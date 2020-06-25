@@ -13,13 +13,9 @@ function calc_new(i, j)
 
 x, y, z = param( "1000", "2000", "1000")  #вызов 
 X = range (0,12*10+1)
-c = exp(z)
 
-x = convolve(X,sin(x))
-VV=x 
-x = calc(x,z)
-f = convolve(y,X^22)
-#x = shift(x*2,5)
-x = convolve(X,x)*VV
+y = convolve(y,X)
+f = convolve(y,X)
 
-return x#,f
+
+return f

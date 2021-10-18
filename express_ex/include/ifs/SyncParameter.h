@@ -70,8 +70,8 @@ protected:
 
     void openNewInterval(double di_index);
 
-    BareChunk* chunk_;
-    BareChunk* current_chunk_;
+    BareChunk* chunk_ = nullptr;
+    BareChunk* current_chunk_ = nullptr;
     double  frequency_  = -1; 
 };
 

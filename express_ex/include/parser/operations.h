@@ -182,6 +182,7 @@ private:
     void smallArray(Value* arg1, Value* arg2);
     void smallArray(Value* arg1);
 
+    Value* getFirstLargeArrayOperand(bool deep = false);
 
     std::vector<Value*> operand_;
     std::vector<Value*> simplified_operand_;

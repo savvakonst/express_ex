@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 # set the project name
 project(express_ex)
 
-SET(IS_SHARED true)
+SET(IS_SHARED false)
 
 if( NOT CMAKE_CL_64 )
     set(SPlatform  x86)

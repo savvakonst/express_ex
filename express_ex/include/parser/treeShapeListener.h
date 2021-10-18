@@ -83,13 +83,13 @@ private:
 class KEXParser {
 public:
 
-    KEXParser(BodyTemplate* body,  std::string str, bool is_file_name = true) {
+    KEXParser(BodyTemplate* body, const std::string& str, bool is_file_name = true) {
         listener_ = TreeShapeListener(body);
         init(str, is_file_name);
     }
 
 
-    KEXParser(std::string str, bool is_file_name = true, std::map<std::string, bool/*is_file_name*/> lib_str_map = {}){
+    KEXParser(const std::string &str, bool is_file_name = true,const std::map<std::string, bool/*is_file_name*/> &lib_str_map = {}){
         auto body = listener_.activ_body_ ;
 
         for (auto i : lib_str_map) 

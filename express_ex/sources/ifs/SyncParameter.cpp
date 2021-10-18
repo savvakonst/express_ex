@@ -10,20 +10,23 @@
 
 
 #include "Intervals.h"
+#include "ifs/printer.h"
 
-    
- 
+
 SyncParameter::SyncParameter(
     std::string name,
     const std::vector<DataInterval>& interval_list,
     bool save_fnames
 ){
+
+
+
     name_=name;
     //for (auto i : interval_list)
     //    interval_list_.push_back(i);
 
     interval_list_ = interval_list;
-    numer_of_intervals_ = interval_list.size();
+    number_of_intervals_ = interval_list.size();
     if(save_fnames == false){
         for(auto& i : interval_list_){
             i.file_name = "";
@@ -38,6 +41,8 @@ SyncParameter::SyncParameter(
     }
 
 
+
+
     auto bgn = interval_list_.front().time_interval.bgn;
     auto end = interval_list_.back().time_interval.end;
 
@@ -45,8 +50,10 @@ SyncParameter::SyncParameter(
     calcExtendedInfo();
 
 
+
     const DataInterval* last_interval = nullptr;
     for(auto& i : interval_list_){
+
         if(last_interval){
             ex_size_t size =
                 (uint64_t)((i.time_interval.bgn - last_interval->time_interval.bgn) * frequency_) * sizeof_data_type_ - last_interval->time_interval.bgn;
@@ -54,18 +61,26 @@ SyncParameter::SyncParameter(
             if(size)
                 current_chunk_->addNextChunk(new BareChunk(size));
         }
+
+        //std::stringstream stream;
+        //::stream(stream, i, "    ");
+        //llvm::outs() << stream.str();
+
         BareChunk* chunk = new Chunk(&i, &work_directory_);
 
-        if(chunk_){
+        if(chunk_ == nullptr){
             chunk_ = chunk;
             current_chunk_ = chunk;
         }
-        else
-            current_chunk_->addNextChunk(chunk);
-        
+        else{
+            current_chunk_ = current_chunk_->addNextChunk(chunk);
+        }
+
         last_interval = &i;
     }
     current_chunk_ = chunk_;
+
+
 }
 
 
@@ -148,8 +163,8 @@ uint64_t SyncParameter::read(char* data_buffer_ptr, uint64_t point_number){
     ex_size_t bytes_to_read = point_number * sizeof_data_type_;
     ex_size_t readed_bytes = 0;
 
-    while(( bytes_to_read != 0) && (current_chunk_ != nullptr)){
-        
+    while((bytes_to_read != 0) && (current_chunk_ != nullptr)){
+
         readed_bytes = current_chunk_->read(data_buffer_ptr, bytes_to_read);
         bytes_to_read -= readed_bytes;
         current_chunk_ = current_chunk_->getNext();
@@ -176,7 +191,6 @@ ParameterIfs* SyncParameter::intersection(ParameterIfs* b, PRMTypesEn target_ty,
         error_info_ = "different frequencys is not supported yet ";
         return nullptr;
     }
-
     else if(parameter_a->frequency_ <= 0.0){
         error_info_ = "async parameter is not supported yet";
         return nullptr;
@@ -189,11 +203,11 @@ ParameterIfs* SyncParameter::intersection(ParameterIfs* b, PRMTypesEn target_ty,
         for(auto b : parameter_b->interval_list_){
             auto t =a & b;
             if(!isEmpty(t)){
-                auto interval = createInterval(t, frequency, target_ty);
+                auto interval = createSyncIntervalByFrerquency(t, frequency, target_ty);
                 if(!ret.empty()){
                     auto t2 = ret.back() || interval;
                     if(!isEmpty(t))
-                        ret.back() = createInterval(t2, frequency, target_ty);
+                        ret.back() = createSyncIntervalByFrerquency(t2, frequency, target_ty);
                     else
                         ret.push_back(interval);
                 }
@@ -226,20 +240,20 @@ SyncParameter* SyncParameter::enlargeFrequency(int64_t arg, PRMTypesEn target_ty
         return this;
 
     for(auto a : parameter_a->interval_list_){
-        auto interval = createInterval(a.time_interval, frequency, target_ty);
+        auto interval = createSyncIntervalByFrerquency(a.time_interval, frequency, target_ty);
         data_interval.push_back(interval);
     }
 
     return new SyncParameter(name, time_interval_, data_interval);
 }
 
-ParameterIfs* SyncParameter::retyping(PRMTypesEn target_ty, const std::string& name) {
+ParameterIfs* SyncParameter::retyping(PRMTypesEn target_ty, const std::string& name){
     if(getRPMType() == target_ty)
         return this;
 
     std::vector<DataInterval> data_interval;
     for(auto a : interval_list_){
-        auto interval = createInterval({}, frequency_, target_ty);
+        auto interval = createSyncIntervalByFrerquency(a.time_interval, frequency_, target_ty);
         data_interval.push_back(interval);
     }
     return new SyncParameter(name, time_interval_, data_interval);
@@ -275,14 +289,14 @@ inline void SyncParameter::openNewInterval(double di_index){
 
     const DataInterval& current_interval = getCufrrentInterval();
     std::string file_name = (current_interval.local ? work_directory_ + "/" : "") + current_interval.file_name;
-    
+
     if(opened_to_read_){
         ifs_ = new std::fstream(file_name, std::ios::in | std::ios::binary);
         ifs_->seekg(current_interval.offs);
     }
     else if(opened_to_write_){
 
-        if (current_interval.offs == 0) 
+        if(current_interval.offs == 0)
             ifs_ =new std::fstream(file_name, std::ios::out | std::ios::binary);
         else
             ifs_ =new std::fstream(file_name, std::ios::out | std::ios::binary | std::ios::app);

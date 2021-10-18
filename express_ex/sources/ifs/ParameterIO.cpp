@@ -6,23 +6,24 @@
 
 #include "parser/defWarningIgnore.h"
 #include "llvm/Support/JSON.h"
+//#include "llvm/Support/ConvertUTF.h"
 #include "parser/undefWarningIgnore.h"
 
 //using namespace llvm;
 
 
 
-bool         fromJSON(const llvm::json::Value &data_fragment, DataInterval &data_interval);
-DataInterval getDataInterval(llvm::json::Value &data_fragment, llvm::json::Array &data_files_list);
+bool         fromJSON(const llvm::json::Value& data_fragment, DataInterval& data_interval);
+DataInterval getDataInterval(llvm::json::Value& data_fragment, llvm::json::Array& data_files_list);
 
-calcMinMaxTy g_calcMinMax_select(PRMTypesEn arg) {
-    int sub_type = ( ((int)arg) >> 4);
+calcMinMaxTy g_calcMinMax_select(PRMTypesEn arg){
+    int sub_type = (((int)arg) >> 4);
     int code = 0xFF & ((int)arg);
 
 #define CALC_CASE_OP(T, SUB_T)   \
                 case( sizeof(T)|(SUB_T<<4) ) :   return calcMinMax<T> 
 
-    switch (code){
+    switch(code){
         CALC_CASE_OP(int8_t, 1);
         CALC_CASE_OP(int16_t, 1);
         CALC_CASE_OP(int32_t, 1);
@@ -33,13 +34,12 @@ calcMinMaxTy g_calcMinMax_select(PRMTypesEn arg) {
         return nullptr;
     };
 }
- 
 
 
-TypeEn PRMType2JITType(PRMTypesEn arg) {
 
-    switch (arg)
-    {
+TypeEn PRMType2JITType(PRMTypesEn arg){
+
+    switch(arg){
     case PRMTypesEn::PRM_TYPE_U08:return TypeEn::unknown_jty;
     case PRMTypesEn::PRM_TYPE_U16:return TypeEn::unknown_jty;
     case PRMTypesEn::PRM_TYPE_U32:return TypeEn::unknown_jty;
@@ -66,18 +66,17 @@ TypeEn PRMType2JITType(PRMTypesEn arg) {
 
 
 
-PRMTypesEn  JITType2PRMType(TypeEn arg) {
-    if (isFloating(arg))
-        return (PRMTypesEn)(0x20 | sizeOfTy(arg) );
-    if (isInteger(arg))
-        return (PRMTypesEn)(0x10 | sizeOfTy(arg) );
+PRMTypesEn  JITType2PRMType(TypeEn arg){
+    if(isFloating(arg))
+        return (PRMTypesEn)(0x20 | sizeOfTy(arg));
+    if(isInteger(arg))
+        return (PRMTypesEn)(0x10 | sizeOfTy(arg));
     return PRMTypesEn::PRM_TYPE_UNKNOWN;
 }
 
-std::string toString(PRMTypesEn arg) {
+std::string toString(PRMTypesEn arg){
 #define CASE_OP(NAME) case PRMTypesEn::NAME:return #NAME;
-    switch (arg)
-    {
+    switch(arg){
         CASE_OP(PRM_TYPE_U08);
         CASE_OP(PRM_TYPE_U16);
         CASE_OP(PRM_TYPE_U32);
@@ -111,7 +110,7 @@ bool isAsync(PRMTypesEn arg){
 
 
 
-bool fromJSON(const llvm::json::Value &DataFragment, DataInterval & dataInterval) {
+bool fromJSON(const llvm::json::Value& DataFragment, DataInterval& dataInterval){
     llvm::json::Path::Root root("bare");
     llvm::json::ObjectMapper O(DataFragment, root);
     bool ret= true;
@@ -126,9 +125,18 @@ bool fromJSON(const llvm::json::Value &DataFragment, DataInterval & dataInterval
 
     return ret;
 }
+/*
+static std::string convertUtf8PathToWinLocate(const std::string& str){
+    std::wstring wstr;
+    bool status = llvm::ConvertUTF8toWide(str, wstr);
+    
+    std::stringstream ss;
+    ss << wstr.c_str();
 
-
-DataInterval getDataInterval(llvm::json::Value &DataFragment, llvm::json::Array &DataFilesList) {
+    return ss.str();
+}
+*/
+DataInterval getDataInterval(llvm::json::Value& DataFragment, llvm::json::Array& DataFilesList){
 
     DataInterval dataInterval;
     fromJSON(DataFragment, dataInterval);
@@ -138,15 +146,18 @@ DataInterval getDataInterval(llvm::json::Value &DataFragment, llvm::json::Array 
     llvm::json::ObjectMapper O(DataFragment, root);
     O.map("Index", dataIndex);
 
-    for (auto i : DataFilesList) {
+    for(auto i : DataFilesList){
         llvm::json::Path::Root root("bare");
         llvm::json::ObjectMapper O(i, root);
         int64_t fileDataIndex;
         O.map("Index", fileDataIndex);
 
-        if (dataIndex == fileDataIndex) {
+        if(dataIndex == fileDataIndex){
+            //std::string tmp;
             O.map("Name", dataInterval.file_name);
             O.map("Local", dataInterval.local);
+            //dataInterval.file_name = convertUtf8PathToWinLocate(tmp);
+
         }
     }
 
@@ -155,9 +166,9 @@ DataInterval getDataInterval(llvm::json::Value &DataFragment, llvm::json::Array 
 
 
 
-bool readParametersList(std::string databaseFName, std::vector<ParameterIfs*>& parameterList) {
+bool readParametersList(std::string databaseFName, std::vector<ParameterIfs*>& parameterList){
     std::ifstream ifs(databaseFName);
-    if (ifs.bad())
+    if(ifs.bad())
         return false;
     std::string content(
         (std::istreambuf_iterator<char>(ifs)),
@@ -165,21 +176,21 @@ bool readParametersList(std::string databaseFName, std::vector<ParameterIfs*>& p
     );
 
     auto e =llvm::json::parse(content);
-    llvm::json::Value &jValue=e.get();
+    llvm::json::Value& jValue=e.get();
 
     llvm::json::Object* jObject          =   jValue.getAsObject();
-    llvm::json::Array*  parametersList   = (*jObject)["Parameters.List"].getAsArray();
+    llvm::json::Array* parametersList   = (*jObject)["Parameters.List"].getAsArray();
 
     llvm::json::Object* parameter        = (*parametersList)[0].getAsObject();
 
-    for (auto i : *parametersList) {
+    for(auto i : *parametersList){
         llvm::json::Object   pObject=*i.getAsObject();
 
-        
-        
+
+
         if(pObject.find("Data.Fragments.List") != pObject.end()){
 
-            
+
             llvm::json::Array& DataFilesList     = *(pObject["Data.Files.List"].getAsArray());
             llvm::json::Array& DataFragmentsList = *(pObject["Data.Fragments.List"].getAsArray());
 
@@ -213,14 +224,14 @@ bool readParametersList(std::string databaseFName, std::vector<ParameterIfs*>& p
     return true;
 }
 
-std::vector<ParameterIfs*>  readParametersList(std::string databaseFName) {
+std::vector<ParameterIfs*>  readParametersList(std::string databaseFName){
     std::vector<ParameterIfs*>  parameterInfoList;
     readParametersList(databaseFName, parameterInfoList);
     return parameterInfoList;
 }
 
 
-ParameterIfs* retyping(ParameterIfs * a, PRMTypesEn target_ty, const std::string& name){
+ParameterIfs* retyping(ParameterIfs* a, PRMTypesEn target_ty, const std::string& name){
     if(a == nullptr)
         return nullptr;
     return a->retyping(target_ty, name);

@@ -56,7 +56,7 @@ public:
         addParametersSet(file_name_list);
     }
 
-    ~ParametersDB() {
+    ~ParametersDB() {        
         for (auto &i : db_parameters_)
             delete i;
         for (auto &i : output_parameters_)
@@ -74,7 +74,7 @@ public:
     bool addParametersSet(const std::vector<std::string> &file_name_list) {
         auto ret= true;
         for(auto file_name : file_name_list)
-            ret&=readParametersList(file_name, db_parameters_);
+            ret &= readParametersList(file_name, db_parameters_);
         return ret;
     }
 
@@ -139,11 +139,11 @@ private:
             for (auto b : parameter_b->interval_list_) {
                 auto t =a & b;
                 if (!isEmpty(t)) {
-                    auto interval = createInterval(t, frequency, target_ty);
+                    auto interval = createSyncIntervalByFrerquency(t, frequency, target_ty);
                     if (!ret.empty()) {
                         auto t2 = ret.back() || interval;
                         if (!isEmpty(t))
-                            ret.back() = createInterval(t2, frequency, target_ty);
+                            ret.back() = createSyncIntervalByFrerquency(t2, frequency, target_ty);
                         else
                             ret.push_back(interval);
                     }

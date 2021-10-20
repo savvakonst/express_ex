@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 # set the project name
 project(express_ex)
 
-SET(IS_SHARED false)
+SET(IS_SHARED true)
 
 if( NOT CMAKE_CL_64 )
     set(SPlatform  x86)
@@ -115,44 +115,42 @@ if(MSVC)
 
 
     SET(ObjNames
-        LLVMX86CodeGen 
-        LLVMX86Desc 
-        LLVMX86Info 
-        LLVMRuntimeDyld 
-        LLVMMCDisassembler 
-        LLVMAsmPrinter 
-        LLVMDebugInfoDWARF 
-        LLVMCFGuard 
-        LLVMGlobalISel 
-        LLVMSelectionDAG 
-        LLVMCodeGen 
-        LLVMTarget 
-        LLVMBitWriter 
-        LLVMScalarOpts 
-        LLVMAggressiveInstCombine 
-        LLVMInstCombine 
-        LLVMTransformUtils 
-        LLVMAnalysis 
-        LLVMObject 
-        LLVMBitReader 
-        LLVMMCParser
-        LLVMMC
-        LLVMDebugInfoCodeView
-        LLVMDebugInfoMSF
-        LLVMTextAPI
-        LLVMProfileData
+        LLVMAggressiveInstCombine
+        LLVMAnalysis
+        LLVMAsmPrinter
         LLVMBinaryFormat
-        LLVMRemarks
+        LLVMBitReader
+        LLVMBitWriter
         LLVMBitstreamReader
-        #LLVMX86Utils
+        LLVMCFGuard
+        LLVMCodeGen
         LLVMCore
+        LLVMDebugInfoCodeView
+        LLVMDebugInfoDWARF
+        LLVMDebugInfoMSF
+        LLVMDemangle
         LLVMExecutionEngine
+        LLVMGlobalISel
+        LLVMInstCombine
         LLVMInterpreter
+        LLVMMC
+        LLVMMCDisassembler
+        LLVMMCJIT
+        LLVMMCParser
+        LLVMObject
+        LLVMProfileData
+        LLVMRemarks
+        LLVMRuntimeDyld
+        LLVMScalarOpts
+        LLVMSelectionDAG
         LLVMSupport
-        LLVMDemangle
-        LLVMMCJIT
-        LLVMDemangle
-        LLVMMCJIT
+        LLVMTarget
+        LLVMTextAPI
+        LLVMTransformUtils
+        LLVMX86CodeGen
+        LLVMX86Desc
+        LLVMX86Info
+        #LLVMX86Utils
         OpenCL
     )
 

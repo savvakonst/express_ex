@@ -32,24 +32,32 @@ int main(int argc, const char* argv[]) {
     };
 
     static llvm::cl::OptionCategory mainCategory("Compiler Options", "Main Options ");
+
     static llvm::cl::opt<std::string> inputFile("i", llvm::cl::desc("input source file"),
                                                 llvm::cl::value_desc("filename"), llvm::cl::Required,
                                                 llvm::cl::cat(mainCategory));
+
     static llvm::cl::opt<bool> optimizationEnable("opt", llvm::cl::desc("optimization enable"), llvm::cl::Optional,
                                                   llvm::cl::cat(mainCategory));
+
     static llvm::cl::opt<bool> ansiEscapeCodes("ansi", llvm::cl::desc("enable ANSI escape codes"), llvm::cl::Optional,
                                                llvm::cl::cat(mainCategory));
+
     static llvm::cl::list<std::string> libraryPaths("dir", llvm::cl::desc("list of available directories"),
                                                     llvm::cl::value_desc("filename"), llvm::cl::ZeroOrMore,
                                                     llvm::cl::cat(mainCategory));
+
     static llvm::cl::list<std::string> moduleFiles("lib", llvm::cl::desc("list of available modules"),
                                                    llvm::cl::value_desc("filename"), llvm::cl::ZeroOrMore,
                                                    llvm::cl::cat(mainCategory));
+
     static llvm::cl::list<std::string> inputDataBaseFile("db", llvm::cl::desc("input data base files"),
                                                          llvm::cl::value_desc("directory"), llvm::cl::ZeroOrMore,
                                                          llvm::cl::cat(mainCategory));
+
     static llvm::cl::opt<bool> runJit("runJit", llvm::cl::desc("run jit"), llvm::cl::Optional,
                                       llvm::cl::cat(mainCategory));
+
     static llvm::cl::bits<ShowNames> showBits(
         llvm::cl::desc("show:"), llvm::cl::cat(mainCategory), llvm::cl::ZeroOrMore,
         llvm::cl::values(clEnumVal(nameList, "names list"),
@@ -89,7 +97,7 @@ int main(int argc, const char* argv[]) {
         stack<Value*> args;
         for (auto i : parameterNameList) {
             auto p = parameterDB[i.second];
-            llvm::outs() << delimiter << "Parameter: \n  " << *p << " \n";
+            // llvm::outs() << delimiter << "Parameter: \n  " << *p << " \n";
             if (p != nullptr) {
                 p->setLocal(false);
                 args.push(new Line(i.first, p));  // potential error

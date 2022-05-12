@@ -53,23 +53,17 @@ public:
   virtual void enterRight_expr(EGrammarParser::Right_exprContext *ctx) = 0;
   virtual void exitRight_expr(EGrammarParser::Right_exprContext *ctx) = 0;
 
-  virtual void enterCallConvolve(EGrammarParser::CallConvolveContext *ctx) = 0;
-  virtual void exitCallConvolve(EGrammarParser::CallConvolveContext *ctx) = 0;
-
-  virtual void enterMoreLess(EGrammarParser::MoreLessContext *ctx) = 0;
-  virtual void exitMoreLess(EGrammarParser::MoreLessContext *ctx) = 0;
-
   virtual void enterParens(EGrammarParser::ParensContext *ctx) = 0;
   virtual void exitParens(EGrammarParser::ParensContext *ctx) = 0;
 
   virtual void enterConst(EGrammarParser::ConstContext *ctx) = 0;
   virtual void exitConst(EGrammarParser::ConstContext *ctx) = 0;
 
-  virtual void enterCallUnaryBInFunc(EGrammarParser::CallUnaryBInFuncContext *ctx) = 0;
-  virtual void exitCallUnaryBInFunc(EGrammarParser::CallUnaryBInFuncContext *ctx) = 0;
-
   virtual void enterShift(EGrammarParser::ShiftContext *ctx) = 0;
   virtual void exitShift(EGrammarParser::ShiftContext *ctx) = 0;
+
+  virtual void enterBitwiseXor(EGrammarParser::BitwiseXorContext *ctx) = 0;
+  virtual void exitBitwiseXor(EGrammarParser::BitwiseXorContext *ctx) = 0;
 
   virtual void enterCondExpr(EGrammarParser::CondExprContext *ctx) = 0;
   virtual void exitCondExpr(EGrammarParser::CondExprContext *ctx) = 0;
@@ -77,8 +71,8 @@ public:
   virtual void enterRange(EGrammarParser::RangeContext *ctx) = 0;
   virtual void exitRange(EGrammarParser::RangeContext *ctx) = 0;
 
-  virtual void enterAddSub(EGrammarParser::AddSubContext *ctx) = 0;
-  virtual void exitAddSub(EGrammarParser::AddSubContext *ctx) = 0;
+  virtual void enterCallRecConvolve(EGrammarParser::CallRecConvolveContext *ctx) = 0;
+  virtual void exitCallRecConvolve(EGrammarParser::CallRecConvolveContext *ctx) = 0;
 
   virtual void enterSmallArrayDefinition(EGrammarParser::SmallArrayDefinitionContext *ctx) = 0;
   virtual void exitSmallArrayDefinition(EGrammarParser::SmallArrayDefinitionContext *ctx) = 0;
@@ -86,8 +80,8 @@ public:
   virtual void enterMoreeqLesseq(EGrammarParser::MoreeqLesseqContext *ctx) = 0;
   virtual void exitMoreeqLesseq(EGrammarParser::MoreeqLesseqContext *ctx) = 0;
 
-  virtual void enterCallFunc(EGrammarParser::CallFuncContext *ctx) = 0;
-  virtual void exitCallFunc(EGrammarParser::CallFuncContext *ctx) = 0;
+  virtual void enterBitwiseAnd(EGrammarParser::BitwiseAndContext *ctx) = 0;
+  virtual void exitBitwiseAnd(EGrammarParser::BitwiseAndContext *ctx) = 0;
 
   virtual void enterMulDiv(EGrammarParser::MulDivContext *ctx) = 0;
   virtual void exitMulDiv(EGrammarParser::MulDivContext *ctx) = 0;
@@ -95,20 +89,44 @@ public:
   virtual void enterDecimation(EGrammarParser::DecimationContext *ctx) = 0;
   virtual void exitDecimation(EGrammarParser::DecimationContext *ctx) = 0;
 
-  virtual void enterInv(EGrammarParser::InvContext *ctx) = 0;
-  virtual void exitInv(EGrammarParser::InvContext *ctx) = 0;
-
   virtual void enterCallTConvBInFunc(EGrammarParser::CallTConvBInFuncContext *ctx) = 0;
   virtual void exitCallTConvBInFunc(EGrammarParser::CallTConvBInFuncContext *ctx) = 0;
 
+  virtual void enterBitwiseShift(EGrammarParser::BitwiseShiftContext *ctx) = 0;
+  virtual void exitBitwiseShift(EGrammarParser::BitwiseShiftContext *ctx) = 0;
+
   virtual void enterPow(EGrammarParser::PowContext *ctx) = 0;
   virtual void exitPow(EGrammarParser::PowContext *ctx) = 0;
+
+  virtual void enterBitwiseOr(EGrammarParser::BitwiseOrContext *ctx) = 0;
+  virtual void exitBitwiseOr(EGrammarParser::BitwiseOrContext *ctx) = 0;
 
   virtual void enterId(EGrammarParser::IdContext *ctx) = 0;
   virtual void exitId(EGrammarParser::IdContext *ctx) = 0;
 
   virtual void enterEquality(EGrammarParser::EqualityContext *ctx) = 0;
   virtual void exitEquality(EGrammarParser::EqualityContext *ctx) = 0;
+
+  virtual void enterCallConvolve(EGrammarParser::CallConvolveContext *ctx) = 0;
+  virtual void exitCallConvolve(EGrammarParser::CallConvolveContext *ctx) = 0;
+
+  virtual void enterMoreLess(EGrammarParser::MoreLessContext *ctx) = 0;
+  virtual void exitMoreLess(EGrammarParser::MoreLessContext *ctx) = 0;
+
+  virtual void enterCallUnaryBInFunc(EGrammarParser::CallUnaryBInFuncContext *ctx) = 0;
+  virtual void exitCallUnaryBInFunc(EGrammarParser::CallUnaryBInFuncContext *ctx) = 0;
+
+  virtual void enterAddSub(EGrammarParser::AddSubContext *ctx) = 0;
+  virtual void exitAddSub(EGrammarParser::AddSubContext *ctx) = 0;
+
+  virtual void enterCallFunc(EGrammarParser::CallFuncContext *ctx) = 0;
+  virtual void exitCallFunc(EGrammarParser::CallFuncContext *ctx) = 0;
+
+  virtual void enterInv(EGrammarParser::InvContext *ctx) = 0;
+  virtual void exitInv(EGrammarParser::InvContext *ctx) = 0;
+
+  virtual void enterCallIntegrate(EGrammarParser::CallIntegrateContext *ctx) = 0;
+  virtual void exitCallIntegrate(EGrammarParser::CallIntegrateContext *ctx) = 0;
 
 
 };

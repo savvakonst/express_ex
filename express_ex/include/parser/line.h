@@ -8,7 +8,7 @@
 
 class Line : public Value {
    public:
-    Line(std::string name, Value* var) : Value() {
+    Line(const std::string& name, Value* var) : Value() {
         names_.push_back(name);
         name_ = name;
         if (isConst(var)) {
@@ -22,31 +22,31 @@ class Line : public Value {
         length_              = var->getLength();
     }
 
-    Line(std::string name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len) : Value() {
+    Line(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len) : Value() {
         names_.push_back(name);
         name_                = name;
         data_structure_type_ = dsty;
         type_                = ty;
-        length_              = len;
-        is_arg               = true;
+        length_              = int64_t(len);
+        is_arg_              = true;
     }
 
-    Line(std::string name, std::string linkName, DataStructureTypeEn dsty) : Value() {
+    Line(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty) : Value() {
         names_.push_back(name);
         name_                = name;
-        link_name_           = linkName;
+        link_name_           = link_name;
         data_structure_type_ = dsty;
-        is_arg               = true;
+        is_arg_              = true;
     }
 
-    Line(std::string name, ParameterIfs* parameter) : Value() {
+    Line(const std::string& name, ParameterIfs* parameter) : Value() {
         names_.push_back(name);
         name_                = name;
         link_name_           = parameter->getName();
-        type_                = PRMType2JITType(parameter->getRPMType());
-        length_              = parameter->getVirtualSize();
+        type_                = PRMType2JITType(parameter->getPrmType());
+        length_              = int64_t(parameter->getVirtualSize());
         data_structure_type_ = DataStructureTypeEn::kLargeArr;
-        is_arg               = true;
+        is_arg_              = true;
 
         if (parameter->isAsync()) {
             parameter_ = new AsyncParameter(*(AsyncParameter*)parameter);
@@ -54,35 +54,35 @@ class Line : public Value {
             parameter_ = new SyncParameter(*(SyncParameter*)parameter);
     }
 
-    Line(std::string name) : Value() {
+    explicit Line(const std::string& name) : Value() {
         names_.push_back(name);
-        name_  = name;
-        type_  = TypeEn::unknown_jty;
-        is_arg = true;
+        name_   = name;
+        type_   = TypeEn::unknown_jty;
+        is_arg_ = true;
     }
 
-    virtual ~Line() {}
+    ~Line() override = default;
 
     void assignValue(Value* var);
-    virtual Value* getAssignedVal(bool deep = false) override;
+    Value* getAssignedVal(bool deep = false) override;
 
-    bool isArg();
-    bool checkName(std::string);
-    bool isTermialLargeArray() { return isArg(); }
+    bool isArg() const;
+    bool checkName(const std::string&) const;
+    bool isTerminalLargeArray() override { return isArg(); }
 
-    const std::string getName(bool onlyName = false) const { return onlyName ? name_ : checkBuffer(name_); }
-    const std::string getLinkName() const { return link_name_; }
-    virtual NodeTypeEn getNodeType() const override { return NodeTypeEn::kLine; }
+    std::string getName(bool only_name = false) const { return only_name ? name_ : checkBuffer(name_); }
+    std::string getLinkName() const { return link_name_; }
+    NodeTypeEn getNodeType() const override { return NodeTypeEn::kLine; }
     untyped_t* getBinaryValuePtr() { return &binary_value_; }
 
     // safe functions .external stack is used
-    virtual void visitEnter(stack<Value*>* visitorStack) override;
-    virtual void markUnusedVisitEnter(stack<Value*>* visitorStack) override;
+    void visitEnter(stack<Value*>* visitor_stack) override;
+    void markUnusedVisitEnter(stack<Value*>* visitor_stack) override;
 
-    virtual void genBodyVisitExit(BodyGenContext* context) override;
-    virtual void printVisitExit(PrintBodyContext* context) override;
-    virtual void genBlocksVisitExit(TableGenContext* context) override;
-    virtual void setupIR(IRGenerator& builder) override;
+    void genBodyVisitExit(BodyGenContext* context) override;
+    void printVisitExit(PrintBodyContext* context) override;
+    void genBlocksVisitExit(TableGenContext* context) override;
+    void setupIR(IRGenerator& builder) override;
 
     virtual void setTempTypeAndBinaryValue(Value* var) {
         temp_type_    = var->getType();
@@ -90,24 +90,24 @@ class Line : public Value {
     }
 
    private:
-    uint32_t reference_;  // atavism
+    uint32_t reference_ = 0;  // atavism
    public:
-    virtual void genRecursiveVisitExit(RecursiveGenContext* context) override {
+    void genRecursiveVisitExit(RecursiveGenContext* context) override {
         // context->setUint(this);
         is_visited_ = false;
-    };
+    }
 
-    virtual void calculateConstRecursive(RecursiveGenContext* context) override {
-        binary_value_ = is_arg ? binary_value_ : assigned_val_->getBinaryValue();
+    void calculateConstRecursive(RecursiveGenContext* context) override {
+        binary_value_ = is_arg_ ? binary_value_ : assigned_val_->getBinaryValue();
         temp_type_    = assigned_val_->getTempType();
     }
 
-    virtual string printUint() {
-        return unique_name_ + (is_arg ? " = arg()" : " = assign(" + assigned_val_->getUniqueName() + ")");
+    std::string printUint() override {
+        return unique_name_ + (is_arg_ ? " = arg()" : " = assign(" + assigned_val_->getUniqueName() + ")");
     }
 
    private:
-    bool is_arg = false;
+    bool is_arg_ = false;
 
     Value* assigned_val_ = nullptr;
 

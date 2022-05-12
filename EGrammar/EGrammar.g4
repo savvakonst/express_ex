@@ -31,6 +31,7 @@ right_expr: expr ;
 
 
 expr:   ID '(' (expr (','expr)*) ')'                                    # callFunc
+    |   SPEC_SYM='integrate'  '('expr')'                                # callIntegrate
     |   SPEC_SYM='convolve'  '('expr','expr(','STRINGLITERAL)?')'       # callConvolve
     |   SPEC_SYM='recconvolve'  '('expr','expr(','STRINGLITERAL)?')'    # callRecConvolve
     |   SPEC_SYM='range'     '('(expr (','expr)*)')'                    # range
@@ -41,10 +42,13 @@ expr:   ID '(' (expr (','expr)*) ')'                                    # callFu
     |   expr ('**'|'^')   expr                                          # pow
     |   expr op=('*'|'/') expr                                          # mulDiv
     |   expr op=('+'|'-') expr                                          # addSub
+    |   expr  op=('<<'|'>>') expr                                       # bitwiseShift
     |   expr op=('>'|'<') expr                                          # moreLess
     |   expr op=('>='|'<=') expr                                        # moreeqLesseq
     |   expr  op=('=='|'!=') expr                                       # equality
-    |   expr  op=('<<'|'>>') expr                                       # bitwise
+    |   expr  '&' expr                                                  # bitwiseAnd
+    |   expr  '|' expr                                                  # bitwiseOr
+    |   expr  'bxor' expr                                                # bitwiseXor
     |   expr '?' left_expr ':' right_expr                               # condExpr
     |   '-' expr                                                        # inv
     |   (DOUBLE|FLOAT|INT64|INT)                                        # const

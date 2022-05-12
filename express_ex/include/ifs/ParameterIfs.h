@@ -17,7 +17,7 @@
 #    pragma warning(disable : 4189)
 #endif
 
-enum class PRMTypesEn : uint64_t
+enum class PrmTypesEn : uint64_t
 {
     PRM_TYPE_U08 = 0x0001,
     PRM_TYPE_U16 = 0x0002,
@@ -63,8 +63,8 @@ typedef struct {
 
 typedef struct {
     union {
-        int64_t int_type_represintation;
-        PRMTypesEn type;
+        int64_t int_type_representation;
+        PrmTypesEn type;
     };
     int64_t offs;
     int64_t size;
@@ -82,18 +82,18 @@ typedef struct {
     double time;
 } Dot;
 
-inline size_t sizeOfTy(PRMTypesEn arg) { return ((uint64_t)arg) & 0xf; }
+inline size_t sizeOfTy(const PrmTypesEn arg) { return ((uint64_t)arg) & 0xf; }
 
-inline size_t sizeOftimeTy(PRMTypesEn arg) {
+inline size_t sizeOfTimeTy(PrmTypesEn arg) {
     if (0x5000 == (((uint64_t)arg) & 0xf000)) return 0x8;
     else
         return 0x4;
 }
 
-// TypeEn      PRMType2JITType(PRMTypesEn arg);
-// PRMTypesEn  JITType2PRMType(TypeEn arg);
+// TypeEn      PRMType2JITType(PrmTypesEn arg);
+// PrmTypesEn  JITType2PRMType(TypeEn arg);
 
-DLL_EXPORT std::string toString(PRMTypesEn arg);
+DLL_EXPORT std::string toString(PrmTypesEn arg);
 
 inline std::stringstream& stream(std::stringstream& OS, const DataInterval& di, std::string offset) {
     OS << offset << "DataInterval{\n";
@@ -126,9 +126,9 @@ inline TimeInterval operator||(DataInterval a, DataInterval b) {
     return {0.0};
 }
 
-inline DataInterval createSyncIntervalByFrerquency(TimeInterval time_interval, double frequency, PRMTypesEn target_ty,
-                                                   const std::string& filename = "", bool local = true) {
-    DataInterval interval;
+inline DataInterval createSyncIntervalByFrequency(TimeInterval time_interval, double frequency, PrmTypesEn target_ty,
+                                                  const std::string& filename = "", bool local = true) {
+    DataInterval interval{};
 
     interval.type          = target_ty;
     interval.offs          = 0;
@@ -142,9 +142,9 @@ inline DataInterval createSyncIntervalByFrerquency(TimeInterval time_interval, d
     return interval;
 }
 
-inline DataInterval createAsyncIntervalBySize(TimeInterval time_interval, int64_t size, PRMTypesEn target_ty,
+inline DataInterval createAsyncIntervalBySize(TimeInterval time_interval, int64_t size, PrmTypesEn target_ty,
                                               const std::string& filename = "", bool local = true) {
-    DataInterval interval;
+    DataInterval interval{};
 
     interval.type          = target_ty;
     interval.offs          = 0;
@@ -164,14 +164,20 @@ class BareChunk;
 
 class DLL_EXPORT ParameterIfs {
    public:
+    virtual ~ParameterIfs() = default;
+
     const std::string& getName() const { return name_; }
+
     const TimeInterval& getMainTimeInterval() const { return time_interval_; }
+
     const std::vector<DataInterval>& getDataIntervalList() const { return interval_list_; }
-    virtual const PRMTypesEn getRPMType() {
+
+    virtual PrmTypesEn getPrmType() {
         if (interval_list_.size()) type_ = interval_list_[0].type;
         return type_;
     }
-    virtual const uint64_t getVirtualSize() = 0;
+
+    virtual uint64_t getVirtualSize() const = 0;
 
     virtual bool isAsync() = 0;
 
@@ -188,9 +194,9 @@ class DLL_EXPORT ParameterIfs {
     virtual uint64_t write(char* data_buffer_ptr, uint64_t point_number) = 0;
     virtual uint64_t read(char* data_buffer_ptr, uint64_t point_number)  = 0;
 
-    virtual ParameterIfs* intersection(ParameterIfs* b, PRMTypesEn target_ty = PRMTypesEn::PRM_TYPE_UNKNOWN,
+    virtual ParameterIfs* intersection(ParameterIfs* b, PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
                                        const std::string& name = "") = 0;
-    virtual ParameterIfs* retyping(PRMTypesEn target_ty    = PRMTypesEn::PRM_TYPE_UNKNOWN,
+    virtual ParameterIfs* retyping(PrmTypesEn target_ty    = PrmTypesEn::PRM_TYPE_UNKNOWN,
                                    const std::string& name = "")     = 0;
 
     virtual void setName(const std::string& name, bool single_file = true) {
@@ -209,7 +215,7 @@ class DLL_EXPORT ParameterIfs {
         for (int64_t i = (current_interval_index_ < 0 ? 0 : current_interval_index_); i < number_of_intervals_; i++) {
             DataInterval& a = interval_list_[(size_t)i];
             if ((a.time_interval.bgn <= time) && (time < (a.time_interval.end + additional_time_))) return i;
-            // this is very bad idea, but it will be here  until nikolay fixes the problem with interval boundaries
+            // this is very bad idea, but it will be here  until Nikolai fixes the problem with interval boundaries
         }
         return -1;
     }
@@ -218,7 +224,7 @@ class DLL_EXPORT ParameterIfs {
     void setLocal(bool val = true) {
         for (auto& i : interval_list_) i.local = val;
     }
-    void addIntrval(const DataInterval& interval) { interval_list_.push_back(interval); }
+    void addInterval(const DataInterval& interval) { interval_list_.push_back(interval); }
 
     virtual ParameterIfs* newParameter() = 0;
     virtual std::stringstream& stream(std::stringstream& OS, std::string offset = "") const {
@@ -237,7 +243,7 @@ class DLL_EXPORT ParameterIfs {
     friend class ParametersDB;
 
    protected:
-    calcMinMaxTy calcMinMaxPtr = nullptr;
+    calcMinMaxTy calc_min_max_ptr_ = nullptr;
 
     std::fstream* ifs_ = nullptr;
 
@@ -247,7 +253,7 @@ class DLL_EXPORT ParameterIfs {
 
     const double additional_time_ = 0.0009765625;  // this is very bad idea, but it will be here  until nikolay fixes
                                                    // the problem with interval boundaries
-    PRMTypesEn type_              = PRMTypesEn::PRM_TYPE_UNKNOWN;
+    PrmTypesEn type_              = PrmTypesEn::PRM_TYPE_UNKNOWN;
 
     int64_t current_interval_index_ = 0;
     int64_t number_of_intervals_    = 0;

@@ -27,7 +27,7 @@ Call::Call(Body* body, const stack<Value*>& args): CallI_ifs(){
 }
 
 void Call::markUnusedVisitEnter(stack<Value*>* visitor_stack){
-    commoMmarkUnusedVisitEnter(visitor_stack);
+    commonMarkUnusedVisitEnter(visitor_stack);
 
     if(body_->getRet().empty())
         print_error("markUnusedVisitEnter: body_->getRet().empty() == true ");
@@ -70,7 +70,7 @@ CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<Value*>& ar
 
 
     for(auto i : args_){
-        p_list.push_back(i->getAssignedVal(true)->getPatameter());
+        p_list.push_back(i->getAssignedVal(true)->getParameter());
     }
 
     Value* temp = nullptr;
@@ -101,7 +101,7 @@ CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<Value*>& ar
 
 
 void CallRecursiveFunction::markUnusedVisitEnter(stack<Value*>* visitor_stack){
-    commoMmarkUnusedVisitEnter(visitor_stack);
+    commonMarkUnusedVisitEnter(visitor_stack);
     for(int64_t i = ((int64_t)args_.size() - 1); i >= 0; i--){
         auto arg = args_[i];
         visitor_stack->push(arg);
@@ -117,11 +117,11 @@ void CallRecursiveFunction::genBlocksVisitExit(TableGenContext* context){
     is_visited_ = false;
 
 
-    PRMTypesEn RPMType = JITType2PRMType(type_);
+    PrmTypesEn RPMType = JITType2PRMType(type_);
 
     for(auto i : args_)
         if(i->isArray()){
-            parameter_ = retyping(i->getAssignedVal(true)->getPatameter(), RPMType, "");
+            parameter_ = retyping(i->getAssignedVal(true)->getParameter(), RPMType, "");
             break;
         }
 

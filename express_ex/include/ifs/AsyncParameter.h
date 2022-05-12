@@ -13,34 +13,32 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
    public:
     AsyncParameter(const AsyncParameter& c) : ParameterIfs(c) { parent_parameter_ = this; }
     AsyncParameter() { parent_parameter_ = this; }
-    AsyncParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_fnames);
+    AsyncParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_file_names);
     AsyncParameter(std::string name, const TimeInterval& time_interval, const std::vector<DataInterval>& interval_list,
-                   bool save_fnames = true);
+                   bool save_file_names = true);
 
-    ~AsyncParameter();
+    ~AsyncParameter() override;
 
-    bool isAsync() { return true; }
+    bool isAsync() override { return true; }
     // is not supported yet
-    virtual std::vector<int64_t> read_dots(Dot* dot_buffer, size_t max_point_number, double from, double to) override;
-    ;
+    std::vector<int64_t> read_dots(Dot* dot_buffer, size_t max_point_number, double from, double to) override;
 
     // is not supported yet
-    virtual std::vector<int64_t> read_dots(double* top_buffer_ptr, double* bottom_buffer_ptr, double* time_buffer_ptr,
-                                           double from, double to, size_t max_point_number_to_read) override;
-    ;
+    std::vector<int64_t> read_dots(double* top_buffer_ptr, double* bottom_buffer_ptr, double* time_buffer_ptr,
+                                   double from, double to, size_t max_point_number_to_read) override;
 
     bool open(bool open_to_write = false) override;
     bool close() override;
-    uint64_t write(char* data_buffer_ptr, uint64_t point_number) override;
-    uint64_t read(char* data_buffer_ptr, uint64_t point_number) override;
+    uint64_t write(char* data_buffer_ptr, uint64_t points_to_write) override;
+    uint64_t read(char* data_buffer_ptr, uint64_t points_to_read) override;
 
-    const uint64_t getVirtualSize() override;
+    uint64_t getVirtualSize() const override;
 
-    ParameterIfs* intersection(ParameterIfs* b, PRMTypesEn target_ty = PRMTypesEn::PRM_TYPE_UNKNOWN,
-                               const std::string& name = "");
-    ParameterIfs* enlargeFrequency(int64_t arg, PRMTypesEn target_ty = PRMTypesEn::PRM_TYPE_UNKNOWN,
+    ParameterIfs* intersection(ParameterIfs* b, PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
+                               const std::string& name = "") override;
+    ParameterIfs* enlargeFrequency(int64_t arg, PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
                                    const std::string& name = "");
-    ParameterIfs* retyping(PRMTypesEn target_ty = PRMTypesEn::PRM_TYPE_UNKNOWN, const std::string& name = "") override;
+    ParameterIfs* retyping(PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN, const std::string& name = "") override;
 
     virtual ParameterIfs* newParameter() override;
 
@@ -48,7 +46,7 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
     friend class ParametersDB;
 
    protected:
-    const size_t PRM_TIME_SIZE_ = 4;
+    const size_t prm_time_size_ = 4;
 
     void readFromBuffer(char* data_buffer_ptr, uint64_t points_to_read);
     void readRawData(uint64_t points_to_read);
@@ -61,32 +59,32 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
             intermediate_buffer_.current_ptr_ += sizeof(float);
             *data_buffer_ptr = *((T*)intermediate_buffer_.current_ptr_);
             intermediate_buffer_.current_ptr_ += sizeof(T);
-            data_buffer_ptr++;
+            ++data_buffer_ptr;
             points_to_read--;
         }
     }
 
     template <typename T>
     void copyFromBuffer(T* data_buffer_ptr, uint64_t points_to_read) {
-        IntermediateBuffer& parent_time_buffer_ = parent_parameter_->time_buffer_;
+        IntermediateBuffer& parent_time_buffer = parent_parameter_->time_buffer_;
         while (points_to_read) {
-            *((float*)intermediate_buffer_.current_ptr_) = *((float*)parent_time_buffer_.current_ptr_);
+            *((float*)intermediate_buffer_.current_ptr_) = *((float*)parent_time_buffer.current_ptr_);
             // this side effect is impotant for IntermediateBuffer::replaceLastData() void
-            parent_time_buffer_.current_ptr_ += sizeof(float);
+            parent_time_buffer.current_ptr_ += sizeof(float);
 
             intermediate_buffer_.current_ptr_ += sizeof(float);
             *((T*)intermediate_buffer_.current_ptr_) = *data_buffer_ptr;
             intermediate_buffer_.current_ptr_ += sizeof(T);
-            data_buffer_ptr++;
+            ++data_buffer_ptr;
             points_to_read--;
         }
     }
 
-    inline const TimeInterval& getTimeInterval(int64_t nterval_index) {
-        return interval_list_[(size_t)nterval_index].time_interval;
+    const TimeInterval& getTimeInterval(int64_t interval_index) const {
+        return interval_list_[(size_t)interval_index].time_interval;
     }
 
-    inline const DataInterval& getCufrrentInterval() { return interval_list_[(size_t)current_interval_index_]; }
+    const DataInterval& getCurrentInterval() { return interval_list_[(size_t)current_interval_index_]; }
 
     inline void openNewInterval();
 
@@ -98,13 +96,13 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
         IntermediateBuffer() : base_ptr_(nullptr), current_ptr_(nullptr), size_(0) {}
         ~IntermediateBuffer() { clear(); }
 
-        inline void clear() {
-            if (base_ptr_) delete[] base_ptr_;
+        void clear() {
+            delete[] base_ptr_;
             base_ptr_    = nullptr;
             current_ptr_ = nullptr;
         }
 
-        inline void resize(size_t new_size) {
+        void resize(size_t new_size) {
             if (new_size > size_) {
                 clear();
                 size_        = new_size;
@@ -113,7 +111,7 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
             }
         }
 
-        inline void replaceLastData() {
+        void replaceLastData() {
             if (current_ptr_ == base_ptr_)  // bad idea
                 return;
             size_t size_to_replace = base_ptr_ + size_ - current_ptr_;
@@ -121,7 +119,7 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
             current_ptr_ = base_ptr_ + size_to_replace;
         }
 
-        inline void resetPos() { current_ptr_ = base_ptr_; }
+        void resetPos() { current_ptr_ = base_ptr_; }
     };
 
     IntermediateBuffer intermediate_buffer_ = IntermediateBuffer();

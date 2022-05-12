@@ -13,7 +13,7 @@ C_INT:      'int';
 C_DOUBLE:   'double';
 C_INT64:    'int64';
 
-SPEC_SYMBOL : 'func' | 'return ' | 'convolve' | 'range' | 'shift'| 'param' | 'out';
+SPEC_SYMBOL : 'func' | 'return ' | 'convolve'| 'inegrate' | 'range' | 'shift'| 'param' | 'out';
 
 MUL :     '*' ;
 DIV :     '/' ;
@@ -27,6 +27,10 @@ LSH :     '<<';
 RSH :     '>>';
 LESSEQ :  '<=';
 MOREEQ :  '=>';
+
+BITWISE_AND : '&';
+BITWISE_OR : '|';
+BITWISE_XOR : 'bxor';
 
 ID  :   [a-zA-Z][a-zA-Z0-9_]* ;
 

@@ -29,9 +29,9 @@ void SubBlock::setUint(Value* var) {
     uint_list_.push(var);
 }
 
-string SubBlock::print() {
+string SubBlock::print() const {
     const size_t max_line_length = 90;
-    string out =
+    std::string out =
         std::string(4, ' ') + "L,R: " + std::to_string(left_length_) + "," + std::to_string(right_length_) + "\n";
     for (auto i : uint_list_) {
         std::string txt       = i->printUint() + ";" + (i->isBuffered() ? " store" : "");
@@ -85,7 +85,7 @@ basic_block_postfix)
     return true;
 }
 */
-bool SubBlock::generateIR(IRGenerator& builder, CycleStageEn type, std::string basic_block_prefix,
+bool SubBlock::generateIR(IRGenerator& builder, CycleStageEn type, const std::string& basic_block_prefix,
                           std::string basic_block_postfix) {
     llvm::LLVMContext& context = builder.getContext();
 
@@ -139,7 +139,7 @@ bool SubBlock::generateIR(IRGenerator& builder, CycleStageEn type, std::string b
 //
 //
 Block::Block(Value* var) {
-    left_ength_   = var->getLeftBufferLen();
+    left_length_  = var->getLeftBufferLen();
     right_length_ = var->getRightBufferLen();
     level_        = var->getLevel();
     length_       = var->getLength();
@@ -147,7 +147,7 @@ Block::Block(Value* var) {
 }
 
 void Block::setUint(Value* var) {
-    left_ength_   = maxInt(left_ength_, var->getLeftBufferLen());
+    left_length_  = maxInt(left_length_, var->getLeftBufferLen());
     right_length_ = maxInt(right_length_, var->getRightBufferLen());
     uint_list_.push(var);
     setUintToSubtable(var);
@@ -176,13 +176,13 @@ void Block::setUintToSubtable(Value* var) {
 
 void Block::recalcLeftRightBufferLengths() {
     for (auto i : uint_list_) {
-        i->setBufferLength(left_ength_, right_length_);
+        i->setBufferLength(left_length_, right_length_);
     }
 }
 
-string Block::print() {
-    const size_t max_line_length = 90;
-    string out                   = std::string(2, ' ') + "level: " + std::to_string(level_) + "\n";
+string Block::print() const {
+    constexpr size_t max_line_length = 90;
+    std::string out                  = std::string(2, ' ') + "level: " + std::to_string(level_) + "\n";
     for (auto i : sub_block_list_) {
         out += i->print();
     }
@@ -341,17 +341,17 @@ TableColumn::TableColumn(Value* var) {
 
 void TableColumn::setUint(Value* var) {
     auto varlevel = var->getLevel();
-    for (Block* i : blockList_)
+    for (Block* i : block_list_)
         if (i->getLevel() == varlevel) {
             i->setUint(var);
             return;
         }
-    blockList_.push(new Block(var));
+    block_list_.push(new Block(var));
 }
 
 string TableColumn::print() {
-    string out = "length: " + std::to_string(length_) + "\n";
-    for (auto i : blockList_) {
+    std::string out = "length: " + std::to_string(length_) + "\n";
+    for (auto i : block_list_) {
         out += i->print();
     }
     return out;
@@ -360,7 +360,7 @@ string TableColumn::print() {
 bool TableColumn::generateIR(IRGenerator& builder, CycleStageEn type, std::string basicBlockPrefix) {
     std::stringstream hex;
     bool res = false;
-    for (auto i : blockList_) {
+    for (auto i : block_list_) {
         std::stringstream ss;
         ss << std::hex << length_;
 
@@ -372,7 +372,7 @@ bool TableColumn::generateIR(IRGenerator& builder, CycleStageEn type, std::strin
 bool TableColumn::generateIR(IRGenerator& builder, CycleStageEn type, int64_t level, std::string basicBlockPrefix) {
     std::stringstream hex;
     bool res = false;
-    for (auto i : blockList_) {
+    for (auto i : block_list_) {
         if (i->getLevel() == level) {
             std::stringstream ss;
             ss << std::hex << length_;
@@ -500,7 +500,7 @@ void Table::declareBuiltInFunctions(BuiltInFuncMap& UBIFMap, llvm::Type* Ty) {
 }
 
 string Table::print() {
-    string out = "";
+    std::string out = "";
 
     out += "constant defenition:\n";
     for (auto i : const_list_) {
@@ -835,6 +835,7 @@ class ExMemoryManager : public llvm::SectionMemoryManager {
 #endif
         return SectionMemoryManager::findSymbol(Name);
     }
+
    private:
 };
 
@@ -991,20 +992,18 @@ void Operation::setupIR(IRGenerator& builder) {
         auto length    = second_op->getLength();
         auto f         = OP(0);
         IR_value_      = builder.CreateConvolve(OP_PTR(0), second_op->getBufferPtr(), length,
-                                           -(length / 2 + shift_parameter_), type_, getUniqueName());
+                                                -(length / 2 + shift_parameter_), type_, getUniqueName());
     } else if (isSlice(op_code_)) {
     } else if (isStoreToBuffer(op_code_)) {
-        print_IR_error("visitExitTxt StoreToBuffer unknown command .");
+        print_IR_error("setupIR StoreToBuffer unknown command .");
     } else {
-        print_IR_error("visitExitTxt unknown command .");
+        print_IR_error("setupIR unknown command .");
     }
 
     if (isBuffered() | isReturned()) {
         if (!is_initialized_) {
-            BufferTypeEn bufferType = isReturned() ? BufferTypeEn::output : BufferTypeEn::internal;
-            if (isReturned()) {
-                builder.AddBufferAlloca(new OutputBuffer(this));
-            } else
+            if (isReturned()) builder.AddBufferAlloca(new OutputBuffer(this));
+            else
                 builder.AddBufferAlloca(new Buffer(this));
 
             IR_buffer_base_ptr_ = builder.CreateBufferInit(type_, "internal_");
@@ -1020,7 +1019,7 @@ void Operation::setupIR(IRGenerator& builder) {
 }
 
 void Line::setupIR(IRGenerator& builder) {
-    if (!is_arg) {
+    if (!is_arg_) {
         // pass
     } else {
         // setBuffered();

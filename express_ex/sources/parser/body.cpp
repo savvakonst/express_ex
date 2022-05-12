@@ -113,7 +113,7 @@ Line* Body::getLastLineFromName(std::string name) const{
 const stack<ParameterIfs*> Body::getOutputParameterList()const{
     stack<ParameterIfs*> p_list;
     for (auto i : return_stack_) {
-        p_list.push(i->getAssignedVal(true)->getPatameter());
+        p_list.push(i->getAssignedVal(true)->getParameter());
     }
     return p_list;
 }
@@ -173,7 +173,7 @@ std::string   Body::print(std::string tab, bool DSTEna, bool hideUnusedLines){
             else
                 var->visitEnter(&visitor_stack);
         } while(!visitor_stack.empty());
-        context.createReurn(value);
+        context.createReturn(value);
     }
 
     return context.getResult();

@@ -136,7 +136,7 @@ int main(int argc, const char* argv[]) {
         if (showBits.isSet(outputPrm)) {
             llvm::outs() << delimiter << "input_prm:";
             for (auto i : args) {
-                llvm::outs() << delimiter << *(i->getPatameter());
+                llvm::outs() << delimiter << *(i->getParameter());
             }
             llvm::outs() << delimiter << "output_prm:";
             for (auto i : body->getOutputParameterList()) {

@@ -1,19 +1,17 @@
-#include <filesystem>
 #include <set>
-#include <type_traits>
 
-#include "ifs/ParameterIO.h"
+#include "ifs/parameterIO.h"
 #include "llvm/Support/JSON.h"
 #include "parser/common.h"
 #include "parser/defWarningIgnore.h"
 #include "parser/undefWarningIgnore.h"
 
-AsyncParameter::AsyncParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_fnames) {
+AsyncParameter::AsyncParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_file_names) {
     name_                = name;
     parent_parameter_    = this;
     interval_list_       = interval_list;
     number_of_intervals_ = interval_list.size();
-    if (save_fnames == false) {
+    if (save_file_names == false) {
         for (auto& i : interval_list_) {
             i.file_name = "";
             i.local     = true;
@@ -23,7 +21,7 @@ AsyncParameter::AsyncParameter(std::string name, const std::vector<DataInterval>
     if (interval_list_.size()) {
         sizeof_data_type_ = sizeOfTy(interval_list_.front().type);
         type_             = interval_list_.front().type;
-        calcMinMaxPtr     = g_calcMinMax_select(type_);
+        calc_min_max_ptr_ = g_calcMinMax_select(type_);
     }
 
     auto bgn = interval_list_.front().time_interval.bgn;
@@ -33,17 +31,17 @@ AsyncParameter::AsyncParameter(std::string name, const std::vector<DataInterval>
 }
 
 AsyncParameter::AsyncParameter(std::string name, const TimeInterval& time_interval,
-                               const std::vector<DataInterval>& interval_list, bool save_fnames)
-    : AsyncParameter(name, interval_list, save_fnames) {
+                               const std::vector<DataInterval>& interval_list, bool save_file_names)
+    : AsyncParameter(name, interval_list, save_file_names) {
     parent_parameter_ = this;
     time_interval_    = time_interval;
 }
 
-AsyncParameter::~AsyncParameter() {}
+AsyncParameter::~AsyncParameter() = default;
 
 void AsyncParameter::readFromBuffer(char* data_buffer_ptr, uint64_t points_to_read) {
     DataInterval& di = interval_list_[current_interval_index_];
-    if (calcMinMaxPtr) calcMinMaxPtr(data_buffer_ptr, points_to_read, di.val_max, di.val_min, is_new_interval_);
+    if (calc_min_max_ptr_) calc_min_max_ptr_(data_buffer_ptr, points_to_read, di.val_max, di.val_min, is_new_interval_);
     if (data_size_ == 8) copyFromBuffer((uint64_t*)data_buffer_ptr, points_to_read);
     else if (data_size_ == 4)
         copyFromBuffer((uint32_t*)data_buffer_ptr, points_to_read);
@@ -69,8 +67,8 @@ inline std::vector<int64_t> AsyncParameter::read_dots(double* top_buffer_ptr, do
 }
 
 inline bool AsyncParameter::open(bool open_to_write) {
-    data_size_        = sizeOfTy(this->getRPMType());
-    data_size_factor_ = (data_size_ + PRM_TIME_SIZE_);
+    data_size_        = sizeOfTy(this->getPrmType());
+    data_size_factor_ = (data_size_ + prm_time_size_);
 
     unused_points_in_current_interval_ = interval_list_[current_interval_index_].size / data_size_factor_;
 
@@ -143,7 +141,7 @@ inline void AsyncParameter::openNewInterval() {
         delete ifs_;
         ifs_ = nullptr;
     }
-    const DataInterval& current_interval = getCufrrentInterval();
+    const DataInterval& current_interval = getCurrentInterval();
     const std::string file_name = (current_interval.local ? work_directory_ + "/" : "") + current_interval.file_name;
 
     if (opened_to_read_) {
@@ -175,7 +173,7 @@ uint64_t AsyncParameter::read(char* data_buffer_ptr, uint64_t points_to_read) {
 
     intermediate_buffer_.resize(points_to_read * data_size_factor_);
     intermediate_buffer_.resetPos();
-    time_buffer_.resize(points_to_read * PRM_TIME_SIZE_);
+    time_buffer_.resize(points_to_read * prm_time_size_);
 
     uint64_t base = points_to_read;
     uint8_t* ptr  = (uint8_t*)data_buffer_ptr;
@@ -220,17 +218,20 @@ uint64_t AsyncParameter::read(char* data_buffer_ptr, uint64_t points_to_read) {
     return base - points_to_read;
 }
 
-inline const uint64_t AsyncParameter::getVirtualSize() {
+inline uint64_t AsyncParameter::getVirtualSize() const {
     uint64_t total_size = 0;
     for (auto& interval : interval_list_) total_size = total_size + interval.size;
-    total_size = total_size / (sizeOfTy(this->getRPMType()) + PRM_TIME_SIZE_);
+
+    auto s = ((ParameterIfs*)this)->getPrmType();
+
+    total_size = total_size / (sizeOfTy(s) + prm_time_size_);
     return total_size;
 }
 
-ParameterIfs* AsyncParameter::intersection(ParameterIfs* b, PRMTypesEn target_ty, const std::string& name) {
+ParameterIfs* AsyncParameter::intersection(ParameterIfs* b, PrmTypesEn target_ty, const std::string& name) {
     auto parameter_a = this;
     auto parameter_b = (AsyncParameter*)b;
-    target_ty        = PRMTypesEn(0x1000 | (uint64_t)target_ty);
+    target_ty        = PrmTypesEn(0x1000 | (uint64_t)target_ty);
 
     if (parameter_a == parameter_b) return this;
 
@@ -262,19 +263,19 @@ ParameterIfs* AsyncParameter::intersection(ParameterIfs* b, PRMTypesEn target_ty
     // return newParameter();
 }
 
-ParameterIfs* AsyncParameter::enlargeFrequency(int64_t arg, PRMTypesEn target_ty, const std::string& name) {
+ParameterIfs* AsyncParameter::enlargeFrequency(int64_t arg, PrmTypesEn target_ty, const std::string& name) {
     return nullptr;
 }
 
-ParameterIfs* AsyncParameter::retyping(PRMTypesEn target_ty, const std::string& name) {
-    target_ty = PRMTypesEn(0x1000 | (uint64_t)target_ty);
+ParameterIfs* AsyncParameter::retyping(PrmTypesEn target_ty, const std::string& name) {
+    target_ty = PrmTypesEn(0x1000 | (uint64_t)target_ty);
 
-    if (getRPMType() == target_ty) return this;
+    if (getPrmType() == target_ty) return this;
 
     std::vector<DataInterval> data_interval;
     for (auto a : interval_list_) {
         int64_t target_size =
-            (a.size / (sizeOfTy(a.type) + sizeOftimeTy(a.type))) * (sizeOfTy(target_ty) + sizeOftimeTy(target_ty));
+            (a.size / (sizeOfTy(a.type) + sizeOfTimeTy(a.type))) * (sizeOfTy(target_ty) + sizeOfTimeTy(target_ty));
         auto interval = createAsyncIntervalBySize(a.time_interval, target_size, target_ty);  // be accurately
         data_interval.push_back(interval);
     }

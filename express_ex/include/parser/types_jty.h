@@ -3,6 +3,8 @@
 
 #include "defWarningIgnore.h"
 //#include "llvm/Support/JSON.h"
+#include <string>
+
 #include "undefWarningIgnore.h"
 
 typedef int64_t untyped_t;
@@ -164,46 +166,46 @@ enum class NodeTypeEn
 };
 
 inline bool isInv(OpCodeEn x) {
-    TypeOpCodeEn t = (TypeOpCodeEn)x;
+    auto t = (TypeOpCodeEn)x;
     return (t < TypeOpCodeEn::invEnd);
 }
 inline bool isArithetic(OpCodeEn x) {
-    TypeOpCodeEn t = (TypeOpCodeEn)x;
+    auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::arithetic <= t) && (t < TypeOpCodeEn::arithetic_end);
 }
 inline bool isComparsion(OpCodeEn x) {
-    TypeOpCodeEn t = (TypeOpCodeEn)x;
+    auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::comparsion <= t) && (t < TypeOpCodeEn::comparsion_end);
 }
 inline bool isBitwise(OpCodeEn x) {
-    TypeOpCodeEn t = (TypeOpCodeEn)x;
+    auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::bitwise <= t) && (t < TypeOpCodeEn::bitwise_end);
 }
 inline bool isTypeConv(OpCodeEn x) {
-    TypeOpCodeEn t = (TypeOpCodeEn)x;
+    auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::type_conv <= t) && (t < TypeOpCodeEn::typeConvEnd);
 }
 inline bool isIntegrate(OpCodeEn x) { return (OpCodeEn::integrate == x); }
 inline bool isSelect(OpCodeEn x) { return (OpCodeEn::select == x); }
 inline bool isCall(OpCodeEn x) { return (OpCodeEn::call == x); }
 inline bool isConvolve(OpCodeEn x) {
-    TypeOpCodeEn t = (TypeOpCodeEn)x;
+    auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::convolve_op <= t) && (t < TypeOpCodeEn::convolve_op_end);
 }
 inline bool isSlice(OpCodeEn x) {
-    TypeOpCodeEn t = (TypeOpCodeEn)x;
+    auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::slice_op <= t) && (t < TypeOpCodeEn::slice_opEnd);
 }
 inline bool isDecimation(OpCodeEn x) { return x == OpCodeEn::decimation; }
-inline bool isUpsampling(OpCodeEn x) { return x == OpCodeEn::upsampling; }
+inline bool isUpSampling(OpCodeEn x) { return x == OpCodeEn::upsampling; }
 inline bool isShift(OpCodeEn x) { return x == OpCodeEn::shift; }
 inline bool isStoreToBuffer(OpCodeEn x) { return (OpCodeEn::storeToBuffer == x); }
 inline bool isBuiltInFunc(OpCodeEn x) {
-    TypeOpCodeEn t = (TypeOpCodeEn)x;
+    auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::builtInFunc <= t) && (t < TypeOpCodeEn::builtInFuncEnd);
 }
 inline bool isSmallArrayDef(OpCodeEn x) {
-    TypeOpCodeEn t = (TypeOpCodeEn)x;
+    auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::smallArrayDef <= t) && (t < TypeOpCodeEn::smallArrayDefEnd);
 }
 
@@ -229,10 +231,12 @@ case (TypeEn::x):   \
 
 inline std::string toString(DataStructureTypeEn type) {
     std::string t = "pass";
+
 #define ENUM2STR(x)            \
 case (DataStructureTypeEn::x): \
     t = #x;                    \
     break
+
     switch (type) {
         ENUM2STR(kConstant);
         ENUM2STR(kVariable);

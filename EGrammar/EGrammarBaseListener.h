@@ -55,23 +55,17 @@ public:
   virtual void enterRight_expr(EGrammarParser::Right_exprContext * /*ctx*/) override { }
   virtual void exitRight_expr(EGrammarParser::Right_exprContext * /*ctx*/) override { }
 
-  virtual void enterCallConvolve(EGrammarParser::CallConvolveContext * /*ctx*/) override { }
-  virtual void exitCallConvolve(EGrammarParser::CallConvolveContext * /*ctx*/) override { }
-
-  virtual void enterMoreLess(EGrammarParser::MoreLessContext * /*ctx*/) override { }
-  virtual void exitMoreLess(EGrammarParser::MoreLessContext * /*ctx*/) override { }
-
   virtual void enterParens(EGrammarParser::ParensContext * /*ctx*/) override { }
   virtual void exitParens(EGrammarParser::ParensContext * /*ctx*/) override { }
 
   virtual void enterConst(EGrammarParser::ConstContext * /*ctx*/) override { }
   virtual void exitConst(EGrammarParser::ConstContext * /*ctx*/) override { }
 
-  virtual void enterCallUnaryBInFunc(EGrammarParser::CallUnaryBInFuncContext * /*ctx*/) override { }
-  virtual void exitCallUnaryBInFunc(EGrammarParser::CallUnaryBInFuncContext * /*ctx*/) override { }
-
   virtual void enterShift(EGrammarParser::ShiftContext * /*ctx*/) override { }
   virtual void exitShift(EGrammarParser::ShiftContext * /*ctx*/) override { }
+
+  virtual void enterBitwiseXor(EGrammarParser::BitwiseXorContext * /*ctx*/) override { }
+  virtual void exitBitwiseXor(EGrammarParser::BitwiseXorContext * /*ctx*/) override { }
 
   virtual void enterCondExpr(EGrammarParser::CondExprContext * /*ctx*/) override { }
   virtual void exitCondExpr(EGrammarParser::CondExprContext * /*ctx*/) override { }
@@ -79,8 +73,8 @@ public:
   virtual void enterRange(EGrammarParser::RangeContext * /*ctx*/) override { }
   virtual void exitRange(EGrammarParser::RangeContext * /*ctx*/) override { }
 
-  virtual void enterAddSub(EGrammarParser::AddSubContext * /*ctx*/) override { }
-  virtual void exitAddSub(EGrammarParser::AddSubContext * /*ctx*/) override { }
+  virtual void enterCallRecConvolve(EGrammarParser::CallRecConvolveContext * /*ctx*/) override { }
+  virtual void exitCallRecConvolve(EGrammarParser::CallRecConvolveContext * /*ctx*/) override { }
 
   virtual void enterSmallArrayDefinition(EGrammarParser::SmallArrayDefinitionContext * /*ctx*/) override { }
   virtual void exitSmallArrayDefinition(EGrammarParser::SmallArrayDefinitionContext * /*ctx*/) override { }
@@ -88,8 +82,8 @@ public:
   virtual void enterMoreeqLesseq(EGrammarParser::MoreeqLesseqContext * /*ctx*/) override { }
   virtual void exitMoreeqLesseq(EGrammarParser::MoreeqLesseqContext * /*ctx*/) override { }
 
-  virtual void enterCallFunc(EGrammarParser::CallFuncContext * /*ctx*/) override { }
-  virtual void exitCallFunc(EGrammarParser::CallFuncContext * /*ctx*/) override { }
+  virtual void enterBitwiseAnd(EGrammarParser::BitwiseAndContext * /*ctx*/) override { }
+  virtual void exitBitwiseAnd(EGrammarParser::BitwiseAndContext * /*ctx*/) override { }
 
   virtual void enterMulDiv(EGrammarParser::MulDivContext * /*ctx*/) override { }
   virtual void exitMulDiv(EGrammarParser::MulDivContext * /*ctx*/) override { }
@@ -97,20 +91,44 @@ public:
   virtual void enterDecimation(EGrammarParser::DecimationContext * /*ctx*/) override { }
   virtual void exitDecimation(EGrammarParser::DecimationContext * /*ctx*/) override { }
 
-  virtual void enterInv(EGrammarParser::InvContext * /*ctx*/) override { }
-  virtual void exitInv(EGrammarParser::InvContext * /*ctx*/) override { }
-
   virtual void enterCallTConvBInFunc(EGrammarParser::CallTConvBInFuncContext * /*ctx*/) override { }
   virtual void exitCallTConvBInFunc(EGrammarParser::CallTConvBInFuncContext * /*ctx*/) override { }
 
+  virtual void enterBitwiseShift(EGrammarParser::BitwiseShiftContext * /*ctx*/) override { }
+  virtual void exitBitwiseShift(EGrammarParser::BitwiseShiftContext * /*ctx*/) override { }
+
   virtual void enterPow(EGrammarParser::PowContext * /*ctx*/) override { }
   virtual void exitPow(EGrammarParser::PowContext * /*ctx*/) override { }
+
+  virtual void enterBitwiseOr(EGrammarParser::BitwiseOrContext * /*ctx*/) override { }
+  virtual void exitBitwiseOr(EGrammarParser::BitwiseOrContext * /*ctx*/) override { }
 
   virtual void enterId(EGrammarParser::IdContext * /*ctx*/) override { }
   virtual void exitId(EGrammarParser::IdContext * /*ctx*/) override { }
 
   virtual void enterEquality(EGrammarParser::EqualityContext * /*ctx*/) override { }
   virtual void exitEquality(EGrammarParser::EqualityContext * /*ctx*/) override { }
+
+  virtual void enterCallConvolve(EGrammarParser::CallConvolveContext * /*ctx*/) override { }
+  virtual void exitCallConvolve(EGrammarParser::CallConvolveContext * /*ctx*/) override { }
+
+  virtual void enterMoreLess(EGrammarParser::MoreLessContext * /*ctx*/) override { }
+  virtual void exitMoreLess(EGrammarParser::MoreLessContext * /*ctx*/) override { }
+
+  virtual void enterCallUnaryBInFunc(EGrammarParser::CallUnaryBInFuncContext * /*ctx*/) override { }
+  virtual void exitCallUnaryBInFunc(EGrammarParser::CallUnaryBInFuncContext * /*ctx*/) override { }
+
+  virtual void enterAddSub(EGrammarParser::AddSubContext * /*ctx*/) override { }
+  virtual void exitAddSub(EGrammarParser::AddSubContext * /*ctx*/) override { }
+
+  virtual void enterCallFunc(EGrammarParser::CallFuncContext * /*ctx*/) override { }
+  virtual void exitCallFunc(EGrammarParser::CallFuncContext * /*ctx*/) override { }
+
+  virtual void enterInv(EGrammarParser::InvContext * /*ctx*/) override { }
+  virtual void exitInv(EGrammarParser::InvContext * /*ctx*/) override { }
+
+  virtual void enterCallIntegrate(EGrammarParser::CallIntegrateContext * /*ctx*/) override { }
+  virtual void exitCallIntegrate(EGrammarParser::CallIntegrateContext * /*ctx*/) override { }
 
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }

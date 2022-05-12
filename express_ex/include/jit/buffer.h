@@ -94,7 +94,7 @@ class Buffer {
 
 class InputBuffer : public Buffer {
    public:
-    InputBuffer(Value* var) : Buffer(var) { parameter_ = var->getPatameter(); }
+    InputBuffer(Value* var) : Buffer(var) { parameter_ = var->getParameter(); }
     virtual ~InputBuffer() {}
 
     virtual int64_t init() {
@@ -126,7 +126,7 @@ class InputBuffer : public Buffer {
 
 class OutputBuffer : public Buffer {
    public:
-    OutputBuffer(Value* var) : Buffer(var) { parameter_ = var->getPatameter(); }
+    OutputBuffer(Value* var) : Buffer(var) { parameter_ = var->getParameter(); }
 
     virtual ~OutputBuffer() { delete parameter_; }
 

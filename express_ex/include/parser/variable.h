@@ -15,13 +15,13 @@ class IRGenerator;
 class Value : public SmallArr {
    public:
     Value() : SmallArr(){};
-    Value(string text, TypeEn type);
+    Value(std::string text, TypeEn type);
     Value(untyped_t value, TypeEn type);
     Value(Value* arg1, Value* arg2, Value* arg3);
     Value(Value* arg1, Value* arg2);
-    Value(Value* arg1);
+    explicit Value(Value* arg1);
 
-    virtual ~Value() {}
+    ~Value() override {}
 
     virtual void setBuffered();
 
@@ -37,10 +37,10 @@ class Value : public SmallArr {
     }
     untyped_t getBinaryValue() const { return *((untyped_t*)(&binary_value_)); }
     double getDoubleValue() const;
-    string getTextValue() const { return text_value_; }
-    string getTxtDSType() const;
-    string getUniqueName() const { return unique_name_; }
-    int64_t getUsageCounter() const { return usage_counter_; }
+    std::string getTextValue() const { return text_value_; }
+    std::string getTxtDSType() const;
+    std::string getUniqueName() const { return unique_name_; }
+    int64_t getUsageCounter() const { return int64_t(usage_counter_); }
     int64_t getLength() const { return length_; }
     int64_t getLevel() const { return level_; }
     int64_t getDecimation() const { return decimation_; }
@@ -50,7 +50,7 @@ class Value : public SmallArr {
     TypeEn getType() const { return type_; }
     TypeEn getTempType() const { return isUnknownTy(type_) ? temp_type_ : type_; }
     DataStructureTypeEn getDSType() const { return data_structure_type_; }
-    ParameterIfs* getPatameter() const { return parameter_; }
+    ParameterIfs* getParameter() const { return parameter_; }
 
     llvm::Value* getIRValue(IRGenerator& builder, int64_t parent_level);
     llvm::Value* getIRValueBasePtr(IRGenerator& builder, int64_t parent_level);
@@ -59,59 +59,59 @@ class Value : public SmallArr {
     virtual NodeTypeEn getNodeType() const { return NodeTypeEn::kValue; }
     virtual Value* getAssignedVal(bool deep = false) { return this; }
 
-    bool isUnused() { return is_unused_; }
-    bool isArray() { return data_structure_type_ != DataStructureTypeEn::kConstant; }
-    bool isVisited() { return is_visited_; }
-    bool isBuffered() { return is_buffered; }
-    bool isReturned() { return is_returned_; }
+    bool isUnused() const { return is_unused_; }
+    bool isArray() const { return data_structure_type_ != DataStructureTypeEn::kConstant; }
+    bool isVisited() const;
+    bool isBuffered() const { return is_buffered; }
+    bool isReturned() const { return is_returned_; }
 
-    virtual bool isTermialLargeArray() { return false; }
+    virtual bool isTerminalLargeArray() { return false; }
     // safe functions .external stack is used
-    void commoMmarkUnusedVisitEnter(stack<Value*>* visitorStack) { usage_counter_++; };
+    void commonMarkUnusedVisitEnter(stack<Value*>* visitor_stack) { usage_counter_++; }
 
-    virtual void visitEnter(stack<Value*>* visitorStack) {
-        visitorStack->push(this);
+    virtual void visitEnter(stack<Value*>* visitor_stack) {
+        visitor_stack->push(this);
         is_visited_ = true;
-    };
+    }
 
-    virtual void markUnusedVisitEnter(stack<Value*>* visitorStack) {
-        commoMmarkUnusedVisitEnter(visitorStack);
+    virtual void markUnusedVisitEnter(stack<Value*>* visitor_stack) {
+        commonMarkUnusedVisitEnter(visitor_stack);
         is_unused_ = false;
-    };
+    }
 
     virtual void genBodyVisitExit(BodyGenContext* context) {
         context->push(context->getGarbageContainer()->add(new Value(text_value_, type_)));
         is_visited_ = false;
-    };
+    }
 
     virtual void genBlocksVisitExit(TableGenContext* context) {
         unique_name_ = "c" + std::to_string(context->getUniqueIndex());
         context->setUint(this);
         is_visited_ = false;
-    };
+    }
 
     virtual void printVisitExit(PrintBodyContext* context) {
         context->push(text_value_);
         is_visited_ = false;
-    };
+    }
 
     virtual void genRecursiveVisitExit(RecursiveGenContext* context) {
         // context->setUint(this);  //not used. this should be removed.
         if (!context->hide_const_values_) context->setUint(this);
         is_visited_ = false;
-    };
+    }
 
     virtual void calculateConstRecursive(RecursiveGenContext* context) {}
 
-    virtual string printUint() { return unique_name_ + "=" + text_value_; }
+    virtual std::string printUint() { return unique_name_ + "=" + text_value_; }
     virtual void setupIR(IRGenerator& builder);
 
-    virtual void calculate() override;
+    void calculate() override;
 
     std::string printSmallArray();
 
    protected:
-    string checkBuffer(string arg) const {
+    std::string checkBuffer(std::string arg) const {
         if (is_buffered) return "storeToBuffer(" + arg + ")";
         else
             return arg;
@@ -129,8 +129,8 @@ class Value : public SmallArr {
     TypeEn type_      = TypeEn::DEFAULT_JTY;
     TypeEn temp_type_ = TypeEn::DEFAULT_JTY;
 
-    string text_value_  = "";
-    string unique_name_ = "";
+    std::string text_value_;
+    std::string unique_name_;
 
     int64_t length_     = 1;
     int64_t decimation_ = 0;
@@ -155,27 +155,27 @@ class Value : public SmallArr {
     friend class TailCallDirectiveTemplate;
 };
 
-inline bool operator==(Value* var_a, DataStructureTypeEn var_b) { return var_a->getDSType() == var_b; }
-inline bool operator==(DataStructureTypeEn var_a, Value* var_b) { return var_a == var_b->getDSType(); }
-inline bool operator<(TypeEn var_a, Value* var_b) { return var_a < var_b->getType(); }
-inline bool operator<(Value* var_a, TypeEn var_b) { return var_a->getType() < var_b; }
+inline bool operator==(const Value* var_a, DataStructureTypeEn var_b) { return var_a->getDSType() == var_b; }
+inline bool operator==(DataStructureTypeEn var_a, const Value* var_b) { return var_a == var_b->getDSType(); }
+inline bool operator<(TypeEn var_a, const Value* var_b) { return var_a < var_b->getType(); }
+inline bool operator<(const Value* var_a, TypeEn var_b) { return var_a->getType() < var_b; }
 
-inline bool isConst(Value* var_a) { return var_a == DataStructureTypeEn::kConstant; }
-inline bool isVariable(Value* var_a) { return var_a == DataStructureTypeEn::kVariable; }
-inline bool isSmallArr(Value* var_a) { return var_a == DataStructureTypeEn::kSmallArr; }
-inline bool isLargeArr(Value* var_a) { return var_a == DataStructureTypeEn::kLargeArr; }
-inline bool isSimilar(Value* var_a, Value* var_b) {
+inline bool isConst(const Value* var_a) { return var_a == DataStructureTypeEn::kConstant; }
+inline bool isVariable(const Value* var_a) { return var_a == DataStructureTypeEn::kVariable; }
+inline bool isSmallArr(const Value* var_a) { return var_a == DataStructureTypeEn::kSmallArr; }
+inline bool isLargeArr(const Value* var_a) { return var_a == DataStructureTypeEn::kLargeArr; }
+inline bool isSimilar(const Value* var_a, const Value* var_b) {
     return (var_a->getDSType() == var_b->getDSType() && (var_a->getLength() == var_b->getLength()));
 }
-inline bool isÑompatible(Value* var_a, Value* var_b) {
+inline bool isCompatible(const Value* var_a, const Value* var_b) {
     return isConst(var_a) || isConst(var_b) || isVariable(var_a) || isVariable(var_b) || isSimilar(var_a, var_b);
 }
 
-inline bool isUnknownTy(Value* var) { return isUnknownTy(var->getType()); }
-inline bool isFloating(Value* var) { return isFloating(var->getType()); }
-inline bool isInteger(Value* var) { return isInteger(var->getType()); }
-inline bool isUInteger(Value* var) { return isUInteger(var->getType()); }
-inline bool isBool(Value* var) { return isBool(var->getType()); }
+inline bool isUnknownTy(const Value* var) { return isUnknownTy(var->getType()); }
+inline bool isFloating(const Value* var) { return isFloating(var->getType()); }
+inline bool isInteger(const Value* var) { return isInteger(var->getType()); }
+inline bool isUInteger(const Value* var) { return isUInteger(var->getType()); }
+inline bool isBool(const Value* var) { return isBool(var->getType()); }
 
 inline Value* maxTypeVar(Value* var_a, Value* var_b) { return var_a->getType() < var_b->getType() ? var_b : var_a; }
 inline Value* maxTempTypeVar(Value* var_a, Value* var_b) {

@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 # set the project name
 project(express_ex)
 
-SET(IS_SHARED true)
+SET(IS_SHARED false)
 
 if( NOT CMAKE_CL_64 )
     set(SPlatform  x86)
@@ -26,7 +26,7 @@ set(openCL_includeDir  ${cudaPath}/include)
 set(EGrammarDir ../EGrammar)
 set(llvmDir     ../../common/llvm-project)
 set(antlr4Dir   ../../common/antlr4/runtime/Cpp/runtime)
-
+ 
 
 include(CMakeMacro.txt)
 
@@ -40,7 +40,8 @@ include_directories(include)
 
 aux_source_directory(${EGrammarDir} EGrammar)
 file(GLOB EGrammarHeaders ${EGrammarDir}/*.h)
-init_source_groups(express_grops_list ifs parser jit)
+init_source_groups(express_grops_list ifs parser jit operations)
+
 
 
 if(IS_SHARED)

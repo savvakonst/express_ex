@@ -22,14 +22,14 @@
 
 DLL_EXPORT bool readParametersList(std::string database_fname, std::vector<ParameterIfs* >& parameter_list);
 DLL_EXPORT std::vector<ParameterIfs*> readParametersList(std::string database_Fame);
-DLL_EXPORT ParameterIfs* intersection(ParameterIfs* a, ParameterIfs* b, PRMTypesEn target_ty, const std::string& name);
-DLL_EXPORT ParameterIfs* intersection(std::vector<ParameterIfs*> arg_list, PRMTypesEn target_ty, const std::string& name);
-DLL_EXPORT ParameterIfs* retyping(ParameterIfs* a, PRMTypesEn target_ty, const std::string& name);
+DLL_EXPORT ParameterIfs* intersection(ParameterIfs* a, ParameterIfs* b, PrmTypesEn target_ty, const std::string& name);
+DLL_EXPORT ParameterIfs* intersection(std::vector<ParameterIfs*> arg_list, PrmTypesEn target_ty, const std::string& name);
+DLL_EXPORT ParameterIfs* retyping(ParameterIfs* a, PrmTypesEn target_ty, const std::string& name);
 DLL_EXPORT ParameterIfs* newParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_fnames);
 DLL_EXPORT ParameterIfs* newParameter(std::string name, const TimeInterval& time_interval,
                                       const std::vector<DataInterval>& interval_list, bool save_fnames=true);
 
-calcMinMaxTy g_calcMinMax_select(PRMTypesEn arg);
+calcMinMaxTy g_calcMinMax_select(PrmTypesEn arg);
 
 
 
@@ -96,7 +96,7 @@ public:
         return nullptr;
     }
 
-    bool createSyncParameter(std::string name, std::vector<SyncParameter*> prototype_parameter_list, PRMTypesEn target_ty=PRMTypesEn::PRM_TYPE_UNKNOWN) {
+    bool createSyncParameter(std::string name, std::vector<SyncParameter*> prototype_parameter_list, PrmTypesEn target_ty=PrmTypesEn::PRM_TYPE_UNKNOWN) {
 
         if (prototype_parameter_list.empty())
             return false;
@@ -124,7 +124,7 @@ public:
     }
 
 private:
-    bool intersection(std::vector<DataInterval> &ret,SyncParameter* parameter_a, SyncParameter* parameter_b, const std::string &name="", PRMTypesEn target_ty = PRMTypesEn::PRM_TYPE_UNKNOWN) {
+    bool intersection(std::vector<DataInterval> &ret,SyncParameter* parameter_a, SyncParameter* parameter_b, const std::string &name="", PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN) {
         if (parameter_a->frequency_ != parameter_b->frequency_) {
             error_info_ = "different frequencys is not supported yet ";
             return false;
@@ -139,11 +139,11 @@ private:
             for (auto b : parameter_b->interval_list_) {
                 auto t =a & b;
                 if (!isEmpty(t)) {
-                    auto interval = createSyncIntervalByFrerquency(t, frequency, target_ty);
+                    auto interval = createSyncIntervalByFrequency(t, frequency, target_ty);
                     if (!ret.empty()) {
                         auto t2 = ret.back() || interval;
                         if (!isEmpty(t))
-                            ret.back() = createSyncIntervalByFrerquency(t2, frequency, target_ty);
+                            ret.back() = createSyncIntervalByFrequency(t2, frequency, target_ty);
                         else
                             ret.push_back(interval);
                     }

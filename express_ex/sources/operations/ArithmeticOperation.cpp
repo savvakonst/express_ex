@@ -1,15 +1,58 @@
 #include "operations/ArithmeticOperation.h"
 
 #include "jit/IR_generator.h"
-#include "parser/operations.h"
+#include "operations/TypeCastOperation.h"
 
 static const std::string kArSym[14] = {"+", "+.", "-", "-.", "*", "*.", "/", "/", "/.", "%", "%", "%.", "**", "**."};
 static std::string txtArOp(OpCodeEn op_code) { return kArSym[((int)op_code - (int)TypeOpCodeEn::arithetic)]; }
 
+Value* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn target_type, Value* arg_a, Value* arg_b,
+                              OpCodeEn op_type) {
+    if (!isCompatible(arg_a, arg_b)) print_error("incompatible values");
+
+    if (isConst(arg_a) && isConst(arg_b) && !isUnknownTy(target_type)) {
+        if (isBool(target_type)) print_error("invalid type: Int1_jty ");
+
+        return garbage_container->add(new Value(
+            calcArithmeticConst(op_type, target_type, arg_a->getBinaryValue(), arg_b->getBinaryValue()), target_type));
+    }
+
+    auto local_op_type = OpCodeEn::none_op;
+
+    if (isInteger(target_type) || isUnknownTy(target_type)) {
+        local_op_type = op_type;
+    } else if (isFloating(target_type)) {
+        switch (op_type) {
+        case (OpCodeEn::add):
+            local_op_type = OpCodeEn::fadd;
+            break;
+        case (OpCodeEn::sub):
+            local_op_type = OpCodeEn::fsub;
+            break;
+        case (OpCodeEn::mul):
+            local_op_type = OpCodeEn::fmul;
+            break;
+        case (OpCodeEn::sdiv):
+            local_op_type = OpCodeEn::fdiv;
+            break;
+        case (OpCodeEn::srem):
+            local_op_type = OpCodeEn::frem;
+            break;
+        case (OpCodeEn::pow):
+            local_op_type = OpCodeEn::fpow;
+            break;
+        default:;
+        }
+    } else {
+        print_error("newArithmeticOperation - unsigned is not supported yet");
+    }
+
+    return garbage_container->add(new ArithmeticOperation(local_op_type, arg_a, arg_b));
+}
+
 void ArithmeticOperation::visitEnterStackUpdate(stack<Value*>* visitor_stack) {
     visitor_stack->push(operand_[1]);
     visitor_stack->push(operand_[0]);
-    Operation_ifs::visitEnterStackUpdate(visitor_stack);
 }
 
 void ArithmeticOperation::genBodyVisitExit(BodyGenContext* context) {
@@ -53,9 +96,6 @@ void ArithmeticOperation::printVisitExit(PrintBodyContext* context) {
     context->push(checkBuffer("(" + op1 + txtArOp(op_code_) + op2 + ")"));
 }
 
-void ArithmeticOperation::genBlocksVisitExit(TableGenContext* context) { /*TODO*/
-}
-
 std::string ArithmeticOperation::printUint() {
     is_visited_ = false;
 
@@ -69,7 +109,7 @@ void ArithmeticOperation::setupIR(IRGenerator& builder) {
     auto ir_op_a = operand_[0]->getAssignedVal(true)->getIRValue(builder, level_);
     auto ir_op_b = operand_[1]->getAssignedVal(true)->getIRValue(builder, level_);
 
-    IR_value_ = builder.CreateArithmetic(ir_op_a, ir_op_b, op_code_, getUniqueName());
+    IR_value_ = builder.createArithmetic(ir_op_a, ir_op_b, op_code_, getUniqueName());
 
     finishSetupIR(builder);
 }

@@ -51,15 +51,15 @@ class SubBlock {
 
     void setUint(Value* var);
     void setBufferLength(uint64_t buffer_length) { buffer_length_ = buffer_length; }
-    uint64_t getLevel() const { return 0; };
-    uint64_t getLength() const { return length_; };
-    uint64_t getLeftLength() const { return left_length_; };
-    uint64_t getRightLength() const { return right_length_; };
+    uint64_t getLevel() const { return 0; }
+    uint64_t getLength() const { return length_; }
+    uint64_t getLeftLength() const { return left_length_; }
+    uint64_t getRightLength() const { return right_length_; }
 
     std::string print() const;
 
     bool generateIR(IRGenerator& builder, CycleStageEn type = CycleStageEn::midle,
-                    const std::string& basic_block_prefix = "", std::string basic_block_postfix = "");
+                    const std::string& basic_block_prefix = "", const std::string& basic_block_postfix = "");
 
    private:
     stack<Value*> uint_list_;
@@ -86,7 +86,8 @@ class Block {
     void recalcLeftRightBufferLengths();
     std::string print() const;
 
-    bool generateIR(IRGenerator& builder, CycleStageEn type = CycleStageEn::midle, std::string basic_block_prefix = "");
+    bool generateIR(IRGenerator& builder, CycleStageEn type = CycleStageEn::midle,
+                    const std::string& basic_block_prefix = "");
 
    private:
     void setUintToSubtable(Value* var);
@@ -111,8 +112,8 @@ class TableColumn {
     }
 
     void setUint(Value* var);
-    void setBufferLength(uint64_t bufferLength_) const {
-        for (auto i : block_list_) i->setBufferLength(bufferLength_);
+    void setBufferLength(uint64_t buffer_length) const {
+        for (auto i : block_list_) i->setBufferLength(buffer_length);
     }
 
     uint64_t getLength() const { return length_; }
@@ -120,7 +121,7 @@ class TableColumn {
         uint64_t level = 0;
         for (auto i : block_list_) {
             auto tmp = i->getLevel();
-            level    = level > tmp ? level : tmp;
+            level = level > tmp ? level : tmp;
         }
         return level;
     }
@@ -136,8 +137,9 @@ class TableColumn {
     }
     std::string print();
 
-    bool generateIR(IRGenerator& builder, CycleStageEn type = CycleStageEn::midle, std::string basicBlockPrefix = "");
-    bool generateIR(IRGenerator& builder, CycleStageEn type, int64_t level, std::string basicBlockPrefix = "");
+    bool generateIR(IRGenerator& builder, CycleStageEn type = CycleStageEn::midle,
+                    const std::string& basic_block_prefix = "");
+    bool generateIR(IRGenerator& builder, CycleStageEn type, int64_t level, const std::string& basic_block_prefix = "");
 
    private:
     uint64_t length_;
@@ -176,7 +178,7 @@ class Table {
         uint64_t level = 0;
         for (auto i : column_list_) {
             auto tmp = i->getMaxLevel();
-            level    = level > tmp ? level : tmp;
+            level = level > tmp ? level : tmp;
         }
         return level;
     }
@@ -186,16 +188,16 @@ class Table {
     llvm::Function* getBIFunc(BuiltInFuncMap& UBIFMap, OpCodeEn op, llvm::Type* Ty);
     llvm::Function* getConvolveFunc(TypeEn type);
     llvm::Function* getGPUConvolveFunc(TypeEn type);
-    llvm::Module* getModule() { return M_; }
+    llvm::Module* getModule() const { return M_; }
 
     void declareBuiltInFunctions(BuiltInFuncMap& UBIFMap, llvm::Type* Ty);
 
-    std::string print();
-    void calculateBufferLength(std::string basicBlockPrefix = "");
+    std::string print() const;
+    void calculateBufferLength(const std::string& basic_block_prefix = "");
 
     bool llvmInit();
 
-    bool generateIR(std::string basicBlockPrefix = "");
+    bool generateIR(const std::string& basic_block_prefix = "");
 
     bool runOptimization();
     bool run();
@@ -218,14 +220,14 @@ class Table {
     void declareFunctions();
 
     // what means external ?
-    llvm::Module* M_            = nullptr;  // external
+    llvm::Module* M_ = nullptr;             // external
     llvm::LLVMContext* context_ = nullptr;  // external
 
     std::unique_ptr<llvm::Module> module_u_ptr_;
     std::unique_ptr<llvm::legacy::FunctionPassManager> the_FPM_;
 
     llvm::Function* buffer_update_function_ = nullptr;  // external
-    llvm::Function* main_function_          = nullptr;  // external
+    llvm::Function* main_function_ = nullptr;           // external
 
     std::map<TypeEn, llvm::Function*> convolve_map_;  // external
 
@@ -240,13 +242,13 @@ class Table {
     stack<Value*> const_list_;        // external
     stack<Value*> small_array_list_;  // external
 
-    uint64_t* max_column_depth_ = 0;
+    // uint64_t* max_column_depth_ = nullptr;
     stack<TableColumn*> column_list_;  // internal
 
-    int64_t topLevel = 0;
+    // int64_t top_level_ = 0ll;
 
     std::map<OpCodeEn, int> BIF2LLVMmap_;
-    std::set<ParameterIfs*> parameterSet_;  // external
+    std::set<ParameterIfs*> parameter_set_;  // external
 
     int64_t min_buffer_length_;
     int64_t max_buffer_length_;
@@ -265,7 +267,7 @@ class TableGenContext {
         return (unique_name_counter_ - 3);
     }
     void setUint(Value* var) { table_->setUint(var); };
-    void setParameter(ParameterIfs* var) { table_->parameterSet_.insert(var); };
+    void setParameter(ParameterIfs* var) { table_->parameter_set_.insert(var); };
     void setMaxBufferLength(int64_t length) {
         int64_t temp = (int64_t)1 << (int8_t)(floor(log2(length)) - 1);
         if (table_->max_buffer_length_ > temp) table_->max_buffer_length_ = temp;

@@ -64,7 +64,7 @@ class BodyTemplate {
     BodyTemplate* getParent() const { return parent_body_template_; }
     BodyTemplate* getFunctionBody(const std::string& name) const;
     stack<ParameterIfs*> getOutputParameterList() const;
-    GarbageContainer* getGarbageContainer() const { return garbage_contaiiner_; }
+    GarbageContainer* getGarbageContainer() const { return garbage_container_; }
 
     // tree walker methods
 
@@ -80,7 +80,7 @@ class BodyTemplate {
 
     int arg_count_ = 0;
 
-    bool is_operator_      = false;
+    bool is_operator_ = false;
     bool is_tail_callable_ = false;
 
     stack<Value*> var_stack_;
@@ -88,7 +88,7 @@ class BodyTemplate {
     stack<Line*> return_stack_;
 
     BodyTemplate* parent_body_template_ = nullptr;
-    GarbageContainer* garbage_contaiiner_;
+    GarbageContainer* garbage_container_;
 
     friend BodyGenContext;
 };

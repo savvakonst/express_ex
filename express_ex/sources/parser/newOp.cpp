@@ -7,6 +7,8 @@
 
 #include "parser/operations.h"
 
+#ifdef OLD_NEW_OP
+
 Value* newInvOperation(GarbageContainer* garbage_container, Value* arg) {
     print_error("inverse operation is not supported yet");
     return arg;
@@ -14,7 +16,7 @@ Value* newInvOperation(GarbageContainer* garbage_container, Value* arg) {
 
 Value* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, Value* arg) {
     const TypeEn arg_type = arg->getType();
-    Value* ret_val        = nullptr;
+    Value* ret_val = nullptr;
 
     if (!isUnknownTy(arg_type) && isConst(arg)) {
         ret_val = new Value(calcTypeConvConst(target_type, arg_type, arg->getBinaryValue()), target_type);
@@ -48,7 +50,7 @@ Value* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, Va
 Value* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn target_type, Value* arg, OpCodeEn op_type) {
     Value* var = arg;
     if (TypeEn::float_jty > target_type) {
-        var         = newTypeConvOp(garbage_container, TypeEn::double_jty, arg);
+        var = newTypeConvOp(garbage_container, TypeEn::double_jty, arg);
         target_type = var->getType();
     }
 
@@ -227,3 +229,5 @@ Value* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<Value*>& ar
 
     return garbage_container->add(new Operation(OpCodeEn::smallArrayDef, typedArgs, target_type));
 }
+
+#endif

@@ -32,116 +32,117 @@ class IRGenerator : public llvm::IRBuilder<> {
     void AddInitializedValue(llvm::Value* var) { initialized_value_list_.push_back(var); }
     void ClearInitializedValueList() { initialized_value_list_.clear(); }
 
-    llvm::Value* CreateFPow(llvm::Value* AOperand, llvm::Value* BOperand, const std::string& name = "");
-    llvm::Value* CreateConst(int64_t& binaryValue, TypeEn targetTy, const std::string& name = "");
-    llvm::Value* CreateArithmetic(llvm::Value* AOperand, llvm::Value* BOperand, OpCodeEn opCode,
+    llvm::Value* createFPow(llvm::Value* a_operand, llvm::Value* b_operand, const std::string& name = "");
+    llvm::Value* createConst(int64_t& binary_value, TypeEn target_ty, const std::string& name = "");
+    llvm::Value* createArithmetic(llvm::Value* a_operand, llvm::Value* b_operand, OpCodeEn op_code,
                                   const std::string& name = "");
-    llvm::Value* CreateComparsion(llvm::Value* AOperand, llvm::Value* BOperand, OpCodeEn opCode,
+    llvm::Value* createComparison(llvm::Value* a_operand, llvm::Value* b_operand, OpCodeEn op_code,
                                   const std::string& name = "");
-    llvm::Value* CreateInv(llvm::Value* AOperand, OpCodeEn opCode, const std::string& name = "");
-    llvm::Value* CreateTypeConv(llvm::Value* AOperand, OpCodeEn opCode, TypeEn targetTy, const std::string& name = "");
-    llvm::Value* CreateBuiltInFunc(llvm::Value* AOperand, OpCodeEn opCode, const std::string& name = "");
-    llvm::Value* CreateConvolve(llvm::Value* aOperand, char* ptr, int64_t length, int64_t shift, TypeEn type,
+    llvm::Value* createInv(llvm::Value* a_operand, OpCodeEn op_code, const std::string& name = "");
+    llvm::Value* createTypeConv(llvm::Value* a_operand, OpCodeEn op_code, TypeEn target_ty,
                                 const std::string& name = "");
-    llvm::Value* CreateCall_(llvm::Value* Callee, llvm::ArrayRef<llvm::Value*> Args = {}, const std::string& Name = "");
-    llvm::Value* CreateConvolve(llvm::Value* AOperand, llvm::Value* BOperand, const std::string& name = "");
-    llvm::Value* CreateGPUConvolve(llvm::Value* aOperand, char* ptr, int64_t length, int64_t shift, TypeEn type,
+    llvm::Value* createBuiltInFunc(llvm::Value* a_operand, OpCodeEn op_code, const std::string& name = "");
+    llvm::Value* createConvolve(llvm::Value* a_operand, char* ptr, int64_t length, int64_t shift, TypeEn type,
+                                const std::string& name = "");
+    llvm::Value* createCall(llvm::Value* callee, llvm::ArrayRef<llvm::Value*> args = {}, const std::string& name = "");
+    llvm::Value* createConvolve(llvm::Value* a_operand, llvm::Value* b_operand, const std::string& name = "");
+    llvm::Value* createGpuConvolve(llvm::Value* a_operand, char* ptr, int64_t length, int64_t shift, TypeEn type,
                                    const std::string& name = "");
-    llvm::Value* CreatePositionalAlloca(llvm::Type* AOperand, int64_t i, const std::string& name = "");
-    llvm::Value* CreatePositionalOffset(std::string name = "", int64_t startValue = 0);
-    llvm::Value* CreatePositionalOffsetAlloca(std::string name = "", int64_t startValue = 0);
-    llvm::Value* CreatePositionalInBoundsGEP(llvm::Value* Ptr, llvm::ArrayRef<llvm::Value*> IdxList,
-                                             const std::string& Name = "");
-    llvm::Value* CreatePositionalLoad(llvm::Value* AOperand, const std::string& name = "");
-    llvm::Value* CreatePositionalLoad(llvm::Value* AOperand, bool isVolatile, const std::string& name = "");
-    llvm::Value* CreateLoadOffset(const std::string& name = "common_offset");
-    void CreatePositionalStore(llvm::Value* AOperand, llvm::Value* BOperand, bool isVolatile = false);
-    llvm::Value* CreateBufferInit(TypeEn targetTy, const std::string& name = "");
-    void CreateStartBRs();
-    void CreateMidleBRs();
+    llvm::Value* createPositionalAlloca(llvm::Type* a_operand, int64_t i, const std::string& name = "");
+    llvm::Value* createPositionalOffset(const std::string& name = "", int64_t start_value = 0);
+    llvm::Value* createPositionalOffsetAlloca(const std::string& name = "", int64_t start_value = 0);
+    llvm::Value* createPositionalInBoundsGep(llvm::Value* ptr, llvm::ArrayRef<llvm::Value*> idx_list,
+                                             const std::string& name = "");
+    llvm::Value* createPositionalLoad(llvm::Value* a_operand, const std::string& name = "");
+    llvm::Value* createPositionalLoad(llvm::Value* a_operand, bool is_volatile, const std::string& name = "");
+    llvm::Value* createLoadOffset(const std::string& name = "common_offset");
+    void createPositionalStore(llvm::Value* a_operand, llvm::Value* ptr, bool is_volatile = false);
+    llvm::Value* createBufferInit(TypeEn target_ty, const std::string& name = "");
+    void createStartBRs();
+    void createMiddleBRs();
 
-    void* AddBufferAlloca(Buffer* s);
+    void* addBufferAlloca(Buffer* s);
 
-    llvm::BasicBlock* CreateNewIntermediateBB(const std::string& postfix) {
-        return CreateNewBB(init_bock_, "intermediate_" + postfix);
+    llvm::BasicBlock* createNewIntermediateBb(const std::string& postfix) {
+        return createNewBb(init_bock_, "intermediate_" + postfix);
     }
-    llvm::BasicBlock* CreateNewLoadBB(const std::string& postfix) {
-        return CreateNewBB(load_block_, "load_" + postfix);
+    llvm::BasicBlock* createNewLoadBb(const std::string& postfix) {
+        return createNewBb(load_block_, "load_" + postfix);
     }
-    llvm::BasicBlock* CreateNewCalcBB(const std::string& postfix) {
-        return CreateNewBB(calc_block_, "calc_" + postfix);
+    llvm::BasicBlock* createNewCalcBb(const std::string& postfix) {
+        return createNewBb(calc_block_, "calc_" + postfix);
     }
     llvm::BasicBlock* CreateNewStoreBB(const std::string& postfix) {
-        return CreateNewBB(store_block_, "store_" + postfix);
+        return createNewBb(store_block_, "store_" + postfix);
     }
 
-    void SetInitInsertPoint(llvm::BasicBlock* bb = nullptr) { SetCInsertPoint(init_bock_, bb); };
-    void SetLoadInsertPoint(llvm::BasicBlock* bb = nullptr) { SetCInsertPoint(load_block_, bb); };
-    void SetCalcInsertPoint(llvm::BasicBlock* bb = nullptr) { SetCInsertPoint(calc_block_, bb); };
-    void SetStoreInsertPoint(llvm::BasicBlock* bb = nullptr) { SetCInsertPoint(store_block_, bb); };
-    void SetTerminalOpInsertPoint(llvm::BasicBlock* bb = nullptr) { SetCInsertPoint(terminal_op_block_, bb); };
+    void setInitInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(init_bock_, bb); }
+    void setLoadInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(load_block_, bb); }
+    void setCalcInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(calc_block_, bb); }
+    void setStoreInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(store_block_, bb); }
+    void setTerminalOpInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(terminal_op_block_, bb); }
 
-    void SetLoopEnterInsertPoint(llvm::BasicBlock* bb = nullptr) { SetCInsertPoint(loop_enter_block_, bb); };
-    void SetIntermediateInsertPoint(llvm::BasicBlock* bb = nullptr) { SetCInsertPoint(intermediate_block_, bb); };
-    void SetCycleExitInsertPoint(llvm::BasicBlock* bb = nullptr) { SetCInsertPoint(cycle_exit_block_, bb); };
-    void SetExitInsertPoint(llvm::BasicBlock* bb = nullptr) { SetCInsertPoint(exit_block_, bb); };
+    void setLoopEnterInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(loop_enter_block_, bb); }
+    void setIntermediateInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(intermediate_block_, bb); }
+    void setCycleExitInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(cycle_exit_block_, bb); }
+    void setExitInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(exit_block_, bb); }
 
-    void SetLastInsertPoint() { SetInsertPoint(bb_List_.back()); };
+    void setLastInsertPoint() { SetInsertPoint(bb_List_.back()); }
 
-    void SetCurrentFunction(llvm::Function* currentFunction_) { current_Function_ = currentFunction_; }
-    void SetBufferUpdateFunction(llvm::Value* bufferUpdateFunction_) {
-        buffer_update_function_ = bufferUpdateFunction_;
+    void setCurrentFunction(llvm::Function* current_function) { current_function_ = current_function; }
+    void setBufferUpdateFunction(llvm::Value* buffer_update_function) {
+        buffer_update_function_ = buffer_update_function;
     }
-    void SetDeclareConvolve(llvm::Type* type, uintptr_t addr);
+    void setDeclareConvolve(llvm::Type* type, uintptr_t addr);
 
-    void SetCurrentOffsetValue(llvm::Value* currentOffsetValue_) { current_offset_value_ = current_offset_value_; }
-    void SetCurrentCMPRes(llvm::Value* currentCMPRes_) { current_CMP_res_ = currentCMPRes_; }
+    void setCurrentOffsetValue(llvm::Value* current_offset_value) { current_offset_value_ = current_offset_value_; }
+    void setCurrentCmpRes(llvm::Value* current_cmp_res) { current_cmp_res_ = current_cmp_res; }
 
-    void SetOffsetToZero();
+    void setOffsetToZero();
 
-    void SetOffsetTo(int64_t val);
+    void setOffsetTo(int64_t val);
 
-    void DropBaseInsertPoint() {
-        calc_block_         = nullptr;
-        load_block_         = nullptr;
-        store_block_        = nullptr;
+    void dropBaseInsertPoint() {
+        calc_block_ = nullptr;
+        load_block_ = nullptr;
+        store_block_ = nullptr;
         intermediate_block_ = nullptr;
     };
 
-    llvm::BasicBlock* getInitBlock() { return init_bock_; }
-    llvm::BasicBlock* getLoadBlock() { return load_block_; }
-    llvm::BasicBlock* getCalcBlock() { return calc_block_; }
-    llvm::BasicBlock* getStoreBlock() { return store_block_; }
-    llvm::BasicBlock* getTerminalOpBlock() { return terminal_op_block_; }
-    llvm::BasicBlock* getCurrentBlock() { return BB; }
-    llvm::BasicBlock* getExitBlock() { return exit_block_; }
+    llvm::BasicBlock* getInitBlock() const { return init_bock_; }
+    llvm::BasicBlock* getLoadBlock() const { return load_block_; }
+    llvm::BasicBlock* getCalcBlock() const { return calc_block_; }
+    llvm::BasicBlock* getStoreBlock() const { return store_block_; }
+    llvm::BasicBlock* getTerminalOpBlock() const { return terminal_op_block_; }
+    llvm::BasicBlock* getCurrentBlock() const { return BB; }
+    llvm::BasicBlock* getExitBlock() const { return exit_block_; }
 
-    llvm::BasicBlock* getBlock(int N) { return bb_List_[N]; }
-    llvm::BasicBlock* getLastBlock(int N) { return bb_List_.back(); }
+    llvm::BasicBlock* getBlock(int n) const { return bb_List_[n]; }
+    llvm::BasicBlock* getLastBlock(int n) const { return bb_List_.back(); }
 
-    llvm::Value* getCurrentOffsetValueAlloca() { return current_offset_value_alloca_; }
-    llvm::Value* getCurrentOffsetValue() { return current_offset_value_; }
-    llvm::Value* getCurrentCMPRes() { return current_CMP_res_; }
+    llvm::Value* getCurrentOffsetValueAlloca() const { return current_offset_value_alloca_; }
+    llvm::Value* getCurrentOffsetValue() const { return current_offset_value_; }
+    llvm::Value* getCurrentCMPRes() const { return current_cmp_res_; }
 
-    llvm::Type* getLLVMType(TypeEn targetTy);
-    llvm::Function* getCurrentFunction() { return current_Function_; }
+    llvm::Type* getLLVMType(TypeEn target_ty);
+    llvm::Function* getCurrentFunction() const { return current_function_; }
     llvm::Module* getCurrentModule();
 
-    std::vector<std::list<Buffer*>*>* getBufferList(BufferTypeEn bufferType = BufferTypeEn::input) {
+    std::vector<std::list<Buffer*>*>* getBufferList(BufferTypeEn buffer_type = BufferTypeEn::input) {
         return &buffer_list_;
     }
 
-    void nextBufferGeoup() { buffer_list_.push_back(new std::list<Buffer*>()); }
+    void nextBufferGroup() { buffer_list_.push_back(new std::list<Buffer*>()); }
 
     std::vector<llvm::Value*> arg_ptr_list_;
     const bool is_pure_function_;
 
    private:
-    typedef llvm::BasicBlock* BasicBlockPtr;
+    typedef llvm::BasicBlock* basicBlockPtr_t;
 
-    llvm::BasicBlock* CreateNewBB(BasicBlockPtr& prot, const std::string& name = "");
+    llvm::BasicBlock* createNewBb(basicBlockPtr_t& prot, const std::string& name = "");
 
-    void SetCInsertPoint(BasicBlockPtr& prot, llvm::BasicBlock* bb = nullptr) {
+    void setCInsertPoint(basicBlockPtr_t& prot, llvm::BasicBlock* bb = nullptr) {
         if (bb == nullptr) bb = prot;
         else {
             prot = bb;
@@ -152,35 +153,35 @@ class IRGenerator : public llvm::IRBuilder<> {
 
     std::vector<std::list<Buffer*>*> buffer_list_;
 
-    llvm::BasicBlock* init_bock_          = nullptr;
-    llvm::BasicBlock* calc_block_         = nullptr;
-    llvm::BasicBlock* load_block_         = nullptr;
-    llvm::BasicBlock* store_block_        = nullptr;
-    llvm::BasicBlock* terminal_op_block_  = nullptr;
+    llvm::BasicBlock* init_bock_ = nullptr;
+    llvm::BasicBlock* calc_block_ = nullptr;
+    llvm::BasicBlock* load_block_ = nullptr;
+    llvm::BasicBlock* store_block_ = nullptr;
+    llvm::BasicBlock* terminal_op_block_ = nullptr;
     llvm::BasicBlock* intermediate_block_ = nullptr;
-    llvm::BasicBlock* loop_enter_block_   = nullptr;
-    llvm::BasicBlock* cycle_exit_block_   = nullptr;
-    llvm::BasicBlock* exit_block_         = nullptr;
+    llvm::BasicBlock* loop_enter_block_ = nullptr;
+    llvm::BasicBlock* cycle_exit_block_ = nullptr;
+    llvm::BasicBlock* exit_block_ = nullptr;
 
     std::vector<llvm::BasicBlock*> bb_List_;
 
-    //  list of values that are alrady loaded in current loop block,
+    //  list of values that are already loaded in current loop block,
     //  this list should be cleared every time in the transition to a next block.
     std::vector<llvm::Value*> initialized_value_list_;
 
     llvm::Value* convolve_double_function_ = nullptr;
-    llvm::Value* convolve_float_function_  = nullptr;
+    llvm::Value* convolve_float_function_ = nullptr;
 
-    llvm::Value* convolve_I64_function_ = nullptr;
-    llvm::Value* convolve_I32_function_ = nullptr;
+    llvm::Value* convolve_i64_function_ = nullptr;
+    llvm::Value* convolve_i32_function_ = nullptr;
 
     llvm::Value* current_offset_value_alloca_ = nullptr;
-    llvm::Value* current_offset_value_        = nullptr;
-    llvm::Value* current_CMP_res_             = nullptr;
+    llvm::Value* current_offset_value_ = nullptr;
+    llvm::Value* current_cmp_res_ = nullptr;
 
     Table* table_ = nullptr;
 
-    llvm::Function* current_Function_    = nullptr;
+    llvm::Function* current_function_ = nullptr;
     llvm::Value* buffer_update_function_ = nullptr;
 
     std::vector<llvm::Value*> buffers_List_;

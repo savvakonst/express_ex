@@ -1,13 +1,10 @@
 #ifndef SYNC_PARAMETER_H
 #define SYNC_PARAMETER_H
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
 #include <string>
 #include <vector>
 
-#include "ParameterIfs.h"
+#include "parameterIfs.h"
 
 class DLL_EXPORT SyncParameter : public ParameterIfs {
    public:
@@ -36,11 +33,11 @@ class DLL_EXPORT SyncParameter : public ParameterIfs {
 
     ParameterIfs* intersection(ParameterIfs* prm, PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
                                const std::string& name = "") override;
-    SyncParameter* enlargeFrequency(int64_t arg, PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
-                                    const std::string& name = "");
+    SyncParameter* enlargeFrequency(int64_t freq_factor, PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
+                                    const std::string& name = "") const;
     ParameterIfs* retyping(PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN, const std::string& name = "") override;
 
-    virtual ParameterIfs* newParameter() override;
+    ParameterIfs* newParameter() override;
 
     friend void readParametersList(std::string databaseFName, std::vector<ParameterIfs>& parameterList);
     friend class ParametersDB;
@@ -48,17 +45,17 @@ class DLL_EXPORT SyncParameter : public ParameterIfs {
    protected:
     bool calcExtendedInfo();
 
-    inline const TimeInterval& getTimeInterval(int64_t interval_index) const {
+    const TimeInterval& getTimeInterval(int64_t interval_index) const {
         return interval_list_[(size_t)interval_index].time_interval;
     }
 
-    inline const DataInterval& getCurrentInterval() { return interval_list_[(size_t)current_interval_index_]; }
+    const DataInterval& getCurrentInterval() { return interval_list_[(size_t)current_interval_index_]; }
 
     void openNewInterval(double di_index);
 
-    BareChunk* chunk_         = nullptr;
+    BareChunk* chunk_ = nullptr;
     BareChunk* current_chunk_ = nullptr;
-    double frequency_         = -1;
+    double frequency_ = -1;
 };
 
 #endif

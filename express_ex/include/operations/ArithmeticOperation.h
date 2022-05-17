@@ -5,6 +5,9 @@
 
 #include "Operation_ifs.h"
 
+Value* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn target_type, Value* arg_a, Value* arg_b,
+                              OpCodeEn op_type);
+
 class ArithmeticOperation : public Operation_ifs {
    public:
     // constructor of arithmetic, logic or comparision operation
@@ -12,7 +15,7 @@ class ArithmeticOperation : public Operation_ifs {
         commonSetup(op, maxDSVar(var_a, var_b));
 
         type_ = maxTypeVar(var_a, var_b)->getType();
-        type_ = isComparsion(op) && !isUnknownTy(type_) ? TypeEn::int1_jty : type_;
+        type_ = isComparison(op) && !isUnknownTy(type_) ? TypeEn::int1_jty : type_;
 
         level_ = maxLevelVar(var_a, var_b)->getLevel();
 
@@ -29,7 +32,7 @@ class ArithmeticOperation : public Operation_ifs {
     void genBodyVisitExit(BodyGenContext* context) override;
     void calculateConstRecursive(RecursiveGenContext* context) override;
     void printVisitExit(PrintBodyContext* context) override;
-    void genBlocksVisitExit(TableGenContext* context) override;
+    // void genBlocksVisitExit(TableGenContext* context) override;
 
     std::string printUint() override;
     void setupIR(IRGenerator& builder) override;

@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "jit/buffer.h"
 #include "parser/types_jty.h"
 #include "parser/variable.h"
 
@@ -56,7 +55,8 @@ class Operation_ifs : public Value {
     }
 
     void printVisitExit(PrintBodyContext* context) override { print_error("visitExitTxt unknown command."); }
-    void genBlocksVisitExit(TableGenContext* context) override = 0;
+
+    void genBlocksVisitExit(TableGenContext* context) override;
 
     void genRecursiveVisitExit(RecursiveGenContext* context) override {
         context->setUint(this);

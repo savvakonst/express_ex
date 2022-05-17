@@ -1,14 +1,58 @@
-
 #include "operations/ComparisonOperation.h"
 
 #include "jit/IR_generator.h"
-#include "parser/operations.h"
+#include "operations/TypeCastOperation.h"
 
 static const std::string kArComp[17] = {
     "==", "!=", " ugt ", " uge ", " ult ", " ule ",  ">",  ">=", " less ",
     "<=", "==", "!=",    ">",     ">=",    " less ", "<=", "_",
 };
 static std::string txtCompOp(OpCodeEn op_code) { return kArComp[((int)op_code - (int)TypeOpCodeEn::comparsion)]; }
+
+Value* newComparisonOperation(GarbageContainer* garbage_container, TypeEn target_type, Value* arg_a, Value* arg_b,
+                              OpCodeEn op_type) {
+    if (!isCompatible(arg_a, arg_b)) print_error("incompatible values");
+
+    if (isConst(arg_a) && isConst(arg_b) && !isUnknownTy(target_type)) {
+        if (isBool(target_type)) print_error("invalid type: Int1_jty ");
+
+        return garbage_container->add(
+            new Value(calcComparisonConst(op_type, target_type, arg_a->getBinaryValue(), arg_b->getBinaryValue()),
+                      TypeEn::int1_jty));
+    }
+
+    OpCodeEn local_op_type = OpCodeEn::none_op;
+
+    if (isInteger(target_type) || isUnknownTy(target_type)) {
+        local_op_type = op_type;
+    } else if (isFloating(target_type)) {
+        switch (op_type) {
+        case (OpCodeEn::eq):
+            local_op_type = (OpCodeEn::oeq);
+            break;
+        case (OpCodeEn::ne):
+            local_op_type = (OpCodeEn::one);
+            break;
+        case (OpCodeEn::sgt):
+            local_op_type = (OpCodeEn::ogt);
+            break;
+        case (OpCodeEn::sge):
+            local_op_type = (OpCodeEn::oge);
+            break;
+        case (OpCodeEn::slt):
+            local_op_type = (OpCodeEn::olt);
+            break;
+        case (OpCodeEn::sle):
+            local_op_type = (OpCodeEn::ole);
+            break;
+        default:;
+        }
+    } else {
+        print_error("newComparisonOperation - unsigned is not supported yet");
+    }
+
+    return garbage_container->add(new ComparisonOperation(local_op_type, arg_a, arg_b));
+}
 
 void ComparisonOperation::visitEnterStackUpdate(stack<Value*>* visitor_stack) {
     visitor_stack->push(operand_[1]);
@@ -17,7 +61,7 @@ void ComparisonOperation::visitEnterStackUpdate(stack<Value*>* visitor_stack) {
 
 void ComparisonOperation::genBodyVisitExit(BodyGenContext* context) {
     GarbageContainer* garbage_container = context->getGarbageContainer();
-    g_pos                               = pos;
+    g_pos = pos;
 
     is_visited_ = false;
 
@@ -45,12 +89,12 @@ void ComparisonOperation::calculateConstRecursive(RecursiveGenContext* context) 
     auto op_a = operand_[0];
     auto op_b = operand_[1];
 
-    auto local_type        = maxTempTypeVar(op_a, op_b)->getTempType();
-    auto arg_a             = calcTypeConvConst(local_type, op_a->getTempType(), op_a->getBinaryValue());
-    auto arg_b             = calcTypeConvConst(local_type, op_b->getTempType(), op_b->getBinaryValue());
+    auto local_type = maxTempTypeVar(op_a, op_b)->getTempType();
+    auto arg_a = calcTypeConvConst(local_type, op_a->getTempType(), op_a->getBinaryValue());
+    auto arg_b = calcTypeConvConst(local_type, op_b->getTempType(), op_b->getBinaryValue());
     untyped_t binary_value = calcComparisonConst(op_code_, local_type, arg_a, arg_b);
-    binary_value_          = binary_value;
-    temp_type_             = TypeEn::int1_jty;
+    binary_value_ = binary_value;
+    temp_type_ = TypeEn::int1_jty;
 }
 
 void ComparisonOperation::printVisitExit(PrintBodyContext* context) {
@@ -61,9 +105,6 @@ void ComparisonOperation::printVisitExit(PrintBodyContext* context) {
     context->push(checkBuffer("(" + op1 + txtCompOp(op_code_) + op2 + ")"));
 
     Operation_ifs::printVisitExit(context);
-}
-
-void ComparisonOperation::genBlocksVisitExit(TableGenContext* context) { /*TODO:*/
 }
 
 std::string ComparisonOperation::printUint() {
@@ -79,7 +120,7 @@ void ComparisonOperation::setupIR(IRGenerator& builder) {
     auto ir_op_a = operand_[0]->getAssignedVal(true)->getIRValue(builder, level_);
     auto ir_op_b = operand_[1]->getAssignedVal(true)->getIRValue(builder, level_);
 
-    IR_value_ = builder.CreateComparsion(ir_op_a, ir_op_b, op_code_, getUniqueName());
+    IR_value_ = builder.createComparison(ir_op_a, ir_op_b, op_code_, getUniqueName());
 
     finishSetupIR(builder);
 }

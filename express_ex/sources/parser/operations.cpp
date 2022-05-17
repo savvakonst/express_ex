@@ -1,9 +1,9 @@
 
 #include "parser/operations.h"
 
-#include <set>
-#include <sstream>
 #include <string>
+
+#include "jit/IR_generator.h"
 // void print_error(std::string &content);
 
 // void Operation::setBufferLength(uint64_t left, uint64_t right) {
@@ -53,10 +53,10 @@ void Operation::visitEnterSetupBuffer(stack<Value*>* visitor_stack) {
 }
 
 void Operation::visitEnterStackUpdate(stack<Value*>* visitor_stack) {
-    if (isArithetic(op_code_)) {
+    if (isArithmetic(op_code_)) {
         visitor_stack->push(operand_[1]);
         visitor_stack->push(operand_[0]);
-    } else if (isComparsion(op_code_)) {
+    } else if (isComparison(op_code_)) {
         visitor_stack->push(operand_[1]);
         visitor_stack->push(operand_[0]);
     } else if (isInv(op_code_)) {
@@ -95,7 +95,7 @@ void Operation::genBlocksVisitExit(TableGenContext* context) {
 
     PrmTypesEn prm_type = JITType2PRMType(type_);
 
-    if (isSelect(op_code_) || isArithetic(op_code_) || isComparsion(op_code_) || isBuiltInFunc(op_code_) ||
+    if (isSelect(op_code_) || isArithmetic(op_code_) || isComparison(op_code_) || isBuiltInFunc(op_code_) ||
         isSelect(op_code_) || isConvolve(op_code_)) {
         std::vector<ParameterIfs*> p_list;
         for (auto i : operand_) {
@@ -135,7 +135,7 @@ void Operation::genBodyVisitExit(BodyGenContext* context) {
 
     is_visited_ = false;
     Value* ret = nullptr;
-    if (isArithetic(op_code_)) {
+    if (isArithmetic(op_code_)) {
         auto op2 = context->pop();
         auto op1 = context->pop();
 
@@ -152,7 +152,7 @@ void Operation::genBodyVisitExit(BodyGenContext* context) {
         ret = newArithmeticOperation(garbage_container, target_type, newTypeConvOp(garbage_container, target_type, op1),
                                      newTypeConvOp(garbage_container, target_type, op2), (OpCodeEn)(int)op_code_);
 
-    } else if (isComparsion(op_code_)) {
+    } else if (isComparison(op_code_)) {
         auto op2 = context->pop();
         auto op1 = context->pop();
 
@@ -171,7 +171,8 @@ void Operation::genBodyVisitExit(BodyGenContext* context) {
 
     } else if (isInv(op_code_)) {
         auto op1 = context->pop();
-        ret = newInvOperation(garbage_container, op1);
+        print_error("visitExitTxt newInvOperation unknown command .");
+        // ret = newInvOperation(garbage_container, op1);
     } else if (isTypeConv(op_code_)) {
         auto op1 = context->pop();
         ret = newTypeConvOp(garbage_container, type_, op1);
@@ -207,7 +208,7 @@ void Operation::genBodyVisitExit(BodyGenContext* context) {
                                    newTypeConvOp(garbage_container, target_type, op2), shift_parameter_, op_code_);
     } else if (isSlice(op_code_)) {
         auto op1 = context->pop();
-        ret = newSliceOp(garbage_container, op1, getSliceParameter(), op_code_);
+        // ret = newSliceOp(garbage_container, op1, getSliceParameter(), op_code_);
     } else if (isStoreToBuffer(op_code_)) {
         print_error("visitExitTxt StoreToBuffer unknown command .");
     } else if (isSmallArrayDef(op_code_)) {
@@ -224,12 +225,12 @@ void Operation::genBodyVisitExit(BodyGenContext* context) {
 
 void Operation::calculateConstRecursive(RecursiveGenContext* context) {
 #define OP(i) (operand_[(i)])
-    if (isArithetic(op_code_)) {
+    if (isArithmetic(op_code_)) {
         temp_type_ = maxTempTypeVar(OP(0), OP(1))->getTempType();
         auto arg_a = calcTypeConvConst(temp_type_, OP(0)->getTempType(), OP(0)->getBinaryValue());
         auto arg_b = calcTypeConvConst(temp_type_, OP(1)->getTempType(), OP(1)->getBinaryValue());
         binary_value_ = calcArithmeticConst(op_code_, temp_type_, arg_a, arg_b);
-    } else if (isComparsion(op_code_)) {
+    } else if (isComparison(op_code_)) {
         auto local_type = maxTempTypeVar(OP(0), OP(1))->getTempType();
         auto arg_a = calcTypeConvConst(local_type, OP(0)->getTempType(), OP(0)->getBinaryValue());
         auto arg_b = calcTypeConvConst(local_type, OP(1)->getTempType(), OP(1)->getBinaryValue());
@@ -279,11 +280,11 @@ void Operation::calculateConstRecursive(RecursiveGenContext* context) {
 void Operation::printVisitExit(PrintBodyContext* context) {
     is_visited_ = false;
 
-    if (isArithetic(op_code_)) {
+    if (isArithmetic(op_code_)) {
         auto op2 = context->pop();
         auto op1 = context->pop();
         context->push(checkBuffer("(" + op1 + txtArOp(op_code_) + op2 + ")"));
-    } else if (isComparsion(op_code_)) {
+    } else if (isComparison(op_code_)) {
         auto op2 = context->pop();
         auto op1 = context->pop();
         context->push(checkBuffer("(" + op1 + txtCompOp(op_code_) + op2 + ")"));
@@ -333,8 +334,8 @@ string Operation::printUint() {
 
 #define OP(i) (operand_[(i)]->getAssignedVal(true)->getUniqueName())
 
-    if (isArithetic(op_code_)) return u_name + " = " + OP(0) + txtArOp(op_code_) + OP(1);
-    if (isComparsion(op_code_)) return u_name + " = " + OP(0) + txtCompOp(op_code_) + OP(1);
+    if (isArithmetic(op_code_)) return u_name + " = " + OP(0) + txtArOp(op_code_) + OP(1);
+    if (isComparison(op_code_)) return u_name + " = " + OP(0) + txtCompOp(op_code_) + OP(1);
     if (isInv(op_code_)) return u_name + " = " + "( -" + OP(0) + ")";
     if (isTypeConv(op_code_)) return u_name + " = " + txtTConOp(op_code_) + "( " + OP(0) + ")";
     if (isBuiltInFunc(op_code_)) return u_name + " = " + txtBuiltInOp(op_code_) + "( " + OP(0) + ")";
@@ -361,7 +362,7 @@ string Operation::printUint() {
 void Operation::calculate() {
 #define OP(i) (operand_[(i)]->getAssignedVal(true))
     int length = (int)length_;
-    if (isArithetic(op_code_)) {
+    if (isArithmetic(op_code_)) {
         auto a_operand = OP(0);
         auto b_operand = OP(1);
 
@@ -374,7 +375,7 @@ void Operation::calculate() {
         else
             buffer_ptr_ = calcArithmeticSmallArray(op_code_, type_, buffer_ptr_, a_operand->getBinaryValue(),
                                                    b_operand->getBufferPtr(), length);
-    } else if (isComparsion(op_code_)) {
+    } else if (isComparison(op_code_)) {
         auto a_operand = OP(0);
         auto b_operand = OP(1);
         auto local_type = a_operand->getType();
@@ -489,3 +490,64 @@ void Operation::smallArray(Value* arg1) {
         print_error("range(len) - arg must be integer constant");
     }
 };
+
+void Operation::setupIR(IRGenerator& builder) {
+#define OP(i) (operand_[(i)]->getAssignedVal(true)->getIRValue(builder, level_))
+#define OP_PTR(i) (operand_[(i)]->getAssignedVal(true)->getIRValuePtr(builder, level_))
+
+    if (isArithmetic(op_code_)) {
+        IR_value_ = builder.createArithmetic(OP(0), OP(1), op_code_, getUniqueName());
+    } else if (isComparison(op_code_)) {
+        IR_value_ = builder.createComparison(OP(0), OP(1), op_code_, getUniqueName());
+    } else if (isInv(op_code_)) {
+        IR_value_ = builder.createInv(OP(0), op_code_, getUniqueName());
+    } else if (isTypeConv(op_code_)) {
+        IR_value_ = builder.createTypeConv(OP(0), op_code_, type_, getUniqueName());
+    } else if (isBuiltInFunc(op_code_)) {
+        IR_value_ = builder.createBuiltInFunc(OP(0), op_code_, getUniqueName());
+    } else if (isSelect(op_code_)) {
+        if (contain_rec_call_) {
+            llvm::Value* ret_val = nullptr;
+            if (operand_[1]->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall) {
+                builder.CreateCondBr(OP(0), builder.getCurrentBlock(), builder.getExitBlock());
+                ret_val = OP(2);
+            } else {
+                builder.CreateCondBr(OP(0), builder.getExitBlock(), builder.getCurrentBlock());
+                ret_val = OP(1);
+            }
+            builder.setExitInsertPoint();
+            builder.CreateRet(ret_val);
+            builder.setCalcInsertPoint();
+        } else
+            IR_value_ = builder.CreateSelect(OP(0), OP(1), OP(2), getUniqueName());
+    } else if (isConvolve(op_code_)) {
+        auto second_op = operand_[1]->getAssignedVal(true);
+        auto length = second_op->getLength();
+        auto f = OP(0);
+        IR_value_ = builder.createConvolve(OP_PTR(0), second_op->getBufferPtr(), length,
+                                           -(length / 2 + shift_parameter_), type_, getUniqueName());
+    } else if (isSlice(op_code_)) {
+        print_IR_error("setupIR StoreToBuffer unknown command .");
+    } else if (isStoreToBuffer(op_code_)) {
+        print_IR_error("setupIR StoreToBuffer unknown command .");
+    } else {
+        print_IR_error("setupIR unknown command .");
+    }
+
+    if (isBuffered() | isReturned()) {
+        if (!is_initialized_) {
+            if (isReturned()) builder.addBufferAlloca(new OutputBuffer(this));
+            else
+                builder.addBufferAlloca(new Buffer(this));
+
+            IR_buffer_base_ptr_ = builder.createBufferInit(type_, "internal_");
+            is_initialized_ = true;
+        }
+        builder.setStoreInsertPoint();
+        IR_buffer_ptr_ = builder.CreateInBoundsGEP(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(), "offset_incr");
+        builder.createPositionalStore(IR_value_, IR_buffer_ptr_);
+    }
+
+#undef OP_PTR
+#undef OP
+}

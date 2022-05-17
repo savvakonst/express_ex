@@ -1,6 +1,7 @@
 #ifndef PARAMETERIFS_H
 #define PARAMETERIFS_H
 #include <algorithm >
+#include <complex>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -56,8 +57,8 @@ enum class PrmTypesEn : uint64_t
 };
 
 typedef struct {
-    double bgn   = 0.0;
-    double end   = 0.0;
+    double bgn = 0.0;
+    double end = 0.0;
     int64_t offs = 0;  // this is duplicated rudiment
 } TimeInterval;
 
@@ -130,14 +131,81 @@ inline DataInterval createSyncIntervalByFrequency(TimeInterval time_interval, do
                                                   const std::string& filename = "", bool local = true) {
     DataInterval interval{};
 
-    interval.type          = target_ty;
-    interval.offs          = 0;
-    interval.size          = sizeOfTy(target_ty) * (int64_t)((time_interval.end - time_interval.bgn) * frequency);
-    interval.frequency     = frequency;
+    interval.type = target_ty;
+    interval.offs = 0;
+
+    interval.size = sizeOfTy(target_ty) * (int64_t)((time_interval.end - time_interval.bgn) * frequency);
+    interval.frequency = frequency;
     interval.time_interval = time_interval;
 
     interval.file_name = filename;
-    interval.local     = local;
+    interval.local = local;
+
+    return interval;
+}
+
+inline DataInterval createSyncInterval(const DataInterval& src, int64_t freq_factor, const std::string& filename = "",
+                                       bool local = true) {
+    DataInterval interval{};
+
+    int64_t dst_frequency;
+    auto src_frequency = int64_t(src.frequency);
+
+    if (freq_factor > 1) {
+        dst_frequency = src_frequency * freq_factor;
+        interval.size = src.size * freq_factor;
+        interval.offs = src.offs * freq_factor;
+    } else if (freq_factor < -1) {
+        dst_frequency = src_frequency / freq_factor;
+        interval.size = src.size / freq_factor;
+        interval.offs = src.offs / freq_factor;
+    } else {
+        dst_frequency = src_frequency;
+        interval.size = src.size;
+        interval.offs = src.offs;
+    }
+
+    interval.type = src.type;
+
+    interval.frequency = double(dst_frequency);
+    interval.time_interval = src.time_interval;
+
+    interval.file_name = filename;
+    interval.local = local;
+
+    return interval;
+}
+
+inline DataInterval createSyncInterval(const DataInterval& src, PrmTypesEn target_ty, const std::string& filename = "",
+                                       bool local = true) {
+    DataInterval interval{};
+
+    interval.type = target_ty;
+    interval.offs = 0;
+
+    interval.size = src.size / sizeOfTy(src.type) * sizeOfTy(target_ty);
+    interval.frequency = src.frequency;
+    interval.time_interval = src.time_interval;
+
+    interval.file_name = filename;
+    interval.local = local;
+
+    return interval;
+}
+
+inline DataInterval createSyncIntervalBySize(TimeInterval time_interval, double frequency, PrmTypesEn target_ty,
+                                             const std::string& filename = "", bool local = true) {
+    DataInterval interval{};
+
+    interval.type = target_ty;
+    interval.offs = 0;
+
+    interval.size = sizeOfTy(target_ty) * (int64_t)((time_interval.end - time_interval.bgn) * frequency);
+    interval.frequency = frequency;
+    interval.time_interval = time_interval;
+
+    interval.file_name = filename;
+    interval.local = local;
 
     return interval;
 }
@@ -146,14 +214,14 @@ inline DataInterval createAsyncIntervalBySize(TimeInterval time_interval, int64_
                                               const std::string& filename = "", bool local = true) {
     DataInterval interval{};
 
-    interval.type          = target_ty;
-    interval.offs          = 0;
-    interval.size          = (int64_t)size;
-    interval.frequency     = 0;
+    interval.type = target_ty;
+    interval.offs = 0;
+    interval.size = (int64_t)size;
+    interval.frequency = 0;
     interval.time_interval = time_interval;
 
     interval.file_name = filename;
-    interval.local     = local;
+    interval.local = local;
 
     return interval;
 }
@@ -189,15 +257,15 @@ class DLL_EXPORT ParameterIfs {
                                            double from, double to, size_t max_point_number_to_read) = 0;
 
     virtual bool open(bool open_to_write = false) = 0;
-    virtual bool close()                          = 0;
+    virtual bool close() = 0;
 
     virtual uint64_t write(char* data_buffer_ptr, uint64_t point_number) = 0;
-    virtual uint64_t read(char* data_buffer_ptr, uint64_t point_number)  = 0;
+    virtual uint64_t read(char* data_buffer_ptr, uint64_t point_number) = 0;
 
     virtual ParameterIfs* intersection(ParameterIfs* b, PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
                                        const std::string& name = "") = 0;
-    virtual ParameterIfs* retyping(PrmTypesEn target_ty    = PrmTypesEn::PRM_TYPE_UNKNOWN,
-                                   const std::string& name = "")     = 0;
+    virtual ParameterIfs* retyping(PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
+                                   const std::string& name = "") = 0;
 
     virtual void setName(const std::string& name, bool single_file = true) {
         name_ = name;
@@ -253,19 +321,19 @@ class DLL_EXPORT ParameterIfs {
 
     const double additional_time_ = 0.0009765625;  // this is very bad idea, but it will be here  until nikolay fixes
                                                    // the problem with interval boundaries
-    PrmTypesEn type_              = PrmTypesEn::PRM_TYPE_UNKNOWN;
+    PrmTypesEn type_ = PrmTypesEn::PRM_TYPE_UNKNOWN;
 
     int64_t current_interval_index_ = 0;
-    int64_t number_of_intervals_    = 0;
+    int64_t number_of_intervals_ = 0;
 
     int64_t sizeof_data_type_ = 0;
-    int64_t point_number_     = 0;
+    int64_t point_number_ = 0;
 
-    bool opened_to_read_  = false;
+    bool opened_to_read_ = false;
     bool opened_to_write_ = false;
 
     std::string work_directory_ = "";
-    std::string error_info_     = "";
+    std::string error_info_ = "";
 };
 
 #ifdef _MSC_VER

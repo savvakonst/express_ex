@@ -11,12 +11,12 @@
 
 BodyTemplate::BodyTemplate(const std::string& name, BodyTemplate* parent_body_template)
     : name_(name), parent_body_template_(parent_body_template) {
-    garbage_contaiiner_ = new GarbageContainer();
+    garbage_container_ = new GarbageContainer();
     lines_.reserve(30);
 }
 
 BodyTemplate::~BodyTemplate() {
-    delete garbage_contaiiner_;
+    delete garbage_container_;
     /*
     for (auto& line : lines_) {
         delete line;
@@ -26,33 +26,33 @@ BodyTemplate::~BodyTemplate() {
 
 void BodyTemplate::addLine(const std::string& name, Value* var) {
     auto line = new Line(name, var);
-    garbage_contaiiner_->add(line);
+    garbage_container_->add(line);
     lines_.push_back(line);
 }
 
 void BodyTemplate::addArg(const std::string& name) {
     auto line = new Line(name);
-    garbage_contaiiner_->add(line);
+    garbage_container_->add(line);
     arg_count_++;
     lines_.push_back(line);
 }
 
 void BodyTemplate::addParam(Line* line) {  //?delete
-    garbage_contaiiner_->add(line);
+    garbage_container_->add(line);
     arg_count_++;
     lines_.push_back(line);
 }
 
 void BodyTemplate::addParam(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len) {  //?delete
     auto line = new Line(name, ty, dsty, len);
-    garbage_contaiiner_->add(line);
+    garbage_container_->add(line);
     arg_count_++;
     lines_.push_back(line);
 }
 
 void BodyTemplate::addParam(const std::string& name, const std::string& linkName, DataStructureTypeEn dsty) {
     auto line = new Line(name, linkName, dsty);
-    garbage_contaiiner_->add(line);
+    garbage_container_->add(line);
     arg_count_++;
     lines_.push_back(line);
 }
@@ -67,13 +67,13 @@ void BodyTemplate::addReturn(const std::string& name, Value* var) {  //?remove V
         if (!valid_recursion) print_error("it isn't tail recursion");
     }
 
-    garbage_contaiiner_->add(line);
+    garbage_container_->add(line);
     return_stack_.push_back(line);
 }
 
 // varStack push/pop
 void BodyTemplate::push(Value* line) {
-    garbage_contaiiner_->add(line);
+    garbage_container_->add(line);
     var_stack_.push_back(line);
 }
 
@@ -95,43 +95,43 @@ std::map<std::string, std::string> BodyTemplate::getParameterLinkNames(bool hide
 // create operation and push to varStack
 void BodyTemplate::addTypeConvOp(TypeEn target_type) {
     Value* arg1 = pop();
-    push(newTypeConvOp(garbage_contaiiner_, target_type, arg1));
+    push(newTypeConvOp(garbage_container_, target_type, arg1));
 }
 
 void BodyTemplate::addBuiltInFuncOp(OpCodeEn u_type_op) {
-    Value* arg       = pop();
+    Value* arg = pop();
     auto target_type = TypeEn::DEFAULT_JTY;
-    push(newBuiltInFuncOperation(garbage_contaiiner_, target_type, arg, u_type_op));
+    push(newBuiltInFuncOperation(garbage_container_, target_type, arg, u_type_op));
 }
 
 void BodyTemplate::addIntegrateOp() {
     Value* arg = pop();
-    push(newIntegrateOperation(garbage_contaiiner_, arg));
+    push(newIntegrateOperation(garbage_container_, arg));
 }
 
 void BodyTemplate::addInvOp() {
-    Value* arg  = pop();
-    Value* zero = garbage_contaiiner_->add(new Value("0", TypeEn::int32_jty));
-    push(newArithmeticOperation(garbage_contaiiner_, TypeEn::DEFAULT_JTY, zero, arg, OpCodeEn::sub));
+    Value* arg = pop();
+    Value* zero = garbage_container_->add(new Value("0", TypeEn::int32_jty));
+    push(newArithmeticOperation(garbage_container_, TypeEn::DEFAULT_JTY, zero, arg, OpCodeEn::sub));
 }
 
 void BodyTemplate::addArithmeticOp(OpCodeEn u_type_op) {
     Value* arg_b = pop();
     Value* arg_a = pop();
-    push(newArithmeticOperation(garbage_contaiiner_, TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op));
+    push(newArithmeticOperation(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op));
 }
 
 void BodyTemplate::addComparisonOp(OpCodeEn u_type_op) {
     Value* arg_b = pop();
     Value* arg_a = pop();
-    push(newComparisonOperation(garbage_contaiiner_, TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op));
+    push(newComparisonOperation(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op));
 }
 
 void BodyTemplate::addConvolveOp(OpCodeEn u_type_op, uint32_t shift) {  // necessary to add type maching
     Value* arg_b = pop();
     Value* arg_a = pop();
     is_operator_ = true;
-    push(newConvolveOperation(garbage_contaiiner_, TypeEn::DEFAULT_JTY, arg_a, arg_b, shift, u_type_op));
+    push(newConvolveOperation(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, shift, u_type_op));
 }
 
 void BodyTemplate::addSelectOp() {
@@ -143,30 +143,32 @@ void BodyTemplate::addSelectOp() {
 
     if (is_tail_callable_) {
         const NodeTypeEn p = arg_c->getAssignedVal(true)->getNodeType();
-        valid_recursion    = (p == NodeTypeEn::kTailCall);
-        valid_recursion    = valid_recursion || (arg_b->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall);
+        valid_recursion = (p == NodeTypeEn::kTailCall);
+        valid_recursion = valid_recursion || (arg_b->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall);
     }
 
-    push(newSelectOp(garbage_contaiiner_, TypeEn::DEFAULT_JTY, arg_a, arg_b, arg_c, valid_recursion));
+    push(newSelectOp(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, arg_c, valid_recursion));
 }
 
 void BodyTemplate::addRangeOp(size_t arg_count) {
     if ((arg_count < 1) || (arg_count > 3)) print_error("invalid signature of range(..) function");
 
     stack<Value*> v = pop(arg_count);
-    push(newSmallArrayDefOp(garbage_contaiiner_, v, OpCodeEn::smallArrayRange));
+    push(newSmallArrayDefOp(garbage_container_, v, OpCodeEn::smallArrayRange));
 }
 
 void BodyTemplate::addShiftOp() {
     Value* arg2 = pop();
     Value* arg1 = pop();
-    push(newSliceOp(garbage_contaiiner_, arg1, arg2, OpCodeEn::shift));
+    print_error("addShiftOp");
+    // push(newSliceOp(garbage_container_, arg1, arg2, OpCodeEn::shift));
 }
 
 void BodyTemplate::addDecimationOp() {
     Value* arg2 = pop();
     Value* arg1 = pop();
-    push(newSliceOp(garbage_contaiiner_, arg1, arg2, OpCodeEn::decimation));
+    print_error("addShiftOp");
+    // push(newSliceOp(garbage_container_, arg1, arg2, OpCodeEn::decimation));
 }
 
 void BodyTemplate::addSmallArrayDefinitionOp(size_t length) {
@@ -174,7 +176,7 @@ void BodyTemplate::addSmallArrayDefinitionOp(size_t length) {
     is_operator_ = true;
     for (size_t i = 0; i < length; i++) op.push(pop());
     std::reverse(op.begin(), op.end());
-    push(newSmallArrayDefOp(garbage_contaiiner_, op, OpCodeEn::smallArrayDef, true));
+    push(newSmallArrayDefOp(garbage_container_, op, OpCodeEn::smallArrayDef, true));
 }
 
 void BodyTemplate::addCall(BodyTemplate* body) {
@@ -186,9 +188,9 @@ void BodyTemplate::addCall(BodyTemplate* body) {
 
     is_operator_ = is_operator_ || body->is_operator_;
 
-    if (body->is_tail_callable_) push(garbage_contaiiner_->add(new CallRecursiveFunctionTemplate(body, a)));
+    if (body->is_tail_callable_) push(garbage_container_->add(new CallRecursiveFunctionTemplate(body, a)));
     else
-        push(garbage_contaiiner_->add(new CallTemplate(body, a)));
+        push(garbage_container_->add(new CallTemplate(body, a)));
 }
 
 void BodyTemplate::addTailCall() {
@@ -202,7 +204,7 @@ void BodyTemplate::addTailCall() {
 
     is_tail_callable_ = true;
     // new TailCallDirective(a);
-    push(garbage_contaiiner_->add(new TailCallDirectiveTemplate(a)));
+    push(garbage_container_->add(new TailCallDirectiveTemplate(a)));
 }
 
 Line* BodyTemplate::getLastLineFromName(const std::string& name) const {

@@ -10,7 +10,7 @@ if( NOT CMAKE_CL_64 )
     set(SPlatform  x86)
     set(APlarform  Win32)
 else()
-    set(SPlatform  x64)
+    set(SPlatform  x64) 
     set(APlarform  x64)
 endif()
  

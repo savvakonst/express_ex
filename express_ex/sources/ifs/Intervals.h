@@ -14,7 +14,7 @@ class BareChunk {
    public:
     BareChunk(ex_size_t size) : size_(size), data_to_read_(size) {}
 
-    ~BareChunk() = default;
+    virtual ~BareChunk() = default;
 
     virtual ex_size_t read(char* ptr, ex_size_t size) {
         ex_size_t readed_data = getReadedData(size);
@@ -31,17 +31,19 @@ class BareChunk {
         return next_chunk_;
     }
 
-    BareChunk* getNext() {
+    BareChunk* getNextIfNoDataToRead() {
         if (data_to_read_ == 0) return next_chunk_;
         else
             return this;
     }
 
+    BareChunk* getNext() { return next_chunk_; }
+
    protected:
     inline ex_size_t getReadedData(ex_size_t size) {
         if (size > data_to_read_) {
             ex_size_t readed_data = data_to_read_;
-            data_to_read_         = 0;
+            data_to_read_ = 0;
             return readed_data;
         } else {
             data_to_read_ -= size;
@@ -49,7 +51,7 @@ class BareChunk {
         }
     }
 
-    ex_size_t size_         = 0;
+    ex_size_t size_ = 0;
     ex_size_t data_to_read_ = 0;
 
     BareChunk* next_chunk_ = nullptr;
@@ -61,6 +63,8 @@ class Chunk : public BareChunk {
         : BareChunk(di->size), di_(di), work_directory_(work_directory) {
         size_of_word_ = sizeOfTy(di_->type);
     }
+
+    ~Chunk() override { close(); }
 
     ex_size_t read(char* ptr, ex_size_t size) override {
         if (size_ == data_to_read_) openToRead();
@@ -98,7 +102,7 @@ class Chunk : public BareChunk {
         close();
 
         std::string file_name = (di_->local ? *work_directory_ + "/" : "") + di_->file_name;
-        ifs_                  = new std::fstream(file_name, std::ios::in | std::ios::binary);
+        ifs_ = new std::fstream(file_name, std::ios::in | std::ios::binary);
         ifs_->seekg(di_->offs);
     }
 
@@ -111,10 +115,10 @@ class Chunk : public BareChunk {
             ifs_ = new std::fstream(file_name, std::ios::out | std::ios::binary | std::ios::app);
     }
 
-    ex_size_t size_of_word_            = 0;
+    ex_size_t size_of_word_ = 0;
     const std::string* work_directory_ = nullptr;
-    std::fstream* ifs_                 = nullptr;
-    DataInterval* di_                  = nullptr;
+    std::fstream* ifs_ = nullptr;
+    DataInterval* di_ = nullptr;
 };
 
 #endif

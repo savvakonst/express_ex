@@ -13,18 +13,18 @@ SyncParameter::SyncParameter(std::string name, const std::vector<DataInterval>& 
     // for (auto i : interval_list)
     //     interval_list_.push_back(i);
 
-    interval_list_       = interval_list;
+    interval_list_ = interval_list;
     number_of_intervals_ = interval_list.size();
     if (save_file_names == false) {
         for (auto& i : interval_list_) {
             i.file_name = "";
-            i.local     = true;
+            i.local = true;
         }
     }
 
     if (interval_list_.size()) {
         sizeof_data_type_ = sizeOfTy(interval_list_.front().type);
-        type_             = interval_list_.front().type;
+        type_ = interval_list_.front().type;
         calc_min_max_ptr_ = g_calcMinMax_select(type_);
     }
 
@@ -51,7 +51,7 @@ SyncParameter::SyncParameter(std::string name, const std::vector<DataInterval>& 
         BareChunk* chunk = new Chunk(&i, &work_directory_);
 
         if (chunk_ == nullptr) {
-            chunk_         = chunk;
+            chunk_ = chunk;
             current_chunk_ = chunk;
         } else {
             current_chunk_ = current_chunk_->addNextChunk(chunk);
@@ -96,14 +96,14 @@ inline std::vector<int64_t> SyncParameter::read_dots(double* top_buffer_ptr, dou
 inline bool SyncParameter::open(bool open_to_write) {
     if (opened_to_read_ | opened_to_write_) return false;
 
-    opened_to_read_  = !open_to_write;
+    opened_to_read_ = !open_to_write;
     opened_to_write_ = open_to_write;
     return opened_to_read_;
 }
 
 inline bool SyncParameter::close() {
     if (opened_to_read_ | opened_to_write_) {
-        opened_to_read_  = false;
+        opened_to_read_ = false;
         opened_to_write_ = false;
         return true;
     }
@@ -115,24 +115,24 @@ bool SyncParameter::seek(int64_t point_umber) { return false; }
 
 uint64_t SyncParameter::write(char* data_buffer_ptr, uint64_t point_number) {
     ex_size_t bytes_to_write = point_number * sizeof_data_type_;
-    ex_size_t written_bytes  = 0;
+    ex_size_t written_bytes = 0;
 
     while ((bytes_to_write != 0) && (current_chunk_ != nullptr)) {
         written_bytes = current_chunk_->write(data_buffer_ptr, bytes_to_write, calc_min_max_ptr_);
         bytes_to_write -= written_bytes;
-        current_chunk_ = current_chunk_->getNext();
+        current_chunk_ = current_chunk_->getNextIfNoDataToRead();
     }
     return written_bytes;
 }
 
 uint64_t SyncParameter::read(char* data_buffer_ptr, uint64_t point_number) {
     ex_size_t bytes_to_read = point_number * sizeof_data_type_;
-    ex_size_t readed_bytes  = 0;
+    ex_size_t readed_bytes = 0;
 
     while ((bytes_to_read != 0) && (current_chunk_ != nullptr)) {
         readed_bytes = current_chunk_->read(data_buffer_ptr, bytes_to_read);
         bytes_to_read -= readed_bytes;
-        current_chunk_ = current_chunk_->getNext();
+        current_chunk_ = current_chunk_->getNextIfNoDataToRead();
     }
     return readed_bytes;
 }
@@ -180,22 +180,17 @@ ParameterIfs* SyncParameter::intersection(ParameterIfs* prm, PrmTypesEn target_t
     return new SyncParameter(name, time_interval_, ret);
 }
 
-SyncParameter* SyncParameter::enlargeFrequency(int64_t arg, PrmTypesEn target_ty, const std::string& name) {
-    auto parameter_a   = this;
-    SyncParameter* ret = this;
+SyncParameter* SyncParameter::enlargeFrequency(int64_t freq_factor, PrmTypesEn target_ty,
+                                               const std::string& name) const {
+    auto parameter_a = this;
+
     std::vector<DataInterval> data_interval;
 
-    double frequency = .0;
+    if ((-1 <= freq_factor) && (freq_factor <= 1)) return nullptr;
+    if ((freq_factor < -1) && (int64_t(this->frequency_) % freq_factor)) return nullptr;
 
-    if (arg > 1) frequency = this->frequency_ * arg;
-    else if (arg < -1) {
-        if (((int)this->frequency_) % arg) return nullptr;
-        frequency = this->frequency_ / arg;
-    } else
-        return this;
-
-    for (auto a : parameter_a->interval_list_) {
-        auto interval = createSyncIntervalByFrequency(a.time_interval, frequency, target_ty);
+    for (const DataInterval& a : parameter_a->interval_list_) {
+        auto interval = createSyncInterval(a, freq_factor);
         data_interval.push_back(interval);
     }
 
@@ -206,8 +201,8 @@ ParameterIfs* SyncParameter::retyping(PrmTypesEn target_ty, const std::string& n
     if (getPrmType() == target_ty) return this;
 
     std::vector<DataInterval> data_interval;
-    for (auto a : interval_list_) {
-        auto interval = createSyncIntervalByFrequency(a.time_interval, frequency_, target_ty);
+    for (const DataInterval& a : interval_list_) {
+        auto interval = createSyncInterval(a, target_ty);
         data_interval.push_back(interval);
     }
     return new SyncParameter(name, time_interval_, data_interval);

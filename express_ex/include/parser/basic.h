@@ -96,7 +96,7 @@ class BodyGenContext {
    private:
     GarbageContainer* garbage_container_ = nullptr;
     stack<Value*> var_stack_;
-    Body* current_body_                = nullptr;
+    Body* current_body_ = nullptr;
     std::vector<Line*>* namespace_ptr_ = nullptr;
 
     friend CallRecursiveFunctionTemplate;
@@ -111,8 +111,8 @@ class RecursiveGenContext {
 
     ~RecursiveGenContext() = default;
 
-    inline void setUint(Value* var) { instructions_list_.push(var); }
-    inline uint32_t getReference() { return reference_cnt_++; }
+    void setUint(Value* var) { instructions_list_.push(var); }
+    uint32_t getReference() { return reference_cnt_++; }
 
     void addArg(Value* arg) {
         if (!hide_const_values_) instructions_list_.push(arg);
@@ -122,8 +122,9 @@ class RecursiveGenContext {
     stack<Value*> instructions_list_;
     const bool hide_const_values_;
 
-   private:
     bool exit_from_loop_;
+
+   private:
     uint32_t reference_cnt_ = 0;
 
     stack<Value*> args_reference_;
@@ -151,7 +152,7 @@ class SmallArr {
    protected:
     PosInText pos;
     double start_ = 0;
-    double stop_  = 0;
+    double stop_ = 0;
 
     char* buffer_ptr_ = nullptr;
 };

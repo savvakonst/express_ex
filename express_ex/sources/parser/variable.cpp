@@ -1,8 +1,10 @@
 #include "parser/variable.h"
 
+#include "jit/IR_generator.h"
+
 Value::Value(std::string text, TypeEn type) : SmallArr() {
     text_value_ = text;
-    type_       = type;
+    type_ = type;
 
     binary_value_ = 0;
 
@@ -38,7 +40,7 @@ Value::Value(std::string text, TypeEn type) : SmallArr() {
 
 Value::Value(untyped_t binary_value, TypeEn type) : SmallArr() {
     binary_value_ = binary_value;
-    type_         = type;
+    type_ = type;
 #define OP(T) text_value_ = std::to_string(*((T*)(&binary_value_)))
     SWITCH_TYPE_OP(type, ;);
 #undef OP
@@ -49,9 +51,9 @@ Value::Value(Value* arg1, Value* arg2, Value* arg3) : SmallArr() {
         print_error("range args must be a constant");
         return;
         length_ = arg3->getBinaryValue();
-        type_   = TypeEn::double_jty;
-        start_  = arg1->getDoubleValue();
-        stop_   = arg2->getDoubleValue();
+        type_ = TypeEn::double_jty;
+        start_ = arg1->getDoubleValue();
+        stop_ = arg2->getDoubleValue();
     } else {
         print_error("range(start_num,stop_num,length) -signature is not supported yet");
         return;
@@ -60,13 +62,13 @@ Value::Value(Value* arg1, Value* arg2, Value* arg3) : SmallArr() {
 
 Value::Value(Value* arg1, Value* arg2) : SmallArr() {
     if (isConst(arg1) && isConst(arg2) && isInteger(arg1) && isInteger(arg2)) {
-        length_              = arg2->getBinaryValue() - arg1->getBinaryValue();
+        length_ = arg2->getBinaryValue() - arg1->getBinaryValue();
         data_structure_type_ = DataStructureTypeEn::kSmallArr;
-        type_                = TypeEn::int64_jty;
+        type_ = TypeEn::int64_jty;
         text_value_ =
             "range(" + std::to_string(arg1->getBinaryValue()) + "," + std::to_string(arg2->getBinaryValue()) + ")";
         start_ = (double)arg1->getBinaryValue();
-        stop_  = (double)arg2->getBinaryValue();
+        stop_ = (double)arg2->getBinaryValue();
     } else {
         print_error("range(start_num,stop_num) - arg must be integer consant");
     }
@@ -74,12 +76,12 @@ Value::Value(Value* arg1, Value* arg2) : SmallArr() {
 
 Value::Value(Value* arg1) : SmallArr() {
     if (isConst(arg1) && isInteger(arg1)) {
-        length_              = arg1->getBinaryValue();
+        length_ = arg1->getBinaryValue();
         data_structure_type_ = DataStructureTypeEn::kSmallArr;
-        type_                = TypeEn::int64_jty;
-        text_value_          = "range(" + std::to_string(arg1->getBinaryValue()) + ")";
-        start_               = 0.0;
-        stop_                = (double)length_;
+        type_ = TypeEn::int64_jty;
+        text_value_ = "range(" + std::to_string(arg1->getBinaryValue()) + ")";
+        start_ = 0.0;
+        stop_ = (double)length_;
     } else {
         print_error("range(len) - arg must be integer consant");
     }
@@ -95,14 +97,14 @@ void Value::setBufferLength(uint64_t central_length) { buffer_length_ = central_
 
 void Value::setBufferLength(uint64_t left, uint64_t right) {
     if (isLargeArr(this)) {
-        left_buffer_length_  = maxInt(left_buffer_length_, left);
+        left_buffer_length_ = maxInt(left_buffer_length_, left);
         right_buffer_length_ = maxInt(right_buffer_length_, right);
     }
 }
 
 void Value::setBufferLength(Value* var) {
     if (isLargeArr(this)) {
-        left_buffer_length_  = maxInt(left_buffer_length_, var->getLeftBufferLen());
+        left_buffer_length_ = maxInt(left_buffer_length_, var->getLeftBufferLen());
         right_buffer_length_ = maxInt(right_buffer_length_, var->getRightBufferLen());
     }
 }
@@ -154,3 +156,39 @@ std::string Value::printSmallArray() {
     ret += "];";
     return ret;
 }
+
+/// Implementation of Value, Operation, Line and Call  members,
+/// which provide llvm IR generation.
+///
+///
+llvm::Value* Value::getIRValue(IRGenerator& builder, int64_t parent_level) {
+    llvm::Value* ret = nullptr;
+    if (isBuffered() & (parent_level != level_)) {
+        if (!builder.CheckExistence(IR_buffer_base_ptr_)) {
+            IR_buffer_ptr_ = builder.createPositionalInBoundsGep(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(),
+                                                                 "offset_incr");
+            IR_loaded_buffer_value_ = builder.createPositionalLoad(IR_buffer_ptr_, "buffer_");
+            builder.AddInitializedValue(IR_buffer_base_ptr_);
+        }
+        ret = IR_loaded_buffer_value_;
+    } else
+        ret = IR_value_;
+
+    if ((ret == nullptr) && !builder.is_pure_function_) print_IR_error("IRValue - is nullptr :" + getUniqueName());
+
+    return ret;
+}
+
+llvm::Value* Value::getIRValueBasePtr(IRGenerator& builder, int64_t parent_level) const {
+    auto ret = isBuffered() ? IR_buffer_base_ptr_ : nullptr;
+    if (ret == nullptr) print_IR_error("getIRValueBasePtr - is nullptr :" + getUniqueName());
+    return ret;
+}
+
+llvm::Value* Value::getIRValuePtr(IRGenerator& builder, int64_t parent_level) const {
+    auto ret = isBuffered() ? IR_buffer_ptr_ : nullptr;
+    if (ret == nullptr) print_IR_error("getIRValuePtr - is nullptr :" + getUniqueName());
+    return ret;
+}
+
+void Value::setupIR(IRGenerator& builder) { IR_value_ = builder.createConst(binary_value_, type_, ""); }

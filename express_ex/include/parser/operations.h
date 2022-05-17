@@ -19,10 +19,10 @@ class Operation : public Value {
 
         if (op == OpCodeEn::shift) {
             shift_parameter_ = shift_or_decimation;
-            level_           = var->getLevel() + 1;
+            level_ = var->getLevel() + 1;
         } else if (op == OpCodeEn::decimation) {
             decimation_parameter_ = shift_or_decimation;
-            level_                = var->getLevel() + 1;
+            level_ = var->getLevel() + 1;
         } else {
             level_ = var->getLevel();
         }
@@ -36,7 +36,7 @@ class Operation : public Value {
 
         if (op == OpCodeEn::convolve) {
             shift_parameter_ = shift;
-            level_           = large_arr->getLevel() + 1;
+            level_ = large_arr->getLevel() + 1;
         } else {
             print_error("unknown convolve op");
         }
@@ -57,7 +57,7 @@ class Operation : public Value {
         commonSetup(op, maxDSVar(var_a, var_b));
 
         type_ = maxTypeVar(var_a, var_b)->getType();
-        type_ = isComparsion(op) && !isUnknownTy(type_) ? TypeEn::int1_jty : type_;
+        type_ = isComparison(op) && !isUnknownTy(type_) ? TypeEn::int1_jty : type_;
 
         level_ = maxLevelVar(var_a, var_b)->getLevel();
 
@@ -72,8 +72,8 @@ class Operation : public Value {
     Operation(OpCodeEn op, Value* var_a, Value* var_b, Value* var_c, TypeEn target_type, bool rec_call = false)
         : Value() {
         commonSetup(op, maxDSVar(var_a, var_b));
-        type_             = target_type;
-        level_            = maxLevelVar(maxLevelVar(var_a, var_b), var_c)->getLevel();
+        type_ = target_type;
+        level_ = maxLevelVar(maxLevelVar(var_a, var_b), var_c)->getLevel();
         contain_rec_call_ = rec_call;
 
         operand_.push_back(var_a);
@@ -93,16 +93,16 @@ class Operation : public Value {
     // constructor of small array definition
     Operation(OpCodeEn op, stack<Value*>& args, TypeEn target_type) : Value() {
         size_t args_size = args.size();
-        op_code_         = op;
+        op_code_ = op;
 
         if (args.empty()) print_error("range() - invalid signature");
 
         if (op == OpCodeEn::smallArrayDef) {
             for (auto& i : args) operand_.push_back(i);
 
-            type_                = target_type;
+            type_ = target_type;
             data_structure_type_ = DataStructureTypeEn::kSmallArr;
-            length_              = int64_t(args_size);
+            length_ = int64_t(args_size);
 
             level_ = 0;
         } else if (op == OpCodeEn::smallArrayRange) {
@@ -118,9 +118,9 @@ class Operation : public Value {
     }
 
     void commonSetup(OpCodeEn op, Value* var) {
-        op_code_             = op;
+        op_code_ = op;
         data_structure_type_ = var->getDSType();
-        length_              = var->getLength();
+        length_ = var->getLength();
     }
 
     int64_t getSliceParameter() const {
@@ -170,20 +170,20 @@ class Operation : public Value {
     OpCodeEn op_code_ = OpCodeEn::none_op;
 
     // convolve params
-    int64_t shift_parameter_      = 0;
+    int64_t shift_parameter_ = 0;
     int64_t decimation_parameter_ = 0;
 
     bool contain_rec_call_ = false;
 
-    const std::string ar_sym_[14]  = {"+", "+.", "-", "-.", "*", "*.", "/", "/", "/.", "%", "%", "%.", "**", "**."};
+    const std::string ar_sym_[14] = {"+", "+.", "-", "-.", "*", "*.", "/", "/", "/.", "%", "%", "%.", "**", "**."};
     const std::string ar_comp_[17] = {
         "==", "!=", " ugt ", " uge ", " ult ", " ule ",  ">",  ">=", " less ",
         "<=", "==", "!=",    ">",     ">=",    " less ", "<=", "_",
     };
-    const std::string ar_t_conv_[10]  = {"trunc", "zext",   "sext",   "fptrunc", "fpext",
+    const std::string ar_t_conv_[10] = {"trunc", "zext",   "sext",   "fptrunc", "fpext",
                                         "fptoi", "fptosi", "uitofp", "sitofp",  "common_cast"};
     const std::string ar_built_in_[6] = {"log", "log2", "log10", "cos", "sin", "exp"};
-    const std::string ar_slice_[2]    = {"decimation", "shift"};
+    const std::string ar_slice_[2] = {"decimation", "shift"};
 
     std::string txtArOp(OpCodeEn op_code) const { return ar_sym_[((int)op_code - (int)TypeOpCodeEn::arithetic)]; }
     std::string txtCompOp(OpCodeEn op_code) const { return ar_comp_[((int)op_code - (int)TypeOpCodeEn::comparsion)]; }
@@ -194,20 +194,20 @@ class Operation : public Value {
     std::string txtSliceOp(OpCodeEn op_code) const { return ar_slice_[((int)op_code - (int)TypeOpCodeEn::slice_op)]; }
 };
 
-Value* newInvOperation(GarbageContainer* garbage_container, Value* arg);
+// Value* newInvOperation(GarbageContainer* garbage_container, Value* arg);
 Value* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn target_type, Value* arg, OpCodeEn op_type);
 Value* newIntegrateOperation(GarbageContainer* garbage_container, Value* value);
 Value* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn target_type, Value* arg_a, Value* arg_b,
                               OpCodeEn op_type);
-Value* newComparisonOperation(GarbageContainer* garbageContainer, TypeEn target_type, Value* arg_a, Value* arg_b,
+Value* newComparisonOperation(GarbageContainer* garbage_container, TypeEn target_type, Value* arg_a, Value* arg_b,
                               OpCodeEn op_type);
-Value* newConvolveOperation(GarbageContainer* garbageContainer, TypeEn target_type, Value* arg1, Value* arg_b,
+Value* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target_type, Value* arg1, Value* arg_b,
                             int64_t shift = 0, OpCodeEn op_type = OpCodeEn::convolve);
 Value* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, Value* arg);
 Value* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, Value* arg_a, Value* arg_b, Value* arg_c,
                    bool rec_call = false);
-Value* newSliceOp(GarbageContainer* garbageContainer, Value* arg_a, Value* arg_b, OpCodeEn op_type);
-Value* newSliceOp(GarbageContainer* garbageContainer, Value* arg_a, int64_t int_val, OpCodeEn type_op);
+// Value* newSliceOp(GarbageContainer* garbage_container, Value* arg_a, Value* arg_b, OpCodeEn op_type);
+// Value* newSliceOp(GarbageContainer* garbage_container, Value* arg_a, int64_t int_val, OpCodeEn type_op);
 Value* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<Value*>& args,
                           OpCodeEn op_type = OpCodeEn::smallArrayDef, bool is_template = false);
 

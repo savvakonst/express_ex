@@ -131,28 +131,28 @@ enum class OpCodeEn
 
 enum class TypeOpCodeEn
 {
-    inv           = (int)OpCodeEn::neg,
-    arithetic     = (int)OpCodeEn::add,
-    comparsion    = (int)OpCodeEn::eq,
-    bitwise       = (int)OpCodeEn::LSHL,
-    type_conv     = (int)OpCodeEn::trunc,
-    convolve_op   = (int)OpCodeEn::convolve,
-    integrate_op  = (int)OpCodeEn::integrate,
-    slice_op      = (int)OpCodeEn::decimation,
+    inv = (int)OpCodeEn::neg,
+    arithetic = (int)OpCodeEn::add,
+    comparsion = (int)OpCodeEn::eq,
+    bitwise = (int)OpCodeEn::LSHL,
+    type_conv = (int)OpCodeEn::trunc,
+    convolve_op = (int)OpCodeEn::convolve,
+    integrate_op = (int)OpCodeEn::integrate,
+    slice_op = (int)OpCodeEn::decimation,
     storeToBuffer = (int)OpCodeEn::storeToBuffer,
     smallArrayDef = (int)OpCodeEn::smallArrayDef,
-    builtInFunc   = (int)OpCodeEn::log,
+    builtInFunc = (int)OpCodeEn::log,
 
-    invEnd           = arithetic,
-    arithetic_end    = comparsion,
-    comparsion_end   = bitwise,
-    bitwise_end      = type_conv,
-    typeConvEnd      = convolve_op,
-    convolve_op_end  = (int)OpCodeEn::convolve_f + 1,
+    invEnd = arithetic,
+    arithetic_end = comparsion,
+    comparsion_end = bitwise,
+    bitwise_end = type_conv,
+    typeConvEnd = convolve_op,
+    convolve_op_end = (int)OpCodeEn::convolve_f + 1,
     integrate_op_end = (int)OpCodeEn::integrate + 1,
     smallArrayDefEnd = (int)OpCodeEn::smallArrayRange + 1,
-    slice_opEnd      = (int)OpCodeEn::shift + 1,
-    builtInFuncEnd   = (int)OpCodeEn::exp + 1
+    slice_opEnd = (int)OpCodeEn::shift + 1,
+    builtInFuncEnd = (int)OpCodeEn::exp + 1
 };
 
 enum class NodeTypeEn
@@ -169,11 +169,11 @@ inline bool isInv(OpCodeEn x) {
     auto t = (TypeOpCodeEn)x;
     return (t < TypeOpCodeEn::invEnd);
 }
-inline bool isArithetic(OpCodeEn x) {
+inline bool isArithmetic(OpCodeEn x) {
     auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::arithetic <= t) && (t < TypeOpCodeEn::arithetic_end);
 }
-inline bool isComparsion(OpCodeEn x) {
+inline bool isComparison(OpCodeEn x) {
     auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::comparsion <= t) && (t < TypeOpCodeEn::comparsion_end);
 }

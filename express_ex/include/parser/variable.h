@@ -53,8 +53,8 @@ class Value : public SmallArr {
     ParameterIfs* getParameter() const { return parameter_; }
 
     llvm::Value* getIRValue(IRGenerator& builder, int64_t parent_level);
-    llvm::Value* getIRValueBasePtr(IRGenerator& builder, int64_t parent_level);
-    llvm::Value* getIRValuePtr(IRGenerator& builder, int64_t parent_level);
+    llvm::Value* getIRValueBasePtr(IRGenerator& builder, int64_t parent_level) const;
+    llvm::Value* getIRValuePtr(IRGenerator& builder, int64_t parent_level) const;
 
     virtual NodeTypeEn getNodeType() const { return NodeTypeEn::kValue; }
     virtual Value* getAssignedVal(bool deep = false) { return this; }
@@ -117,26 +117,26 @@ class Value : public SmallArr {
             return arg;
     }
 
-    bool is_unused_  = true;
+    bool is_unused_ = true;
     bool is_visited_ = false;
     bool is_buffered = false;
 
-    bool is_returned_    = false;
+    bool is_returned_ = false;
     bool is_initialized_ = false;
 
     DataStructureTypeEn data_structure_type_ = DataStructureTypeEn::kConstant;
 
-    TypeEn type_      = TypeEn::DEFAULT_JTY;
+    TypeEn type_ = TypeEn::DEFAULT_JTY;
     TypeEn temp_type_ = TypeEn::DEFAULT_JTY;
 
     std::string text_value_;
     std::string unique_name_;
 
-    int64_t length_     = 1;
+    int64_t length_ = 1;
     int64_t decimation_ = 0;
-    int64_t level_      = 0;
+    int64_t level_ = 0;
 
-    uint64_t left_buffer_length_  = 0;
+    uint64_t left_buffer_length_ = 0;
     uint64_t right_buffer_length_ = 0;
 
     int64_t buffer_length_ = 0;
@@ -146,10 +146,10 @@ class Value : public SmallArr {
 
     uint64_t buffer_num_ = 0;  // unused
 
-    llvm::Value* IR_value_               = nullptr;
+    llvm::Value* IR_value_ = nullptr;
     llvm::Value* IR_loaded_buffer_value_ = nullptr;
-    llvm::Value* IR_buffer_ptr_          = nullptr;
-    llvm::Value* IR_buffer_base_ptr_     = nullptr;
+    llvm::Value* IR_buffer_ptr_ = nullptr;
+    llvm::Value* IR_buffer_base_ptr_ = nullptr;
 
     ParameterIfs* parameter_ = nullptr;
     friend class TailCallDirectiveTemplate;

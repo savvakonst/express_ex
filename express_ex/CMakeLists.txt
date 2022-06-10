@@ -6,7 +6,7 @@ project(express_ex)
 
 SET(IS_SHARED false)
 
-if( NOT CMAKE_CL_64 )
+if( NOT  CMAKE_CL_64 )
     set(SPlatform  x86)
     set(APlarform  Win32)
 else()
@@ -19,8 +19,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 
-set(CLHPP       C:/Users/SVK/Desktop/openCl/khronos/OpenCL-CLHPP/include) 
-set(cudaPath    C:/Program\ Files/NVIDIA\ GPU\ Computing\ Toolkit/CUDA/v11.0)
+set(CLHPP       "C:/Users/SVK/Desktop/openCl/khronos/OpenCL-CLHPP/include") 
+set(cudaPath    "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0")
 set(openCL_includeDir  ${cudaPath}/include)
 
 set(EGrammarDir ../EGrammar)
@@ -58,10 +58,31 @@ source_group( "EGrammar\\sources"   FILES ${EGrammar} )
 
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 
-set_target_properties(express_ex        PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY_DEBUG      "Debug"
-    RUNTIME_OUTPUT_DIRECTORY_RELEASE    "Release"
-)
+
+#set_target_properties(express_ex        PROPERTIES
+#    RUNTIME_OUTPUT_DIRECTORY_DEBUG      "Debug"
+#    RUNTIME_OUTPUT_DIRECTORY_RELEASE    "Release"
+#    LIBRARY_OUTPUT_DIRECTORY_DEBUG      "Debug"
+#    LIBRARY_OUTPUT_DIRECTORY_RELEASE    "Debug"
+#)
+#
+#	LIBRARY_OUTPUT_DIRECTORY_DEBUG      "Debug"
+#	LIBRARY_OUTPUT_DIRECTORY_RELEASE    "Debug"
+#
+
+
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+#set(CONAN_CONFIG_DIR ${CMAKE_SOURCE_DIR}/../conan/cmake)
+#include(${CONAN_CONFIG_DIR}/conanbuildinfo_multi.cmake)
+#conan_basic_setup(TARGETS)
+
+
+add_subdirectory(io_ex)
+target_link_libraries(express_ex io_ex)
 
 if(MSVC) 
 
@@ -157,8 +178,8 @@ if(MSVC)
 
     
     set(openCL_libDir ${cudaPath}/lib/${APlarform})
-    SET(llvmLibPath   ${llvmDir}/build_${SPlatform}/$<CONFIG>/lib)
-    SET(antlrLibPath  ${antlr4Dir}/bin/vs-2019/${SPlatform}/$<CONFIG>\ DLL)
+    set(llvmLibPath   ${llvmDir}/build_${SPlatform}/$<CONFIG>/lib)
+    set(antlrLibPath  ${antlr4Dir}/bin/vs-2019/${SPlatform}/$<CONFIG>\ DLL)
 
     target_link_directories(express_ex PUBLIC 
         ${antlrLibPath}
@@ -168,6 +189,8 @@ if(MSVC)
 
 
     target_link_libraries(express_ex ${ObjNames} antlr4-runtime )
+
+
 
 
     SET(commonMSVC_Definitions 

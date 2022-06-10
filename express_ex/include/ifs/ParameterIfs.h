@@ -1,6 +1,6 @@
 #ifndef PARAMETERIFS_H
 #define PARAMETERIFS_H
-#include <algorithm >
+#include <algorithm>
 #include <complex>
 #include <fstream>
 #include <iostream>
@@ -56,13 +56,12 @@ enum class PrmTypesEn : uint64_t
     PRM_TYPE_UNKNOWN = 0xffff
 };
 
-typedef struct {
+struct TimeInterval {
     double bgn = 0.0;
     double end = 0.0;
-    int64_t offs = 0;  // this is duplicated rudiment
-} TimeInterval;
+};
 
-typedef struct {
+struct DataInterval {
     union {
         int64_t int_type_representation;
         PrmTypesEn type;
@@ -75,13 +74,13 @@ typedef struct {
     TimeInterval time_interval;
     std::string file_name;
     bool local;
-} DataInterval;
+};
 
-typedef struct {
+struct Dot {
     double val_max;
     double val_min;
     double time;
-} Dot;
+};
 
 inline size_t sizeOfTy(const PrmTypesEn arg) { return ((uint64_t)arg) & 0xf; }
 
@@ -127,15 +126,34 @@ inline TimeInterval operator||(DataInterval a, DataInterval b) {
     return {0.0};
 }
 
-inline DataInterval createSyncIntervalByFrequency(TimeInterval time_interval, double frequency, PrmTypesEn target_ty,
-                                                  const std::string& filename = "", bool local = true) {
+inline DataInterval createSyncIntervalByFrequency(TimeInterval time_interval, int64_t frequency, PrmTypesEn target_ty,
+                                                  int64_t offset = 0, const std::string& filename = "",
+                                                  bool local = true) {
     DataInterval interval{};
 
     interval.type = target_ty;
     interval.offs = 0;
 
-    interval.size = sizeOfTy(target_ty) * (int64_t)((time_interval.end - time_interval.bgn) * frequency);
-    interval.frequency = frequency;
+    constexpr auto tick_size = 1024;
+    auto begin = int64_t(time_interval.bgn * tick_size);
+    auto end = int64_t(time_interval.end * tick_size);
+
+    auto tick_begin = tick_size * (begin / tick_size);
+
+    if (frequency > tick_size) {
+        interval.size = int64_t(sizeOfTy(target_ty)) * (end - begin + 1) * (frequency / tick_size);
+        std::cout << "interval.size: " << interval.size << ": " << (end - begin + 1);
+    } else {
+        auto tmp = (end - tick_begin + 1) * frequency;
+        auto len = tmp / tick_size + ((tmp % tick_size) > 0);
+
+        tmp = (begin % tick_size) * frequency;
+        len -= tmp / tick_size + ((tmp % tick_size) > 0);
+
+        interval.size = int64_t(sizeOfTy(target_ty)) * len;
+    }
+
+    interval.frequency = double(frequency);
     interval.time_interval = time_interval;
 
     interval.file_name = filename;
@@ -193,23 +211,6 @@ inline DataInterval createSyncInterval(const DataInterval& src, PrmTypesEn targe
     return interval;
 }
 
-inline DataInterval createSyncIntervalBySize(TimeInterval time_interval, double frequency, PrmTypesEn target_ty,
-                                             const std::string& filename = "", bool local = true) {
-    DataInterval interval{};
-
-    interval.type = target_ty;
-    interval.offs = 0;
-
-    interval.size = sizeOfTy(target_ty) * (int64_t)((time_interval.end - time_interval.bgn) * frequency);
-    interval.frequency = frequency;
-    interval.time_interval = time_interval;
-
-    interval.file_name = filename;
-    interval.local = local;
-
-    return interval;
-}
-
 inline DataInterval createAsyncIntervalBySize(TimeInterval time_interval, int64_t size, PrmTypesEn target_ty,
                                               const std::string& filename = "", bool local = true) {
     DataInterval interval{};
@@ -225,6 +226,25 @@ inline DataInterval createAsyncIntervalBySize(TimeInterval time_interval, int64_
 
     return interval;
 }
+
+/* std::pair<uint64_t, uint64_t> getBorders(const DataInterval& di) {
+    constexpr auto tick_size = 1024;
+
+    auto begin = int64_t(di.time_interval.bgn * tick_size);
+    auto frequency = int64_t(di.frequency);
+
+    if (frequency > tick_size) {
+        begin + sizeOfTy(di.type) * frequency / tick_size;
+    }
+
+    auto offset = begin % tick_size
+
+                  auto end = di.size / int64_t(sizeOfTy(di.type));
+
+    return {
+        begin,
+    };
+}*/
 
 typedef void (*calcMinMaxTy)(char* carg, int64_t Number, double& dmax, double& dmin, bool init);
 

@@ -6,7 +6,8 @@
 #include "parser/defWarningIgnore.h"
 #include "parser/undefWarningIgnore.h"
 
-AsyncParameter::AsyncParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_file_names) {
+AsyncParameter::AsyncParameter(const std::string& name, const std::vector<DataInterval>& interval_list,
+                               bool save_file_names) {
     name_                = name;
     parent_parameter_    = this;
     interval_list_       = interval_list;
@@ -30,7 +31,7 @@ AsyncParameter::AsyncParameter(std::string name, const std::vector<DataInterval>
     time_interval_ = {bgn, end};
 }
 
-AsyncParameter::AsyncParameter(std::string name, const TimeInterval& time_interval,
+AsyncParameter::AsyncParameter(const std::string& name, const TimeInterval& time_interval,
                                const std::vector<DataInterval>& interval_list, bool save_file_names)
     : AsyncParameter(name, interval_list, save_file_names) {
     parent_parameter_ = this;

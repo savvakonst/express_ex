@@ -163,12 +163,12 @@ std::string Value::printSmallArray() {
 ///
 llvm::Value* Value::getIRValue(IRGenerator& builder, int64_t parent_level) {
     llvm::Value* ret = nullptr;
-    if (isBuffered() & (parent_level != level_)) {
-        if (!builder.CheckExistence(IR_buffer_base_ptr_)) {
+    if (isBuffered() && (parent_level != level_)) {
+        if (!builder.checkExistence(IR_buffer_base_ptr_)) {
             IR_buffer_ptr_ = builder.createPositionalInBoundsGep(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(),
-                                                                 "offset_incr");
-            IR_loaded_buffer_value_ = builder.createPositionalLoad(IR_buffer_ptr_, "buffer_");
-            builder.AddInitializedValue(IR_buffer_base_ptr_);
+                                                                 "offset_val_incr_");
+            IR_loaded_buffer_value_ = builder.createPositionalLoad(IR_buffer_ptr_, true, "buffer_val_");
+            builder.addInitializedValue(IR_buffer_base_ptr_);
         }
         ret = IR_loaded_buffer_value_;
     } else
@@ -179,13 +179,31 @@ llvm::Value* Value::getIRValue(IRGenerator& builder, int64_t parent_level) {
     return ret;
 }
 
-llvm::Value* Value::getIRValueBasePtr(IRGenerator& builder, int64_t parent_level) const {
+llvm::Value* Value::getIrValueBasePtr(IRGenerator& builder, int64_t parent_level) {
+    if (isBuffered() && (parent_level != level_)) {
+        if (!builder.checkExistence(IR_buffer_base_ptr_)) {
+            IR_buffer_ptr_ = builder.createPositionalInBoundsGep(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(),
+                                                                 "offset_val_incr_");
+            IR_loaded_buffer_value_ = builder.createPositionalLoad(IR_buffer_ptr_, true, "buffer_val_");
+            builder.addInitializedValue(IR_buffer_base_ptr_);
+        }
+    }
+
     auto ret = isBuffered() ? IR_buffer_base_ptr_ : nullptr;
     if (ret == nullptr) print_IR_error("getIRValueBasePtr - is nullptr :" + getUniqueName());
     return ret;
 }
 
-llvm::Value* Value::getIRValuePtr(IRGenerator& builder, int64_t parent_level) const {
+llvm::Value* Value::getIrValuePtr(IRGenerator& builder, int64_t parent_level) {
+    if (isBuffered() && (parent_level != level_)) {
+        if (!builder.checkExistence(IR_buffer_base_ptr_)) {
+            IR_buffer_ptr_ = builder.createPositionalInBoundsGep(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(),
+                                                                 "offset_val_incr_");
+            IR_loaded_buffer_value_ = builder.createPositionalLoad(IR_buffer_ptr_, true, "buffer_val_");
+            builder.addInitializedValue(IR_buffer_base_ptr_);
+        }
+    }
+
     auto ret = isBuffered() ? IR_buffer_ptr_ : nullptr;
     if (ret == nullptr) print_IR_error("getIRValuePtr - is nullptr :" + getUniqueName());
     return ret;

@@ -102,6 +102,8 @@ void SelectOperation::setupIR(IRGenerator& builder) {
         builder.setCalcInsertPoint();
     } else
         IR_value_ = builder.CreateSelect(ir_op_a, ir_op_b, ir_op_c, getUniqueName());
+
+    finishSetupIR(builder);
 }
 
 void SelectOperation::calculate() {

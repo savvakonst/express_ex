@@ -493,7 +493,7 @@ void Operation::smallArray(Value* arg1) {
 
 void Operation::setupIR(IRGenerator& builder) {
 #define OP(i) (operand_[(i)]->getAssignedVal(true)->getIRValue(builder, level_))
-#define OP_PTR(i) (operand_[(i)]->getAssignedVal(true)->getIRValuePtr(builder, level_))
+#define OP_PTR(i) (operand_[(i)]->getAssignedVal(true)->getIrValuePtr(builder, level_))
 
     if (isArithmetic(op_code_)) {
         IR_value_ = builder.createArithmetic(OP(0), OP(1), op_code_, getUniqueName());
@@ -544,7 +544,8 @@ void Operation::setupIR(IRGenerator& builder) {
             is_initialized_ = true;
         }
         builder.setStoreInsertPoint();
-        IR_buffer_ptr_ = builder.CreateInBoundsGEP(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(), "offset_incr");
+        IR_buffer_ptr_ =
+            builder.CreateInBoundsGEP(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(), "offset_op_old_incr_");
         builder.createPositionalStore(IR_value_, IR_buffer_ptr_);
     }
 

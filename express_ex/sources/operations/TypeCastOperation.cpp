@@ -100,5 +100,6 @@ void TypeCastOperation::setupIR(IRGenerator& builder) {
 void TypeCastOperation::calculate() {
     int length = (int)length_;
     auto op_a = operand_[0]->getAssignedVal(true);
+
     buffer_ptr_ = calcTypeConvSmallArray(type_, op_a->getType(), buffer_ptr_, op_a->getBufferPtr(), length);
 }

@@ -112,7 +112,7 @@ bool SubBlock::generateIR(IRGenerator& builder, CycleStageEn type, const std::st
         builder.CreateCondBr(builder.getCurrentCMPRes(), builder.getLoadBlock(), bb_intermediate);
     }
 
-    builder.ClearInitializedValueList();
+    builder.clearInitializedValueList();
 
     builder.setIntermediateInsertPoint(bb_intermediate);
     builder.setLoadInsertPoint(bb_load);
@@ -297,7 +297,7 @@ bool Block::generateIR(IRGenerator& builder, CycleStageEn type, const std::strin
             builder.CreateBr(bb_intermediate);
         }
 
-        builder.ClearInitializedValueList();
+        builder.clearInitializedValueList();
 
         builder.setIntermediateInsertPoint(bb_intermediate);
         // builder.SetOffsetToZero();
@@ -448,7 +448,7 @@ Table::~Table() {
 
 // add Value to table_
 void Table::setUint(Value* var) {
-    auto varLength = var->getLength();
+    auto var_length = var->getLength();
     if (isConst(var)) {
         const_list_.push(var);
         return;
@@ -458,7 +458,7 @@ void Table::setUint(Value* var) {
         return;
     }
     for (auto i : column_list_)
-        if (i->getLength() == varLength) {
+        if (i->getLength() == var_length) {
             i->setUint(var);
             return;
         }
@@ -606,17 +606,17 @@ llvm::Function* CreateConvolveFunction(llvm::Module* M, TypeEn type) {
 
     IRGenerator builder(context, nullptr);
 
-    auto currentType = builder.getLLVMType(type);
+    auto current_type = builder.getLLVMType(type);
 
     llvm::Function* function = llvm::Function::Create(
         llvm::FunctionType::get(
-            currentType,
-            {currentType->getPointerTo(), currentType->getPointerTo(), builder.getInt64Ty(), builder.getInt64Ty()},
+            current_type,
+            {current_type->getPointerTo(), current_type->getPointerTo(), builder.getInt64Ty(), builder.getInt64Ty()},
             false),
         llvm::Function::ExternalLinkage, "convolveFunction", M);
 
-    llvm::BasicBlock* bb_Entry = llvm::BasicBlock::Create(context, "entry_block", function);
-    llvm::BasicBlock* bb_LoopBody = llvm::BasicBlock::Create(context, "loop_body_block", function);
+    llvm::BasicBlock* bb_entry = llvm::BasicBlock::Create(context, "entry_block", function);
+    llvm::BasicBlock* bb_loop_body = llvm::BasicBlock::Create(context, "loop_body_block", function);
     llvm::BasicBlock* bb_exit = llvm::BasicBlock::Create(context, "exit_block", function);
 
     auto offset = function->getArg(3);
@@ -624,11 +624,11 @@ llvm::Function* CreateConvolveFunction(llvm::Module* M, TypeEn type) {
     auto small_arr_base_ptr = function->getArg(1);
 
     // entry_block
-    builder.SetInsertPoint(bb_Entry);
-    auto big_arr_base_ptr = builder.CreateInBoundsGEP(function->getArg(0), offset);
+    builder.SetInsertPoint(bb_entry);
+    auto big_arr_base_ptr = builder.CreateInBoundsGEP(function->getArg(0), offset, "big_arr_base_ptr");
 
     auto index_ptr = builder.CreateAlloca(builder.getInt64Ty(), nullptr, "index_ptr");
-    auto sum_ptr = builder.CreateAlloca(currentType, nullptr, "sum_ptr");
+    auto sum_ptr = builder.CreateAlloca(current_type, nullptr, "sum_ptr");
 
     int64_t zero = 0;
     double one = 0;
@@ -636,10 +636,10 @@ llvm::Function* CreateConvolveFunction(llvm::Module* M, TypeEn type) {
 
     builder.CreateStore(builder.createConst(zero, type), sum_ptr);
     builder.CreateStore(builder.getInt64(0), index_ptr);
-    builder.CreateBr(bb_LoopBody);
+    builder.CreateBr(bb_loop_body);
 
     // loop_body_block
-    builder.SetInsertPoint(bb_LoopBody);
+    builder.SetInsertPoint(bb_loop_body);
 
     auto index = builder.CreateLoad(index_ptr, "index");
     auto next_index = builder.CreateAdd(index, builder.getInt64(1), "next_index");
@@ -664,12 +664,13 @@ llvm::Function* CreateConvolveFunction(llvm::Module* M, TypeEn type) {
     builder.CreateStore(next_sum, sum_ptr);
     builder.CreateStore(next_index, index_ptr);
     auto cond = builder.CreateICmpSLT(next_index, num_of_samples);
-    builder.CreateCondBr(cond, bb_LoopBody, bb_exit);
+    builder.CreateCondBr(cond, bb_loop_body, bb_exit);
 
     // exit_block
     builder.SetInsertPoint(bb_exit);
 
     auto return_val = builder.CreateLoad(sum_ptr);
+
     builder.CreateRet(return_val);
 
     return function;
@@ -764,7 +765,7 @@ bool Table::generateIRInGroup(Group& group, uint32_t index) {
     builder.dropBaseInsertPoint();
 
     llvm::Value* glob_index_alloca = builder.createPositionalOffsetAlloca("glob_index_alloca", 0);
-    builder.createPositionalOffsetAlloca("common_offset_alloca", 0);
+    builder.createPositionalOffsetAlloca("common_offset_alloca_", 0);
 
     builder.setLoopEnterInsertPoint(bb_loop_enter);
     llvm::Value* glob_index = builder.CreateLoad(glob_index_alloca, "glob_index");
@@ -955,8 +956,8 @@ void Line::setupIR(IRGenerator& builder) {
                 is_initialized_ = true;
             }
             IR_buffer_ptr_ = builder.createPositionalInBoundsGep(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(),
-                                                                 "offset_arg_incr");
-            IR_value_ = builder.createPositionalLoad(IR_buffer_ptr_, "arg_buffer_");
+                                                                 "offset_arg_incr_");
+            IR_value_ = builder.createPositionalLoad(IR_buffer_ptr_, true, "arg_buffer_val_");
         }
     }
 }
@@ -992,7 +993,8 @@ void CallRecursiveFunction::setupIR(IRGenerator& builder) {
             is_initialized_ = true;
         }
         builder.setStoreInsertPoint();
-        IR_buffer_ptr_ = builder.CreateInBoundsGEP(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(), "offset_incr");
+        IR_buffer_ptr_ =
+            builder.CreateInBoundsGEP(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(), "offset_cr_incr_");
         builder.createPositionalStore(IR_value_, IR_buffer_ptr_);
     }
 }

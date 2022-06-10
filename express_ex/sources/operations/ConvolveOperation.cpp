@@ -13,12 +13,12 @@ Value* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target_t
             newArithmeticOperation(garbage_container, target_type, arg_a, arg_b, OpCodeEn::mul));
     }
     if (isSmallArr(arg_a) && isSmallArr(arg_b)) {
-        return garbage_container->add(new ConvolveOperation(op_type, arg_a, arg_b, shift));
+        return garbage_container->add(new ConvolveOperation(arg_a, arg_b, shift));
         // print_error("convolve(SmallArr_t,SmallArr_t) - is not supported yet");
     }
     if (isSmallArr(arg_a) != isSmallArr(arg_b)) {
-        if (isSmallArr(arg_b)) return garbage_container->add(new ConvolveOperation(op_type, arg_a, arg_b, shift));
-        return garbage_container->add(new ConvolveOperation(op_type, arg_b, arg_a, shift));
+        if (isSmallArr(arg_b)) return garbage_container->add(new ConvolveOperation(arg_a, arg_b, shift));
+        return garbage_container->add(new ConvolveOperation(arg_b, arg_a, shift));
     }
     if (isLargeArr(arg_a) && isLargeArr(arg_b)) {
         print_error("convolve(LargeArr_t,LargeArr_t) - is not supported");
@@ -85,13 +85,17 @@ std::string ConvolveOperation::printUint() {
 }
 
 void ConvolveOperation::setupIR(IRGenerator& builder) {
-    auto ir_op_a_ptr = operand_[0]->getAssignedVal(true)->getIRValuePtr(builder, level_);
+    auto ir_op_a_ptr = operand_[0]->getAssignedVal(true)->getIrValuePtr(builder, level_);
 
-    auto second_op = operand_[1]->getAssignedVal(true);
-    auto length = second_op->getLength();
+    auto op_b = operand_[1]->getAssignedVal(true);
+    auto length = op_b->getLength();
 
-    IR_value_ = builder.createConvolve(ir_op_a_ptr, second_op->getBufferPtr(), length, -(length / 2 + shift_parameter_),
-                                       type_, getUniqueName());
+    auto buffer_ptr = op_b->getBufferPtr();
+
+    IR_value_ = builder.createConvolve(ir_op_a_ptr, buffer_ptr, length, -(length / 2 + shift_parameter_), type_,
+                                       getUniqueName());
+
+    finishSetupIR(builder);
 }
 
 void ConvolveOperation::calculate() {

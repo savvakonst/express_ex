@@ -1,6 +1,6 @@
 #ifndef BLOCK_H
 #define BLOCK_H
-
+ 
 #include <iostream>
 #include <map>
 #include <set>
@@ -260,15 +260,12 @@ class Table {
 class TableGenContext {
    public:
     TableGenContext(Table* arg) { table_ = arg; }
-    ~TableGenContext() {}
+    ~TableGenContext() = default;
 
-    uint64_t getUniqueIndex() {
-        unique_name_counter_++;
-        return (unique_name_counter_ - 3);
-    }
-    void setUint(Value* var) { table_->setUint(var); };
-    void setParameter(ParameterIfs* var) { table_->parameter_set_.insert(var); };
-    void setMaxBufferLength(int64_t length) {
+    uint64_t getUniqueIndex() { return unique_name_counter_++; }
+    void setUint(Value* var) const { table_->setUint(var); };
+    void setParameter(ParameterIfs* var) const { table_->parameter_set_.insert(var); };
+    void setMaxBufferLength(int64_t length) const {
         int64_t temp = (int64_t)1 << (int8_t)(floor(log2(length)) - 1);
         if (table_->max_buffer_length_ > temp) table_->max_buffer_length_ = temp;
     };

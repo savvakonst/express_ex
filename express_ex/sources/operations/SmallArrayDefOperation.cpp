@@ -106,6 +106,9 @@ void SmallArrayDefOperation::setupIR(IRGenerator& builder) {
 }
 
 void SmallArrayDefOperation::calculate() { /*do nothing*/
+    if (op_code_ == OpCodeEn::smallArrayDef) buffer_ptr_ = calcSmallArrayDef(type_, operand_);
+    else
+        smallArrayGen();
 }
 
 void SmallArrayDefOperation::smallArray() {

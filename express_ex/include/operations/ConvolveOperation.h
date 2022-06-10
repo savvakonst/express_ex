@@ -10,15 +10,11 @@ Value* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target_t
 
 class ConvolveOperation : public Operation_ifs {
    public:
-    ConvolveOperation(OpCodeEn op, Value* large_arr, Value* small_arr, int64_t shift) : Operation_ifs() {
-        commonSetup(op, maxDSVar(large_arr, small_arr));
+    ConvolveOperation(Value* large_arr, Value* small_arr, int64_t shift) : Operation_ifs() {
+        commonSetup(OpCodeEn::convolve, maxDSVar(large_arr, small_arr));
 
-        if (op == OpCodeEn::convolve) {
-            shift_parameter_ = shift;
-            level_ = large_arr->getLevel() + 1;
-        } else {
-            print_error("unknown convolve op");
-        }
+        shift_parameter_ = shift;
+        level_ = large_arr->getLevel() + 1;
 
         type_ = large_arr->getType();
         if (data_structure_type_ == DataStructureTypeEn::kLargeArr) length_ = large_arr->getLength();

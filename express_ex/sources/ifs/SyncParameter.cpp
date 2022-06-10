@@ -1,4 +1,5 @@
 #include <set>
+#include <utility>
 
 #include "Intervals.h"
 #include "ifs/parameterIO.h"
@@ -9,7 +10,7 @@
 #include "parser/undefWarningIgnore.h"
 
 SyncParameter::SyncParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_file_names) {
-    name_ = name;
+    name_ = std::move(name);
     // for (auto i : interval_list)
     //     interval_list_.push_back(i);
 
@@ -59,12 +60,13 @@ SyncParameter::SyncParameter(std::string name, const std::vector<DataInterval>& 
 
         last_interval = &i;
     }
+    if (current_chunk_) current_chunk_->addNextChunk(new FinishChunk());
     current_chunk_ = chunk_;
 }
 
 SyncParameter::SyncParameter(std::string name, const TimeInterval& time_interval,
                              const std::vector<DataInterval>& interval_list, bool save_file_names)
-    : SyncParameter(name, interval_list, save_file_names) {
+    : SyncParameter(std::move(name), interval_list, save_file_names) {
     time_interval_ = time_interval;
     calcExtendedInfo();
 }
@@ -124,18 +126,21 @@ uint64_t SyncParameter::write(char* data_buffer_ptr, uint64_t point_number) {
     }
     return written_bytes;
 }
-
+      
 uint64_t SyncParameter::read(char* data_buffer_ptr, uint64_t point_number) {
+
     ex_size_t bytes_to_read = point_number * sizeof_data_type_;
     ex_size_t readed_bytes = 0;
 
     while ((bytes_to_read != 0) && (current_chunk_ != nullptr)) {
         readed_bytes = current_chunk_->read(data_buffer_ptr, bytes_to_read);
+        data_buffer_ptr += readed_bytes;
         bytes_to_read -= readed_bytes;
         current_chunk_ = current_chunk_->getNextIfNoDataToRead();
     }
     return readed_bytes;
 }
+ 
 
 uint64_t SyncParameter::getVirtualSize() const {
     if (interval_list_.size() == 1) return ((uint64_t)interval_list_.front().size) / sizeof_data_type_;
@@ -159,7 +164,7 @@ ParameterIfs* SyncParameter::intersection(ParameterIfs* prm, PrmTypesEn target_t
         return nullptr;
     }
 
-    auto frequency = parameter_a->frequency_;
+    auto frequency = int64_t(parameter_a->frequency_);
     std::vector<DataInterval> ret;
 
     for (const auto& a : parameter_a->interval_list_) {
@@ -177,6 +182,15 @@ ParameterIfs* SyncParameter::intersection(ParameterIfs* prm, PrmTypesEn target_t
             }
         }
     }
+
+    int64_t offset = 0;
+    int64_t size = 0;
+    for (auto& i : ret) {
+        i.offs = offset + size;
+        offset = i.offs;
+        size = i.size;
+    }
+
     return new SyncParameter(name, time_interval_, ret);
 }
 

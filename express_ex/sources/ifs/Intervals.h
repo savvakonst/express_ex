@@ -26,7 +26,7 @@ class BareChunk {
         return getReadedData(size);
     }
 
-    BareChunk* addNextChunk(BareChunk* next_chunk) {
+    virtual BareChunk* addNextChunk(BareChunk* next_chunk) {
         next_chunk_ = next_chunk;
         return next_chunk_;
     }
@@ -95,6 +95,7 @@ class Chunk : public BareChunk {
         if (ifs_) {
             ifs_->close();
             delete ifs_;
+            ifs_ = nullptr;
         }
     }
 
@@ -119,6 +120,22 @@ class Chunk : public BareChunk {
     const std::string* work_directory_ = nullptr;
     std::fstream* ifs_ = nullptr;
     DataInterval* di_ = nullptr;
+};
+
+class FinishChunk : public BareChunk {
+   public:
+    FinishChunk() : BareChunk(1) { next_chunk_ = nullptr; }
+
+    ~FinishChunk() override = default;
+
+    virtual ex_size_t read(char* ptr, ex_size_t size) override {
+        memset(ptr, 0, size);
+        return size;
+    }
+
+    virtual ex_size_t write(char* ptr, ex_size_t size, calcMinMaxTy calcMinMaxPtr = nullptr) override { return size; }
+
+    BareChunk* addNextChunk(BareChunk* next_chunk) override { return nullptr; }
 };
 
 #endif

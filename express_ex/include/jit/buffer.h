@@ -25,12 +25,12 @@ enum class BufferTypeEn
 
 class Buffer {
    public:
-    Buffer(Value* var) {
-        length_           = var->getBufferLen();
-        left_offset_      = var->getLeftBufferLen();
-        right_offset_     = var->getRightBufferLen();
-        type_             = TypeEn::unknown_jty;
-        type_             = var->getType();
+    explicit Buffer(Value* var) {
+        length_ = var->getBufferLen();
+        left_offset_ = var->getLeftBufferLen();
+        right_offset_ = var->getRightBufferLen();
+        type_ = TypeEn::unknown_jty;
+        type_ = var->getType();
         sizeof_data_type_ = sizeOfTy(type_);
         setBufferAlloca();
     }
@@ -48,17 +48,17 @@ class Buffer {
     }
 
     void setBufferAlloca() {
-        ptr_        = new char[(size_t)(sizeof_data_type_ * (length_ + left_offset_ + right_offset_))];
-        left_ptr_   = ptr_ + sizeof_data_type_ * left_offset_;
+        ptr_ = new char[(size_t)(sizeof_data_type_ * (length_ + left_offset_ + right_offset_))];
+        left_ptr_ = ptr_ + sizeof_data_type_ * left_offset_;
         bottom_ptr_ = ptr_ + sizeof_data_type_ * (left_offset_ + right_offset_);
-        top_ptr_    = ptr_ + sizeof_data_type_ * length_;
+        top_ptr_ = ptr_ + sizeof_data_type_ * length_;
     }
 
     virtual BufferTypeEn getBufferType() { return BufferTypeEn::internal; }
 
     virtual std::string getName() { return "internal"; }
 
-    char* getPtr() { return left_ptr_; }
+    char* getPtr() const { return left_ptr_; }
 
     virtual int64_t close() { return 0; }
 
@@ -79,25 +79,25 @@ class Buffer {
     }
 
    protected:
-    TypeEn type_              = TypeEn::unknown_jty;
+    TypeEn type_ = TypeEn::unknown_jty;
     int64_t sizeof_data_type_ = -1;
-    int64_t length_           = -1;
-    int64_t left_offset_      = -1;
-    int64_t right_offset_     = -1;
+    int64_t length_ = -1;
+    int64_t left_offset_ = -1;
+    int64_t right_offset_ = -1;
 
-    char* ptr_             = nullptr;
-    char* left_ptr_        = nullptr;
-    char* bottom_ptr_      = nullptr;
-    char* top_ptr_         = nullptr;
+    char* ptr_ = nullptr;
+    char* left_ptr_ = nullptr;
+    char* bottom_ptr_ = nullptr;
+    char* top_ptr_ = nullptr;
     std::string link_name_ = std::string();
 };
 
 class InputBuffer : public Buffer {
    public:
-    InputBuffer(Value* var) : Buffer(var) { parameter_ = var->getParameter(); }
-    virtual ~InputBuffer() {}
+    explicit InputBuffer(Value* var) : Buffer(var) { parameter_ = var->getParameter(); }
+    ~InputBuffer() override = default;
 
-    virtual int64_t init() {
+    int64_t init() override {
         std::memset(ptr_, 0, (size_t)(sizeof_data_type_ * (length_ + left_offset_ + right_offset_)));
         parameter_->open(false);
         // parameter_->read(ptr_, left_offset_ + length_ + right_offset_);
@@ -105,20 +105,20 @@ class InputBuffer : public Buffer {
         return 0;
     }
 
-    virtual int64_t update() {
+    int64_t update() override {
         std::memcpy(ptr_, top_ptr_, (size_t)((left_offset_ + right_offset_) * sizeof_data_type_));
         parameter_->read(bottom_ptr_, length_);
         return 0;
     }
 
-    virtual int64_t close() {
+    int64_t close() override {
         parameter_->close();
         return 0;
     }
 
-    virtual BufferTypeEn getBufferType() { return BufferTypeEn::input; }
+    BufferTypeEn getBufferType() override { return BufferTypeEn::input; }
 
-    virtual std::string getName() { return parameter_->getName(); }
+    std::string getName() override { return parameter_->getName(); }
 
    protected:
     ParameterIfs* parameter_ = nullptr;
@@ -126,34 +126,34 @@ class InputBuffer : public Buffer {
 
 class OutputBuffer : public Buffer {
    public:
-    OutputBuffer(Value* var) : Buffer(var) { parameter_ = var->getParameter(); }
+    explicit OutputBuffer(Value* var) : Buffer(var) { parameter_ = var->getParameter(); }
 
-    virtual ~OutputBuffer() { delete parameter_; }
+    ~OutputBuffer() override { delete parameter_; }
 
     void addParameter(SyncParameter* parameter) { parameter_ = parameter; }
 
-    virtual int64_t init() {
+    int64_t init() override {
         parameter_->open(true);
         return 0;
     }
 
-    virtual int64_t update() {
+    int64_t update() override {
         parameter_->write(ptr_, length_);
         return 0;
     }
 
-    virtual int64_t close() {
+    int64_t close() override {
         parameter_->close();
         return 0;
     }
 
-    virtual BufferTypeEn getBufferType() { return BufferTypeEn::output; }
+    BufferTypeEn getBufferType() override { return BufferTypeEn::output; }
 
-    virtual std::string getName() { return parameter_->getName(); }
+    std::string getName() override { return parameter_->getName(); }
 
    protected:
     ParameterIfs* parameter_ = nullptr;
-    std::string link_name_   = "";
+    std::string link_name_;
 };
 
 #endif

@@ -13,10 +13,11 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
    public:
     AsyncParameter(const AsyncParameter& c) : ParameterIfs(c) { parent_parameter_ = this; }
     AsyncParameter() { parent_parameter_ = this; }
-    AsyncParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_file_names);
-    AsyncParameter(std::string name, const TimeInterval& time_interval, const std::vector<DataInterval>& interval_list,
+    AsyncParameter(const std::string &name, const std::vector<DataInterval>& interval_list, bool save_file_names);
+    AsyncParameter(const std::string& name, const TimeInterval& time_interval,
+                   const std::vector<DataInterval>& interval_list,
                    bool save_file_names = true);
-
+     
     ~AsyncParameter() override;
 
     bool isAsync() override { return true; }

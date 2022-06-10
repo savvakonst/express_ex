@@ -24,13 +24,13 @@ class IRGenerator : public llvm::IRBuilder<> {
     IRGenerator(llvm::LLVMContext& context, Table* table, bool is_pure_function = false);
     ~IRGenerator();
 
-    bool CheckExistence(llvm::Value* var) {
+    bool checkExistence(llvm::Value* var) const {
         for (auto& i : initialized_value_list_)
             if (i == var) return true;
         return false;
     }
-    void AddInitializedValue(llvm::Value* var) { initialized_value_list_.push_back(var); }
-    void ClearInitializedValueList() { initialized_value_list_.clear(); }
+    void addInitializedValue(llvm::Value* var) { initialized_value_list_.push_back(var); }
+    void clearInitializedValueList() { initialized_value_list_.clear(); }
 
     llvm::Value* createFPow(llvm::Value* a_operand, llvm::Value* b_operand, const std::string& name = "");
     llvm::Value* createConst(int64_t& binary_value, TypeEn target_ty, const std::string& name = "");
@@ -55,7 +55,7 @@ class IRGenerator : public llvm::IRBuilder<> {
                                              const std::string& name = "");
     llvm::Value* createPositionalLoad(llvm::Value* a_operand, const std::string& name = "");
     llvm::Value* createPositionalLoad(llvm::Value* a_operand, bool is_volatile, const std::string& name = "");
-    llvm::Value* createLoadOffset(const std::string& name = "common_offset");
+    llvm::Value* createLoadOffset(const std::string& name = "common_offset_");
     void createPositionalStore(llvm::Value* a_operand, llvm::Value* ptr, bool is_volatile = false);
     llvm::Value* createBufferInit(TypeEn target_ty, const std::string& name = "");
     void createStartBRs();

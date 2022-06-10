@@ -53,8 +53,8 @@ class Value : public SmallArr {
     ParameterIfs* getParameter() const { return parameter_; }
 
     llvm::Value* getIRValue(IRGenerator& builder, int64_t parent_level);
-    llvm::Value* getIRValueBasePtr(IRGenerator& builder, int64_t parent_level) const;
-    llvm::Value* getIRValuePtr(IRGenerator& builder, int64_t parent_level) const;
+    llvm::Value* getIrValueBasePtr(IRGenerator& builder, int64_t parent_level);
+    llvm::Value* getIrValuePtr(IRGenerator& builder, int64_t parent_level);
 
     virtual NodeTypeEn getNodeType() const { return NodeTypeEn::kValue; }
     virtual Value* getAssignedVal(bool deep = false) { return this; }

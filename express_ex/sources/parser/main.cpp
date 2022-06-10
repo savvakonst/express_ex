@@ -143,7 +143,7 @@ int main(int argc, const char* argv[]) {
                 llvm::outs() << delimiter << *i;
             }
         }
-
+         
         if (showBits.isSet(tableSSR)) llvm::outs() << delimiter << table->print();
 
         table->calculateBufferLength();

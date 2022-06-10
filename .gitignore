@@ -9,12 +9,10 @@
 /express_ex/*
 
 
-!/express_ex/Release/
-!/express_ex/Release/**
-!/express_ex/Debug/
-!/express_ex/Debug/**
-
-
+!/express_ex/io_ex/
+!/express_ex/io_ex/**
+!/express_ex/app/
+!/express_ex/app/**
 !/express_ex/cmake_.bat
 !/express_ex/remove.bat
 
@@ -25,6 +23,8 @@
 
 !/topsyntaxhighlighter/
 /topsyntaxhighlighter/*
+
+
 
 
 #------------------- common excludes --------------------

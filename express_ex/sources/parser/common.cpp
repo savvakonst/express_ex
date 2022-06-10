@@ -178,7 +178,7 @@ untyped_t calcTypeConvConst(TypeEn ret_type, TypeEn arg_type, untyped_t arg_int)
     {                                     \
         T1 *typedRet = (T1 *)&return_int; \
         T2 *typedArg = (T2 *)&arg_int;    \
-        typedRet[0]  = (T1)typedArg[0];   \
+        typedRet[0] = (T1)typedArg[0];    \
     }
     CONV_TYPE_OP(arg_type, ret_type);
 #undef OP_LV2
@@ -193,7 +193,7 @@ char *calcSmallArrayDef(TypeEn targetType, const std::vector<Value *> &operand) 
         T *ptr = (T *)ret;                                         \
         for (auto &j : operand) {                                  \
             int64_t v = j->getAssignedVal(true)->getBinaryValue(); \
-            *ptr++    = *((T *)(&v));                              \
+            *ptr++ = *((T *)(&v));                                 \
         }                                                          \
     }
 

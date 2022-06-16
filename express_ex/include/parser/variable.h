@@ -6,7 +6,7 @@
 
 #include "basic.h"
 #include "common.h"
-#include "ifs/ParameterIO.h"
+#include "../../lib/ifs/parameterIO.h"
 #include "jit/table.h"
 
 using std::string;

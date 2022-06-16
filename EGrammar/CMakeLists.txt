@@ -17,6 +17,7 @@ if(MSVC_VERSION)
     set(ANTLR_SUPPRESS_ERRORS
             /wd4275
             /wd4251
+            /wd4244
             )
 endif()
 
@@ -26,17 +27,25 @@ if(NOT antlr4-runtime_FOUND)
     set(ANTLR_BUILD_CPP_TESTS OFF)
     set(ANTLR4_INSTALL ON)
     set(WITH_STATIC_CRT OFF)
-
     set(antlr_4_SOURCE_SUBDIR runtime/Cpp)
+    set(EXTERNAL_ANTLR_4_SOURCE_DIR  ${CMAKE_SOURCE_DIR}/external_projects/antlr_4)
+
+
+
+    if(NOT EXISTS ${EXTERNAL_ANTLR_4_SOURCE_DIR}/${antlr_4_SOURCE_SUBDIR}/CMakeLists.txt)
+        set(ANTLR_4_GIT_REPOSITORY https://github.com/antlr/antlr4.git)
+        message("EXTERNAL_ANTLR_4_SOURCE_DIR ${EXTERNAL_ANTLR_4_SOURCE_DIR}")
+    endif()
 
     include(FetchContent)
     FetchContent_Declare( # TODO: need to set up a source code destination directory to avoid source code duplication
             antlr_4
-            GIT_REPOSITORY https://github.com/antlr/antlr4.git
+            GIT_REPOSITORY ${ANTLR_4_GIT_REPOSITORY}
             GIT_TAG 9cf7e96a2adbf71021bc2c1ccf2917a574040b08
+            SOURCE_DIR ${EXTERNAL_ANTLR_4_SOURCE_DIR}
+            GIT_PROGRESS ON
             SOURCE_SUBDIR ${antlr_4_SOURCE_SUBDIR}
             )
-
 
 
 
@@ -45,6 +54,11 @@ if(NOT antlr4-runtime_FOUND)
     endif()
 
     FetchContent_MakeAvailable(antlr_4)
+
+    set_target_properties(antlr4_shared PROPERTIES  INTERFACE_COMPILE_DEFINITIONS "")
+    #get_target_property( GET_PROP_OF_EGRAMMAR antlr4_shared INTERFACE_COMPILE_DEFINITIONS )
+    #message("COMPILE_DEFINITIONS ${GET_PROP_OF_EGRAMMAR}")
+    #target_compile_definitions(antlr4_shared PRIVATE ANTLR4CPP_EXPORTS)
 
     target_compile_options(antlr4_shared PRIVATE ${ANTLR_SUPPRESS_ERRORS})
     if (MSVC_VERSION)
@@ -78,10 +92,20 @@ add_library(${LIBRARY_NAME} STATIC
   ${LIBRARY_SOURCES}
 )
 
-message("ANTLR4_INCLUDE_DIR ${ANTLR4_INCLUDE_DIR}")
+message("CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}")
+message("CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}")
 
-set_target_properties(${LIBRARY_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
+
+
+
+
+#set_target_properties(${LIBRARY_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+#ANTLR4CPP_STATIC
 target_compile_options(${LIBRARY_NAME} PRIVATE ${ANTLR_SUPPRESS_ERRORS})
-target_include_directories(${LIBRARY_NAME} PRIVATE ${ANTLR4_INCLUDE_DIR})
-target_link_libraries(${LIBRARY_NAME} antlr4_shared)
+target_include_directories(${LIBRARY_NAME} PUBLIC . ${ANTLR4_INCLUDE_DIR})
+target_link_libraries(${LIBRARY_NAME} PRIVATE antlr4_shared)
+
+get_target_property( GET_PROP_OF_EGRAMMAR ${LIBRARY_NAME} COMPILE_DEFINITIONS)
+message("GET_PROP_OF_EGRAMMAR ${GET_PROP_OF_EGRAMMAR}")
+message("COMPILE_DEFINITIONS ${COMPILE_DEFINITIONS}")

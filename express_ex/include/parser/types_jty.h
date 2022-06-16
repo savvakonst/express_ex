@@ -2,7 +2,6 @@
 #define TYPES_JTS_H
 
 #include "defWarningIgnore.h"
-//#include "llvm/Support/JSON.h"
 #include <string>
 
 #include "undefWarningIgnore.h"

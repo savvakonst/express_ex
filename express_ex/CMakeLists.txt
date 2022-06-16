@@ -14,11 +14,6 @@ else()
     set(APlarform  x64)
 endif()
  
-# specify the C++ standard 
-set(CMAKE_CXX_STANDARD 17)
-
-
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 
 set(CLHPP       "C:/Users/SVK/Desktop/openCl/khronos/OpenCL-CLHPP/include")
@@ -30,7 +25,7 @@ set(llvmDir     ../../common/llvm-project)
 
 
 
-#include(CMakeMacro.txt)
+
 
 include_directories(${CLHPP})
 include_directories(${openCL_includeDir})
@@ -39,73 +34,57 @@ include_directories(${llvmDir}/llvm/include)
 include_directories(${llvmDir}/build_${SPlatform}/include)
 
 
-
-message("CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
-
-#set(CMAKE_PREFIX_PATH ../../libs/antlr4/runtime/Cpp/install/debug_x64 C:/Qt/5.12.8/msvc2017_64)
-
-
-
-
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../EGrammar     ${CMAKE_CURRENT_BINARY_DIR}/EGrammar EXCLUDE_FROM_ALL)
 add_subdirectory(io_ex)
-
-
-
-
-set(CMAKE_CONFIGURATION_TYPES Debug Release)
-
+#add_subdirectory(app)
 
 set(LIBRARY_SOURCES
-    sources/ifs/AsyncParameter.cpp
-    sources/ifs/ParameterIO.cpp
-    sources/ifs/SyncParameter.cpp
-    sources/ifs/express_ex.cpp
-    sources/ifs/printer.cpp
+        lib/ifs/AsyncParameter.cpp
+        lib/ifs/ParameterIO.cpp
+        lib/ifs/SyncParameter.cpp
+        lib/ifs/express_ex.cpp
+        lib/ifs/printer.cpp
 
-    sources/parser/basic.cpp
-    sources/parser/body.cpp
-    sources/parser/bodyTemplate.cpp
-    sources/parser/call.cpp
-    sources/parser/common.cpp
-    sources/parser/errors.cpp
-    sources/parser/line.cpp
-    sources/parser/newOp.cpp
-    sources/parser/operations.cpp
-    sources/parser/treeShapeListener.cpp
-    sources/parser/variable.cpp
-
-
-    sources/operations/ArithmeticOperation.cpp
-    sources/operations/BuiltInCallOperation.cpp
-    sources/operations/ComparisonOperation.cpp
-    sources/operations/ConvolveOperation.cpp
-    sources/operations/IntegrateOperation.cpp
-    sources/operations/Operation_ifs.cpp
-    sources/operations/SelectOperation.cpp
-    sources/operations/SmallArrayDefOperation.cpp
-    sources/operations/StoreToBufferOperation.cpp
-    sources/operations/TypeCastOperation.cpp
+        lib/parser/basic.cpp
+        lib/parser/body.cpp
+        lib/parser/bodyTemplate.cpp
+        lib/parser/call.cpp
+        lib/parser/common.cpp
+        app/main.cpp
+        lib/parser/errors.cpp
+        lib/parser/line.cpp
+        lib/parser/newOp.cpp
+        lib/parser/operations.cpp
+        lib/parser/treeShapeListener.cpp
+        lib/parser/variable.cpp
 
 
-    sources/jit/CL_generator.cpp
-    sources/jit/IR_generator.cpp
-    sources/jit/getWin32Intrinsinc.cpp
-    sources/jit/table.cpp
+        lib/operations/ArithmeticOperation.cpp
+        lib/operations/BuiltInCallOperation.cpp
+        lib/operations/ComparisonOperation.cpp
+        lib/operations/ConvolveOperation.cpp
+        lib/operations/IntegrateOperation.cpp
+        lib/operations/Operation_ifs.cpp
+        lib/operations/SelectOperation.cpp
+        lib/operations/SmallArrayDefOperation.cpp
+        lib/operations/StoreToBufferOperation.cpp
+        lib/operations/TypeCastOperation.cpp
+
+
+        lib/jit/CL_generator.cpp
+        lib/jit/IR_generator.cpp
+        lib/jit/getWin32Intrinsinc.cpp
+        lib/jit/table.cpp
 )
 
 
-
-
-
 set(LIBRARY_HEADERS
-    include/ifs/AsyncParameter.h
-    include/ifs/SyncParameter.h
+        lib/ifs/AsyncParameter.h
+        lib/ifs/SyncParameter.h
     include/ifs/config.h
     include/ifs/express_ex.h
-    include/ifs/parameterIO.h
+        lib/ifs/parameterIO.h
     include/ifs/parameterIfs.h
-    include/ifs/printer.h
+        lib/ifs/printer.h
 
 
     include/parser/basic.h
@@ -144,11 +123,8 @@ set(LIBRARY_HEADERS
 )
 
 
+#set(CMAKE_CXX_STACK_SIZE "10000000")
 
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 
 
@@ -157,23 +133,20 @@ add_library(express_ex SHARED
     ${LIBRARY_HEADERS}
 )
 
-target_include_directories(express_ex PUBLIC include)
+target_include_directories(express_ex PRIVATE include)
+target_link_libraries(express_ex
+        PRIVATE antlr4_shared
+        PRIVATE EGrammar)
 
 
 
+#add_executable(express_ex_exe
+#        ${LIBRARY_SOURCES}
+#        ${LIBRARY_HEADERS}
+#        )
 
 
-target_link_libraries(express_ex io_ex)
-target_link_libraries(express_ex EGrammar)
-
-
-set(CMAKE_CXX_STACK_SIZE "10000000")
-
-if(MSVC)
-
-
-
-
+if(MSVC_VERSION)
 
     target_compile_options(express_ex PRIVATE
         /wd4804
@@ -228,13 +201,12 @@ if(MSVC)
     #set(antlrLibPath  ${antlr4Dir}/bin/vs-2019/${SPlatform}/$<CONFIG>\ DLL)
 
     target_link_directories(express_ex PUBLIC
-        #${antlrLibPath}
         ${llvmLibPath}
         ${openCL_libDir}
     )
 
 
-    target_link_libraries(express_ex ${ObjNames}  )
+    target_link_libraries(express_ex PRIVATE ${ObjNames}  )
 
 
 
@@ -255,14 +227,16 @@ if(MSVC)
         __STDC_LIMIT_MACROS
     )
 
-
+    set_property(TARGET express_ex APPEND PROPERTY
+        COMPILE_DEFINITIONS ${common_MSVC_definitions} DLL_express_ex_EXPORT
+    )
 
 
     if(IS_SHARED)
     #if(false)
-        set_property(TARGET express_ex APPEND PROPERTY
-            COMPILE_DEFINITIONS ${common_MSVC_definitions} DLL_express_ex_EXPORT
-        )
+        #set_property(TARGET express_ex APPEND PROPERTY
+        #    COMPILE_DEFINITIONS ${common_MSVC_definitions} DLL_express_ex_EXPORT
+        #)
 
         set(FILE_NAMES_TO_COPY "express_ex.*" "syntaxhighlighter.*" "topsyntaxhighlighter.*" "antlr4-runtime.*")
 
@@ -292,9 +266,9 @@ if(MSVC)
 
 
     else()
-        set_property(TARGET express_ex APPEND PROPERTY
-            COMPILE_DEFINITIONS ${common_MSVC_definitions} CONSOLE_APP_
-        )
+        #set_property(TARGET express_ex APPEND PROPERTY
+        #    COMPILE_DEFINITIONS ${common_MSVC_definitions} CONSOLE_APP_
+        #)
     endif()
 
 

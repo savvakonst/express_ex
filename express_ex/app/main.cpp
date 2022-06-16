@@ -1,19 +1,18 @@
 ﻿
 #include <clocale>
 #include <fstream>
-#include <iostream>
-#include <strstream>
 
-#include "ifs/ParameterIO.h"
+
+#include "../lib/ifs/parameterIO.h"
 #include "ifs/express_ex.h"
-#include "ifs/printer.h"
+#include "../lib/ifs/printer.h"
 #include "llvm/Support/CommandLine.h"
 #include "parser/body.h"
 #include "parser/defWarningIgnore.h"
 #include "parser/treeShapeListener.h"
 #include "parser/undefWarningIgnore.h"
 
-bool g_ansiEscapeCodes;
+
 
 void clGpuConvolve();
 int main(int argc, const char* argv[]) {
@@ -74,7 +73,7 @@ int main(int argc, const char* argv[]) {
 
     // clGpuConvolve();
 
-    g_ansiEscapeCodes = ansiEscapeCodes;
+    g_ansi_escape_codes = ansiEscapeCodes;
 
     ExColors colorReset = ExColors::RESET;
     ExColors colorRed   = ExColors::RED;

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <strstream>
 #include <fstream>
-#include <parser/types_jty.h>
+#include <common/types_jty.h>
 #include <CL/cl.hpp>
 #include <cstdlib>
 

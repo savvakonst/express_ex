@@ -2,7 +2,7 @@
 #define BUFFER_H
 
 #include "ifs/parameterIO.h"
-#include "parser/common.h"
+#include "common/common.h"
 #include "parser/variable.h"
 
 enum class BufferTypeEn

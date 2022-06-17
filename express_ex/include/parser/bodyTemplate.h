@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 
-#include "common.h"
+#include "common/common.h"
 
 class BodyGenContext;
 class GarbageContainer;

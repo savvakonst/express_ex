@@ -38,23 +38,29 @@ add_subdirectory(io_ex)
 #add_subdirectory(app)
 
 set(LIBRARY_SOURCES
+
+
+
         lib/ifs/AsyncParameter.cpp
         lib/ifs/ParameterIO.cpp
         lib/ifs/SyncParameter.cpp
         lib/ifs/express_ex.cpp
         lib/ifs/printer.cpp
 
+        lib/KexParser/KexParser.cpp
+        lib/KexParser/treeShapeListener.cpp
+
         lib/parser/basic.cpp
         lib/parser/body.cpp
         lib/parser/bodyTemplate.cpp
         lib/parser/call.cpp
-        lib/parser/common.cpp
+        lib/common/common.cpp
         app/main.cpp
-        lib/parser/errors.cpp
+        lib/KexParser/errors.cpp
         lib/parser/line.cpp
         lib/parser/newOp.cpp
         lib/parser/operations.cpp
-        lib/parser/treeShapeListener.cpp
+
         lib/parser/variable.cpp
 
 
@@ -74,53 +80,58 @@ set(LIBRARY_SOURCES
         lib/jit/IR_generator.cpp
         lib/jit/getWin32Intrinsinc.cpp
         lib/jit/table.cpp
-)
+
+
+        )
 
 
 set(LIBRARY_HEADERS
         include/ifs/AsyncParameter.h
         include/ifs/SyncParameter.h
-    include/ifs/config.h
-    include/ifs/express_ex.h
+        include/ifs/config.h
+        include/ifs/express_ex.h
         include/ifs/parameterIO.h
-    include/ifs/parameterIfs.h
+        include/ifs/parameterIfs.h
         include/ifs/printer.h
 
 
-    include/parser/basic.h
-    include/parser/body.h
-    include/parser/bodyTemplate.h
-    include/parser/call.h
-    include/parser/callTemplate.h
-    include/parser/common.h
-    include/parser/defWarningIgnore.h
-    include/parser/line.h
-    include/parser/operations.h
-    include/parser/parsingException.h
-    include/parser/treeShapeListener.h
-    include/parser/types_jty.h
-    include/parser/undefWarningIgnore.h
-    include/parser/variable.h
+        lib/KexParser/treeShapeListener.h
 
-    include/operations/ArithmeticOperation.h
-    include/operations/BuiltInCallOperation.h
-    include/operations/ComparisonOperation.h
-    include/operations/ConvolveOperation.h
-    include/operations/IntegrateOperation.h
-    include/operations/Operation_ifs.h
-    include/operations/SelectOperation.h
-    include/operations/SmallArrayDefOperation.h
-    include/operations/StoreToBufferOperation.h
-    include/operations/TypeCastOperation.h
+        include/parser/KexParser.h
+        include/parser/basic.h
+        include/parser/body.h
+        include/parser/bodyTemplate.h
+        include/parser/call.h
+        include/parser/callTemplate.h
+        include/common/common.h
+        include/parser/defWarningIgnore.h
+        include/parser/line.h
+        include/parser/operations.h
+        include/parser/parsingException.h
 
-    include/jit/CL_generator.h
-    include/jit/IR_generator.h
-    include/jit/buffer.h
-    include/jit/context.h
-    include/jit/llvmHdrs.h
-    include/jit/orcjit.h
-    include/jit/table.h
-)
+        include/common/types_jty.h
+        include/common/undefWarningIgnore.h
+        include/parser/variable.h
+
+        include/operations/ArithmeticOperation.h
+        include/operations/BuiltInCallOperation.h
+        include/operations/ComparisonOperation.h
+        include/operations/ConvolveOperation.h
+        include/operations/IntegrateOperation.h
+        include/operations/Operation_ifs.h
+        include/operations/SelectOperation.h
+        include/operations/SmallArrayDefOperation.h
+        include/operations/StoreToBufferOperation.h
+        include/operations/TypeCastOperation.h
+
+        include/jit/CL_generator.h
+        include/jit/IR_generator.h
+        include/jit/buffer.h
+        include/jit/context.h
+        include/jit/llvmHdrs.h
+        include/jit/orcjit.h
+        include/jit/table.h
+        include/common/ErrorIoIfs.h)
 
 
 #set(CMAKE_CXX_STACK_SIZE "10000000")

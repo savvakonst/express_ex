@@ -1,10 +1,10 @@
 #ifndef TYPES_JTS_H
 #define TYPES_JTS_H
 
-#include "defWarningIgnore.h"
+#include "parser/defWarningIgnore.h"
 #include <string>
 
-#include "undefWarningIgnore.h"
+#include "common/undefWarningIgnore.h"
 
 typedef int64_t untyped_t;
 typedef int64_t ex_size_t;

@@ -5,7 +5,7 @@
 #include <string>
 
 #include "basic.h"
-#include "common.h"
+#include "common/common.h"
 #include "ifs/parameterIO.h"
 #include "jit/table.h"
 

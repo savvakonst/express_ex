@@ -7,7 +7,7 @@
 #include <string>
 
 #include "body.h"
-#include "types_jty.h"
+#include "common/types_jty.h"
 
 class Value;
 class Line;

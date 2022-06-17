@@ -2,17 +2,16 @@
 #include <clocale>
 #include <fstream>
 
-
+#include "llvm/Support/CommandLine.h"
 #include "ifs/parameterIO.h"
 #include "ifs/express_ex.h"
 #include "ifs/printer.h"
-#include "llvm/Support/CommandLine.h"
 #include "parser/body.h"
 #include "parser/defWarningIgnore.h"
-#include "parser/treeShapeListener.h"
-#include "parser/undefWarningIgnore.h"
-
-
+#include "parser/KexParser.h"
+#include "common/undefWarningIgnore.h"
+#include "parser/line.h"
+#include "parser/bodyTemplate.h"
 
 void clGpuConvolve();
 int main(int argc, const char* argv[]) {
@@ -122,8 +121,8 @@ int main(int argc, const char* argv[]) {
         if (showBits.isSet(redusedFSR)) llvm::outs() << delimiter << body->print("", false, true);
 
         jit_init();
-        Table* table            = new Table();
-        TableGenContext context = TableGenContext(table);
+        auto* table  = new Table();
+        auto context = TableGenContext(table);
 
         body->genTable(&context);
 

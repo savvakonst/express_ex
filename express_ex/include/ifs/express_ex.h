@@ -2,7 +2,7 @@
 #define EXPRESS_EX_H
 #include <vector>
 #include <map>
-#include "../../lib/ifs/parameterIO.h"
+#include "parameterIO.h"
 
 #ifdef _MSC_VER 
 #pragma warning( push )  

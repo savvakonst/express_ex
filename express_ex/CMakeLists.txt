@@ -78,13 +78,13 @@ set(LIBRARY_SOURCES
 
 
 set(LIBRARY_HEADERS
-        lib/ifs/AsyncParameter.h
-        lib/ifs/SyncParameter.h
+        include/ifs/AsyncParameter.h
+        include/ifs/SyncParameter.h
     include/ifs/config.h
     include/ifs/express_ex.h
-        lib/ifs/parameterIO.h
+        include/ifs/parameterIO.h
     include/ifs/parameterIfs.h
-        lib/ifs/printer.h
+        include/ifs/printer.h
 
 
     include/parser/basic.h

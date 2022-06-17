@@ -5,6 +5,8 @@
 #include <vector>
 
 #include "variable.h"
+#include "ifs/AsyncParameter.h"
+#include "ifs/SyncParameter.h"
 
 class Line : public Value {
    public:

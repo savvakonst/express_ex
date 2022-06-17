@@ -1,7 +1,7 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#include "../../lib/ifs/parameterIO.h"
+#include "ifs/parameterIO.h"
 #include "parser/common.h"
 #include "parser/variable.h"
 
@@ -130,7 +130,7 @@ class OutputBuffer : public Buffer {
 
     ~OutputBuffer() override { delete parameter_; }
 
-    void addParameter(SyncParameter* parameter) { parameter_ = parameter; }
+    void addParameter(ParameterIfs* parameter) { parameter_ = parameter; }
 
     int64_t init() override {
         parameter_->open(true);

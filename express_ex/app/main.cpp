@@ -3,9 +3,9 @@
 #include <fstream>
 
 
-#include "../lib/ifs/parameterIO.h"
+#include "ifs/parameterIO.h"
 #include "ifs/express_ex.h"
-#include "../lib/ifs/printer.h"
+#include "ifs/printer.h"
 #include "llvm/Support/CommandLine.h"
 #include "parser/body.h"
 #include "parser/defWarningIgnore.h"
@@ -80,7 +80,7 @@ int main(int argc, const char* argv[]) {
     ExColors colorGreen = ExColors::GREEN;
     Delimiter delimiter = Delimiter::GREEN;
 
-    ParametersDB parameterDB(inputDataBaseFile);
+    ParametersDB parameter_db(inputDataBaseFile);
 
     try {
         std::map<std::string, bool> modules_map;
@@ -95,7 +95,7 @@ int main(int argc, const char* argv[]) {
 
         stack<Value*> args;
         for (auto i : parameterNameList) {
-            auto p = parameterDB[i.second];
+            auto p = parameter_db[i.second];
             // llvm::outs() << delimiter << "Parameter: \n  " << *p << " \n";
             if (p != nullptr) {
                 p->setLocal(false);

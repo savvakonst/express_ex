@@ -29,9 +29,6 @@ template <typename T>
 class stack : public std::vector<T> {
    public:
     T pop() {
-        if (std::vector<T>::size() == 0) {
-            print_error("stack is empty");
-        }
         T res = std::vector<T>::back();
         std::vector<T>::pop_back();
 

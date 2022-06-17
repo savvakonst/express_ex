@@ -6,7 +6,7 @@
 #include <set>
 #include <vector>
 
-#include "../../lib/ifs/parameterIO.h"
+#include "ifs/parameterIO.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
 #include "parser/common.h"

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "parser/types_jty.h"
+#include "common/types_jty.h"
 #include "parser/variable.h"
 
 // extern bool g_gpu_acceleration_enable;

@@ -5,12 +5,15 @@
 #include <string>
 #include <vector>
 
-#include "ifs/ParameterIfs.h"
+#include "ifs/parameterIfs.h"
 #include "types_jty.h"
+
+#include "common/ErrorIoIfs.h"
 
 void print_error(const std::string& content);
 void print_IR_error(const std::string& content);
 void print_SA_error(const std::string& content);
+
 
 class Line;
 class Value;

@@ -9,9 +9,9 @@
 #include "ifs/parameterIO.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
-#include "parser/common.h"
+#include "common/common.h"
 #include "parser/defWarningIgnore.h"
-#include "parser/undefWarningIgnore.h"
+#include "common/undefWarningIgnore.h"
 
 using std::string;
 class Value;

@@ -8,7 +8,7 @@
 #include "parser/defWarningIgnore.h"
 #include "llvm/Support/raw_ostream.h"
 
-#include "parser/undefWarningIgnore.h"
+#include "common/undefWarningIgnore.h"
 
 
 extern bool g_ansi_escape_codes;

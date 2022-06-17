@@ -8,8 +8,8 @@
 #include "buffer.h"
 #include "llvm/IR/IRBuilder.h"
 #include "parser/defWarningIgnore.h"
-#include "parser/types_jty.h"
-#include "parser/undefWarningIgnore.h"
+#include "common/types_jty.h"
+#include "common/undefWarningIgnore.h"
 
 class Table;
 class Value;

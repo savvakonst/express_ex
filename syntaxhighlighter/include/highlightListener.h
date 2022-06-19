@@ -103,7 +103,7 @@ public:
     TreeShapeListener(HighlightStyle * style, const std::vector<Namespace*> &lib_namespace ) : EGrammarBaseListener() {
         highlight_style_ = style;
 
-        if (lib_namespace.size()==0) 
+        if (lib_namespace.empty())
             namespase_list_.push_back(new Namespace("main"));
         else
             for (auto i :lib_namespace)
@@ -112,7 +112,7 @@ public:
         activ_namespace_ = namespase_list_[0];
     }
 
-    ~TreeShapeListener(){
+    ~TreeShapeListener() override{
         for(auto &i : namespase_list_){
             delete i ;
         }

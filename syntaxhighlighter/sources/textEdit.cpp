@@ -51,7 +51,7 @@ void KexEdit::rehighlight(){
     parser.addErrorListener(&errorListner);
 
 
-    antlr4::tree::ParseTree* tree=NULL;
+    antlr4::tree::ParseTree* tree = NULL;
     try{
         tree = parser.start();
     }catch(antlr4::NoViableAltException ){

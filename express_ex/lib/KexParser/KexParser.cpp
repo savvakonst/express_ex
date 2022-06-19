@@ -31,21 +31,21 @@ void KEXParser::init(std::string str, bool is_file_name) {
     } else
         content = str;
 
-    ANTLRInputStream* input_   = new ANTLRInputStream(content + "\n");
-    EGrammarLexer* lexer_      = new EGrammarLexer(input_);
-    CommonTokenStream* tokens_ = new CommonTokenStream(lexer_);
-    EGrammarParser* parser_    = new EGrammarParser(tokens_);
+    ANTLRInputStream* input   = new ANTLRInputStream(content + "\n");
+    EGrammarLexer* lexer      = new EGrammarLexer(input);
+    CommonTokenStream* tokens = new CommonTokenStream(lexer);
+    EGrammarParser* parser    = new EGrammarParser(tokens);
 
-    parser_->removeErrorListeners();
+    parser->removeErrorListeners();
     EErrorListener* error_listner_ = new EErrorListener;
-    parser_->addErrorListener(error_listner_);
+    parser->addErrorListener(error_listner_);
 
-    tree::ParseTree* tree_ = parser_->start();
-    tree::ParseTreeWalker::DEFAULT.walk(listener_, tree_);
+    tree::ParseTree* tree = parser->start();
+    tree::ParseTreeWalker::DEFAULT.walk(listener_, tree);
 
     delete error_listner_;
-    delete parser_;
-    delete tokens_;
-    delete lexer_;
-    delete input_;
+    delete parser;
+    delete tokens;
+    delete lexer;
+    delete input;
 }

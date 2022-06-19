@@ -8,7 +8,7 @@
 #include "ifs/parameterIfs.h"
 #include "types_jty.h"
 
-#include "common/ErrorIoIfs.h"
+
 
 void print_error(const std::string& content);
 void print_IR_error(const std::string& content);
@@ -23,6 +23,7 @@ typedef struct {
     int64_t stop_line      = -1;
     int64_t start_char_pos = -1;
     int64_t stop_char_pos  = -1;
+    std::string txt;
 } PosInText;
 
 template <typename T>

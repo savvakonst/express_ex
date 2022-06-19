@@ -7,11 +7,15 @@
 #include "ifs/express_ex.h"
 #include "ifs/printer.h"
 #include "parser/body.h"
-#include "parser/defWarningIgnore.h"
+
 #include "parser/KexParser.h"
-#include "common/undefWarningIgnore.h"
+
 #include "parser/line.h"
 #include "parser/bodyTemplate.h"
+
+
+#include "common/errors.h"
+
 
 void clGpuConvolve();
 int main(int argc, const char* argv[]) {
@@ -90,7 +94,11 @@ int main(int argc, const char* argv[]) {
 
         std::map<std::string, std::string> parameterNameList = body_template->getParameterLinkNames();
 
-        if (showBits.isSet(nameList)) llvm::outs() << delimiter << "names list: \n  " << parameterNameList << " \n";
+        if (showBits.isSet(nameList))
+            llvm::outs() << delimiter << "names list: \n  " << parameterNameList << " \n";
+
+        if (showBits.isSet(untypedFSR))
+            llvm::outs() << delimiter << body_template->print("") << delimiter << "\n";
 
         stack<Value*> args;
         for (auto i : parameterNameList) {
@@ -102,7 +110,7 @@ int main(int argc, const char* argv[]) {
             } else
                 print_error("can not find parameter " + i.second);
         }
-        if (showBits.isSet(untypedFSR)) llvm::outs() << delimiter << body_template->print("") << delimiter << "\n";
+
 
         if (0 == inputDataBaseFile.size()) {
             llvm::outs() << colorRed << "there are no input database file\n" << colorReset;
@@ -116,9 +124,12 @@ int main(int argc, const char* argv[]) {
         if (showBits.isSet(activeNameList))
             llvm::outs() << delimiter << "names list: \n  " << body->getParameterLinkNames(true) << " \n";
 
-        if (showBits.isSet(allFSR)) llvm::outs() << delimiter << body->print("");
+        if (showBits.isSet(allFSR))
+            llvm::outs() << delimiter << body->print("");
 
-        if (showBits.isSet(redusedFSR)) llvm::outs() << delimiter << body->print("", false, true);
+        if (showBits.isSet(redusedFSR))
+            llvm::outs() << delimiter << body->print("", false, true);
+
 
         jit_init();
         auto* table  = new Table();
@@ -148,9 +159,11 @@ int main(int argc, const char* argv[]) {
         table->llvmInit();
         table->generateIR();
 
-        if (optimizationEnable) table->runOptimization();
+        if (optimizationEnable)
+            table->runOptimization();
 
-        if (showBits.isSet(llvmIRcode)) table->printllvmIr();
+        if (showBits.isSet(llvmIRcode))
+            table->printllvmIr();
 
         if (runJit) table->run();
 

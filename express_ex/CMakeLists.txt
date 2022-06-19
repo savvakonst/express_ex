@@ -55,7 +55,7 @@ set(LIBRARY_SOURCES
         lib/parser/bodyTemplate.cpp
         lib/parser/call.cpp
         lib/common/common.cpp
-        app/main.cpp
+        #app/main.cpp
         lib/KexParser/errors.cpp
         lib/parser/line.cpp
         lib/parser/newOp.cpp
@@ -131,7 +131,7 @@ set(LIBRARY_HEADERS
         include/jit/llvmHdrs.h
         include/jit/orcjit.h
         include/jit/table.h
-        include/common/ErrorIoIfs.h)
+        include/ifs/ExStreamIfs.h include/common/errors.h include/ifs/ExStream.h include/common/errors.h lib/ifs/ErrorsIo.cpp)
 
 
 #set(CMAKE_CXX_STACK_SIZE "10000000")

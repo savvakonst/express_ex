@@ -27,13 +27,7 @@ public:
     BodyTemplate* getActivBody();
 
 private:
-    /*
-    std::vector<BodyTemplate*> & getContext() {
-        print_error("KEXParser::getContext()");
-        return {nullptr};
-        //return listener_.context_;
-    }
-    */
+
 
     void init(std::string str, bool is_file_name = true);
 

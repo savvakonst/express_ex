@@ -8,36 +8,29 @@
 #include "parser/KexParser.h"
 #include "parser/line.h"
 #include "parser/bodyTemplate.h"
-
-
-#include "parser/defWarningIgnore.h"
-#include "llvm/Support/CommandLine.h"
-#include "common/undefWarningIgnore.h"
-
 #include "ifs/express_ex.h"
 
 
-//using namespace llvm;
-extern bool  g_ansi_escape_codes;
-
-#define REMOVE_MEMBER(X)    if (X != nullptr) {\
-                                delete X;\
-                                X=nullptr;\
-                            }\
 
 
-extern std::string g_error_str;
-Express_ex::~Express_ex()
-{
+
+#define REMOVE_MEMBER(X)    \
+                            delete X;\
+                            X = nullptr
+
+
+
+
+Express_ex::~Express_ex(){
     REMOVE_MEMBER(table_);
     REMOVE_MEMBER(body_);
     REMOVE_MEMBER(kex_parser_);
 }
 
-bool Express_ex::parseText(std::string str, bool is_file_name , std::map<std::string, bool/*is_file_name*/> lib_str_map ) {
+bool Express_ex::parseText(const std::string &str, bool is_file_name , std::map<std::string, bool/*is_file_name*/> lib_str_map ) {
 
     //
-    bool status=false;
+    bool status = false;
 
 
     REMOVE_MEMBER(table_);
@@ -50,19 +43,32 @@ bool Express_ex::parseText(std::string str, bool is_file_name , std::map<std::st
         kex_parser_ =new KEXParser(str, is_file_name, lib_str_map);
 
         body_template_ = kex_parser_->getActivBody();
-        body_template_->getParameterLinkNames();
+        //body_template_->getParameterLinkNames(); TODO try to remove
+
+        if(info_stream_) {
+            std::string output;
+            if (name_list_)
+                *info_stream_ << Delimiter::GREEN << "names list: \n  " << body_template_->getParameterLinkNames()<< " \n";
+
+            if (untyped_fsr_)
+                *info_stream_ << Delimiter::GREEN << body_template_->print("") << Delimiter::GREEN << "\n";
+
+            *info_stream_ << output;
+        }
+
+
         status=true;
     }
     catch (size_t) {
-        error_str_ = g_error_str;
+        //TODO
+        //error_str_ = g_error_str;
     }
 
     return status;
 }
 
 
-bool Express_ex::setParameters(const std::map<std::string , ParameterIfs*> &parameters_map)
-{
+bool Express_ex::setParameters(const std::map<std::string , ParameterIfs*> &parameters_map){
     bool status=false;
 
 
@@ -83,11 +89,20 @@ bool Express_ex::setParameters(const std::map<std::string , ParameterIfs*> &para
         body_ = body_template_->genBodyByTemplate(nullptr, args, false);
         body_->symplyfy();
 
-        body_->getParameterLinkNames(true);
+        //body_->getParameterLinkNames(true); TODO try to remove
+
+        if(info_stream_) {
+            if (active_name_list_)
+                *info_stream_ << Delimiter::GREEN << "names list: \n  " << body_->getParameterLinkNames(true) << " \n";
+            if (all_fsr_)
+                *info_stream_ << Delimiter::GREEN << body_->print("");
+            if (reduced_fsr_)
+                *info_stream_ << Delimiter::GREEN << body_->print("", false, true);
+        }
 
 
         table_   = new Table();
-        TableGenContext context = TableGenContext(table_);
+        auto context = TableGenContext(table_);
 
         body_->genTable(&context);
 
@@ -95,10 +110,27 @@ bool Express_ex::setParameters(const std::map<std::string , ParameterIfs*> &para
         for (auto i : body_->getOutputParameterList())
             i->setName("out_" + std::to_string(index++));
 
+        if(info_stream_) {
+            if (output_prm_) {
+                *info_stream_ << Delimiter::GREEN << "input_prm:";
+                for (auto i: args) {
+                    *info_stream_ << Delimiter::GREEN << *(i->getParameter());
+                }
+                *info_stream_ << Delimiter::GREEN << "output_prm:";
+                for (auto i: body_->getOutputParameterList()) {
+                    *info_stream_ << Delimiter::GREEN << *i;
+                }
+            }
+            if(table_ssr_)
+                *info_stream_ << Delimiter::GREEN << table_->print();
+        }
+
+
         status=true;
     }
     catch (size_t) {
-        error_str_ = g_error_str;
+        //TODO
+        //error_str_ = g_error_str;
     }
 
     return status;
@@ -108,36 +140,52 @@ std::map<std::string, std::string> Express_ex::getParameterLinkNamesMap(bool hid
     if (body_template_)
         return body_template_->getParameterLinkNames(hide_unused);
     else
-        return std::map<std::string, std::string>();
+        return {};
 }
 
-std::vector<ParameterIfs*> Express_ex::getOutputParameterVector()
-{
+std::vector<ParameterIfs*> Express_ex::getOutputParameterVector(){
     if (body_)
         return body_->getOutputParameterList();
     else
-        return std::vector<ParameterIfs*>();
+        return {};
 }
 
-bool Express_ex::genJit()
-{
+bool Express_ex::genJit(bool optimization_enable){
     bool status=false;
     try {
         table_->calculateBufferLength();
         table_->llvmInit();
         table_->generateIR();
-        table_->runOptimization();
+        if(optimization_enable)
+            table_->runOptimization();
+
+        if (info_stream_ && llvm_ir_code_)
+            *info_stream_ << table_->printllvmIr();
+
         status = true;
     }
     catch (size_t) {
-        error_str_ = g_error_str;
+        //TODO
+        //error_str_ = g_error_str;
     }
 
     return status;
 }
 
-bool Express_ex::run()
-{
+bool Express_ex::run(){
     table_->run();
     return true;
+}
+
+
+//TODO: need to remove this
+extern  ExStreamIfs * g_error_stream;
+
+
+void Express_ex::setErrorIo(ExStreamIfs* syntax) {
+    g_error_stream = syntax;
+}
+
+void Express_ex::setInfoStream(ExStreamIfs *info_stream) {
+    info_stream_ = info_stream;
 }

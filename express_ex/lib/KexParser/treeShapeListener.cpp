@@ -1,9 +1,24 @@
 #include "treeShapeListener.h"
-//#include "parser.h"
+#include "ifs/ExStreamIfs.h"
 
-ParserRuleContext* g_err_context = nullptr;
+
 PosInText g_pos;
-std::string g_pos_file;
+
+//TODO: need to remove this
+extern  ExStreamIfs * g_error_stream;
+
+void EErrorListener::syntaxError(Recognizer* recognizer, Token* offendingSymbol, size_t line, size_t charPositionInLine, const std::string & msg, std::exception_ptr e){
+    ExStreamIfs &s = *g_error_stream;
+
+    s << ExColors::RED << "line " << line << "; pos " << charPositionInLine << ":" << "_" << ". ";
+    s << "error: "<< ExColors::RESET;
+    s<< msg << ".\n" ;
+    s << ExColors::GREEN << "\t" << offendingSymbol->getText() << "\n" << ExColors::RESET;
+
+
+    throw  size_t(1);
+}
+
 
 TreeShapeListener::TreeShapeListener() : EGrammarBaseListener() { activ_body_ = new BodyTemplate("main", activ_body_); }
 
@@ -15,20 +30,21 @@ TreeShapeListener::TreeShapeListener(BodyTemplate* body, const std::vector<BodyT
 TreeShapeListener::~TreeShapeListener() = default;
 
 void TreeShapeListener::setPos(ParserRuleContext* ctx) {
-    g_err_context        = ctx;
+
     g_pos.start_line     = (int64_t)ctx->getStart()->getLine();
     g_pos.stop_line      = (int64_t)ctx->getStop()->getLine();
     g_pos.start_char_pos = (int64_t)ctx->getStart()->getCharPositionInLine();
     g_pos.stop_char_pos  = (int64_t)ctx->getStop()->getCharPositionInLine();
+    g_pos.txt            = ctx-> getText();
 }
 
 void TreeShapeListener::exitAssign(EGrammarParser::AssignContext* ctx) {
-    g_err_context = ctx;
+    setPos(ctx);
     activ_body_->addLine(ctx->ID()->getText(), activ_body_->pop());
 }
 
 void TreeShapeListener::exitAssignParam(EGrammarParser::AssignParamContext* ctx) {
-    g_err_context  = ctx;
+    setPos(ctx);
     const auto id  = ctx->ID();
     const auto stl = ctx->STRINGLITERAL();
 

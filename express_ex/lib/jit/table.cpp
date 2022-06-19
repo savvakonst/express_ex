@@ -922,9 +922,12 @@ bool Table::run() {
 }
 
 std::string Table::printllvmIr() {
-    llvm::outs() << ExColors::GREEN << "\n\n---------We just constructed this LLVM module:--------- \n"
+    std::string ret;
+    llvm::raw_string_ostream(ret)<< ExColors::GREEN << "\n\n---------We just constructed this LLVM module:--------- \n"
                  << ExColors::RESET << *M_ << "\n\n";
-    return "";
+
+
+    return ret;
 }
 
 /// Implementation of Value, Operation, Line and Call  members,

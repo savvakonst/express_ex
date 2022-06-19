@@ -9,6 +9,8 @@
 #include <vector>
 
 #include "config.h"
+#include "ExStreamIfs.h"
+
 
 #ifdef _MSC_VER
 #    pragma warning(push)
@@ -315,6 +317,7 @@ class DLL_EXPORT ParameterIfs {
     void addInterval(const DataInterval& interval) { interval_list_.push_back(interval); }
 
     virtual ParameterIfs* newParameter() = 0;
+
     virtual std::stringstream& stream(std::stringstream& OS, std::string offset = "") const {
         OS << offset << "ParameterInfo{\n";
         OS << offset << "  parameter_name: " << name_ << "\n";
@@ -356,8 +359,14 @@ class DLL_EXPORT ParameterIfs {
     std::string error_info_ = "";
 };
 
-#ifdef _MSC_VER
-#    pragma warning(pop)
-#endif
+
+
+
+inline ExStreamIfs &operator<<(ExStreamIfs &stream,const ParameterIfs & arg) {
+    std::stringstream std_stream;
+    stream << arg.stream(std_stream).str() << " ";
+    return stream;
+}
+
 
 #endif

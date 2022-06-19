@@ -21,7 +21,7 @@
 using namespace antlr4;
 // using namespace  parser_cpp;
 
-extern ParserRuleContext* g_err_context;
+
 
 class EErrorListener : public BaseErrorListener {
     void syntaxError(Recognizer* recognizer, Token* offendingSymbol, size_t line, size_t charPositionInLine,
@@ -31,7 +31,7 @@ class EErrorListener : public BaseErrorListener {
 class TreeShapeListener : public EGrammarBaseListener {
    public:
     TreeShapeListener();
-    TreeShapeListener(BodyTemplate* body, const std::vector<BodyTemplate*>& context = {});
+    explicit TreeShapeListener(BodyTemplate* body, const std::vector<BodyTemplate*>& context = {});
     ~TreeShapeListener() override;
 
     void exitAssign(EGrammarParser::AssignContext* ctx) override;

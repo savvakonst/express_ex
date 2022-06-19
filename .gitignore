@@ -1,48 +1,49 @@
-*
-!.gitignore
-!*.drawio
-
-!/EGrammar
-!/EGrammar/*
-
-!/express_ex
-/express_ex/*
-
-!/express_ex/lib/
-!/express_ex/lib/**
-!/express_ex/io_ex/
-!/express_ex/io_ex/**
-!/express_ex/app/
-!/express_ex/app/**
-!/express_ex/cmake_.bat
-!/express_ex/remove.bat
-
-
-!/syntaxhighlighter
-/syntaxhighlighter/*
-
-
-!/topsyntaxhighlighter/
-/topsyntaxhighlighter/*
-
-
-
-
 #------------------- common excludes --------------------
+.conandeps/
+__pycache__/
+.vscode/
+.vs/
+.idea/
+build/
+x86/
+x64/
+*build*/
+debug/
+release/
+Temp/
 
-!/**/include/
-!/**/include/**
-!/**/sources/
-!/**/sources/**
-!/**/icons/
-!/**/icons/**
 
-!/**/*CMakeLists.txt
-!/**/*.CMakeMacro.txt
-!/**/*.pri
-!/**/*.pro
-!/**/*.qrc
 
+*.vcxproj
+*.vcxproj.*
+*.sln
+
+*.psro.user
+*.prso.user.*
+
+object_script.*.Release
+object_script.*.Debug
+*_plugin_import.cpp
+/.qmake.cache
+/.qmake.stash
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.moc
+
+msvc_make.*
+
+.qmake.stash
+
+ui_*.h
+*.qmlc
+*.jsc
+Makefile*
+*build-*
+*.qm
+*.prl
+/msvc_make.bat
 
 
 *.exe
@@ -56,6 +57,9 @@
 *.html
 
 
-!setup.bat
-!llvm.7z
-!antlr4.7z
+#------------------- specific excludes --------------------
+
+
+external_projects/
+express_ex/test/
+old/

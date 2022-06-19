@@ -1,0 +1,60 @@
+
+set(sources_dir sources)
+set(include_dir include)
+
+macro(init_module module_name )
+
+    set (extra_macro_args ${ARGN})
+    list(LENGTH extra_macro_args num_extra_args)
+
+    set(optional_include_dir ${include_dir})
+    set(optional_sources_dir ${sources_dir})
+
+    if (${num_extra_args} GREATER 0)
+        list(GET extra_macro_args 0 optional_include_dir)
+        if (${num_extra_args} GREATER 1)
+            list(GET extra_macro_args 1 optional_source_dir)
+        endif ()
+    endif ()
+
+    message("---------------------------------got an optional_include_dir: ${optional_include_dir}")
+    message("---------------------------------got an optional_sources_dir: ${optional_sources_dir} ")
+
+    #include_directories(${optional_include_dir}/${module_name})
+    aux_source_directory(${optional_sources_dir}/${module_name} ${module_name}_sources)
+    file(GLOB h_headers ${optional_include_dir}/${module_name}/*.h)
+    file(GLOB hpp_headers ${optional_include_dir}/${module_name}/*.hpp)
+	set(${module_name}_headers ${h_headers} ${hpp_headers})
+
+endmacro()
+
+
+macro(create_group module_name )
+    if(DEFINED ${module_name}_headers)
+        source_group( "${module_name}\\headers"   FILES ${${module_name}_headers} )
+    endif ()
+    if(DEFINED ${module_name}_sources)
+        source_group( "${module_name}\\sources"   FILES ${${module_name}_sources} )
+    endif ()
+endmacro()
+
+
+
+macro(create_list_of_sources name_of_list)
+    set (extra_macro_args ${ARGN})
+    foreach(X IN LISTS extra_macro_args)
+        set(${name_of_list} ${${name_of_list}} ${${X}_sources})
+        set(${name_of_list} ${${name_of_list}} ${${X}_headers})
+    endforeach()
+endmacro()
+
+
+macro(init_source_groups name_of_list)
+    set (extra_macro_args ${ARGN})
+    foreach(X IN LISTS extra_macro_args)
+		init_module(${X})
+		create_group(${X})
+        set(${name_of_list} ${${name_of_list}} ${${X}_sources})
+        set(${name_of_list} ${${name_of_list}} ${${X}_headers})
+    endforeach()
+endmacro()

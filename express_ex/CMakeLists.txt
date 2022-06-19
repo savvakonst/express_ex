@@ -35,7 +35,7 @@ include_directories(${llvmDir}/build_${SPlatform}/include)
 
 
 add_subdirectory(io_ex)
-#add_subdirectory(app)
+
 
 set(LIBRARY_SOURCES
 

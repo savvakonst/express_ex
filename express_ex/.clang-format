@@ -1,0 +1,16 @@
+AlignAfterOpenBracket: Align
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 120
+MaxEmptyLinesToKeep: 1
+
+BreakBeforeBraces: Attach
+IndentCaseLabels: false
+AlignTrailingComments: true
+AlignEscapedNewlines: Left
+AllowShortEnumsOnASingleLine: false
+IndentPPDirectives: AfterHash
+AllowShortIfStatementsOnASingleLine: Always
+#AlignConsecutiveAssignments: AcrossComments
+#AllowShortIfStatementsOnASingleLine: false 
+#AllowShortCaseLabelsOnASingleLine: true

@@ -42,7 +42,7 @@ class QUILIBSHARED_EXPORT Highlighter : public SearchHighLight
 public:
     Highlighter(QTextDocument *parent = 0);
 
-    void setListener(TreeShapeListener *l){listener=l;}
+    void setListener(TreeShapeListener *l){ listener = l;}
 protected:
     void highlightBlock(const QString &text) override;
 

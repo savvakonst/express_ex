@@ -35,7 +35,7 @@
 !/**/icons/
 !/**/icons/**
 
-!/**/*.CMakeLists.txt
+!/**/*CMakeLists.txt
 !/**/*.CMakeMacro.txt
 !/**/*.pri
 !/**/*.pro

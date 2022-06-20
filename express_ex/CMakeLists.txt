@@ -21,9 +21,6 @@ set(OPENCL_INCLUDEDIR__ ${CUDAPATH__}/include)
 set(OPENCL_LIBDIR__ ${CUDAPATH__}/lib/${APlarform})
 
 
-
-
-
 set(LIBRARY_SOURCES
 
         lib/ifs/AsyncParameter.cpp
@@ -125,7 +122,6 @@ set(LIBRARY_HEADERS
         )
 
 
-
 if (MSVC_VERSION)
     SET(EXPRESS_EX_DEFINITIONS__
             WIN32
@@ -152,11 +148,6 @@ add_library(express_ex SHARED
         )
 
 
-
-
-
-
-
 target_compile_options(express_ex PRIVATE
         ${EXPRESS_EX_COMPILE_OPTIONS__}
         )
@@ -172,7 +163,7 @@ target_link_directories(express_ex PUBLIC
         ${OPENCL_LIBDIR__}
         )
 
-separate_arguments(LLVM_DEFINITIONS_LIST__ NATIVE_COMMAND ${LLVM_DEFINITIONS} )
+separate_arguments(LLVM_DEFINITIONS_LIST__ NATIVE_COMMAND ${LLVM_DEFINITIONS})
 
 llvm_map_components_to_libnames(llvm_libs
         Core
@@ -196,7 +187,6 @@ target_link_libraries(express_ex PRIVATE
         EGrammar
         ${llvm_libs}
         )
-
 
 
 #set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "express_ex") ???

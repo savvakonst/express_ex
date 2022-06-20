@@ -29,6 +29,8 @@ class IRGenerator : public llvm::IRBuilder<> {
             if (i == var) return true;
         return false;
     }
+
+
     void addInitializedValue(llvm::Value* var) { initialized_value_list_.push_back(var); }
     void clearInitializedValueList() { initialized_value_list_.clear(); }
 

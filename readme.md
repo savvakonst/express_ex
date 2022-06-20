@@ -1,10 +1,22 @@
 # Процесс сборки
 
-1 CMAKE_<LANG>_FLAGS  
-2 CMAKE_<LANG>_FLAGS_<CONFIG> 
-3 (add_compile_options() or target_compile_options())
-
 ## Зависимости
+
+* llvm.  
+  * извлечение LLVM:
+    необходимо скачать версию ниже 14, т.к. в ней начинается переход к "Opaque Pointers" и,
+    как следствие, большие изменения в API.
+    * для Windows: `git clone --depth 1 --config core.autocrlf=false --branch llvmorg-12.0.1  https://github.com/llvm/llvm-project.git`
+    * для Linux: `git clone --depth 1  --branch llvmorg-12.0.1  https://github.com/llvm/llvm-project.git`
+  * build LLVM
+  `cmake -G "Ninja" 
+  -DLLVM_INCLUDE_TESTS=OFF  
+  -DLLVM_INCLUDE_BENCHMARKS=OFF 
+  -DLLVM_INCLUDE_TOOLS=OFF  
+  -DLLVM_INCLUDE_DOCS=OFF 
+  -DLLVM_TARGETS_TO_BUILD=X86`  
+  
+
 
 * antlr 4.  
   Если у вас нет внешнего проекта antlr 4 nj проще всего 

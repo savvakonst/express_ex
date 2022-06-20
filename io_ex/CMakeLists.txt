@@ -13,9 +13,9 @@ set(CMAKE_AUTOUIC ON)
 
 
 add_library(io_ex SHARED
-	DatasetsStorage_ifs.h
-	FolderIoInterface.cpp
-	FolderIoInterface.h
+        DatasetsStorage_ifs.h
+        FolderIoInterface.cpp
+        FolderIoInterface.h
 	#Hdf5IoInterface.cpp  #require hdf5 library
 	#Hdf5IoInterface.h
         )

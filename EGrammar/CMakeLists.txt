@@ -10,7 +10,7 @@ set(LIBRARY_NAME EGrammar)
 project(${PROJECT_NAME} VERSION 1.0 LANGUAGES CXX)
 
 
-find_package(antlr4-runtime QUIET)
+find_package(antlr4-runtime QUIET CONFIG)
 
 if (MSVC_VERSION)
     set(ANTLR_SUPPRESS_ERRORS
@@ -32,7 +32,6 @@ if (NOT antlr4-runtime_FOUND)
 
     if (NOT EXISTS ${EXTERNAL_ANTLR_4_SOURCE_DIR}/${antlr_4_SOURCE_SUBDIR}/CMakeLists.txt)
         set(ANTLR_4_GIT_REPOSITORY https://github.com/antlr/antlr4.git)
-        message("EXTERNAL_ANTLR_4_SOURCE_DIR ${EXTERNAL_ANTLR_4_SOURCE_DIR}")
     endif ()
 
     include(FetchContent)

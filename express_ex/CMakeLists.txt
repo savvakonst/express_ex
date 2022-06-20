@@ -32,19 +32,19 @@ if (NOT LLVM_FOUND)
     if (NOT EXISTS ${EXTERNAL_LLVM_SOURCE_DIR}/${LLVM_SOURCE_SUBDIR}/CMakeLists.txt)
         set(LLVM_GIT_REPOSITORY https://github.com/llvm/llvm-project.git)
     endif ()
-    message("${LLVM_GIT_REPOSITORY}")
+
+
+
+    find_package(Git)
     include(FetchContent)
+    set(FETCHCONTENT_QUIET FALSE)
+
     FetchContent_Declare(
             llvm_prj
-            GIT_REPOSITORY ${LLVM_GIT_REPOSITORY}
-            #GIT_TAG release/12.x/llvmorg-12.0.1
-            GIT_TAG llvmorg-12.0.1
+            DOWNLOAD_COMMAND ${GIT_EXECUTABLE} clone --depth 1 --config core.autocrlf=false --branch llvmorg-12.0.1 "${LLVM_GIT_REPOSITORY}" "${EXTERNAL_LLVM_SOURCE_DIR}"
+            # this is used because GIT_SHALLOW TRUE doesn't help, it calls git clone --depth 1 --no-single-branch
             SOURCE_DIR ${EXTERNAL_LLVM_SOURCE_DIR}
             GIT_PROGRESS TRUE
-            GIT_SHALLOW TRUE
-            USES_TERMINAL_DOWNLOAD TRUE
-
-            CMAKE_CACHE_ARGS
             #SOURCE_SUBDIR ${LLVM_SOURCE_SUBDIR}
     )
 

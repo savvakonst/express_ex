@@ -33,14 +33,14 @@ if (NOT antlr4-runtime_FOUND)
     if (NOT EXISTS ${EXTERNAL_ANTLR_4_SOURCE_DIR}/${antlr_4_SOURCE_SUBDIR}/CMakeLists.txt)
         set(ANTLR_4_GIT_REPOSITORY https://github.com/antlr/antlr4.git)
     endif ()
-
+    set(FETCHCONTENT_QUIET FALSE)
     include(FetchContent)
     FetchContent_Declare(
             antlr_4
             GIT_REPOSITORY ${ANTLR_4_GIT_REPOSITORY}
             GIT_TAG 9cf7e96a2adbf71021bc2c1ccf2917a574040b08
             SOURCE_DIR ${EXTERNAL_ANTLR_4_SOURCE_DIR}
-            GIT_PROGRESS ON
+            GIT_PROGRESS TRUE
             SOURCE_SUBDIR ${antlr_4_SOURCE_SUBDIR}
             )
 

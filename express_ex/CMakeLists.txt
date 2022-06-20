@@ -1,51 +1,37 @@
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 
 # set the project name
 project(express_ex)
 
 SET(IS_SHARED false)
 
-if( NOT  CMAKE_CL_64 )
-    set(SPlatform  x86)
-    set(APlarform  Win32)
-else()
-    set(SPlatform  x64) 
-    set(APlarform  x64)
-endif()
- 
+if (NOT CMAKE_CL_64)
+    set(SPlatform x86)
+    set(APlarform Win32)
+else ()
+    set(SPlatform x64)
+    set(APlarform x64)
+endif ()
 
 
-set(CLHPP       "C:/Users/SVK/Desktop/openCl/khronos/OpenCL-CLHPP/include")
-set(cudaPath    "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0")
-set(openCL_includeDir  ${cudaPath}/include)
-
-set(EGrammarDir ../EGrammar)
-set(llvmDir     ../../common/llvm-project)
+set(CLHPP__C "C:/Users/SVK/Desktop/openCl/khronos/OpenCL-CLHPP/include")
+set(CUDAPATH__C "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0")
+set(OPENCL_INCLUDEDIR__C ${CUDAPATH__C}/include)
+set(OPENCL_LIBDIR__C ${CUDAPATH__C}/lib/${APlarform})
 
 
 
-
-
-include_directories(${CLHPP})
-include_directories(${openCL_includeDir})
-
-include_directories(${llvmDir}/llvm/include)
-include_directories(${llvmDir}/build_${SPlatform}/include)
-
-
-add_subdirectory(io_ex)
 
 
 set(LIBRARY_SOURCES
-
-
 
         lib/ifs/AsyncParameter.cpp
         lib/ifs/ParameterIO.cpp
         lib/ifs/SyncParameter.cpp
         lib/ifs/express_ex.cpp
         lib/ifs/printer.cpp
+        lib/ifs/ErrorsIo.cpp
 
         lib/KexParser/KexParser.cpp
         lib/KexParser/treeShapeListener.cpp
@@ -93,11 +79,12 @@ set(LIBRARY_HEADERS
         include/ifs/parameterIO.h
         include/ifs/parameterIfs.h
         include/ifs/printer.h
-
+        include/ifs/ExStream.h
 
         lib/KexParser/treeShapeListener.h
 
         include/parser/KexParser.h
+        include/parser/variable.h
         include/parser/basic.h
         include/parser/body.h
         include/parser/bodyTemplate.h
@@ -109,9 +96,12 @@ set(LIBRARY_HEADERS
         include/parser/operations.h
         include/parser/parsingException.h
 
+
+        include/common/errors.h
+        include/common/errors.h
         include/common/types_jty.h
         include/common/undefWarningIgnore.h
-        include/parser/variable.h
+
 
         include/operations/ArithmeticOperation.h
         include/operations/BuiltInCallOperation.h
@@ -131,167 +121,82 @@ set(LIBRARY_HEADERS
         include/jit/llvmHdrs.h
         include/jit/orcjit.h
         include/jit/table.h
-        include/ifs/ExStreamIfs.h include/common/errors.h include/ifs/ExStream.h include/common/errors.h lib/ifs/ErrorsIo.cpp)
+        include/ifs/ExStreamIfs.h
+        )
 
+
+
+if (MSVC_VERSION)
+    SET(EXPRESS_EX_DEFINITIONS__C
+            WIN32
+            _WINDOWS
+            UNICODE
+            _UNICODE
+            )
+    SET(EXPRESS_EX_COMPILE_OPTIONS__C
+            /wd4804
+            /wd4018
+            /wd5208
+            )
+
+endif ()
 
 #set(CMAKE_CXX_STACK_SIZE "10000000")
 
-
+find_package(LLVM REQUIRED CONFIG)
 
 
 add_library(express_ex SHARED
-    ${LIBRARY_SOURCES}
-    ${LIBRARY_HEADERS}
-)
-
-target_include_directories(express_ex PRIVATE include)
-target_link_libraries(express_ex
-        PRIVATE antlr4_shared
-        PRIVATE EGrammar)
+        ${LIBRARY_SOURCES}
+        ${LIBRARY_HEADERS}
+        )
 
 
 
-#add_executable(express_ex_exe
-#        ${LIBRARY_SOURCES}
-#        ${LIBRARY_HEADERS}
-#        )
 
 
-if(MSVC_VERSION)
-
-    target_compile_options(express_ex PRIVATE
-        /wd4804
-        /wd4018
-        /wd5208
-    )
 
 
-    SET(ObjNames
-        LLVMAggressiveInstCombine
-        LLVMAnalysis
-        LLVMAsmPrinter
-        LLVMBinaryFormat
-        LLVMBitReader
-        LLVMBitWriter
-        LLVMBitstreamReader
-        LLVMCFGuard
-        LLVMCodeGen
-        LLVMCore
-        LLVMDebugInfoCodeView
-        LLVMDebugInfoDWARF
-        LLVMDebugInfoMSF
-        LLVMDemangle
-        LLVMExecutionEngine
-        LLVMGlobalISel
-        LLVMInstCombine
-        LLVMInterpreter
-        LLVMMC
-        LLVMMCDisassembler
-        LLVMMCJIT
-        LLVMMCParser
-        LLVMObject
-        LLVMProfileData
-        LLVMRemarks
-        LLVMRuntimeDyld
-        LLVMScalarOpts
-        LLVMSelectionDAG
-        LLVMSupport
-        LLVMTarget
-        LLVMTextAPI
-        LLVMTransformUtils
-        LLVMX86CodeGen
-        LLVMX86Desc
-        LLVMX86Info
-        #LLVMX86Utils
+target_compile_options(express_ex PRIVATE
+        ${EXPRESS_EX_COMPILE_OPTIONS__C}
+        )
+
+target_include_directories(express_ex
+        PRIVATE include
+        PRIVATE ${LLVM_INCLUDE_DIRS}
+        )
+
+target_link_directories(express_ex PUBLIC
+        ${OPENCL_LIBDIR__C}
+        )
+
+separate_arguments(LLVM_DEFINITIONS_LIST__C NATIVE_COMMAND ${LLVM_DEFINITIONS} )
+
+llvm_map_components_to_libnames(llvm_libs
+        Core
+        ExecutionEngine
+        Interpreter
+        MC
+        MCJIT
+        Support
+        nativecodegen
+        )
+
+target_compile_definitions(express_ex PRIVATE
+        ${EXPRESS_EX_DEFINITIONS__C}
+        ${LLVM_DEFINITIONS_LIST__C}
+        DLL_express_ex_EXPORT
+        )
+
+target_link_libraries(express_ex PRIVATE
         OpenCL
-    )
-
-
-    set(openCL_libDir ${cudaPath}/lib/${APlarform})
-    set(llvmLibPath   ${llvmDir}/build_${SPlatform}/$<CONFIG>/lib)
-    #set(antlrLibPath  ${antlr4Dir}/bin/vs-2019/${SPlatform}/$<CONFIG>\ DLL)
-
-    target_link_directories(express_ex PUBLIC
-        ${llvmLibPath}
-        ${openCL_libDir}
-    )
-
-
-    target_link_libraries(express_ex PRIVATE ${ObjNames}  )
+        antlr4_shared
+        EGrammar
+        ${llvm_libs}
+        )
 
 
 
-
-    SET(common_MSVC_definitions
-        WIN32
-        _WINDOWS
-        _CRT_SECURE_NO_DEPRECATE
-        _CRT_SECURE_NO_WARNINGS
-        _CRT_NONSTDC_NO_DEPRECATE
-        _CRT_NONSTDC_NO_WARNINGS
-        _SCL_SECURE_NO_DEPRECATE
-        _SCL_SECURE_NO_WARNINGS
-        UNICODE
-        _UNICODE
-        __STDC_CONSTANT_MACROS
-        __STDC_FORMAT_MACROS
-        __STDC_LIMIT_MACROS
-    )
-
-    set_property(TARGET express_ex APPEND PROPERTY
-        COMPILE_DEFINITIONS ${common_MSVC_definitions} DLL_express_ex_EXPORT
-    )
+#set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "express_ex") ???
 
 
-    if(IS_SHARED)
-    #if(false)
-        #set_property(TARGET express_ex APPEND PROPERTY
-        #    COMPILE_DEFINITIONS ${common_MSVC_definitions} DLL_express_ex_EXPORT
-        #)
-
-        set(FILE_NAMES_TO_COPY "express_ex.*" "syntaxhighlighter.*" "topsyntaxhighlighter.*" "antlr4-runtime.*")
-
-
-        foreach( TARGET_CONFIG  Debug Release)
-
-            foreach( FILE_NAME_MASK ${FILE_NAMES_TO_COPY})
-
-                #set(FILES_TO_COPY_PATTERN ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${FILE_NAME_MASK} )
-                file(GLOB FILES_TO_COPY "${SPlatform}/${TARGET_CONFIG}/${FILE_NAME_MASK}" )
-
-                #add_custom_command(TARGET express_ex POST_BUILD COMMAND ${CMAKE_COMMAND} -E echo "-------------------------FILES_TO_COPY: $<FILES_TO_COPY>")
-
-                foreach( FILE_NAME_VAR ${FILES_TO_COPY})
-                    add_custom_command(TARGET express_ex POST_BUILD COMMAND ${CMAKE_COMMAND} -E echo "-------------------------FILE_NAME_VAR: ${FILE_NAME_VAR}")
-
-                    add_custom_command(TARGET express_ex POST_BUILD
-                        COMMAND  ${CMAKE_COMMAND} -E copy_if_different
-                            ${FILE_NAME_VAR}
-                            //nas_sy/Common/svk/express_ex/${APlarform}/${TARGET_CONFIG}.Shared
-                        )
-                endforeach( FILE_NAME_VAR )
-            endforeach( FILE_NAME_MASK )
-        endforeach( TARGET_CONFIG )
-
-
-
-
-    else()
-        #set_property(TARGET express_ex APPEND PROPERTY
-        #    COMPILE_DEFINITIONS ${common_MSVC_definitions} CONSOLE_APP_
-        #)
-    endif()
-
-
-
-    #set_property(GLOBAL PROPERTY VS_STARTUP_PROJECT "express_ex")
-    set_property (DIRECTORY PROPERTY VS_STARTUP_PROJECT "express_ex")
-else()
-    message(FATAL_ERROR  "compilers other than MSVC are not supported" )   
-endif()
-
-
-
-
-
-#COMMAND $<$<CONFIG:Release>:strip>  

@@ -544,6 +544,9 @@ void Operation::setupIR(IRGenerator& builder) {
             is_initialized_ = true;
         }
         builder.setStoreInsertPoint();
+
+        // llvmorg-14.0.5
+
         IR_buffer_ptr_ =
             builder.CreateInBoundsGEP(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(), "offset_op_old_incr_");
         builder.createPositionalStore(IR_value_, IR_buffer_ptr_);

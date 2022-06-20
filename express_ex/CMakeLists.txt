@@ -21,6 +21,33 @@ set(OPENCL_INCLUDEDIR__ ${CUDAPATH__}/include)
 set(OPENCL_LIBDIR__ ${CUDAPATH__}/lib/${APlarform})
 
 
+find_package(LLVM QUIET CONFIG)
+
+if (NOT LLVM_FOUND)
+
+
+    set(EXTERNAL_LLVM_SOURCE_DIR ${CMAKE_SOURCE_DIR}/external_projects/llvm)
+
+    if (NOT EXISTS ${EXTERNAL_ANTLR_4_SOURCE_DIR}/${antlr_4_SOURCE_SUBDIR}/CMakeLists.txt)
+        set(LLVM_GIT_REPOSITORY https://github.com/llvm/llvm-project.git)
+    endif ()
+
+    include(FetchContent)
+    FetchContent_Declare(
+            llvm_prj
+            GIT_REPOSITORY ${LLVM_GIT_REPOSITORY}
+            GIT_TAG llvmorg-12.0.1
+            SOURCE_DIR ${EXTERNAL_LLVM_SOURCE_DIR}
+            GIT_PROGRESS ON
+            GIT_SHALLOW ON
+            #SOURCE_SUBDIR ${antlr_4_SOURCE_SUBDIR}
+    )
+
+
+endif()
+
+
+
 set(LIBRARY_SOURCES
 
         lib/ifs/AsyncParameter.cpp
@@ -139,7 +166,12 @@ endif ()
 
 #set(CMAKE_CXX_STACK_SIZE "10000000")
 
-find_package(LLVM REQUIRED CONFIG)
+
+
+
+
+
+
 
 
 add_library(express_ex SHARED

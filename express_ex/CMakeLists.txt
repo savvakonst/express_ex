@@ -15,10 +15,10 @@ else ()
 endif ()
 
 
-set(CLHPP__C "C:/Users/SVK/Desktop/openCl/khronos/OpenCL-CLHPP/include")
-set(CUDAPATH__C "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0")
-set(OPENCL_INCLUDEDIR__C ${CUDAPATH__C}/include)
-set(OPENCL_LIBDIR__C ${CUDAPATH__C}/lib/${APlarform})
+set(CLHPP__ "C:/Users/SVK/Desktop/openCl/khronos/OpenCL-CLHPP/include")
+set(CUDAPATH__ "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0")
+set(OPENCL_INCLUDEDIR__ ${CUDAPATH__}/include)
+set(OPENCL_LIBDIR__ ${CUDAPATH__}/lib/${APlarform})
 
 
 
@@ -127,13 +127,13 @@ set(LIBRARY_HEADERS
 
 
 if (MSVC_VERSION)
-    SET(EXPRESS_EX_DEFINITIONS__C
+    SET(EXPRESS_EX_DEFINITIONS__
             WIN32
             _WINDOWS
             UNICODE
             _UNICODE
             )
-    SET(EXPRESS_EX_COMPILE_OPTIONS__C
+    SET(EXPRESS_EX_COMPILE_OPTIONS__
             /wd4804
             /wd4018
             /wd5208
@@ -158,19 +158,21 @@ add_library(express_ex SHARED
 
 
 target_compile_options(express_ex PRIVATE
-        ${EXPRESS_EX_COMPILE_OPTIONS__C}
+        ${EXPRESS_EX_COMPILE_OPTIONS__}
         )
 
 target_include_directories(express_ex
         PRIVATE include
         PRIVATE ${LLVM_INCLUDE_DIRS}
+        PRIVATE ${OPENCL_INCLUDEDIR__}
+        PRIVATE ${OPENCL_LIBDIR__}
         )
 
 target_link_directories(express_ex PUBLIC
-        ${OPENCL_LIBDIR__C}
+        ${OPENCL_LIBDIR__}
         )
 
-separate_arguments(LLVM_DEFINITIONS_LIST__C NATIVE_COMMAND ${LLVM_DEFINITIONS} )
+separate_arguments(LLVM_DEFINITIONS_LIST__ NATIVE_COMMAND ${LLVM_DEFINITIONS} )
 
 llvm_map_components_to_libnames(llvm_libs
         Core
@@ -183,8 +185,8 @@ llvm_map_components_to_libnames(llvm_libs
         )
 
 target_compile_definitions(express_ex PRIVATE
-        ${EXPRESS_EX_DEFINITIONS__C}
-        ${LLVM_DEFINITIONS_LIST__C}
+        ${EXPRESS_EX_DEFINITIONS__}
+        ${LLVM_DEFINITIONS_LIST__}
         DLL_express_ex_EXPORT
         )
 

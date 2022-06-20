@@ -26,23 +26,26 @@ find_package(LLVM QUIET CONFIG)
 if (NOT LLVM_FOUND)
 
 
-    set(EXTERNAL_LLVM_SOURCE_DIR ${CMAKE_SOURCE_DIR}/external_projects/llvm)
+    set(LLVM_SOURCE_SUBDIR llvm)
+    set(EXTERNAL_LLVM_SOURCE_DIR ${CMAKE_SOURCE_DIR}/external_projects/llvm-project)
 
-    if (NOT EXISTS ${EXTERNAL_ANTLR_4_SOURCE_DIR}/${antlr_4_SOURCE_SUBDIR}/CMakeLists.txt)
+    if (NOT EXISTS ${EXTERNAL_LLVM_SOURCE_DIR}/${LLVM_SOURCE_SUBDIR}/CMakeLists.txt)
         set(LLVM_GIT_REPOSITORY https://github.com/llvm/llvm-project.git)
     endif ()
-
+    message("${LLVM_GIT_REPOSITORY}")
     include(FetchContent)
     FetchContent_Declare(
             llvm_prj
             GIT_REPOSITORY ${LLVM_GIT_REPOSITORY}
+            #GIT_TAG release/12.x/llvmorg-12.0.1
             GIT_TAG llvmorg-12.0.1
             SOURCE_DIR ${EXTERNAL_LLVM_SOURCE_DIR}
-            GIT_PROGRESS ON
-            GIT_SHALLOW ON
-            #SOURCE_SUBDIR ${antlr_4_SOURCE_SUBDIR}
+            GIT_PROGRESS TRUE
+            GIT_SHALLOW TRUE
+            #SOURCE_SUBDIR ${LLVM_SOURCE_SUBDIR}
     )
 
+    FetchContent_MakeAvailable(llvm_prj)
 
 endif()
 

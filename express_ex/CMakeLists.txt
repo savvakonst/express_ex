@@ -66,16 +66,50 @@ if (NOT LLVM_FOUND)
     FetchContent_GetProperties(llvm_prj)
     if(NOT llvm_prj_POPULATED)
         FetchContent_Populate(llvm_prj)
-        add_subdirectory(${EXTERNAL_LLVM_PROJECT_DIR}  ${llvm_prj_BINARY_DIR} EXCLUDE_FROM_ALL)
+
+
+
+
+
+
+
+        set(LLVM_ADDITIONAL_ARGS "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}" "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}" )
+
+        set(LLVM_BUILD_TYPE)
+
+        if(CMAKE_VS_PLATFORM_NAME)
+            if(CMAKE_VS_PLATFORM_NAME STREQUAL "x64")
+                set(LLVM_ADDITIONAL_ARGS -A x64 -Thost=x64)
+            else()
+                set(LLVM_ADDITIONAL_ARGS -A Win32 -Thost=x64)
+            endif()
+        elseif(CMAKE_CXX_COMPILER MATCHES "x64/cl.exe")
+        elseif(CMAKE_CXX_COMPILER MATCHES "x86/cl.exe")
+        elseif(CMAKE_CXX_FLAGS MATCHES "-m64")
+            set(LLVM_ADDITIONAL_ARGS ${LLVM_ADDITIONAL_ARGS} "-DCMAKE_CXX_FLAGS=-m64" "-DCMAKE_C_COMPILER=-m64" )
+        elseif(CMAKE_CXX_FLAGS MATCHES "-m32")
+            set(LLVM_ADDITIONAL_ARGS ${LLVM_ADDITIONAL_ARGS} "-DCMAKE_CXX_FLAGS=-m32" "-DCMAKE_C_COMPILER=-m32" )
+        endif()
+
+
+
+        execute_process(
+                COMMAND ${CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" ${LLVM_ADDITIONAL_ARGS} -DLLVM_INCLUDE_TESTS=OFF  -DLLVM_INCLUDE_BENCHMARKS=OFF -DLLVM_INCLUDE_TOOLS=OFF -DLLVM_INCLUDE_DOCS=OFF -DLLVM_TARGETS_TO_BUILD=X86  ${EXTERNAL_LLVM_PROJECT_DIR}
+                RESULT_VARIABLE result
+                ${outputOptions}
+                WORKING_DIRECTORY "${llvm_prj_BINARY_DIR}"
+        )
+
+
     endif()
 
-    set(LLVM_INCLUDE_DIRS ${EXTERNAL_LLVM_PROJECT_DIR}/include;${llvm_prj_BINARY_DIR}/include)
-    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${llvm_prj_BINARY_DIR}")
+    #set(LLVM_INCLUDE_DIRS ${EXTERNAL_LLVM_PROJECT_DIR}/include;${llvm_prj_BINARY_DIR}/include)
+    #set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${llvm_prj_BINARY_DIR}")
 
 
 
-    get_directory_property(LLVM_DEFINITIONS_LIST__ DIRECTORY ${EXTERNAL_LLVM_PROJECT_DIR} COMPILE_DEFINITIONS)
-    message("COMPILE_DEFINITIONS MSVC ${LLVM_DEFINITIONS_LIST__}")
+    #get_directory_property(LLVM_DEFINITIONS_LIST__ DIRECTORY ${EXTERNAL_LLVM_PROJECT_DIR} COMPILE_DEFINITIONS)
+    #message("COMPILE_DEFINITIONS MSVC ${LLVM_DEFINITIONS_LIST__}")
 
 endif()
 

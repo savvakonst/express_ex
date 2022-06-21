@@ -1,5 +1,5 @@
 # Процесс сборки
-
+`-DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64;C:/Express_expr_compiler/libs/llvm-project/llvm/cmake-build-debug -G "Ninja" -DCMAKE_VERBOSE_MAKEFILE=1 --graphviz=dep.dot`
 ## Зависимости
 
 * llvm.  

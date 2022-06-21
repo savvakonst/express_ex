@@ -28,27 +28,54 @@ if (NOT LLVM_FOUND)
 
     set(LLVM_SOURCE_SUBDIR llvm)
     set(EXTERNAL_LLVM_SOURCE_DIR ${CMAKE_SOURCE_DIR}/external_projects/llvm-project)
+    set(EXTERNAL_LLVM_PROJECT_DIR ${EXTERNAL_LLVM_SOURCE_DIR}/${LLVM_SOURCE_SUBDIR})
 
-    if (NOT EXISTS ${EXTERNAL_LLVM_SOURCE_DIR}/${LLVM_SOURCE_SUBDIR}/CMakeLists.txt)
+
+    if (NOT EXISTS ${EXTERNAL_LLVM_PROJECT_DIR}/CMakeLists.txt)
         set(LLVM_GIT_REPOSITORY https://github.com/llvm/llvm-project.git)
+        find_package(Git REQUIRED)
+        set(LLVM_DOWNLOAD_COMMAND DOWNLOAD_COMMAND
+                ${GIT_EXECUTABLE} clone
+                --depth 1 --config core.autocrlf=false --branch llvmorg-12.0.1 "${LLVM_GIT_REPOSITORY}" "${EXTERNAL_LLVM_SOURCE_DIR}")
+    else()
+        set(LLVM_DOWNLOAD_COMMAND )
     endif ()
 
 
+    set (LLVM_INCLUDE_TESTS OFF)
+    set(LLVM_INCLUDE_BENCHMARKS OFF)
+    set(LLVM_INCLUDE_TOOLS OFF)
+    set(LLVM_INCLUDE_DOCS OFF)
+    set(LLVM_TARGETS_TO_BUILD X86)
 
-    find_package(Git)
+
     include(FetchContent)
     set(FETCHCONTENT_QUIET FALSE)
-
     FetchContent_Declare(
             llvm_prj
-            DOWNLOAD_COMMAND ${GIT_EXECUTABLE} clone --depth 1 --config core.autocrlf=false --branch llvmorg-12.0.1 "${LLVM_GIT_REPOSITORY}" "${EXTERNAL_LLVM_SOURCE_DIR}"
-            # this is used because GIT_SHALLOW TRUE doesn't help, it calls git clone --depth 1 --no-single-branch
+            ${LLVM_DOWNLOAD_COMMAND}
             SOURCE_DIR ${EXTERNAL_LLVM_SOURCE_DIR}
+            SOURCE_SUBDIR ${LLVM_SOURCE_SUBDIR}
+
             GIT_PROGRESS TRUE
-            #SOURCE_SUBDIR ${LLVM_SOURCE_SUBDIR}
+            LOG_CONFIGURE TRUE
     )
 
-    FetchContent_MakeAvailable(llvm_prj)
+
+
+    FetchContent_GetProperties(llvm_prj)
+    if(NOT llvm_prj_POPULATED)
+        FetchContent_Populate(llvm_prj)
+        add_subdirectory(${EXTERNAL_LLVM_PROJECT_DIR}  ${llvm_prj_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif()
+
+    set(LLVM_INCLUDE_DIRS ${EXTERNAL_LLVM_PROJECT_DIR}/include;${llvm_prj_BINARY_DIR}/include)
+    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${llvm_prj_BINARY_DIR}")
+
+
+
+    get_directory_property(LLVM_DEFINITIONS_LIST__ DIRECTORY ${EXTERNAL_LLVM_PROJECT_DIR} COMPILE_DEFINITIONS)
+    message("COMPILE_DEFINITIONS MSVC ${LLVM_DEFINITIONS_LIST__}")
 
 endif()
 
@@ -201,8 +228,6 @@ target_link_directories(express_ex PUBLIC
         ${OPENCL_LIBDIR__}
         )
 
-separate_arguments(LLVM_DEFINITIONS_LIST__ NATIVE_COMMAND ${LLVM_DEFINITIONS})
-
 llvm_map_components_to_libnames(llvm_libs
         Core
         ExecutionEngine
@@ -212,6 +237,8 @@ llvm_map_components_to_libnames(llvm_libs
         Support
         nativecodegen
         )
+
+message("llvm_libs ${llvm_libs}")
 
 target_compile_definitions(express_ex PRIVATE
         ${EXPRESS_EX_DEFINITIONS__}

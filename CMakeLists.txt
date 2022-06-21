@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 
+
 #set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 if (NOT hasParent)
     set(VENV_PATH bin)

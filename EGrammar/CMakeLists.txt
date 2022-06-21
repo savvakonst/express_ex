@@ -40,8 +40,8 @@ if (NOT antlr4-runtime_FOUND)
             GIT_REPOSITORY ${ANTLR_4_GIT_REPOSITORY}
             GIT_TAG 9cf7e96a2adbf71021bc2c1ccf2917a574040b08
             SOURCE_DIR ${EXTERNAL_ANTLR_4_SOURCE_DIR}
-            GIT_PROGRESS TRUE
             SOURCE_SUBDIR ${antlr_4_SOURCE_SUBDIR}
+            GIT_PROGRESS TRUE
             )
 
 

@@ -88,6 +88,15 @@ add_library(${LIBRARY_NAME} STATIC
         ${LIBRARY_SOURCES}
         )
 
+
+add_custom_command(TARGET ${LIBRARY_NAME}
+        PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E echo   "-------------------------  $<CONFIG>" )
+
+add_custom_command(TARGET ${LIBRARY_NAME}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E echo   "-------------------------  $<CONFIG>" )
+
 message("CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}")
 message("CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}")
 

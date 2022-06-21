@@ -93,13 +93,11 @@ add_custom_command(TARGET ${LIBRARY_NAME}
         PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E echo   "-------------------------  $<CONFIG>" )
 
-add_custom_command(TARGET ${LIBRARY_NAME}
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E echo   "-------------------------  $<CONFIG>" )
+#[[
 
 message("CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}")
 message("CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}")
-
+]]
 
 #set_target_properties(${LIBRARY_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 #ANTLR4CPP_STATIC

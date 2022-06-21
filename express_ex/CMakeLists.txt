@@ -229,7 +229,7 @@ if (NOT LLVM_FOUND  #[[OR DEFINED LLVM_BUILD_DIR]] )
         set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${llvm_prj_BINARY_DIR})
         find_package(LLVM REQUIRED CONFIG)
 
-        set(LLVM_BUILD_DIR  TRUE  CACHE STRING
+        set(LLVM_BUILD_DIR  ${llvm_prj_BINARY_DIR}  CACHE STRING
                 "cached name of available python module" FORCE)
 
     endif()
@@ -245,7 +245,8 @@ add_library(express_ex SHARED
         ${LIBRARY_HEADERS}
         )
 
-
+message("LLVM_BUILD_DIR ${LLVM_BUILD_DIR}")
+message("LLVM_BUILD_DIR ${LLVM_BUILD_DIR}")
 if(DEFINED LLVM_BUILD_DIR)
     set(LLVM_TARGETS "${LLVM_COMPONENTS}")
     list(TRANSFORM LLVM_TARGETS PREPEND LLVM)

@@ -281,7 +281,6 @@ if(DEFINED LLVM_BUILD_DIR)
         set(LLVM_LIB_PATHS  ${LLVM_LIB_PATHS}   $<TARGET_FILE:${LLVM_LIB_NAME}>)
     endforeach()
 
-
     add_custom_target(build_llvm
             ${CMAKE_COMMAND} --build "${LLVM_BUILD_DIR}" --target ${LLVM_LIBS__} --config $<CONFIG>
             OUTPUTS  ${LLVM_LIB_PATHS}
@@ -296,7 +295,6 @@ if(DEFINED LLVM_BUILD_DIR)
             OUTPUTS  ${LLVM_LIB_PATHS}
             WORKING_DIRECTORY "${LLVM_BUILD_DIR}")
 ]]
-
 endif()
 
 

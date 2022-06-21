@@ -245,21 +245,15 @@ add_library(express_ex SHARED
         ${LIBRARY_HEADERS}
         )
 
-message("LLVM_BUILD_DIR ${LLVM_BUILD_DIR}")
-message("LLVM_BUILD_DIR ${LLVM_BUILD_DIR}")
-if(DEFINED LLVM_BUILD_DIR)
-    set(LLVM_TARGETS "${LLVM_COMPONENTS}")
-    list(TRANSFORM LLVM_TARGETS PREPEND LLVM)
 
-    add_custom_command(TARGET express_ex
-            PRE_BUILD
-            COMMAND ${CMAKE_COMMAND} --build --target &{LLVM_TARGETS} --config $<CONFIG>
-            WORKING_DIRECTORY "${LLVM_BUILD_DIR}")
-endif()
+
+
 
 target_compile_options(express_ex PRIVATE
         ${EXPRESS_EX_COMPILE_OPTIONS__}
         )
+
+#add_dependencies(express_ex build_llvm)
 
 target_include_directories(express_ex
         PRIVATE include
@@ -276,6 +270,34 @@ llvm_map_components_to_libnames(LLVM_LIBS__
         ${LLVM_COMPONENTS}
         )
 
+
+if(DEFINED LLVM_BUILD_DIR)
+    message("LLVM_BUILD_DIR ${LLVM_BUILD_DIR}")
+
+    set(LLVM_TARGETS "${LLVM_COMPONENTS}")
+    list(TRANSFORM LLVM_TARGETS PREPEND LLVM)
+
+    foreach(LLVM_LIB_NAME ${LLVM_LIBS__})
+        set(LLVM_LIB_PATHS  ${LLVM_LIB_PATHS}   $<TARGET_FILE:${LLVM_LIB_NAME}>)
+    endforeach()
+
+
+    add_custom_target(build_llvm
+            ${CMAKE_COMMAND} --build "${LLVM_BUILD_DIR}" --target ${LLVM_LIBS__} --config $<CONFIG>
+            OUTPUTS  ${LLVM_LIB_PATHS}
+            WORKING_DIRECTORY "${LLVM_BUILD_DIR}" )
+
+    add_dependencies(express_ex build_llvm)
+
+#[[
+    add_custom_command(TARGET express_ex
+            PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} --build "${LLVM_BUILD_DIR}" --target ${LLVM_LIBS__} --config $<CONFIG>
+            OUTPUTS  ${LLVM_LIB_PATHS}
+            WORKING_DIRECTORY "${LLVM_BUILD_DIR}")
+]]
+
+endif()
 
 
 separate_arguments(LLVM_DEFINITIONS_LIST__ NATIVE_COMMAND ${LLVM_DEFINITIONS})
@@ -296,6 +318,12 @@ target_link_libraries(express_ex PRIVATE
         )
 
 
+
+
+
+
+
+
 message("LLVM_LIBS__ ${LLVM_LIBS__}")
 message("LLVM_DEFINITIONS_LIST__ ${LLVM_DEFINITIONS_LIST__}")
 message("LLVM_BUILD_TYPE ${CMAKE_BUILD_TYPE}")
@@ -304,5 +332,8 @@ message("GENERATOR_IS_MULTI_CONFIG ${IS_MULTI_CONFIG}")
 message("LLVM_TARGETS ${LLVM_TARGETS}")
 message("CMAKE_CONFIGURATION_TYPES ${CMAKE_CONFIGURATION_TYPES}")
 message("llvm_prj_BINARY_DIR ${llvm_prj_BINARY_DIR}")
+
+
+
 
 #set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "express_ex") ???

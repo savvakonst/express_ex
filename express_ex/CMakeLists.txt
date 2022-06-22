@@ -247,14 +247,10 @@ add_library(express_ex SHARED
         )
 
 
-
-
-
 target_compile_options(express_ex PRIVATE
         ${EXPRESS_EX_COMPILE_OPTIONS__}
         )
 
-#add_dependencies(express_ex build_llvm)
 
 target_include_directories(express_ex
         PRIVATE include
@@ -282,47 +278,20 @@ target_link_libraries(express_ex PRIVATE
 
 
 if(DEFINED LLVM_BUILD_DIR)
-    message("LLVM_BUILD_DIR ${LLVM_BUILD_DIR}")
-
-    set(LLVM_TARGETS "${LLVM_COMPONENTS}")
-    list(TRANSFORM LLVM_TARGETS PREPEND LLVM)
-
-    get_target_property(TEMP_VAR LLVMCore INTERFACE_LINK_LIBRARIES)
-    if(TEMP_VAR)
-        message("INTERFACE_LINK_LIBRARIES  ${TEMP_VAR}")
-    endif()
-
-
 
     get_interface_link_libraries_recursively(LLVM_ALL_DEPENDENCIES ${LLVM_LIBS__})
     get_library_paths(LLVM_LIB_PATHS ${LLVM_ALL_DEPENDENCIES})
-    #[[
-    foreach(LLVM_LIB_NAME ${LLVM_ALL_DEPENDENCIES})
-        string(TOUPPER ${CMAKE_BUILD_TYPE} TMP_VAR)
-        get_target_property(TEMP_VAR  ${LLVM_LIB_NAME} IMPORTED_LOCATION_${TMP_VAR} )
-        set(LLVM_LIB_PATHS  ${LLVM_LIB_PATHS}   ${TEMP_VAR})
-    endforeach()
-]]
-    message("CMAKE_BUILD_TYPE          ${CMAKE_BUILD_TYPE}")
 
-
-    message("LLVM_ALL_DEPENDENCIES ${LLVM_ALL_DEPENDENCIES}")
-    message("LLVM_LIB_PATHS  ${LLVM_LIB_PATHS}")
+    message("${CMAKE_COMMAND} --build \"${LLVM_BUILD_DIR}\" --target ${LLVM_LIBS__} --config $<CONFIG>")
 
     add_custom_target(build_llvm
             ${CMAKE_COMMAND} --build "${LLVM_BUILD_DIR}" --target ${LLVM_LIBS__} --config $<CONFIG>
             BYPRODUCTS  ${LLVM_LIB_PATHS}
-            WORKING_DIRECTORY "${LLVM_BUILD_DIR}" )
+            #WORKING_DIRECTORY "${LLVM_BUILD_DIR}"
+            )
 
     add_dependencies(express_ex build_llvm)
 
-#[[
-    add_custom_command(TARGET express_ex
-            PRE_BUILD
-            COMMAND ${CMAKE_COMMAND} --build "${LLVM_BUILD_DIR}" --target ${LLVM_LIBS__} --config $<CONFIG>
-            OUTPUTS  ${LLVM_LIB_PATHS}
-            WORKING_DIRECTORY "${LLVM_BUILD_DIR}")
-]]
 endif()
 
 
@@ -350,7 +319,6 @@ message("LLVM_DEFINITIONS_LIST__ ${LLVM_DEFINITIONS_LIST__}")
 message("LLVM_BUILD_TYPE ${CMAKE_BUILD_TYPE}")
 message("CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
 message("GENERATOR_IS_MULTI_CONFIG ${IS_MULTI_CONFIG}")
-message("LLVM_TARGETS ${LLVM_TARGETS}")
 message("CMAKE_CONFIGURATION_TYPES ${CMAKE_CONFIGURATION_TYPES}")
 message("llvm_prj_BINARY_DIR ${llvm_prj_BINARY_DIR}")
 

@@ -5,8 +5,8 @@
 для этого не нужны никакие "дополнительные" аргументы. Cmake разместит эти "подпроекты" 
 в каталоге "external_projects", при желании можно изменить каталог с промощью аргумента cmake
 `-DEXTERNAL_PROJECTS_DIRECTORY= "некий каталог"`. 
->Внимание! при автоматической загрузке зависимостей и использовании в качестве генератора Ninja
-> перед сборкой цели express_ex соберите отдельно build_llvm
+>Внимание! при автоматической загрузке зависимостей и использовании в качестве генератора Ninja Multi-Config
+> перед сборкой цели express_ex возможно понадобится сначала собрать отдельно цель build_llvm
 
 Далее идут инструкции для ручного подключения 
 зависимостей:
@@ -31,7 +31,7 @@
   -DLLVM_INCLUDE_DOCS=OFF 
   -DLLVM_TARGETS_TO_BUILD=X86`  
   
-
+`"C:/Program Files/JetBrains/CLion 2021.2.3/bin/cmake/win/bin/cmake.exe" --build "C:/Express_expr_compiler/express/cmake-build-debug/_deps/llvm_prj-build" --target LLVMCore LLVMExecutionEngine LLVMInterpreter LLVMMC LLVMMCJIT LLVMSupport LLVMX86CodeGen LLVMX86Desc LLVMX86Info`
 * antlr 4.  
   Если у вас нет внешнего проекта antlr 4 nj проще всего 
   не делать ничего, во время генерации проекта cmake сам загрузит c помощью git проект antlr 4 

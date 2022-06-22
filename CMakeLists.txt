@@ -17,6 +17,7 @@ elseif()
     endif()
 endif()
 
+include(ExpressUtils.cmake)
 
 #set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 if (NOT hasParent)

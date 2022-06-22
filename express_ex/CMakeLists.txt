@@ -280,47 +280,6 @@ target_link_libraries(express_ex PRIVATE
 
 
 
-function(get_interface_link_libraries_recursively out_libs)
-
-    set(TMP_OUT_LIBS )
-    message("get_interface_link_libraries_recursively ${ARGN}")
-    set(TMP_LIST_DEPTH_0 ${ARGN} )
-    set(TMP_CNT 0)
-    while(TMP_LIST_DEPTH_0)
-        if(NOT TMP_LIST_DEPTH_${TMP_CNT})
-            unset(TMP_LIST_DEPTH_${TMP_CNT})
-            math(EXPR TMP_CNT "${TMP_CNT}-1" )
-            list(POP_FRONT TMP_LIST_DEPTH_${TMP_CNT} )
-        endif()
-
-        if(NOT TMP_LIST_DEPTH_${TMP_CNT} )
-            continue()
-        endif()
-
-        list(GET TMP_LIST_DEPTH_${TMP_CNT} 0 TMP_CURRENT)
-        #message("TMP_CURRENT ${TMP_CURRENT}")
-        math(EXPR TMP_CNT "${TMP_CNT}+1" )
-        if(TARGET ${TMP_CURRENT})
-            get_target_property(TMP_LIST_DEPTH_${TMP_CNT} ${TMP_CURRENT} INTERFACE_LINK_LIBRARIES )
-
-            if(NOT ${TMP_CURRENT} IN_LIST TMP_OUT_LIBS)
-                set(TMP_OUT_LIBS ${TMP_OUT_LIBS} ${TMP_CURRENT})
-            endif()
-        else()
-            set(TMP_LIST_DEPTH_${TMP_CNT})
-        endif()
-
-        if(NOT TMP_LIST_DEPTH_${TMP_CNT})
-            unset(TMP_LIST_DEPTH_${TMP_CNT})
-            math(EXPR TMP_CNT "${TMP_CNT}-1" )
-            list(POP_FRONT TMP_LIST_DEPTH_${TMP_CNT} )
-        endif()
-    endwhile()
-
-    set(${out_libs} ${TMP_OUT_LIBS} PARENT_SCOPE)
-endfunction()
-
-
 
 if(DEFINED LLVM_BUILD_DIR)
     message("LLVM_BUILD_DIR ${LLVM_BUILD_DIR}")
@@ -335,59 +294,18 @@ if(DEFINED LLVM_BUILD_DIR)
 
 
 
-
-    set(LLVM_ALL_DEPENDENCIES )
-
-
-    set(TMP_LIST_DEPTH_0 ${LLVM_LIBS__} )
-    set(TMP_CNT 0)
-    while(TMP_LIST_DEPTH_0)
-        if(NOT TMP_LIST_DEPTH_${TMP_CNT})
-            unset(TMP_LIST_DEPTH_${TMP_CNT})
-            math(EXPR TMP_CNT "${TMP_CNT}-1" )
-            list(POP_FRONT TMP_LIST_DEPTH_${TMP_CNT} )
-        endif()
-
-        if(NOT TMP_LIST_DEPTH_${TMP_CNT} )
-            continue()
-        endif()
-
-        list(GET TMP_LIST_DEPTH_${TMP_CNT} 0 TMP_CURRENT)
-        #message("TMP_CURRENT ${TMP_CURRENT}")
-        math(EXPR TMP_CNT "${TMP_CNT}+1" )
-        if(TARGET ${TMP_CURRENT})
-            get_target_property(TMP_LIST_DEPTH_${TMP_CNT} ${TMP_CURRENT} INTERFACE_LINK_LIBRARIES )
-
-            if(NOT ${TMP_CURRENT} IN_LIST LLVM_ALL_DEPENDENCIES)
-                set(LLVM_ALL_DEPENDENCIES ${LLVM_ALL_DEPENDENCIES} ${TMP_CURRENT})
-            endif()
-        else()
-            set(TMP_LIST_DEPTH_${TMP_CNT})
-        endif()
-
-        if(NOT TMP_LIST_DEPTH_${TMP_CNT})
-            unset(TMP_LIST_DEPTH_${TMP_CNT})
-            math(EXPR TMP_CNT "${TMP_CNT}-1" )
-            list(POP_FRONT TMP_LIST_DEPTH_${TMP_CNT} )
-        endif()
-    endwhile()
-
-    list(REMOVE_DUPLICATES LLVM_ALL_DEPENDENCIES)
-
-
-
-    foreach(LLVM_LIB_NAME ${LLVM_LIBS__})
-        get_target_property(TEMP_VAR  ${LLVM_LIB_NAME} IMPORTED_LOCATION_DEBUG )
-        set(LLVM_LIB_PATHS  ${LLVM_LIB_PATHS}   ${TEMP_VAR})
-        #message()
-        #set(LLVM_LIB_PATHS  ${LLVM_LIB_PATHS}   $<TARGET_FILE:${LLVM_LIB_NAME}>)
-    endforeach()
-
-    message("LLVM_LIBS__           ${LLVM_LIBS__}")
-
-    message("LLVM_ALL_DEPENDENCIES ${LLVM_ALL_DEPENDENCIES}")
-    set(LLVM_ALL_DEPENDENCIES )
     get_interface_link_libraries_recursively(LLVM_ALL_DEPENDENCIES ${LLVM_LIBS__})
+    get_library_paths(LLVM_LIB_PATHS ${LLVM_ALL_DEPENDENCIES})
+    #[[
+    foreach(LLVM_LIB_NAME ${LLVM_ALL_DEPENDENCIES})
+        string(TOUPPER ${CMAKE_BUILD_TYPE} TMP_VAR)
+        get_target_property(TEMP_VAR  ${LLVM_LIB_NAME} IMPORTED_LOCATION_${TMP_VAR} )
+        set(LLVM_LIB_PATHS  ${LLVM_LIB_PATHS}   ${TEMP_VAR})
+    endforeach()
+]]
+    message("CMAKE_BUILD_TYPE          ${CMAKE_BUILD_TYPE}")
+
+
     message("LLVM_ALL_DEPENDENCIES ${LLVM_ALL_DEPENDENCIES}")
     message("LLVM_LIB_PATHS  ${LLVM_LIB_PATHS}")
 

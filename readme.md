@@ -1,6 +1,11 @@
 # Процесс сборки
-`-DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64;C:/Express_expr_compiler/libs/llvm-project/llvm/cmake-build-debug -G "Ninja" -DCMAKE_VERBOSE_MAKEFILE=1 --graphviz=dep.dot`
+
 ## Зависимости
+Вообще говоря Cmake может сам подтянуть все зависимости к проекту кроме Qt во время генерации, 
+для этого не нужны никакие "дополнительные" аргументы. Cmake разместит эти "подпроекты" 
+в каталоге "external_projects", при желании можно изменить каталог с промощью аргумента cmake
+`-DEXTERNAL_PROJECTS_DIRECTORY= "некий каталог"`. Далее идут инструкции для ручного подключения 
+зависимостей
 
 * llvm.  
   * извлечение LLVM:
@@ -16,8 +21,9 @@
   -DLLVM_INCLUDE_DOCS=OFF 
   -DLLVM_TARGETS_TO_BUILD=X86`  
   
-
-
+  примеры конфигурирования проекта с ручным подключением llvm: 
+  * с ninja `cmake -DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64;путь к llvm-project/llvm" -G "Ninja" "путь к проекту" `
+  * с Visual Studio  `make -DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64;путь к llvm-project/llvm" -G "Visual Studio 16 2019" -A x64`
 * antlr 4.  
   Если у вас нет внешнего проекта antlr 4 nj проще всего 
   не делать ничего, во время генерации проекта cmake сам загрузит c помощью git проект antlr 4 
@@ -36,5 +42,5 @@
   `cmake --install "директория сборки" --prefix "директория пакета" `
 
 * QT.  
-  При генерации проекта укажите путь к пакету QT. 
-  >пример: `-DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64`
+  При генерации проекта укажите путь к пакету QT. c помощью аргумента `CMAKE_PREFIX_PATH`
+

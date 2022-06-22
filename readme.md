@@ -4,16 +4,26 @@
 Вообще говоря Cmake может сам подтянуть все зависимости к проекту кроме Qt во время генерации, 
 для этого не нужны никакие "дополнительные" аргументы. Cmake разместит эти "подпроекты" 
 в каталоге "external_projects", при желании можно изменить каталог с промощью аргумента cmake
-`-DEXTERNAL_PROJECTS_DIRECTORY= "некий каталог"`. Далее идут инструкции для ручного подключения 
-зависимостей
+`-DEXTERNAL_PROJECTS_DIRECTORY= "некий каталог"`. 
+>Внимание! при автоматической загрузке зависимостей и использовании в качестве генератора Ninja
+> перед сборкой цели express_ex соберите отдельно build_llvm
+
+Далее идут инструкции для ручного подключения 
+зависимостей:
 
 * llvm.  
+  если уже имеется 
+  Примеры конфигурирования проекта с ручным подключением llvm:
+  * с ninja `cmake -DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64;путь к папке где был собран llvm"  -G "Visual Studio 16 2019" -A x64`
+  * с Visual Studio  `make -DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64;путь к llvm-build" -G "Visual Studio 16 2019" -A x64`
+  
+  Как установить и сконфигурировать llvm не думая):
   * извлечение LLVM:
     необходимо скачать версию ниже 14, т.к. в ней начинается переход к "Opaque Pointers" и,
     как следствие, большие изменения в API.
     * для Windows: `git clone --depth 1 --config core.autocrlf=false --branch llvmorg-12.0.1  https://github.com/llvm/llvm-project.git`
     * для Linux: `git clone --depth 1  --branch llvmorg-12.0.1  https://github.com/llvm/llvm-project.git`
-  * build LLVM
+  * конфигурировани LLVM
   `cmake -G "Ninja" 
   -DLLVM_INCLUDE_TESTS=OFF  
   -DLLVM_INCLUDE_BENCHMARKS=OFF 
@@ -21,9 +31,7 @@
   -DLLVM_INCLUDE_DOCS=OFF 
   -DLLVM_TARGETS_TO_BUILD=X86`  
   
-  примеры конфигурирования проекта с ручным подключением llvm: 
-  * с ninja `cmake -DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64;путь к llvm-project/llvm" -G "Ninja" "путь к проекту" `
-  * с Visual Studio  `make -DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64;путь к llvm-project/llvm" -G "Visual Studio 16 2019" -A x64`
+
 * antlr 4.  
   Если у вас нет внешнего проекта antlr 4 nj проще всего 
   не делать ничего, во время генерации проекта cmake сам загрузит c помощью git проект antlr 4 

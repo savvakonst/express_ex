@@ -22,7 +22,7 @@ set(OPENCL_LIBDIR__ ${CUDAPATH__}/lib/${APlarform})
 
 
 
-
+add_subdirectory(test)
 
 
 set(LIBRARY_SOURCES
@@ -46,7 +46,7 @@ set(LIBRARY_SOURCES
         lib/KexParser/errors.cpp
         lib/parser/line.cpp
         lib/parser/newOp.cpp
-        lib/parser/operations.cpp
+        #lib/parser/operations.cpp
 
         lib/parser/variable.cpp
 
@@ -79,7 +79,7 @@ set(LIBRARY_HEADERS
         include/ifs/express_ex.h
         include/ifs/parameterIO.h
         include/ifs/parameterIfs.h
-        include/ifs/printer.h
+        lib/ifs/printer.h
         include/ifs/ExStream.h
 
         lib/KexParser/treeShapeListener.h
@@ -253,7 +253,7 @@ target_compile_options(express_ex PRIVATE
 
 
 target_include_directories(express_ex
-        PRIVATE include
+        PUBLIC include
         PRIVATE ${LLVM_INCLUDE_DIRS}
         PRIVATE ${OPENCL_INCLUDEDIR__}
         PRIVATE ${OPENCL_LIBDIR__}
@@ -322,6 +322,30 @@ message("CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
 message("GENERATOR_IS_MULTI_CONFIG ${IS_MULTI_CONFIG}")
 message("CMAKE_CONFIGURATION_TYPES ${CMAKE_CONFIGURATION_TYPES}")
 message("llvm_prj_BINARY_DIR ${llvm_prj_BINARY_DIR}")
+
+
+
+
+
+
+add_executable(express_ex_app
+        app/main.cpp
+        )
+
+
+target_include_directories(express_ex_app
+        PRIVATE ${LLVM_INCLUDE_DIRS}
+        )
+
+
+llvm_map_components_to_libnames(LLVM_LIBS_FOR_APP_
+        Support
+        )
+
+target_link_libraries(express_ex_app PRIVATE
+        express_ex
+        ${LLVM_LIBS_FOR_APP_}
+        )
 
 
 

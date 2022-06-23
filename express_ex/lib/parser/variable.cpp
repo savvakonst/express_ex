@@ -89,7 +89,7 @@ Value::Value(Value* arg1) : SmallArr() {
 
 void Value::setBuffered() {
     if (isLargeArr(this)) {
-        is_buffered = true;
+        is_buffered_ = true;
     }
 }
 

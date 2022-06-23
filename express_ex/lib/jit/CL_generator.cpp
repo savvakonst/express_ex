@@ -8,9 +8,26 @@ void clGpuConvolve() {
 
     const int size_of_large_v = 1 << 20;
     const int size_of_small_v = 1 << 10;
+    const int &bottom_offset = size_of_small_v;
+    //const int left_offset = size_of_small_v/2;
+    //const int right_offset = size_of_small_v - left_offset;
+    int64_t length_ = int64_t(size_of_large_v);
+    int64_t left_offset_ = size_of_small_v/2;
+    int64_t right_offset_ = size_of_small_v - left_offset_;
+    constexpr int64_t sizeof_data_type_ = sizeof(local_T);
 
-    std::vector<local_T> large_input_v;  rangeVector(large_input_v, size_of_large_v + size_of_small_v, 1);
+
+
+
+    std::vector<local_T> large_input_v;  rangeVector(large_input_v, size_of_large_v + size_of_small_v, 0);
     std::vector<local_T> small_input_v;  rangeVector(small_input_v, size_of_small_v, 1);
+
+
+    char* ptr_ = (char*)large_input_v.data();
+    char* left_ptr_ = ptr_ + sizeof_data_type_ * left_offset_;
+    char* bottom_ptr_ = ptr_ + sizeof_data_type_ * (left_offset_ + right_offset_);
+    char* top_ptr_ = ptr_ + sizeof_data_type_ * length_;
+
 
     std::vector<local_T> output_v; output_v.resize(size_of_large_v);
 
@@ -19,11 +36,17 @@ void clGpuConvolve() {
 
     std::ifstream input_stream("bigdata.bin", std::ios::binary );
     std::ofstream outout_strem("output.bin", std::ios::out | std::ios::binary );
-    size_t data_to_read = sizeof(local_T) * size_of_large_v;
+
+    int data_to_read = sizeof_data_type_ * length_;
+    input_stream.read(left_ptr_, sizeof_data_type_*(length_ + right_offset_));
+
     for (int i=0; i < (1024*1); i++) {
 
-        input_stream.read((char*)large_input_v.data(),data_to_read);
         convolve.run(large_input_v.data(), small_input_v.data(), output_v.data());
+
+        std::memcpy(ptr_, top_ptr_, size_t(sizeof_data_type_ * (left_offset_ + right_offset_) ));
+        input_stream.read(bottom_ptr_, sizeof_data_type_ * length_ );
+
         if(!input_stream) {
             data_to_read = input_stream.gcount();
             outout_strem.write((const char*)output_v.data() , data_to_read);

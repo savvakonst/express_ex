@@ -5,36 +5,39 @@
 #ifndef EXPRESS_EX_ENV_EXSTREAM_H
 #define EXPRESS_EX_ENV_EXSTREAM_H
 #include "ExStreamIfs.h"
+#include "config.h"
 
-
-class ExStream: public  ExStringStreamIfs{
+class DLL_EXPORT ExStream: public  ExStreamIfs{
 public :
     ~ExStream() override = default;
-    ExStringStreamIfs &operator<<(const std::string &arg) override ;
-    ExStringStreamIfs &operator<<(const ExColors & arg) override ;
+    ExStreamIfs &operator<<(const std::string &arg) override ;
+    ExStreamIfs &operator<<(const ExColors & arg) override ;
+    void finalize() override;
+
 };
 
-class ExStringStream: public  ExStringStreamIfs{
+class DLL_EXPORT ExStringStream: public  ExStringStreamIfs{
 public :
     ~ExStringStream() override = default;
-    ExStringStreamIfs &operator<<(const std::string &arg) override ;
-    ExStringStreamIfs &operator<<(const ExColors & arg) override ;
-
+    ExStreamIfs &operator<<(const std::string &arg) override ;
+    ExStreamIfs &operator<<(const ExColors & arg) override ;
+    void finalize() override;;
     std::string readAndClear() override ;
 private:
     std::list<std::string> list_;
 };
 
 
-class ExErrorStream: public  ExStringStreamIfs{
+class DLL_EXPORT ExErrorStream: public  ExStreamIfs{
 public :
     ~ExErrorStream() override = default;
-    ExStringStreamIfs &operator<<(const std::string &arg) override ;
-    ExStringStreamIfs &operator<<(const ExColors & arg) override ;
+    ExStreamIfs &operator<<(const std::string &arg) override ;
+    ExStreamIfs &operator<<(const ExColors & arg) override ;
+    void finalize() override;;
 };
 
 
-class ExErrorStringStream: public  ExStringStream{
+class DLL_EXPORT ExErrorStringStream: public  ExStringStream{
 public :
     ~ExErrorStringStream() override = default;
 };

@@ -62,7 +62,7 @@ class Value : public SmallArr {
     bool isUnused() const { return is_unused_; }
     bool isArray() const { return data_structure_type_ != DataStructureTypeEn::kConstant; }
     bool isVisited() const;
-    bool isBuffered() const { return is_buffered; }
+    bool isBuffered() const { return is_buffered_; }
     bool isReturned() const { return is_returned_; }
 
     virtual bool isTerminalLargeArray() { return false; }
@@ -112,14 +112,14 @@ class Value : public SmallArr {
 
    protected:
     std::string checkBuffer(std::string arg) const {
-        if (is_buffered) return "storeToBuffer(" + arg + ")";
+        if (is_buffered_) return "storeToBuffer(" + arg + ")";
         else
             return arg;
     }
 
     bool is_unused_ = true;
     bool is_visited_ = false;
-    bool is_buffered = false;
+    bool is_buffered_ = false;
 
     bool is_returned_ = false;
     bool is_initialized_ = false;

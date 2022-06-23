@@ -3,7 +3,7 @@
 
 #include <map>
 #include "ifs/parameterIfs.h"
-#include "ExStreamIfs.h"
+#include "ifs/ExStreamIfs.h"
 
 #include "parser/defWarningIgnore.h"
 #include "llvm/Support/raw_ostream.h"

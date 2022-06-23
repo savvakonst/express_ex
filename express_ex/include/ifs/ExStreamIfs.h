@@ -87,7 +87,7 @@ public :
 
 
 inline ExStreamIfs & operator<<(ExStreamIfs & stream, bool arg){
-    return stream << (arg ? "true" : "false");
+    return stream << std::string (arg ? "true" : "false");
 }
 
 template <typename T, typename  std::enable_if<
@@ -98,19 +98,19 @@ ExStreamIfs & operator<<(ExStreamIfs & stream,T arg ){
 }
 
 
-inline ExStreamIfs & operator<<(ExStreamIfs & stream,Delimiter delimiter){
+inline ExStreamIfs & operator<<(ExStreamIfs & stream, Delimiter delimiter){
     return stream << "\n" << (ExColors)(delimiter) << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << (((int)delimiter <= (int)ExColors::RESET) ? ExColors::RESET : ExColors::AnsiRESET) << "\n";
 }
 
-template<typename Key_T, typename _T>
-inline ExStreamIfs & operator<<(ExStreamIfs & stream, const std::map<Key_T, _T> & arg) {
+template<typename Key_T, typename T>
+inline ExStreamIfs & operator<<(ExStreamIfs & stream, const std::map<Key_T, T> & arg) {
     for (auto i : arg)
         stream << i.first << ": " << i.second << " ";
     return stream;
 }
 
-template< typename _T>
-inline ExStreamIfs & operator<<(ExStreamIfs & stream, const std::vector<_T> & arg) {
+template< typename T>
+inline ExStreamIfs & operator<<(ExStreamIfs & stream, const std::vector<T> & arg) {
     for (auto i : arg)
         stream << i << " ";
     return stream;

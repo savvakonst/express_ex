@@ -3,21 +3,22 @@
 
 #include <sstream>
 
-#include "ifs/printer.h"
+
 #include "jit/IR_generator.h"
 #include "jit/buffer.h"
 #include "jit/llvmHdrs.h"
 #include "llvm/ExecutionEngine/SectionMemoryManager.h"
 #include "llvm/Support/DynamicLibrary.h"
+
 #include "parser/basic.h"
 #include "parser/body.h"
 #include "parser/call.h"
 #include "parser/line.h"
-//#include "parser/operations.h"
 
-#include "parser/line.h"
 
-// using namespace llvm;
+
+
+
 
 SubBlock::SubBlock(Value* var) {
     left_length_ = var->getLeftBufferLen();
@@ -923,10 +924,7 @@ bool Table::run() {
 
 std::string Table::printllvmIr() {
     std::string ret;
-    llvm::raw_string_ostream(ret)<< ExColors::GREEN << "\n\n---------We just constructed this LLVM module:--------- \n"
-                 << ExColors::RESET << *M_ << "\n\n";
-
-
+    llvm::raw_string_ostream(ret)<< *M_ << "\n\n";
     return ret;
 }
 

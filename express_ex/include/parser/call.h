@@ -37,7 +37,7 @@ class CallI_ifs : public Value {
     Value* getAssignedVal(bool deep = false) override {
         if (body_ == nullptr) return nullptr;
 
-        if (is_buffered & deep) {
+        if (is_buffered_ & deep) {
             body_->getRet().front()->getAssignedVal(true)->setBuffered();
         }
 

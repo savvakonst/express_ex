@@ -130,7 +130,7 @@ class RecursiveGenContext {
     stack<Value*> args_reference_;
 
     friend class TailCallDirectiveTemplate;
-    friend class Operation;
+
     // std::map<std::string, Value> namespace_ptr_ ;
 };
 

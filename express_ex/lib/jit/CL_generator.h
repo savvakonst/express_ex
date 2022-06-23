@@ -44,7 +44,7 @@ public:
         //context_ = cl::Context::getDefault();
         context_ = cl::Context(CL_DEVICE_TYPE_GPU, properties);
         devices_ = context_.getInfo<CL_CONTEXT_DEVICES>();
-      
+
     }
 
     template<typename local_T>
@@ -84,9 +84,9 @@ public:
 
         std::string kernel_source = kernel_header + R"CLC(
         {)CLC" + 
-            stype +R"CLC( summ = 0.0 ;
+            stype +R"CLC( sum = 0.0 ;
             int size = right_size;
-            int left_offset = size / 2;
+            int left_offset = 0;//size / 2;
 
 
             int block_ix = get_group_id(0);
@@ -94,14 +94,13 @@ public:
             int block_dim = get_local_size(0);
             int index     = block_dim * block_dim + local_ix ;
 
-            if(index<left_size){
+            //if(index<left_size){
                 for(int i=0;i < size;i++)
-                    summ += left_v[i + get_global_id(0)] * right_v[size - 1 - i];
-        
-                //output_v[index + left_offset + output_offset] = summ;
-                output_v[get_global_id(0)] = summ;
-            }
-            //output_v[get_global_id(0)] = 1.0;
+                    sum += left_v[i + get_global_id(0) + left_offset] * right_v[i];//right_v[size - 1 - i];
+
+                output_v[get_global_id(0)] = sum;
+            //}
+            //output_v[get_global_id(0)] = 2.0;
         }
         )CLC";
 
@@ -114,7 +113,12 @@ public:
         cl_int err = CL_SUCCESS;
 
         kernel_ = cl::Kernel(program_, "convolve", &err);
+        try{
         queue_ = cl::CommandQueue(context, devices[0], 0, &err);
+        }catch (const  cl::Error& e){
+            std::cerr << e.what();
+        }
+
     }
 
     ~GpuConvolve()
@@ -150,9 +154,8 @@ public:
         auto status = queue_.enqueueNDRangeKernel(
             kernel_,
             cl::NullRange,
-            //cl::NDRange(left_size_),
             cl::NDRange(left_size_),
-            cl::NullRange,//cl::NDRange(block_dim),
+            cl::NullRange,
             NULL,
             &event);
 
@@ -172,8 +175,8 @@ public:
         auto &context = parent_->context_;
         const int type_size=sizeof(local_T);
 
-        left_size_=left_size;
-        right_size_=right_size;
+        left_size_ = left_size;
+        right_size_ = right_size;
         offset_=offset;
 
         input_left_buffer_   = cl::Buffer(context, CL_MEM_READ_ONLY, (left_size + right_size)* type_size);

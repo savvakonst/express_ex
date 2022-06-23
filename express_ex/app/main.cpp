@@ -1,23 +1,15 @@
 ﻿
 #include <clocale>
-#include <fstream>
 
 #include "llvm/Support/CommandLine.h"
 #include "ifs/parameterIO.h"
 #include "ifs/express_ex.h"
-#include "ifs/printer.h"
-#include "parser/body.h"
-
-#include "parser/KexParser.h"
-
-#include "parser/line.h"
-#include "parser/bodyTemplate.h"
+#include "ifs/ExStream.h"
 
 
-#include "common/errors.h"
 
 
-void clGpuConvolve();
+
 int main(int argc, const char* argv[]) {
     std::setlocale(LC_ALL, "en_US.UTF-8");
 
@@ -74,102 +66,66 @@ int main(int argc, const char* argv[]) {
     llvm::cl::HideUnrelatedOptions(mainCategory);
     llvm::cl::ParseCommandLineOptions(argc, argv, "express jit");
 
+
+
+
     // clGpuConvolve();
 
-    g_ansi_escape_codes = ansiEscapeCodes;
+    //g_ansi_escape_codes = ansiEscapeCodes;
 
-    ExColors colorReset = ExColors::RESET;
-    ExColors colorRed   = ExColors::RED;
-    ExColors colorGreen = ExColors::GREEN;
-    Delimiter delimiter = Delimiter::GREEN;
+
 
     ParametersDB parameter_db(inputDataBaseFile);
 
-    try {
+    ExStream ex_stream;
+    ExErrorStream ex_error_stream;
+
+    if (0 == inputDataBaseFile.size()) {
+        ex_error_stream << ExColors::RED << "there are no input database file\n" << ExColors::RESET;
+        return 1;
+    }
+
+    Express_ex express_ex;
+
+    express_ex.setErrorIo(&ex_error_stream);
+    express_ex.setInfoStream(&ex_stream);
+
+    express_ex.name_list_ = showBits.isSet(nameList);
+    express_ex.untyped_fsr_ = showBits.isSet(untypedFSR);
+    express_ex.active_name_list_ = showBits.isSet(activeNameList);
+    express_ex.all_fsr_ = showBits.isSet(allFSR);
+    express_ex.reduced_fsr_ = showBits.isSet(redusedFSR);
+    express_ex.output_prm_= showBits.isSet(outputPrm);
+    express_ex.llvm_ir_code_= showBits.isSet(llvmIRcode);
+    express_ex.optimization_enable_ = optimizationEnable;
+
+
         std::map<std::string, bool> modules_map;
         for (auto i : moduleFiles) modules_map[i] = true;
 
-        KEXParser parser(inputFile, true, modules_map);
-        BodyTemplate* body_template = parser.getActivBody();
-
-        std::map<std::string, std::string> parameterNameList = body_template->getParameterLinkNames();
-
-        if (showBits.isSet(nameList))
-            llvm::outs() << delimiter << "names list: \n  " << parameterNameList << " \n";
-
-        if (showBits.isSet(untypedFSR))
-            llvm::outs() << delimiter << body_template->print("") << delimiter << "\n";
-
-        stack<Value*> args;
-        for (auto i : parameterNameList) {
-            auto p = parameter_db[i.second];
-            // llvm::outs() << delimiter << "Parameter: \n  " << *p << " \n";
-            if (p != nullptr) {
-                p->setLocal(false);
-                args.push(new Line(i.first, p));  // potential error
-            } else
-                print_error("can not find parameter " + i.second);
-        }
-
-
-        if (0 == inputDataBaseFile.size()) {
-            llvm::outs() << colorRed << "there are no input database file\n" << colorReset;
+        if(express_ex.parseText(inputFile, true, modules_map))
             return 1;
-        }
 
-        Body* body = body_template->genBodyByTemplate(nullptr, args, false);
-        body->symplyfy();
+        auto parameter_name_list = express_ex.getParameterLinkNamesMap();
 
-        /// print block
-        if (showBits.isSet(activeNameList))
-            llvm::outs() << delimiter << "names list: \n  " << body->getParameterLinkNames(true) << " \n";
+        std::map<std::string, ParameterIfs *> parameters_map;
+        for (auto i : parameter_name_list)
+            parameters_map[i.second] = parameter_db[i.second];
 
-        if (showBits.isSet(allFSR))
-            llvm::outs() << delimiter << body->print("");
-
-        if (showBits.isSet(redusedFSR))
-            llvm::outs() << delimiter << body->print("", false, true);
-
+        if(express_ex.setParameters(parameters_map))
+            return 1;
 
         jit_init();
-        auto* table  = new Table();
-        auto context = TableGenContext(table);
 
-        body->genTable(&context);
+        if(!express_ex.genJit())
+            return 1;
 
-        int index = 0;
-        for (auto i : body->getOutputParameterList()) {
-            i->setName("out_" + std::to_string(index++));
-            i->setLocal(false);
-        }
-        if (showBits.isSet(outputPrm)) {
-            llvm::outs() << delimiter << "input_prm:";
-            for (auto i : args) {
-                llvm::outs() << delimiter << *(i->getParameter());
-            }
-            llvm::outs() << delimiter << "output_prm:";
-            for (auto i : body->getOutputParameterList()) {
-                llvm::outs() << delimiter << *i;
-            }
-        }
-         
-        if (showBits.isSet(tableSSR)) llvm::outs() << delimiter << table->print();
+        if (runJit) express_ex.run();
 
-        table->calculateBufferLength();
-        table->llvmInit();
-        table->generateIR();
 
-        if (optimizationEnable)
-            table->runOptimization();
-
-        if (showBits.isSet(llvmIRcode))
-            table->printllvmIr();
-
-        if (runJit) table->run();
 
         llvm::outs() << "complete";
-    } catch (size_t) {
-    }
+
 
     return 0;
 }

@@ -46,7 +46,7 @@ public :
     bool                                genJit(bool optimization_enable = true);
     bool                                run();
 
-    const std::string &                 getErrorMsg() { return  error_str_; }
+
 
     void                                setErrorIo(ExStreamIfs* syntax);
     void                                setInfoStream(ExStreamIfs* info_stream);
@@ -65,7 +65,7 @@ public :
 private:
 
     ExStreamIfs* info_stream_;
-
+    ExStreamIfs *error_stream_;
 
 
     KEXParser * kex_parser_ = nullptr;
@@ -73,7 +73,8 @@ private:
     Body*   body_ = nullptr;
     Table*  table_ = nullptr;
 
-    std::string error_str_  ;
+
+
 
 
 };

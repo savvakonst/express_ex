@@ -7,8 +7,9 @@
 #include <iostream>
 #include <strstream>
 #include <fstream>
-#include <common/types_jty.h>
-#include <CL/cl.hpp>
+#include <vector>
+//#include <CL/cl.hpp>
+#include <CL/opencl.hpp>
 #include <cstdlib>
 
 
@@ -19,7 +20,7 @@ void rangeVector(std::vector<T> & arr, int N, double step) {
     arr.clear();
     arr.resize(N);
     for (int i=0; i < N; i++)
-        arr[i]=(T)(i * step);
+        arr[i]=(T)(step);
 }
 
 
@@ -58,10 +59,13 @@ private:
     int          status_ = 0;
 };
 
+class GpuConvolve_ifs{
+    virtual void run( const void * c_left_v,  const void * c_right_v, void * c_output_v) =0;
+};
+
 
 template<typename local_T>
-class GpuConvolve
-{
+class GpuConvolve : public GpuConvolve_ifs {
 public:
     GpuConvolve(GPUPlatform *parent){
         parent_ = parent ;
@@ -95,6 +99,7 @@ public:
         
                 output_v[index + left_offset + output_offset] = summ;
             }
+            output_v[index] = 1.0;
         }
         )CLC";
 
@@ -115,7 +120,11 @@ public:
 
     }
 
-    void run( const local_T * left_v,  const local_T * right_v, local_T * output_v) {
+    void run(const void * c_left_v,  const void * c_right_v, void * c_output_v) override {
+
+        const local_T * left_v =(local_T *)c_left_v;
+        const local_T * right_v =(local_T *)c_right_v;
+        local_T * output_v = (local_T* )c_output_v;
 
         auto &context = parent_->context_;
         const int type_size = sizeof(local_T);

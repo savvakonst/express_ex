@@ -1,4 +1,4 @@
-#include "jit/CL_generator.h"
+#include "CL_generator.h"
 
 
 typedef float local_T;
@@ -17,12 +17,25 @@ void clGpuConvolve() {
     GpuConvolve<local_T> convolve(&platform);
     convolve.sizeInit(size_of_large_v, size_of_small_v, 0);
 
+    std::ifstream input_stream("bigdata.bin", std::ios::binary );
+    std::ofstream outout_strem("output.bin", std::ios::out | std::ios::binary );
+    size_t data_to_read = sizeof(local_T) * size_of_large_v;
     for (int i=0; i < (1024*1); i++) {
+
+        input_stream.read((char*)large_input_v.data(),data_to_read);
         convolve.run(large_input_v.data(), small_input_v.data(), output_v.data());
+        if(!input_stream) {
+            data_to_read = input_stream.gcount();
+            outout_strem.write((const char*)output_v.data() , data_to_read);
+            break;
+        }
+        outout_strem.write((const char*)output_v.data() , data_to_read);
         //if ((i % 32) == 0)
         //    std::cout << "convolve in progress\n";
     }
-    convolve.run(large_input_v.data(), small_input_v.data(), output_v.data());
+    input_stream.close();
+    outout_strem.close();
+    //convolve.run(large_input_v.data(), small_input_v.data(), output_v.data());
     std::cout << "convolve complete";
 }
 
@@ -120,4 +133,8 @@ int clGpuConvolveTemplate(void)
 
     return EXIT_SUCCESS;
 
+}
+
+int main(int argc, const char* argv[]){
+     clGpuConvolve();
 }

@@ -58,7 +58,9 @@ Makefile*
 
 
 #------------------- specific excludes --------------------
-
+external_binaries
+external_binaries/
+external_binaries/**
 
 external_projects
 external_projects/

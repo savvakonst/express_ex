@@ -63,7 +63,7 @@ set(LIBRARY_SOURCES
         lib/operations/TypeCastOperation.cpp
 
 
-        lib/jit/CL_generator.cpp
+        #lib/jit/CL_generator.cpp
         lib/jit/IR_generator.cpp
         lib/jit/getWin32Intrinsinc.cpp
         lib/jit/table.cpp
@@ -115,7 +115,7 @@ set(LIBRARY_HEADERS
         include/operations/StoreToBufferOperation.h
         include/operations/TypeCastOperation.h
 
-        include/jit/CL_generator.h
+        #include/jit/CL_generator.h
         include/jit/IR_generator.h
         include/jit/buffer.h
         include/jit/context.h
@@ -268,7 +268,7 @@ llvm_map_components_to_libnames(LLVM_LIBS__
         )
 
 target_link_libraries(express_ex PRIVATE
-        OpenCL
+        #OpenCL
         antlr4_shared
         EGrammar
         ${LLVM_LIBS__}
@@ -287,6 +287,7 @@ if(DEFINED LLVM_BUILD_DIR)
     add_custom_target(build_llvm
             ${CMAKE_COMMAND} --build "${LLVM_BUILD_DIR}" --target ${LLVM_LIBS__} --config $<CONFIG>
             BYPRODUCTS  ${LLVM_LIB_PATHS}
+            USES_TERMINAL
             #WORKING_DIRECTORY "${LLVM_BUILD_DIR}"
             )
 

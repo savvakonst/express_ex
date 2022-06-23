@@ -44,12 +44,12 @@ void ExStringStream::finalize() {}
 
 // ExErrorStream
 ExStreamIfs &ExErrorStream::operator<<(const std::string &arg) {
-    llvm::errs() <<arg;
+    llvm::outs() <<arg;
     return *this;
 }
 
 ExStreamIfs &ExErrorStream::operator<<(const ExColors &arg) {
-    llvm::errs() <<arg;
+    llvm::outs() <<arg;
     return *this;
 }
 

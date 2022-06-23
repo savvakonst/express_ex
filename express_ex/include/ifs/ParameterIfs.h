@@ -10,7 +10,7 @@
 
 #include "config.h"
 #include "ExStreamIfs.h"
-
+#include "DatasetsStorage_ifs.h"
 
 #ifdef _MSC_VER
 #    pragma warning(push)
@@ -76,6 +76,7 @@ struct DataInterval {
     TimeInterval time_interval;
     std::string file_name;
     bool local;
+    DatasetsStorage_ifs * ds;
 };
 
 struct Dot {
@@ -293,7 +294,7 @@ class DLL_EXPORT ParameterIfs {
         name_ = name;
 
         if ((interval_list_.size() == 1) || single_file) {
-            for (auto& i : interval_list_) i.file_name = name + ".dat";
+            for (auto& i : interval_list_) i.file_name = name ;
             return;
         }
 

@@ -53,17 +53,17 @@ void Line::visitEnter(stack<Value*>* visitor_stack) {
 
 void Line::genBodyVisitExit(BodyGenContext* context) {
     is_visited_                   = false;
-    std::vector<Line*> namespace_ = context->getNamespace();
+    std::vector<Line*> namespace_l = context->getNamespace();
 
     std::string name = getName(true);
-    if (namespace_.empty()) return;
-    for (int i = (int)namespace_.size() - 1; i >= 0; i--) {
-        if (namespace_[i]->checkName(name)) {
-            context->push(namespace_[i]);
+    if (namespace_l.empty()) return;
+    for (int i = (int)namespace_l.size() - 1; i >= 0; i--) {
+        if (namespace_l[i]->checkName(name)) {
+            context->push(namespace_l[i]);
             return;
         }
     }
-    print_error("visitExit can't find var name");
+    print_error("visitExit can't find var name: "+name);
 }
 
 void Line::printVisitExit(PrintBodyContext* context) {

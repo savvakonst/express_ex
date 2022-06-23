@@ -3,9 +3,6 @@
 
 #include "Intervals.h"
 #include "ifs/SyncParameter.h"
-#include "printer.h"
-#include "llvm/Support/JSON.h"
-#include "common/common.h"
 #include "parser/defWarningIgnore.h"
 #include "common/undefWarningIgnore.h"
 

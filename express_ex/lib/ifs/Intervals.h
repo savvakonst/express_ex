@@ -104,7 +104,10 @@ class Chunk : public BareChunk {
 
         std::string file_name = (di_->local ? *work_directory_ + "/" : "") + di_->file_name;
         ifs_ = new std::fstream(file_name, std::ios::in | std::ios::binary);
+        if(!ifs_->is_open())
+            print_IR_error("cant open: " +file_name);
         ifs_->seekg(di_->offs);
+
     }
 
     void openToWrite() {

@@ -86,9 +86,7 @@ public :
 
 
 
-inline ExStreamIfs & operator<<(ExStreamIfs & stream, bool arg){
-    return stream << std::string (arg ? "true" : "false");
-}
+
 
 template <typename T, typename  std::enable_if<
         std::is_arithmetic<T>::value && !std::is_same<T,bool>::value,
@@ -115,6 +113,9 @@ inline ExStreamIfs & operator<<(ExStreamIfs & stream, const std::vector<T> & arg
         stream << i << " ";
     return stream;
 }
-
-
+/*
+inline ExStreamIfs & operator<<(ExStreamIfs & stream, bool arg){
+    return stream << std::string (arg ? "true" : "false");
+}
+*/
 #endif //EXPRESS_EX_ENV_EXSTREAMIFS_H

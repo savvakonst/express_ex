@@ -2,3 +2,4 @@ x = param("#1_A01__2")
 v = double(x)
 z = convolve(double([-3,2,1]),v)  
 return double(z)
+

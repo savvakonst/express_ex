@@ -10,32 +10,6 @@
 
 int main(int argc, const char *argv[]) {
 
-    llvm::outs()<<llvm::sys::path::root_name("C:/safasf/asfasfs/safsaf")<<"\n";
-    llvm::outs()<<llvm::sys::path::extension("C:/safasf\\asfasfs\\fff")<<"\n";
-    llvm::outs()<<llvm::sys::path::extension("C:/fff")<<"\n";
-
-    llvm::outs()<<llvm::sys::path::filename("C:/safasf/asfasfs/safsaf.dat")<<"\n";
-    llvm::outs()<<llvm::sys::path::root_name("safasf\\asfasfs\\fff.dat")<<"\n";
-    llvm::outs()<<llvm::sys::path::root_name("fff.dat")<<"\n";
-
-    llvm::outs()<<llvm::sys::path::filename("safasf/asfasfs/safsaf.dat.dat")<<"\n";
-    llvm::outs()<<llvm::sys::path::filename("C:\\safasf\\asfasfs\\fff.dat.dat")<<"\n";
-    llvm::outs()<<llvm::sys::path::filename("C:/fff.dat.dat")<<"\n";
-
-
-    llvm::outs()<<llvm::sys::path::parent_path("safasf/asfasfs////safsaf")<<"\n";
-    llvm::outs()<<llvm::sys::path::parent_path("safasf\\asfasfs\\fff")<<"\n";
-    llvm::outs()<<llvm::sys::path::parent_path("fff")<<"\n";
-
-    llvm::outs()<<llvm::sys::path::parent_path("safasf////asfasfs////safsaf.dat")<<"\n";
-    llvm::outs()<<llvm::sys::path::parent_path("safasf\\asfasfs\\fff.dat")<<"\n";
-    llvm::outs()<<llvm::sys::path::parent_path("fff.dat")<<"\n";
-
-    llvm::outs()<<llvm::sys::path::parent_path("C:/safasf/asfasfs/safsaf.dat.dat")<<"\n";
-    llvm::outs()<<llvm::sys::path::parent_path("safasf\\asfasfs\\fff.dat.dat")<<"\n";
-    llvm::outs()<<llvm::sys::path::parent_path("fff.dat.dat")<<"\n";
-
-
     std::setlocale(LC_ALL, "en_US.UTF-8");
 
     enum ShowNames {
@@ -57,7 +31,7 @@ int main(int argc, const char *argv[]) {
                                                 llvm::cl::cat(mainCategory));
 
     static llvm::cl::opt<std::string> outputFile("o", llvm::cl::desc("output data file name"),
-                                                 llvm::cl::value_desc("filename"),llvm::cl::init("out"), llvm::cl::Optional,
+                                                 llvm::cl::value_desc("filename"),llvm::cl::init("out.dat"), llvm::cl::Optional,
                                                  llvm::cl::cat(mainCategory));
 
     static llvm::cl::opt<bool> optimizationEnable("opt", llvm::cl::desc("optimization enable"), llvm::cl::Optional,
@@ -97,12 +71,7 @@ int main(int argc, const char *argv[]) {
 
 
 
-
-    // clGpuConvolve();
-
     //g_ansi_escape_codes = ansiEscapeCodes;
-
-
 
     ParametersDB parameter_db(inputDataBaseFile);
 
@@ -132,35 +101,45 @@ int main(int argc, const char *argv[]) {
     std::map<std::string, bool> modules_map;
     for (auto i: moduleFiles) modules_map[i] = true;
 
-    if (express_ex.parseText(inputFile, true, modules_map))
+    if (!express_ex.parseText(inputFile, true, modules_map))
         return 1;
 
     auto parameter_name_list = express_ex.getParameterLinkNamesMap();
 
     std::map<std::string, ParameterIfs *> parameters_map;
-    for (auto i: parameter_name_list)
-        parameters_map[i.second] = parameter_db[i.second];
+    for (auto i: parameter_name_list) {
+        parameters_map[i.first] = parameter_db[i.second];
+        parameters_map[i.first]->setLocal(false);
+    }
 
-    if (express_ex.setParameters(parameters_map))
+
+    if (!express_ex.setParameters(parameters_map))
         return 1;
 
     auto list = express_ex.getOutputParameterVector();
 
 
-    auto output_path = llvm::sys::path::parent_path(outputFile).str();
+
+
+    llvm::SmallString<5> small_string(outputFile);
+    llvm::sys::path::replace_extension(small_string,"");
+    std::string  extension_less_output_file_path = small_string.str().str();
+    std::string  output_extension = llvm::sys::path::extension(outputFile).str();
+
     int index = 0 ;
     if (list.size() == 1) {
 
-        list.front()->setName(output_path+"/");
+        list.front()->setName(extension_less_output_file_path + output_extension);
         list.front()->setLocal(false);
     } else
         for (auto &i: express_ex.getOutputParameterVector()) {
-            i->setName(outputFile + std::to_string(index++));
+
+            i->setName(outputFile + std::to_string(index++)+output_extension);
             i->setLocal(false);
         }
 
-    jit_init();
 
+    jit_init();
     if (!express_ex.genJit())
         return 1;
 

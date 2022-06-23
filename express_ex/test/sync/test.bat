@@ -4,15 +4,13 @@ IF EXIST out_0.dat  DEL /f out_0.dat
 exho %0
 
 IF "%1"=="" (
-    set CONF=Release
-    set ARCH=x64
+    set PATH_TO_EXE=.
     set EX_ARG=--opt
 )
 
 IF NOT "%1"=="" (
-    set CONF=%1
-    set ARCH=%2
-    set EX_ARG=%3
+    set PATH_TO_EXE=%1
+    set EX_ARG=%2
 )
 
 
@@ -20,9 +18,9 @@ set EXPRESS_FILE="sync_base.express"
 
 ::for %%i in ("multi_arg.kex" "multi_arg_cos.kex" "single_arg_convolve.kex") do (
 for %%i in ("single_arg_convolve.kex") do (
-    C:\Express_expr_compiler\express\express_ex\%ARCH%\%CONF%\express_ex   --db=%EXPRESS_FILE% -i=%%i  -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit %EX_ARG%
+    %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i  -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit %EX_ARG%
     ..\ex_test.py   --db=%EXPRESS_FILE% -i=%%i
-    IF EXIST out_0.dat  DEL /f out_0.dat 
+    IF EXIST out_0.dat  DEL /f out.dat
 )
 
 

@@ -128,7 +128,7 @@ class OutputBuffer : public Buffer {
    public:
     explicit OutputBuffer(Value* var) : Buffer(var) { parameter_ = var->getParameter(); }
 
-    ~OutputBuffer() override { delete parameter_; }
+    ~OutputBuffer() override {}
 
     void addParameter(ParameterIfs* parameter) { parameter_ = parameter; }
 

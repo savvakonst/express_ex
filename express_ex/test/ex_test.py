@@ -3,16 +3,18 @@ import argparse
 from ex_lib import *
 from matplotlib.widgets import Button
 
-
 parser = argparse.ArgumentParser()
 
+#parser.add_argument('--executable', help='path to express_ex_app', required=True, type=str)
 
-parser.add_argument('--db',     help='database path', required=True,  type=str)
-parser.add_argument('-i',     help='input *.kex file',
-                    required=True,  type=str)
+parser.add_argument('--db', help='database path', required=True, type=str)
+parser.add_argument('-i', help='input *.kex file',
+                    required=True, type=str)
 parser.add_argument(
-    '--otype',     help='output type file.\npossible values: f8,f4,..,f1,i8,..,u8,.. ',  default="f8",  type=str)
+    '--otype', help='output type file.\npossible values: f8,f4,..,f1,i8,..,u8,.. ', default="f8", type=str)
 args = parser.parse_args()
+
+
 
 
 loadDataBase(args.db)
@@ -20,21 +22,19 @@ py_data = execFile(args.i)
 
 
 
-
-express_data = param("out_0", np.dtype([('time', "f4"), ('data', args.otype)])
-                     if isAsync() else np.dtype([('data', args.otype)]))
+express_data = param("out", np.dtype([('time', "f4"), ('data', args.otype)])
+if isAsync() else np.dtype([('data', args.otype)]))
 
 try:
     diff_data = py_data - express_data
-    #plt.plot(diff)
-    #plt.show()
+    # plt.plot(diff)
+    # plt.show()
 
     fig, ax = plt.subplots()
     plt.subplots_adjust(bottom=0.2)
     l, = plt.plot(diff_data, lw=2)
 
     ax = plt.gca()
-
 
 
     class Index:
@@ -56,6 +56,7 @@ try:
             ax.relim()
             ax.autoscale_view()
             plt.draw()
+
 
     callback = Index()
 

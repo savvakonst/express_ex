@@ -254,12 +254,12 @@ class Table {
     int64_t max_buffer_length_;
     int64_t iterations_ = 0;
 
-    std::string error_info_ = "";
+    std::string error_info_;
 };
 
 class TableGenContext {
    public:
-    TableGenContext(Table* arg) { table_ = arg; }
+    explicit TableGenContext(Table* arg) { table_ = arg; }
     ~TableGenContext() = default;
 
     uint64_t getUniqueIndex() { return unique_name_counter_++; }

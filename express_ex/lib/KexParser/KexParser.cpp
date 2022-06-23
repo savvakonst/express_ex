@@ -12,7 +12,8 @@ KEXParser::KEXParser(BodyTemplate *body, const std::string &str, bool is_file_na
 }
 
 KEXParser::KEXParser(const std::string &str, bool is_file_name, const std::map<std::string, bool> &lib_str_map) {
-    auto body = listener_->activ_body_;
+    listener_ = new TreeShapeListener();
+    //auto body = listener_->activ_body_;
 
     for (auto i : lib_str_map) init(i.first, i.second);
 

@@ -5,6 +5,8 @@ project(express_ex_env)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+enable_testing()
+
 
 
 if(NOT EXTERNAL_PROJECTS_DIRECTORY)

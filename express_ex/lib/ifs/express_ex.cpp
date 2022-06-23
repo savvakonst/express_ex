@@ -44,7 +44,6 @@ bool Express_ex::parseText(const std::string &str, bool is_file_name,
         //body_template_->getParameterLinkNames(); TODO try to remove
 
         if (info_stream_) {
-            std::string output;
             if (name_list_)
                 *info_stream_ << Delimiter::GREEN << "names list: \n  " << body_template_->getParameterLinkNames()
                               << " \n";
@@ -52,7 +51,6 @@ bool Express_ex::parseText(const std::string &str, bool is_file_name,
             if (untyped_fsr_)
                 *info_stream_ << Delimiter::GREEN << body_template_->print("") << Delimiter::GREEN << "\n";
 
-            *info_stream_ << output;
         }
 
 
@@ -160,7 +158,7 @@ bool Express_ex::genJit(bool optimization_enable) {
             table_->runOptimization();
 
         if (info_stream_ && llvm_ir_code_)
-            *info_stream_ << ExColors::GREEN << "\n\n---------We just constructed this LLVM module:--------- \n"
+            *info_stream_ << ExColors::GREEN << "\n\n----------------------LLVM module:--------------------\n"
                           << ExColors::RESET << table_->printllvmIr();
 
         status = true;

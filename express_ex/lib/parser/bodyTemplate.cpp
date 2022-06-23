@@ -224,14 +224,6 @@ BodyTemplate* BodyTemplate::getFunctionBody(const std::string& name) const {
     return nullptr;
 }
 
-stack<ParameterIfs*> BodyTemplate::getOutputParameterList() const {
-    stack<ParameterIfs*> p_list;
-    for (auto i : return_stack_) {
-        p_list.push(i->getAssignedVal(true)->getParameter());
-    }
-    return p_list;
-}
-
 std::string BodyTemplate::print(const std::string& tab, bool DST_ena, bool hide_unused_lines) const {
     PrintBodyContext context(tab, DST_ena, hide_unused_lines);
     stack<Value*> visitor_stack;

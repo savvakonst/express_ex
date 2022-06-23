@@ -10,15 +10,15 @@
 #include "ifs/parameterIfs.h"
 
 
-DLL_EXPORT bool readParametersList(std::string database_fname, std::vector<ParameterIfs*>& parameter_list);
-DLL_EXPORT std::vector<ParameterIfs*> readParametersList(std::string database_Fame);
+DLL_EXPORT bool readParametersList(const std::string& database_f_name, std::vector<ParameterIfs*>& parameter_list);
+DLL_EXPORT std::vector<ParameterIfs*> readParametersList(const std::string& database_Fame);
 DLL_EXPORT ParameterIfs* intersection(ParameterIfs* a, ParameterIfs* b, PrmTypesEn target_ty, const std::string& name);
 DLL_EXPORT ParameterIfs* intersection(std::vector<ParameterIfs*> arg_list, PrmTypesEn target_ty,
                                       const std::string& name);
 DLL_EXPORT ParameterIfs* retyping(ParameterIfs* a, PrmTypesEn target_ty, const std::string& name);
-DLL_EXPORT ParameterIfs* newParameter(std::string name, const std::vector<DataInterval>& interval_list,
+DLL_EXPORT ParameterIfs* newParameter(const std::string& name, const std::vector<DataInterval>& interval_list,
                                       bool save_fnames);
-DLL_EXPORT ParameterIfs* newParameter(std::string name, const TimeInterval& time_interval,
+DLL_EXPORT ParameterIfs* newParameter(const std::string& name, const TimeInterval& time_interval,
                                       const std::vector<DataInterval>& interval_list, bool save_fnames = true);
 
 calcMinMaxTy g_calcMinMax_select(PrmTypesEn arg);
@@ -47,9 +47,7 @@ class DLL_EXPORT ParametersDB {
 
    private:
 
-
     std::vector<ParameterIfs*> db_parameters_;
-
 };
 
 

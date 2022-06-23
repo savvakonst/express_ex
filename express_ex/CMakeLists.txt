@@ -22,7 +22,7 @@ set(OPENCL_LIBDIR__ ${CUDAPATH__}/lib/${APlarform})
 
 
 
-add_subdirectory(test)
+#add_subdirectory(test)
 
 
 set(LIBRARY_SOURCES
@@ -255,8 +255,6 @@ target_compile_options(express_ex PRIVATE
 target_include_directories(express_ex
         PUBLIC include
         PRIVATE ${LLVM_INCLUDE_DIRS}
-        PRIVATE ${OPENCL_INCLUDEDIR__}
-        PRIVATE ${OPENCL_LIBDIR__}
         )
 
 target_link_directories(express_ex PUBLIC
@@ -268,10 +266,12 @@ llvm_map_components_to_libnames(LLVM_LIBS__
         )
 
 target_link_libraries(express_ex PRIVATE
-        #OpenCL
+
         antlr4_shared
         EGrammar
         ${LLVM_LIBS__}
+
+        PUBLIC io_ex
         )
 
 
@@ -346,6 +346,9 @@ target_link_libraries(express_ex_app PRIVATE
         express_ex
         ${LLVM_LIBS_FOR_APP_}
         )
+
+
+
 
 
 

@@ -12,6 +12,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 
+
+
 add_library(io_ex SHARED
         DatasetsStorage_ifs.h
         FolderIoInterface.cpp
@@ -20,4 +22,6 @@ add_library(io_ex SHARED
 	#Hdf5IoInterface.h
         )
 
-target_link_libraries(io_ex Qt5::Widgets)
+target_include_directories(io_ex INTERFACE  ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_libraries(io_ex PRIVATE Qt5::Widgets)

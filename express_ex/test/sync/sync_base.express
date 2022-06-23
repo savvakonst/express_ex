@@ -1,0 +1,1576 @@
+{
+    " File.About": "KSD-Express Header File",
+    " File.Company": "АО Элистех",
+    " File.Date": "2022.05.17",
+    " File.Time": "15:55:12.0",
+    " File.Version": "1.0.0.0",
+    "Data.Fragments.List": [
+        {
+            "Data.Offs": 5264,
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625
+        }
+    ],
+    "Data.Fragments.Number": 1,
+    "Data.Time.Begin": "00:02:28.00",
+    "Data.Time.End": "00:02:40.12",
+    "Data.sTime.Begin": 148,
+    "Data.sTime.End": 160.119140625,
+    "Parameters.List": [
+        {
+            " Name": "#1_A01__1",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__1.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 3.002,
+            "Data.Minimum": 0,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 1",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__1",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 0
+            }
+        },
+        {
+            " Name": "#1_A01__2",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__2.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 3.0025999999999997,
+            "Data.Minimum": -3.0151999999999997,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 2",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__2",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 1
+            }
+        },
+        {
+            " Name": "#1_A01__3",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__3.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 3.001,
+            "Data.Minimum": 0,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 3",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__3",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 2
+            }
+        },
+        {
+            " Name": "#1_A01__4",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__4.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 4",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__4",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 3
+            }
+        },
+        {
+            " Name": "#1_A01__5",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__5.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 5",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__5",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 4
+            }
+        },
+        {
+            " Name": "#1_A01__6",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__6.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 6",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__6",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 5
+            }
+        },
+        {
+            " Name": "#1_A01__7",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__7.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 7",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__7",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 6
+            }
+        },
+        {
+            " Name": "#1_A01__8",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__8.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 8",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__8",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 7
+            }
+        },
+        {
+            " Name": "#1_A01__9",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__9.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 9",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__9",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 8
+            }
+        },
+        {
+            " Name": "#1_A01__10",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__10.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 10",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__10",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 9
+            }
+        },
+        {
+            " Name": "#1_A01__11",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__11.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 11",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__11",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 10
+            }
+        },
+        {
+            " Name": "#1_A01__12",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__12.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 12",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__12",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 11
+            }
+        },
+        {
+            " Name": "#1_A01__13",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__13.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 13",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__13",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 12
+            }
+        },
+        {
+            " Name": "#1_A01__14",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__14.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 14",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__14",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 13
+            }
+        },
+        {
+            " Name": "#1_A01__15",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__15.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 15",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__15",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 14
+            }
+        },
+        {
+            " Name": "#1_A01__16",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__16.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 3.0023999999999997,
+            "Data.Minimum": -3.0147999999999997,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 16",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__16",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 15
+            }
+        },
+        {
+            " Name": "#1_A01__17",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__17.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 3.0023999999999997,
+            "Data.Minimum": -3.0159999999999996,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 17",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__17",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 16
+            }
+        },
+        {
+            " Name": "#1_A01__18",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__18.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 3.0012,
+            "Data.Minimum": -3.0143999999999997,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 18",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__18",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 17
+            }
+        },
+        {
+            " Name": "#1_A01__19",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__19.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 19",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__19",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 18
+            }
+        },
+        {
+            " Name": "#1_A01__20",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__20.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 20",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__20",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 19
+            }
+        },
+        {
+            " Name": "#1_A01__21",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__21.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 21",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__21",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 20
+            }
+        },
+        {
+            " Name": "#1_A01__22",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__22.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 22",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__22",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 21
+            }
+        },
+        {
+            " Name": "#1_A01__23",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__23.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 23",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__23",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 22
+            }
+        },
+        {
+            " Name": "#1_A01__24",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__24.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 24",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__24",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 23
+            }
+        },
+        {
+            " Name": "#1_A01__25",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__25.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 25",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__25",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 24
+            }
+        },
+        {
+            " Name": "#1_A01__26",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__26.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 26",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__26",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 25
+            }
+        },
+        {
+            " Name": "#1_A01__27",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__27.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 27",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__27",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 26
+            }
+        },
+        {
+            " Name": "#1_A01__28",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__28.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 28",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__28",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 27
+            }
+        },
+        {
+            " Name": "#1_A01__29",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__29.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 29",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__29",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 28
+            }
+        },
+        {
+            " Name": "#1_A01__30",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__30.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 10,
+            "Data.Minimum": 10,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 30",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__30",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 29
+            }
+        },
+        {
+            " Name": "#1_A01__31",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__31.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 3.002,
+            "Data.Minimum": -3.0155999999999996,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 31",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__31",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 30
+            }
+        },
+        {
+            " Name": "#1_A01__32",
+            "Category": "Напряжение",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "#1_A01__32.dat",
+                    "Version": 1
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 131072,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 6354432,
+                    "Time.Begin": "00:02:28.00",
+                    "Time.End": "00:02:40.12",
+                    "Type": 36,
+                    "sTime.Begin": 148,
+                    "sTime.End": 160.119140625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 131072,
+            "Data.Maximum": 3.0012,
+            "Data.Minimum": -3.0151999999999997,
+            "Data.Type": 36,
+            "Department": "",
+            "Description": "Модуль КСД/А01, канал 32",
+            "Dimension": "В",
+            "Formula": "x = param()\ny = x\nreturn double(y)",
+            "Module.ID": 1597059137,
+            "Module.Slot": 1,
+            "ShortID": "#1_A01__32",
+            "System": "",
+            "Time.Begin": "00:02:28.00",
+            "Time.End": "00:02:40.12",
+            "Type": 1,
+            "sTime.Begin": 148,
+            "sTime.End": 160.119140625,
+            "~Extended": {
+                "Line": 31
+            }
+        }
+    ],
+    "Parameters.Number": 32,
+    "Parent.Bases.List": [
+        {
+            "Name": "Новая база данных",
+            "Object": "",
+            "Parameters.Number": 32,
+            "Path": "C:/Users/SVK/Desktop/KSD_DATA/a01/sync_base/sync_base.base"
+        }
+    ],
+    "Parent.Bases.Number": 1,
+    "Parent.Files.List": [
+        {
+            "Path": "C:/Users/SVK/Desktop/KSD_DATA/a01/sync_base/sync_A01-001.ksd",
+            "Record.Date": "2021.2.2",
+            "Record.Flight.Number": 0,
+            "Record.Size": 101969404,
+            "Record.Task.Number": 0,
+            "Record.Time.Start": "0:2:28.0",
+            "Record.Time.Stop": "0:2:40.12",
+            "Record.Unit.Serial": 1,
+            "Record.Unit.Version": 1034,
+            "Task.CheckSum": 27685,
+            "Task.Date": "2021.2.2",
+            "Task.Device.ID": 1279546187,
+            "Task.Device.Version": 256,
+            "Task.Flight.Number": 0,
+            "Task.Header.Size": 64,
+            "Task.Plane.Number": 0,
+            "Task.Plane.Type": "��� �����",
+            "Task.Size": 1480,
+            "Task.Sync.Source": 0,
+            "Task.Version": 256
+        }
+    ],
+    "Parent.Files.Number": 1,
+    "Passport": {
+        "Date.Day": 17,
+        "Date.Month": 5,
+        "Date.Year": 2022,
+        "FlightNo": "",
+        "FuelDensity": "",
+        "FuelVolume": "",
+        "Pressure": "",
+        "Staff": "",
+        "Temperature": "",
+        "Theme": "",
+        "Weight": "",
+        "Wind": ""
+    }
+}

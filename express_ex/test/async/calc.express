@@ -1,0 +1,329 @@
+{
+    " File.About": "KSD-Express Header File",
+    " File.Company": "АО Элистех",
+    " File.Date": "2021.08.06",
+    " File.Time": "10:08:55.0",
+    " File.Version": "1.0.0.0",
+    "Data.Fragments.List": [
+        {
+            "Data.Offs": 4290,
+            "Time.Begin": "00:13:17.000",
+            "Time.End": "00:21:57.679",
+            "sTime.Begin": 797,
+            "sTime.End": 1317.6796875
+        }
+    ],
+    "Data.Fragments.Number": 1,
+    "Data.Time.Begin": "00:13:17.000",
+    "Data.Time.End": "00:21:57.679",
+    "Data.sTime.Begin": 797,
+    "Data.sTime.End": 1317.6796875,
+    "Parameters.List": [
+        {
+            " Name": "Широта_СНС_стр",
+            "Category": "",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "Широта_СНС_стр.dat"
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 0,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 60528,
+                    "Time.Begin": "00:13:33.503",
+                    "Time.End": "00:21:57.597",
+                    "Type": 4136,
+                    "sTime.Begin": 813.50390625,
+                    "sTime.End": 1317.59765625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 0,
+            "Data.Maximum": 55.83251953125,
+            "Data.Minimum": -0.0054931640625,
+            "Data.Type": 4136,
+            "Department": "",
+            "Description": "Широта СНС",
+            "Dimension": "°",
+            "Formula": "x = param()\ny = x\nreturn double(y)\n",
+            "Module.ID": 1597124675,
+            "Module.Slot": 3,
+            "ShortID": "",
+            "System": "",
+            "Time.Begin": "00:13:33.503",
+            "Time.End": "00:21:57.597",
+            "sTime.Begin": 813.50390625,
+            "sTime.End": 1317.59765625
+        },
+        {
+            " Name": "Широта_СНС_млр",
+            "Category": "",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "Широта_СНС_млр.dat"
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 0,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 60528,
+                    "Time.Begin": "00:13:33.503",
+                    "Time.End": "00:21:57.597",
+                    "Type": 4136,
+                    "sTime.Begin": 813.50390625,
+                    "sTime.End": 1317.59765625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 0,
+            "Data.Maximum": 0.005491152408006,
+            "Data.Minimum": 0,
+            "Data.Type": 4136,
+            "Department": "",
+            "Description": "Широта СНС",
+            "Dimension": "°",
+            "Formula": "x = param()\ny = x\nreturn double(y)\n",
+            "Module.ID": 1597124675,
+            "Module.Slot": 3,
+            "ShortID": "",
+            "System": "",
+            "Time.Begin": "00:13:33.503",
+            "Time.End": "00:21:57.597",
+            "sTime.Begin": 813.50390625,
+            "sTime.End": 1317.59765625
+        },
+        {
+            " Name": "Широта_СНС",
+            "Category": "",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "Широта_СНС.dat"
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 0,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 60528,
+                    "Time.Begin": "00:13:33.503",
+                    "Time.End": "00:21:57.597",
+                    "Type": 40,
+                    "sTime.Begin": 813.50390625,
+                    "sTime.End": 1317.59765625
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 0,
+            "Data.Maximum": 55.83399206399979,
+            "Data.Minimum": -2.0116544940003422e-06,
+            "Data.Type": 40,
+            "Department": "",
+            "Description": "Широта СНС",
+            "Dimension": "°",
+            "Formula": "x = param(\"Широта_СНС_стр\")\ny = param(\"Широта_СНС_млр\")\nz = x + y\nreturn double(z)\n",
+            "Module.Block": 255,
+            "Module.ID": 1129070915,
+            "Module.Slave": 255,
+            "Module.Slot": 255,
+            "Module.Subslot": 255,
+            "ShortID": "",
+            "System": "",
+            "Time.Begin": "00:13:33.503",
+            "Time.End": "00:21:57.597",
+            "sTime.Begin": 813.50390625,
+            "sTime.End": 1317.59765625
+        },
+        {
+            " Name": "Широта_снс_млр_А1",
+            "Category": "",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "Широта_снс_млр_А1.dat"
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 0,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 203480,
+                    "Time.Begin": "00:13:28.984",
+                    "Time.End": "00:21:57.670",
+                    "Type": 4132,
+                    "sTime.Begin": 808.984375,
+                    "sTime.End": 1317.6708984375
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 0,
+            "Data.Maximum": 0.00016998493200000002,
+            "Data.Minimum": 0,
+            "Data.Type": 4132,
+            "Department": "",
+            "Description": "Широта СНС БИНС",
+            "Dimension": "°",
+            "Formula": "x = param()\ny = x\nreturn double(y)\n",
+            "Module.ID": 1597059139,
+            "Module.Slot": 1,
+            "ShortID": "",
+            "System": "",
+            "Time.Begin": "00:13:28.984",
+            "Time.End": "00:21:57.670",
+            "sTime.Begin": 808.984375,
+            "sTime.End": 1317.6708984375
+        },
+        {
+            " Name": "Широта_снс_стр_А1",
+            "Category": "",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "Широта_снс_стр_А1.dat"
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 0,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 203480,
+                    "Time.Begin": "00:13:28.984",
+                    "Time.End": "00:21:57.669",
+                    "Type": 4132,
+                    "sTime.Begin": 808.984375,
+                    "sTime.End": 1317.669921875
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 0,
+            "Data.Maximum": 55.83389268464168,
+            "Data.Minimum": -0.03158569328152,
+            "Data.Type": 4132,
+            "Department": "",
+            "Description": "Широта СНС БИНС",
+            "Dimension": "°",
+            "Formula": "x = param()\ny = x\nreturn double(y)\n",
+            "Module.ID": 1597059139,
+            "Module.Slot": 1,
+            "ShortID": "",
+            "System": "",
+            "Time.Begin": "00:13:28.984",
+            "Time.End": "00:21:57.669",
+            "sTime.Begin": 808.984375,
+            "sTime.End": 1317.669921875
+        },
+        {
+            " Name": "Широта_СНС_А1",
+            "Category": "",
+            "Data.Files.List": [
+                {
+                    "Index": 0,
+                    "Local": true,
+                    "Name": "Широта_СНС_А1.dat"
+                }
+            ],
+            "Data.Files.Number": 1,
+            "Data.Fragments.List": [
+                {
+                    "Frequency": 0,
+                    "Index": 0,
+                    "Offset": 0,
+                    "Size": 305220,
+                    "Time.Begin": "00:13:28.984",
+                    "Time.End": "00:21:57.669",
+                    "Type": 4136,
+                    "sTime.Begin": 808.984375,
+                    "sTime.End": 1317.669921875
+                }
+            ],
+            "Data.Fragments.Number": 1,
+            "Data.Frequency": 0,
+            "Data.Maximum": 55.83399200439453,
+            "Data.Minimum": -0.03141570836305618,
+            "Data.Type": 4136,
+            "Department": "",
+            "Description": "Широта СНС",
+            "Dimension": "°",
+            "Formula": "x = param(\"Широта_снс_стр_А1\")\ny = param(\"Широта_снс_млр_А1\")\nz = x + y\nreturn double(z)\n",
+            "Module.Block": 255,
+            "Module.ID": 1129070915,
+            "Module.Slave": 255,
+            "Module.Slot": 255,
+            "Module.Subslot": 255,
+            "ShortID": "",
+            "System": "",
+            "Time.Begin": "00:13:28.984",
+            "Time.End": "00:21:57.669",
+            "sTime.Begin": 808.984375,
+            "sTime.End": 1317.669921875
+        }
+    ],
+    "Parameters.Number": 6,
+    "Parent.Bases.List": [
+        {
+            "Name": "БИНС",
+            "Object": "",
+            "Parameters.Number": 32,
+            "Path": "X:/data/kronschtadt/Arinc/БД БИНС.base"
+        }
+    ],
+    "Parent.Bases.Number": 1,
+    "Parent.Files.List": [
+        {
+            "Path": "X:/data/kronschtadt/Arinc/2021_07_06-002.ksd",
+            "Record.Date": "2021.6.30",
+            "Record.Flight.Number": 0,
+            "Record.Size": 99647702,
+            "Record.Task.Number": 0,
+            "Record.Time.Start": "0:13:17.0",
+            "Record.Time.Stop": "0:21:57.68",
+            "Record.Unit.Serial": 9,
+            "Record.Unit.Version": 282,
+            "Task.CheckSum": 26841,
+            "Task.Date": "2021.6.30",
+            "Task.Device.ID": 1279546187,
+            "Task.Device.Version": 256,
+            "Task.Flight.Number": 0,
+            "Task.Header.Size": 64,
+            "Task.Plane.Number": 0,
+            "Task.Plane.Type": "��� �����",
+            "Task.Size": 1272,
+            "Task.Sync.Source": 0,
+            "Task.Version": 256
+        }
+    ],
+    "Parent.Files.Number": 1,
+    "Passport": {
+        "Date.Day": 17,
+        "Date.Month": 3,
+        "Date.Year": 2021,
+        "FlightNo": "1",
+        "FuelDensity": "",
+        "FuelVolume": "",
+        "Pressure": "",
+        "Staff": "автопилот вываавыва",
+        "Temperature": "",
+        "Weight": "",
+        "Wind": ""
+    }
+}

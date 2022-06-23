@@ -1,0 +1,4 @@
+x = param("#1_A01__1")
+y = param("#1_A01__2")
+z = x + cos(9*y)#**2
+return double(z)

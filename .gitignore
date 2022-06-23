@@ -66,6 +66,6 @@ external_projects
 external_projects/
 external_projects/**
 
-express_ex/test/
+express_ex/test/**/*.dat
 old/
 /external_projects/antlr_4/

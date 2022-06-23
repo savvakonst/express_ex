@@ -1,0 +1,3 @@
+x = param("Широта_СНС_стр")
+z = x*3
+return double(z)

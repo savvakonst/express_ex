@@ -1,0 +1,4 @@
+x = param("Широта_снс_стр_А1")
+y = param("Широта_снс_млр_А1")
+z = x + double(y)**2
+return double(z)

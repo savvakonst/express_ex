@@ -88,6 +88,7 @@ public:
             int size = right_size;
             int left_offset = size / 2;
 
+
             int block_ix = get_group_id(0);
             int local_ix = get_local_id(0);
             int block_dim = get_local_size(0);
@@ -95,11 +96,12 @@ public:
 
             if(index<left_size){
                 for(int i=0;i < size;i++)
-                    summ += left_v[i + index] * right_v[size - 1 - i];
+                    summ += left_v[i + get_global_id(0)] * right_v[size - 1 - i];
         
-                output_v[index + left_offset + output_offset] = summ;
+                //output_v[index + left_offset + output_offset] = summ;
+                output_v[get_global_id(0)] = summ;
             }
-            output_v[index] = 1.0;
+            //output_v[get_global_id(0)] = 1.0;
         }
         )CLC";
 
@@ -148,8 +150,9 @@ public:
         auto status = queue_.enqueueNDRangeKernel(
             kernel_,
             cl::NullRange,
-            cl::NDRange(left_size_/ block_dim),
-            cl::NDRange(block_dim),
+            //cl::NDRange(left_size_),
+            cl::NDRange(left_size_),
+            cl::NullRange,//cl::NDRange(block_dim),
             NULL,
             &event);
 

@@ -10,7 +10,7 @@
 
 #include "config.h"
 #include "ExStreamIfs.h"
-#include "DatasetsStorage_ifs.h"
+//#include "DatasetsStorage_ifs.h"
 
 #ifdef _MSC_VER
 #    pragma warning(push)
@@ -76,7 +76,7 @@ struct DataInterval {
     TimeInterval time_interval;
     std::string file_name;
     bool local;
-    DatasetsStorage_ifs * ds;
+    //DatasetsStorage_ifs * ds = nullptr;
 };
 
 struct Dot {

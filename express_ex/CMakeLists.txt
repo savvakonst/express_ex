@@ -265,13 +265,12 @@ llvm_map_components_to_libnames(LLVM_LIBS__
         ${LLVM_COMPONENTS}
         )
 
-target_link_libraries(express_ex PRIVATE
-
-        antlr4_shared
-        EGrammar
-        ${LLVM_LIBS__}
-
+target_link_libraries(express_ex
         PUBLIC io_ex
+
+        PRIVATE antlr4_shared
+        PRIVATE EGrammar
+        PRIVATE ${LLVM_LIBS__}
         )
 
 

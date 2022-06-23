@@ -11,7 +11,7 @@ x64/
 debug/
 release/
 Temp/
-
+Testing/
 
 
 *.vcxproj

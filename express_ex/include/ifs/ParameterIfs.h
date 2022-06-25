@@ -10,7 +10,7 @@
 
 #include "config.h"
 #include "ExStreamIfs.h"
-//#include "DatasetsStorage_ifs.h"
+#include "DatasetsStorage_ifs.h"
 
 #ifdef _MSC_VER
 #    pragma warning(push)
@@ -63,6 +63,10 @@ struct TimeInterval {
     double end = 0.0;
 };
 
+
+
+
+
 struct DataInterval {
     union {
         int64_t int_type_representation;
@@ -76,14 +80,52 @@ struct DataInterval {
     TimeInterval time_interval;
     std::string file_name;
     bool local;
-    //DatasetsStorage_ifs * ds = nullptr;
+    DatasetsStorage_ifs * ds = nullptr;
 };
 
-struct Dot {
+
+
+
+
+
+struct ExTimeInterval {
+    ExTimeInterval(): time(0), duration(0) {}
+    ExTimeInterval(int64_t begin, double duration): time(begin), duration(duration){}
+    ExTimeInterval(double begin, double duration): time(int64_t(begin * (2 << 10)) << 22 ), duration(duration){}
+
+    union{
+        int64_t time ;
+        struct {
+            int32_t time_int;
+            uint32_t time_frac;
+        };
+    };
+
+    /**
+     * It is time offset from first to last element   duration = first_point_time - last_point_time.
+     * If interval contains one point: then the duration = 0.
+     * It member doesn't play significant role, using double for compatibility with ui api
+     */
+    double duration;
+};
+
+
+
+
+struct ExDataInterval {
+    ExTimeInterval time_interval;
+    uint64_t offset;
+    uint64_t size;
+    uint64_t frequency;
     double val_max;
     double val_min;
-    double time;
+    PrmTypesEn type;
+    DatasetsStorage_ifs * ds = nullptr;
+    std::string file_name;
 };
+
+
+
 
 inline size_t sizeOfTy(const PrmTypesEn arg) { return ((uint64_t)arg) & 0xf; }
 
@@ -98,7 +140,7 @@ inline size_t sizeOfTimeTy(PrmTypesEn arg) {
 
 DLL_EXPORT std::string toString(PrmTypesEn arg);
 
-inline std::stringstream& stream(std::stringstream& OS, const DataInterval& di, std::string offset) {
+inline std::stringstream& stream(std::stringstream& OS, const DataInterval& di, const std::string& offset) {
     OS << offset << "DataInterval{\n";
     OS << offset << "  type: " << toString(di.type) << "\n";
     OS << offset << "  offs: " << di.offs << "\n";
@@ -110,6 +152,23 @@ inline std::stringstream& stream(std::stringstream& OS, const DataInterval& di, 
     OS << offset << "}\n";
     return OS;
 }
+
+inline std::stringstream& stream(std::stringstream& OS, const ExDataInterval& di, const std::string& offset) {
+    OS << offset << "DataInterval{\n";
+    OS << offset << "  type: " << toString(di.type) << "\n";
+    OS << offset << "  offs: " << di.offset << "\n";
+    OS << offset << "  size: " << di.size << "\n";
+    OS << offset << "  frequency: " << di.frequency << "\n";
+    OS << offset << "  time_interval.time_int: " << di.time_interval.time_int << "\n";
+    OS << offset << "  time_interval.time_frac " <<"0x"<< std::hex <<di.time_interval.time_frac << "\n"<<std::dec;
+    OS << offset << "  time_interval.duration: " << di.time_interval.duration << "\n";
+    OS << offset << "  file_name: " << di.file_name << "\n";
+    OS << offset << "}\n";
+    return OS;
+}
+
+
+
 
 inline bool isEmpty(TimeInterval i) { return i.bgn >= i.end; }
 
@@ -272,12 +331,6 @@ class DLL_EXPORT ParameterIfs {
 
     virtual bool isAsync() = 0;
 
-    // is not supported yet
-    virtual std::vector<int64_t> read_dots(Dot* dot_buffer, size_t max_point_number, double from, double to) = 0;
-
-    // is not supported yet
-    virtual std::vector<int64_t> read_dots(double* top_buffer_ptr, double* bottom_buffer_ptr, double* time_buffer_ptr,
-                                           double from, double to, size_t max_point_number_to_read) = 0;
 
     virtual bool open(bool open_to_write = false) = 0;
     virtual bool close() = 0;

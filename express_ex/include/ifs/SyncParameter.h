@@ -16,12 +16,7 @@ class DLL_EXPORT SyncParameter : public ParameterIfs {
     ~SyncParameter() override;
 
     bool isAsync() override { return false; }
-    // is not supported yet
-    std::vector<int64_t> read_dots(Dot* dot_buffer, size_t max_point_number, double from, double to) override;
 
-    // is not supported yet
-    std::vector<int64_t> read_dots(double* top_buffer_ptr, double* bottom_buffer_ptr, double* time_buffer_ptr,
-                                   double from, double to, size_t max_point_number_to_read) override;
 
     bool open(bool open_to_write = false) override;
     bool close() override;

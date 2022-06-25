@@ -52,20 +52,6 @@ void AsyncParameter::readFromBuffer(char* data_buffer_ptr, uint64_t points_to_re
         copyFromBuffer((uint8_t*)data_buffer_ptr, points_to_read);
 }
 
-// is not supported yet
-
-// is not supported yet
-
-inline std::vector<int64_t> AsyncParameter::read_dots(Dot* dot_buffer, size_t max_point_number, double from,
-                                                      double to) {
-    return {-1};
-}
-
-inline std::vector<int64_t> AsyncParameter::read_dots(double* top_buffer_ptr, double* bottom_buffer_ptr,
-                                                      double* time_buffer_ptr, double from, double to,
-                                                      size_t max_point_number_to_read) {
-    return {-1};
-}
 
 inline bool AsyncParameter::open(bool open_to_write) {
     data_size_        = sizeOfTy(this->getPrmType());

@@ -6,7 +6,7 @@
 #include "parser/defWarningIgnore.h"
 #include "common/undefWarningIgnore.h"
 
-SyncParameter::SyncParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_file_names) {
+SyncParameter::SyncParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_file_names ) {
     name_ = std::move(name);
     // for (auto i : interval_list)
     //     interval_list_.push_back(i);
@@ -78,19 +78,7 @@ SyncParameter::~SyncParameter() {
     }
 }
 
-// is not supported yet
 
-// is not supported yet
-
-inline std::vector<int64_t> SyncParameter::read_dots(Dot* dot_buffer, size_t max_point_number, double from, double to) {
-    return {-1};
-}
-
-inline std::vector<int64_t> SyncParameter::read_dots(double* top_buffer_ptr, double* bottom_buffer_ptr,
-                                                     double* time_buffer_ptr, double from, double to,
-                                                     size_t max_point_number_to_read) {
-    return {-1};
-}
 
 inline bool SyncParameter::open(bool open_to_write) {
     if (opened_to_read_ | opened_to_write_) return false;

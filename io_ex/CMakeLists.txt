@@ -22,6 +22,10 @@ add_library(io_ex SHARED
 	#Hdf5IoInterface.h
         )
 
+
+
 target_include_directories(io_ex INTERFACE  ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(io_ex PRIVATE Qt5::Widgets)
+
+target_compile_definitions(io_ex PRIVATE DS_STORAGE_TO_EXPORT)

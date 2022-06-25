@@ -21,12 +21,6 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
     ~AsyncParameter() override;
 
     bool isAsync() override { return true; }
-    // is not supported yet
-    std::vector<int64_t> read_dots(Dot* dot_buffer, size_t max_point_number, double from, double to) override;
-
-    // is not supported yet
-    std::vector<int64_t> read_dots(double* top_buffer_ptr, double* bottom_buffer_ptr, double* time_buffer_ptr,
-                                   double from, double to, size_t max_point_number_to_read) override;
 
     bool open(bool open_to_write = false) override;
     bool close() override;
@@ -43,7 +37,7 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
 
     virtual ParameterIfs* newParameter() override;
 
-    friend void readParametersList(std::string databaseFName, std::vector<ParameterIfs>& parameterList);
+
     friend class ParametersDB;
 
    protected:

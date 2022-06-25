@@ -2,6 +2,8 @@
 
 #include <set>
 #include <type_traits>
+#include <ifs/parameterIfs.h>
+
 
 #include "llvm/Support/JSON.h"
 #include "common/common.h"
@@ -284,3 +286,4 @@ ParameterIfs *intersection(std::vector<ParameterIfs *> arg_list, PrmTypesEn targ
 
     return p;
 }
+

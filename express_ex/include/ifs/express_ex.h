@@ -8,14 +8,6 @@
 #include "parameterIO.h"
 
 
-#ifdef _MSC_VER
-#    pragma warning(push)
-#    pragma warning(disable : 5208)
-#    pragma warning(disable : 4251)
-#    pragma warning(disable : 4100)
-#    pragma warning(disable : 4189)
-#endif
-
 
 class KEXParser;
 class Body;
@@ -70,10 +62,6 @@ class DLL_EXPORT Express_ex {
     Table* table_ = nullptr;
 };
 
-
-#ifdef _MSC_VER
-#    pragma warning(pop)
-#endif
 
 
 #endif  // EXPRESS_EX_H

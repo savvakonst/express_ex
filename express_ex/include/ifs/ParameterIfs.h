@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "DatasetsStorage_ifs.h"
@@ -359,7 +360,7 @@ class DLL_EXPORT ParameterIfs {
         return -1;
     }
 
-    void setPath(std::string dirname) { work_directory_ = dirname; }
+    void setPath(std::string dirname) { work_directory_ = std::move(dirname); }
     void setLocal(bool val = true) {
         for (auto& i : interval_list_) i.local = val;
     }
@@ -367,7 +368,7 @@ class DLL_EXPORT ParameterIfs {
 
     virtual ParameterIfs* newParameter() = 0;
 
-    virtual std::stringstream& stream(std::stringstream& OS, std::string offset = "") const {
+    virtual std::stringstream& stream(std::stringstream& OS, const std::string& offset = "") const {
         OS << offset << "ParameterInfo{\n";
         OS << offset << "  parameter_name: " << name_ << "\n";
         OS << offset << "  time_interval.end: " << time_interval_.end << "\n";

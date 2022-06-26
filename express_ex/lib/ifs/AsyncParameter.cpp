@@ -1,27 +1,28 @@
+#include "ifs/AsyncParameter.h"
+
 #include <set>
 
-#include "ifs/parameterIO.h"
-#include "ifs/AsyncParameter.h"
 #include "common/common.h"
-#include "parser/defWarningIgnore.h"
 #include "common/undefWarningIgnore.h"
+#include "ifs/parameterIO.h"
+#include "parser/defWarningIgnore.h"
 
 AsyncParameter::AsyncParameter(const std::string& name, const std::vector<DataInterval>& interval_list,
                                bool save_file_names) {
-    name_                = name;
-    parent_parameter_    = this;
-    interval_list_       = interval_list;
+    name_ = name;
+    parent_parameter_ = this;
+    interval_list_ = interval_list;
     number_of_intervals_ = interval_list.size();
     if (save_file_names == false) {
         for (auto& i : interval_list_) {
             i.file_name = "";
-            i.local     = true;
+            i.local = true;
         }
     }
 
     if (interval_list_.size()) {
         sizeof_data_type_ = sizeOfTy(interval_list_.front().type);
-        type_             = interval_list_.front().type;
+        type_ = interval_list_.front().type;
         calc_min_max_ptr_ = g_calcMinMax_select(type_);
     }
 
@@ -35,7 +36,7 @@ AsyncParameter::AsyncParameter(const std::string& name, const TimeInterval& time
                                const std::vector<DataInterval>& interval_list, bool save_file_names)
     : AsyncParameter(name, interval_list, save_file_names) {
     parent_parameter_ = this;
-    time_interval_    = time_interval;
+    time_interval_ = time_interval;
 }
 
 AsyncParameter::~AsyncParameter() = default;
@@ -52,16 +53,15 @@ void AsyncParameter::readFromBuffer(char* data_buffer_ptr, uint64_t points_to_re
         copyFromBuffer((uint8_t*)data_buffer_ptr, points_to_read);
 }
 
-
 inline bool AsyncParameter::open(bool open_to_write) {
-    data_size_        = sizeOfTy(this->getPrmType());
+    data_size_ = sizeOfTy(this->getPrmType());
     data_size_factor_ = (data_size_ + prm_time_size_);
 
     unused_points_in_current_interval_ = interval_list_[current_interval_index_].size / data_size_factor_;
 
     if (opened_to_read_ | opened_to_write_) return false;
 
-    opened_to_read_  = !open_to_write;
+    opened_to_read_ = !open_to_write;
     opened_to_write_ = open_to_write;
 
     openNewInterval();
@@ -71,8 +71,8 @@ inline bool AsyncParameter::open(bool open_to_write) {
 inline bool AsyncParameter::close() {
     if (opened_to_read_ | opened_to_write_) {
         if (ifs_) ifs_->close();
-        ifs_             = nullptr;
-        opened_to_read_  = false;
+        ifs_ = nullptr;
+        opened_to_read_ = false;
         opened_to_write_ = false;
         return true;
     }
@@ -87,7 +87,7 @@ uint64_t AsyncParameter::write(char* data_buffer_ptr, uint64_t points_to_write) 
     intermediate_buffer_.resetPos();
 
     uint64_t base = points_to_write;
-    uint8_t* ptr  = (uint8_t*)data_buffer_ptr;
+    uint8_t* ptr = (uint8_t*)data_buffer_ptr;
 
     if (interval_list_.size() <= current_interval_index_) return 0;
 
@@ -107,7 +107,7 @@ uint64_t AsyncParameter::write(char* data_buffer_ptr, uint64_t points_to_write) 
         } else {
             readFromBuffer(data_buffer_ptr, points_to_write);
             unused_points_in_current_interval_ -= points_to_write;
-            points_to_write  = 0;
+            points_to_write = 0;
             is_new_interval_ = false;
         }
     }
@@ -163,7 +163,7 @@ uint64_t AsyncParameter::read(char* data_buffer_ptr, uint64_t points_to_read) {
     time_buffer_.resize(points_to_read * prm_time_size_);
 
     uint64_t base = points_to_read;
-    uint8_t* ptr  = (uint8_t*)data_buffer_ptr;
+    uint8_t* ptr = (uint8_t*)data_buffer_ptr;
 
     if (interval_list_.size() <= current_interval_index_) return 0;
 
@@ -218,7 +218,7 @@ inline uint64_t AsyncParameter::getVirtualSize() const {
 ParameterIfs* AsyncParameter::intersection(ParameterIfs* b, PrmTypesEn target_ty, const std::string& name) {
     auto parameter_a = this;
     auto parameter_b = (AsyncParameter*)b;
-    target_ty        = PrmTypesEn(0x1000 | (uint64_t)target_ty);
+    target_ty = PrmTypesEn(0x1000 | (uint64_t)target_ty);
 
     if (parameter_a == parameter_b) return this;
 
@@ -243,7 +243,7 @@ ParameterIfs* AsyncParameter::intersection(ParameterIfs* b, PrmTypesEn target_ty
         data_interval.push_back(interval);
     }
 
-    auto ret               = new AsyncParameter(name, time_interval_, data_interval);
+    auto ret = new AsyncParameter(name, time_interval_, data_interval);
     ret->parent_parameter_ = parent_parameter_;
 
     return ret;
@@ -267,14 +267,14 @@ ParameterIfs* AsyncParameter::retyping(PrmTypesEn target_ty, const std::string& 
         data_interval.push_back(interval);
     }
 
-    auto ret               = new AsyncParameter(name, time_interval_, data_interval);
+    auto ret = new AsyncParameter(name, time_interval_, data_interval);
     ret->parent_parameter_ = parent_parameter_;
 
     return ret;
 }
 
 ParameterIfs* AsyncParameter::newParameter() {
-    AsyncParameter* p    = new AsyncParameter("", this->getMainTimeInterval(), this->getDataIntervalList(), false);
+    AsyncParameter* p = new AsyncParameter("", this->getMainTimeInterval(), this->getDataIntervalList(), false);
     p->parent_parameter_ = parent_parameter_;
     return p;
 }

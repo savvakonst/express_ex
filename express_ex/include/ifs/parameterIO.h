@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-
 #include "ifs/parameterIfs.h"
 
 
@@ -25,8 +24,6 @@ calcMinMaxTy g_calcMinMax_select(PrmTypesEn arg);
 
 class DLL_EXPORT ParametersDB {
    public:
-
-
     ParametersDB(const std::vector<std::string>& file_name_list) { addParametersSet(file_name_list); }
 
     ~ParametersDB() {
@@ -46,7 +43,6 @@ class DLL_EXPORT ParametersDB {
     }
 
    private:
-
     std::vector<ParameterIfs*> db_parameters_;
 };
 

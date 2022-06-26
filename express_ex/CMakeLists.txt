@@ -21,7 +21,6 @@ set(OPENCL_INCLUDEDIR__ ${CUDAPATH__}/include)
 set(OPENCL_LIBDIR__ ${CUDAPATH__}/lib/${APlarform})
 
 
-
 #add_subdirectory(test)
 
 
@@ -153,10 +152,6 @@ endif ()
 #set(CMAKE_CXX_STACK_SIZE "10000000")
 
 
-
-
-
-
 find_package(LLVM QUIET CONFIG)
 
 get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -175,8 +170,8 @@ if (NOT LLVM_FOUND  #[[OR DEFINED LLVM_BUILD_DIR]] )
         set(LLVM_DOWNLOAD_COMMAND DOWNLOAD_COMMAND
                 ${GIT_EXECUTABLE} clone
                 --depth 1 --config core.autocrlf=false --branch llvmorg-12.0.1 "${LLVM_GIT_REPOSITORY}" "${EXTERNAL_LLVM_SOURCE_DIR}")
-    else()
-        set(LLVM_DOWNLOAD_COMMAND )
+    else ()
+        set(LLVM_DOWNLOAD_COMMAND)
     endif ()
 
 
@@ -193,34 +188,34 @@ if (NOT LLVM_FOUND  #[[OR DEFINED LLVM_BUILD_DIR]] )
     )
 
     FetchContent_GetProperties(llvm_prj)
-    if(NOT llvm_prj_POPULATED)
+    if (NOT llvm_prj_POPULATED)
         FetchContent_Populate(llvm_prj)
 
-        set(LLVM_ADDITIONAL_ARGS "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}" "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}" )
+        set(LLVM_ADDITIONAL_ARGS "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}" "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
 
-        if(NOT IS_MULTI_CONFIG)
+        if (NOT IS_MULTI_CONFIG)
             set(LLVM_BUILD_TYPE -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
-        endif()
+        endif ()
 
-        if(CMAKE_VS_PLATFORM_NAME)
-            if(CMAKE_VS_PLATFORM_NAME STREQUAL "x64")
+        if (CMAKE_VS_PLATFORM_NAME)
+            if (CMAKE_VS_PLATFORM_NAME STREQUAL "x64")
                 set(LLVM_ADDITIONAL_ARGS -A x64 -Thost=x64)
-            else()
+            else ()
                 set(LLVM_ADDITIONAL_ARGS -A Win32 -Thost=x64)
-            endif()
-        elseif(CMAKE_CXX_COMPILER MATCHES "x64/cl.exe")
-        elseif(CMAKE_CXX_COMPILER MATCHES "x86/cl.exe")
-        elseif(CMAKE_CXX_FLAGS MATCHES "-m64")
-            set(LLVM_ADDITIONAL_ARGS ${LLVM_ADDITIONAL_ARGS} "-DCMAKE_CXX_FLAGS=-m64" "-DCMAKE_C_COMPILER=-m64" )
-        elseif(CMAKE_CXX_FLAGS MATCHES "-m32")
-            set(LLVM_ADDITIONAL_ARGS ${LLVM_ADDITIONAL_ARGS} "-DCMAKE_CXX_FLAGS=-m32" "-DCMAKE_C_COMPILER=-m32" )
-        endif()
+            endif ()
+        elseif (CMAKE_CXX_COMPILER MATCHES "x64/cl.exe")
+        elseif (CMAKE_CXX_COMPILER MATCHES "x86/cl.exe")
+        elseif (CMAKE_CXX_FLAGS MATCHES "-m64")
+            set(LLVM_ADDITIONAL_ARGS ${LLVM_ADDITIONAL_ARGS} "-DCMAKE_CXX_FLAGS=-m64" "-DCMAKE_C_COMPILER=-m64")
+        elseif (CMAKE_CXX_FLAGS MATCHES "-m32")
+            set(LLVM_ADDITIONAL_ARGS ${LLVM_ADDITIONAL_ARGS} "-DCMAKE_CXX_FLAGS=-m32" "-DCMAKE_C_COMPILER=-m32")
+        endif ()
 
 
         message("run:\n${CMAKE_COMMAND} -G \"${CMAKE_GENERATOR}\" ${LLVM_BUILD_TYPE} ${LLVM_ADDITIONAL_ARGS} -DLLVM_INCLUDE_TESTS=OFF  -DLLVM_INCLUDE_BENCHMARKS=OFF -DLLVM_INCLUDE_TOOLS=OFF -DLLVM_INCLUDE_DOCS=OFF -DLLVM_TARGETS_TO_BUILD=X86  ${EXTERNAL_LLVM_PROJECT_DIR}"
                 )
         execute_process(
-                COMMAND ${CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" ${LLVM_BUILD_TYPE} ${LLVM_ADDITIONAL_ARGS} -DLLVM_INCLUDE_TESTS=OFF  -DLLVM_INCLUDE_BENCHMARKS=OFF -DLLVM_INCLUDE_TOOLS=OFF -DLLVM_INCLUDE_DOCS=OFF -DLLVM_TARGETS_TO_BUILD=X86  ${EXTERNAL_LLVM_PROJECT_DIR}
+                COMMAND ${CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" ${LLVM_BUILD_TYPE} ${LLVM_ADDITIONAL_ARGS} -DLLVM_INCLUDE_TESTS=OFF -DLLVM_INCLUDE_BENCHMARKS=OFF -DLLVM_INCLUDE_TOOLS=OFF -DLLVM_INCLUDE_DOCS=OFF -DLLVM_TARGETS_TO_BUILD=X86 ${EXTERNAL_LLVM_PROJECT_DIR}
                 RESULT_VARIABLE result
                 ${outputOptions}
                 WORKING_DIRECTORY "${llvm_prj_BINARY_DIR}"
@@ -230,15 +225,12 @@ if (NOT LLVM_FOUND  #[[OR DEFINED LLVM_BUILD_DIR]] )
         set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${llvm_prj_BINARY_DIR})
         find_package(LLVM REQUIRED CONFIG)
 
-        set(LLVM_BUILD_DIR  ${llvm_prj_BINARY_DIR}  CACHE STRING
+        set(LLVM_BUILD_DIR ${llvm_prj_BINARY_DIR} CACHE STRING
                 "cached name of available python module" FORCE)
 
-    endif()
+    endif ()
 
-endif()
-
-
-
+endif ()
 
 
 add_library(express_ex SHARED
@@ -274,9 +266,7 @@ target_link_libraries(express_ex
         )
 
 
-
-
-if(DEFINED LLVM_BUILD_DIR)
+if (DEFINED LLVM_BUILD_DIR)
 
     get_interface_link_libraries_recursively(LLVM_ALL_DEPENDENCIES ${LLVM_LIBS__})
     get_library_paths(LLVM_LIB_PATHS ${LLVM_ALL_DEPENDENCIES})
@@ -285,18 +275,17 @@ if(DEFINED LLVM_BUILD_DIR)
 
     add_custom_target(build_llvm
             ${CMAKE_COMMAND} --build "${LLVM_BUILD_DIR}" --target ${LLVM_LIBS__} --config $<CONFIG>
-            BYPRODUCTS  ${LLVM_LIB_PATHS}
+            BYPRODUCTS ${LLVM_LIB_PATHS}
             USES_TERMINAL
             #WORKING_DIRECTORY "${LLVM_BUILD_DIR}"
             )
 
     add_dependencies(express_ex build_llvm)
 
-endif()
+endif ()
 
 
 separate_arguments(LLVM_DEFINITIONS_LIST__ NATIVE_COMMAND ${LLVM_DEFINITIONS})
-
 
 
 target_compile_definitions(express_ex PRIVATE
@@ -306,14 +295,6 @@ target_compile_definitions(express_ex PRIVATE
         )
 
 
-
-
-
-
-
-
-
-
 message("LLVM_LIBS__ ${LLVM_LIBS__}")
 message("LLVM_DEFINITIONS_LIST__ ${LLVM_DEFINITIONS_LIST__}")
 message("LLVM_BUILD_TYPE ${CMAKE_BUILD_TYPE}")
@@ -321,10 +302,6 @@ message("CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
 message("GENERATOR_IS_MULTI_CONFIG ${IS_MULTI_CONFIG}")
 message("CMAKE_CONFIGURATION_TYPES ${CMAKE_CONFIGURATION_TYPES}")
 message("llvm_prj_BINARY_DIR ${llvm_prj_BINARY_DIR}")
-
-
-
-
 
 
 add_executable(express_ex_app
@@ -345,11 +322,6 @@ target_link_libraries(express_ex_app PRIVATE
         express_ex
         ${LLVM_LIBS_FOR_APP_}
         )
-
-
-
-
-
 
 
 #set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "express_ex") ???

@@ -2,8 +2,7 @@ AlignAfterOpenBracket: Align
 BasedOnStyle: Google
 IndentWidth: 4
 ColumnLimit: 120
-MaxEmptyLinesToKeep: 1
-
+MaxEmptyLinesToKeep: 3
 BreakBeforeBraces: Attach
 IndentCaseLabels: false
 AlignTrailingComments: true

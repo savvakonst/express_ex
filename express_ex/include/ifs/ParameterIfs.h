@@ -3,14 +3,15 @@
 #include <algorithm>
 #include <complex>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include "config.h"
-#include "ExStreamIfs.h"
 #include "DatasetsStorage_ifs.h"
+#include "ExStreamIfs.h"
+#include "config.h"
 
 #ifdef _MSC_VER
 #    pragma warning(push)
@@ -65,8 +66,6 @@ struct TimeInterval {
 
 
 
-
-
 struct DataInterval {
     union {
         int64_t int_type_representation;
@@ -80,21 +79,18 @@ struct DataInterval {
     TimeInterval time_interval;
     std::string file_name;
     bool local;
-    DatasetsStorage_ifs * ds = nullptr;
+    DatasetsStorage_ifs* ds = nullptr;
 };
 
 
 
-
-
-
 struct ExTimeInterval {
-    ExTimeInterval(): time(0), duration(0) {}
-    ExTimeInterval(int64_t begin, double duration): time(begin), duration(duration){}
-    ExTimeInterval(double begin, double duration): time(int64_t(begin * (2 << 10)) << 22 ), duration(duration){}
+    ExTimeInterval() : time(0), duration(0) {}
+    ExTimeInterval(int64_t begin, double duration) : time(begin), duration(duration) {}
+    ExTimeInterval(double begin, double duration) : time(int64_t(begin * (2 << 10)) << 22), duration(duration) {}
 
-    union{
-        int64_t time ;
+    union {
+        int64_t time;
         struct {
             int32_t time_int;
             uint32_t time_frac;
@@ -111,7 +107,6 @@ struct ExTimeInterval {
 
 
 
-
 struct ExDataInterval {
     ExTimeInterval time_interval;
     uint64_t offset;
@@ -120,10 +115,9 @@ struct ExDataInterval {
     double val_max;
     double val_min;
     PrmTypesEn type;
-    DatasetsStorage_ifs * ds = nullptr;
+    DatasetsStorage_ifs* ds = nullptr;
     std::string file_name;
 };
-
 
 
 
@@ -160,13 +154,14 @@ inline std::stringstream& stream(std::stringstream& OS, const ExDataInterval& di
     OS << offset << "  size: " << di.size << "\n";
     OS << offset << "  frequency: " << di.frequency << "\n";
     OS << offset << "  time_interval.time_int: " << di.time_interval.time_int << "\n";
-    OS << offset << "  time_interval.time_frac " <<"0x"<< std::hex <<di.time_interval.time_frac << "\n"<<std::dec;
-    OS << offset << "  time_interval.duration: " << di.time_interval.duration << "\n";
+    OS << offset << "  time_interval.time_frac " << std::setfill('0') << std::setw(5) << std::right << "0x" << std::hex
+       << di.time_interval.time_frac << "\n"
+       << std::dec;
+    OS << offset << "  time_interval.duration: " << std::dec << di.time_interval.duration << "\n";
     OS << offset << "  file_name: " << di.file_name << "\n";
     OS << offset << "}\n";
     return OS;
 }
-
 
 
 
@@ -347,7 +342,7 @@ class DLL_EXPORT ParameterIfs {
         name_ = name;
 
         if ((interval_list_.size() == 1) || single_file) {
-            for (auto& i : interval_list_) i.file_name = name ;
+            for (auto& i : interval_list_) i.file_name = name;
             return;
         }
 
@@ -415,8 +410,7 @@ class DLL_EXPORT ParameterIfs {
 
 
 
-
-inline ExStreamIfs &operator<<(ExStreamIfs &stream,const ParameterIfs & arg) {
+inline ExStreamIfs& operator<<(ExStreamIfs& stream, const ParameterIfs& arg) {
     std::stringstream std_stream;
     stream << arg.stream(std_stream).str() << " ";
     return stream;

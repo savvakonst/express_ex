@@ -9,10 +9,8 @@
 class DLL_EXPORT SyncParameter : public ParameterIfs {
    public:
     SyncParameter() = default;
-    SyncParameter(std::string name, const std::vector<ExDataInterval>& interval_list, bool save_file_names);
 
-     SyncParameter(std::string name, const std::vector<DataInterval>& interval_list,
-                                                       bool save_file_names);
+    SyncParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_file_names);
     SyncParameter(std::string name, const TimeInterval& time_interval, const std::vector<DataInterval>& interval_list,
                   bool save_file_names = true);
 
@@ -37,8 +35,7 @@ class DLL_EXPORT SyncParameter : public ParameterIfs {
 
     ParameterIfs* newParameter() override;
 
-    friend void readParametersList(std::string databaseFName, std::vector<ParameterIfs>& parameterList);
-    friend class ParametersDB;
+
 
    protected:
     bool calcExtendedInfo();

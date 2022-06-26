@@ -339,31 +339,20 @@ class DLL_EXPORT ParameterIfs {
     virtual ParameterIfs* retyping(PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
                                    const std::string& name = "") = 0;
 
-    virtual void setName(const std::string& name, bool single_file = true) {
+    virtual void setName(const std::string& name, const std::string & extension = ".dat") {
         name_ = name;
 
-        if ((interval_list_.size() == 1) || single_file) {
-            for (auto& i : interval_list_) i.file_name = name;
+        if ((interval_list_.size() == 1) ) {
+            for (auto& i : interval_list_) i.file_name = name +".dat";
             return;
         }
-
-        int64_t index = 0;
-        for (auto& i : interval_list_) i.file_name = name + "_" + std::to_string(index++) + ".dat";
     }
 
-    int64_t getDataIntervalIndex(double time) {
-        for (int64_t i = (current_interval_index_ < 0 ? 0 : current_interval_index_); i < number_of_intervals_; i++) {
-            DataInterval& a = interval_list_[(size_t)i];
-            if ((a.time_interval.bgn <= time) && (time < (a.time_interval.end + additional_time_))) return i;
-            // this is very bad idea, but it will be here  until Nikolai fixes the problem with interval boundaries
-        }
-        return -1;
-    }
 
-    void setPath(std::string dirname) { work_directory_ = std::move(dirname); }
     void setLocal(bool val = true) {
         for (auto& i : interval_list_) i.local = val;
     }
+
     void addInterval(const DataInterval& interval) { interval_list_.push_back(interval); }
 
     virtual ParameterIfs* newParameter() = 0;
@@ -397,10 +386,10 @@ class DLL_EXPORT ParameterIfs {
     PrmTypesEn type_ = PrmTypesEn::PRM_TYPE_UNKNOWN;
 
     int64_t current_interval_index_ = 0;
-    int64_t number_of_intervals_ = 0;
+
 
     int64_t sizeof_data_type_ = 0;
-    int64_t point_number_ = 0;
+
 
     bool opened_to_read_ = false;
     bool opened_to_write_ = false;

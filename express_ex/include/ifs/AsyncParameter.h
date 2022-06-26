@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "ifs/parameterIfs.h"
+#include "ifs/ParameterIfs.h"
 
 class DLL_EXPORT AsyncParameter : public ParameterIfs {
    public:
@@ -31,11 +31,10 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
 
     ParameterIfs* intersection(ParameterIfs* b, PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
                                const std::string& name = "") override;
-    ParameterIfs* enlargeFrequency(int64_t arg, PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
-                                   const std::string& name = "");
+
     ParameterIfs* retyping(PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN, const std::string& name = "") override;
 
-    virtual ParameterIfs* newParameter() override;
+    ParameterIfs* newParameter() override;
 
 
     friend class ParametersDB;

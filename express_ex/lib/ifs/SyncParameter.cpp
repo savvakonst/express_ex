@@ -4,76 +4,25 @@
 #include <utility>
 
 #include "Intervals.h"
-#include "common/undefWarningIgnore.h"
-#include "parser/defWarningIgnore.h"
 
 
-SyncParameter::SyncParameter(std::string name, const std::vector<ExDataInterval>& interval_list, bool save_file_names) {
-    name_ = std::move(name);
-    // for (auto i : interval_list)
-    //     interval_list_.push_back(i);
 
-    interval_list_ = interval_list;
-    number_of_intervals_ = interval_list.size();
-    if (save_file_names == false) {
-        for (auto& i : interval_list_) {
-            i.file_name = "";
-            i.local = true;
-        }
-    }
 
-    if (interval_list_.size()) {
-        sizeof_data_type_ = sizeOfTy(interval_list_.front().type);
-        type_ = interval_list_.front().type;
-        calc_min_max_ptr_ = g_calcMinMax_select(type_);
-    }
 
-    auto bgn = interval_list_.front().time_interval.bgn;
-    auto end = interval_list_.back().time_interval.end;
-
-    time_interval_ = {bgn, end};
-    calcExtendedInfo();
-
-    const DataInterval* last_interval = nullptr;
-    for (auto& i : interval_list_) {
-        if (last_interval) {
-            ex_size_t size =
-                ex_size_t((i.time_interval.bgn - last_interval->time_interval.bgn) * frequency_) * sizeof_data_type_ -
-                ex_size_t(last_interval->time_interval.bgn);
-
-            if (size) current_chunk_->addNextChunk(new BareChunk(size));
-        }
-
-        BareChunk* chunk = new Chunk(&i, &work_directory_);
-
-        if (chunk_ == nullptr) {
-            chunk_ = chunk;
-            current_chunk_ = chunk;
-        } else {
-            current_chunk_ = current_chunk_->addNextChunk(chunk);
-        }
-
-        last_interval = &i;
-    }
-    if (current_chunk_) current_chunk_->addNextChunk(new FinishChunk());
-    current_chunk_ = chunk_;
-}
 
 SyncParameter::SyncParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_file_names) {
     name_ = std::move(name);
-    // for (auto i : interval_list)
-    //     interval_list_.push_back(i);
 
     interval_list_ = interval_list;
-    number_of_intervals_ = interval_list.size();
-    if (save_file_names == false) {
+
+    if (!save_file_names) {
         for (auto& i : interval_list_) {
             i.file_name = "";
             i.local = true;
         }
     }
 
-    if (interval_list_.size()) {
+    if (!interval_list_.empty()) {
         sizeof_data_type_ = sizeOfTy(interval_list_.front().type);
         type_ = interval_list_.front().type;
         calc_min_max_ptr_ = g_calcMinMax_select(type_);

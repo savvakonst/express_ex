@@ -3,24 +3,23 @@
 #include <set>
 
 #include "common/common.h"
-#include "common/undefWarningIgnore.h"
 #include "ifs/parameterIO.h"
-#include "parser/defWarningIgnore.h"
+
 
 AsyncParameter::AsyncParameter(const std::string& name, const std::vector<DataInterval>& interval_list,
                                bool save_file_names) {
     name_ = name;
     parent_parameter_ = this;
     interval_list_ = interval_list;
-    number_of_intervals_ = interval_list.size();
-    if (save_file_names == false) {
+
+    if (!save_file_names) {
         for (auto& i : interval_list_) {
             i.file_name = "";
             i.local = true;
         }
     }
 
-    if (interval_list_.size()) {
+    if (!interval_list_.empty()) {
         sizeof_data_type_ = sizeOfTy(interval_list_.front().type);
         type_ = interval_list_.front().type;
         calc_min_max_ptr_ = g_calcMinMax_select(type_);
@@ -222,8 +221,9 @@ ParameterIfs* AsyncParameter::intersection(ParameterIfs* b, PrmTypesEn target_ty
 
     if (parameter_a == parameter_b) return this;
 
-    if (parameter_a->number_of_intervals_ == parameter_b->number_of_intervals_) {
-        for (size_t n = 0; n < parameter_a->number_of_intervals_; n++) {
+    if (parameter_a->interval_list_.size() == parameter_b->interval_list_.size()) {
+        auto il_size =parameter_a->interval_list_.size();
+        for (size_t n = 0; n < il_size; n++) {
             DataInterval& interval_a = parameter_a->interval_list_[n];
             DataInterval& interval_b = parameter_b->interval_list_[n];
 
@@ -250,9 +250,7 @@ ParameterIfs* AsyncParameter::intersection(ParameterIfs* b, PrmTypesEn target_ty
     // return newParameter();
 }
 
-ParameterIfs* AsyncParameter::enlargeFrequency(int64_t arg, PrmTypesEn target_ty, const std::string& name) {
-    return nullptr;
-}
+
 
 ParameterIfs* AsyncParameter::retyping(PrmTypesEn target_ty, const std::string& name) {
     target_ty = PrmTypesEn(0x1000 | (uint64_t)target_ty);

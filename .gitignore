@@ -69,3 +69,7 @@ external_projects/**
 express_ex/test/**/*.dat
 old/
 /external_projects/antlr_4/
+
+doc/html
+doc/html/
+doc/html/**

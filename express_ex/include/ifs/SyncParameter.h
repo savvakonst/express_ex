@@ -11,8 +11,8 @@ class DLL_EXPORT SyncParameter : public ParameterIfs {
     SyncParameter() = default;
 
     SyncParameter(std::string name, const std::vector<ExDataInterval>& interval_list, bool save_file_names);
-    SyncParameter(std::string name, const ExTimeInterval& time_interval, const std::vector<ExDataInterval>& interval_list,
-                  bool save_file_names = true);
+    SyncParameter(std::string name, const ExTimeInterval& time_interval,
+                  const std::vector<ExDataInterval>& interval_list, bool save_file_names = true);
 
     ~SyncParameter() override;
 
@@ -46,7 +46,7 @@ class DLL_EXPORT SyncParameter : public ParameterIfs {
 
     const ExDataInterval& getCurrentInterval() { return interval_list_[(size_t)current_interval_index_]; }
 
-    void openNewInterval(double di_index);
+
 
     BareChunk* chunk_ = nullptr;
     BareChunk* current_chunk_ = nullptr;

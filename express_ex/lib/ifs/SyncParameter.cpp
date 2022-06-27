@@ -7,9 +7,6 @@
 
 
 
-
-
-
 SyncParameter::SyncParameter(std::string name, const std::vector<ExDataInterval>& interval_list, bool save_file_names) {
     name_ = std::move(name);
 
@@ -28,19 +25,17 @@ SyncParameter::SyncParameter(std::string name, const std::vector<ExDataInterval>
     }
 
     auto bgn = interval_list_.front().ti.time;
-    auto end = interval_list_.back().ti.time + ;
+    auto end = interval_list_.back().getEndTime();
 
     time_interval_ = {bgn, end};
     calcExtendedInfo();
 
-    const DataInterval* last_interval = nullptr;
+    const ExDataInterval* last_interval = nullptr;
     for (auto& i : interval_list_) {
         if (last_interval) {
-            ex_size_t size =
-                ex_size_t((i.ti.bgn - last_interval->time_interval.bgn) * frequency_) * sizeof_data_type_ -
-                ex_size_t(last_interval->time_interval.bgn);
-
-            if (size) current_chunk_->addNextChunk(new BareChunk(size));
+            ExDataInterval bare_interval(type_);
+            bare_interval.setProperties(i.ti.time, last_interval->getEndTime(), frequency_, 0);
+            if (bare_interval.size) current_chunk_->addNextChunk(new BareChunk(bare_interval.size));
         }
 
         BareChunk* chunk = new Chunk(&i, &work_directory_);
@@ -61,7 +56,6 @@ SyncParameter::SyncParameter(std::string name, const std::vector<ExDataInterval>
 SyncParameter::SyncParameter(std::string name, const ExTimeInterval& time_interval,
                              const std::vector<ExDataInterval>& interval_list, bool save_file_names)
     : SyncParameter(std::move(name), interval_list, save_file_names) {
-
     time_interval_ = time_interval;
     calcExtendedInfo();
 }
@@ -128,9 +122,9 @@ uint64_t SyncParameter::getVirtualSize() const {
     if (interval_list_.size() == 1) return ((uint64_t)interval_list_.front().size) / sizeof_data_type_;
     else
         return (uint64_t)(frequency_ * (time_interval_.time - timeFromDouble(time_interval_.duration)));
-
-
 }
+
+
 
 ParameterIfs* SyncParameter::intersection(ParameterIfs* prm, PrmTypesEn target_ty, const std::string& name) {
     auto parameter_a = this;
@@ -153,34 +147,40 @@ ParameterIfs* SyncParameter::intersection(ParameterIfs* prm, PrmTypesEn target_t
 
 
     auto list_a = parameter_a->interval_list_;
-    auto list_b = parameter_b->interval_list_;
+    auto list_c = parameter_b->interval_list_;
 
-    auto a_i= list_a.begin(),b_i= list_b.begin();
+    auto a_i = list_a.begin(), c_i = list_c.begin();
 
+    uint64_t offset = 0;
+    auto subIntersection = [target_ty, frequency](auto& forward_i, auto& backward_i, uint64_t offset) {
+        auto &fo = *forward_i, &ba = *backward_i;
 
-    while ((a_i!=list_a.end()) || (b_i!=list_b.end())){
-        ExDataInterval  a = *a_i, b = *b_i;
-
-        if(a.ti.time >= b.ti.time){
-            if(a.ti.time < b.getEndTime()){
-                /*they intersect*/
-                if(b.getEndTime()
-
+        ExDataInterval target(target_ty);
+        auto ba_end = ba.getEndTime();
+        if (fo.ti.time < ba_end) {
+            /*they intersect*/
+            auto fo_end = fo.getEndTime();
+            if (ba_end < fo_end) {
+                target.setProperties(fo.ti.time, ba_end, frequency, offset);
+                ++backward_i;
+            } else {
+                target.setProperties(fo, offset);
+                ++forward_i;
             }
-            else { b_i++; /*they don't intersect*/}
-        }{
-            if(b.ti.time < a.getEndTime()){ /*they intersect*/}
-            else { a_i++; }
+        } else { /*they don't intersect*/
+            ++backward_i;
         }
+        return target;
+    };
+
+
+    while ((a_i != list_a.end()) || (c_i != list_c.end())) {
+        ExDataInterval di =
+            (a_i->ti.time >= c_i->ti.time) ? subIntersection(a_i, c_i, offset) : subIntersection(c_i, a_i, offset);
+        offset += di.size;
+        ret.push_back(std::move(di));
     }
 
-    int64_t offset = 0;
-    int64_t size = 0;
-    for (auto& i : ret) {
-        i.offs = offset + size;
-        offset = i.offs;
-        size = i.size;
-    }
 
     return new SyncParameter(name, time_interval_, ret);
 }
@@ -189,14 +189,29 @@ SyncParameter* SyncParameter::enlargeFrequency(int64_t freq_factor, PrmTypesEn t
                                                const std::string& name) const {
     auto parameter_a = this;
 
-    std::vector<DataInterval> data_interval;
+    std::vector<ExDataInterval> data_interval;
 
     if ((-1 <= freq_factor) && (freq_factor <= 1)) return nullptr;
     if ((freq_factor < -1) && (int64_t(this->frequency_) % freq_factor)) return nullptr;
 
-    for (const ExDataInterval& a : parameter_a->interval_list_) {
-        auto interval = createSyncInterval(a, freq_factor);
-        data_interval.push_back(interval);
+
+    uint64_t offset = 0;
+    for (const ExDataInterval& src : parameter_a->interval_list_) {
+        ExDataInterval interval(src.type);
+
+        int64_t dst_frequency;
+        if (freq_factor > 1) {
+            dst_frequency = src.frequency * freq_factor;
+        } else if (freq_factor < -1) {
+            dst_frequency = src.frequency / freq_factor;
+        } else {
+            dst_frequency = src.frequency;
+        }
+
+        interval.setProperties(src.ti.time, src.getEndTime(), dst_frequency, offset);
+
+        offset += interval.size;
+        data_interval.push_back(std::move(interval));
     }
 
     return new SyncParameter(name, time_interval_, data_interval);
@@ -205,10 +220,15 @@ SyncParameter* SyncParameter::enlargeFrequency(int64_t freq_factor, PrmTypesEn t
 ParameterIfs* SyncParameter::retyping(PrmTypesEn target_ty, const std::string& name) {
     if (getPrmType() == target_ty) return this;
 
-    std::vector<DataInterval> data_interval;
-    for (const DataInterval& a : interval_list_) {
-        auto interval = createSyncInterval(a, target_ty);
-        data_interval.push_back(interval);
+    std::vector<ExDataInterval> data_interval;
+    uint64_t offset = 0;
+    for (const ExDataInterval& src : interval_list_) {
+        ExDataInterval interval(target_ty);
+
+        interval.setProperties(src.ti.time, src.getEndTime(), src.frequency, offset);
+
+        offset += interval.size;
+        data_interval.push_back(std::move(interval));
     }
     return new SyncParameter(name, time_interval_, data_interval);
 }
@@ -228,28 +248,3 @@ inline bool SyncParameter::calcExtendedInfo() {
     }
     return true;
 }
-
-inline void SyncParameter::openNewInterval(double di_index) {
-    if (ifs_) {
-        current_interval_index_ = (int64_t)di_index;
-        ifs_->close();
-        delete ifs_;
-        ifs_ = nullptr;
-    }
-
-    const DataInterval& current_interval = getCurrentInterval();
-    std::string file_name = (current_interval.local ? work_directory_ + "/" : "") + current_interval.file_name;
-
-    if (opened_to_read_) {
-        ifs_ = new std::fstream(file_name, std::ios::in | std::ios::binary);
-        ifs_->seekg(current_interval.offs);
-    } else if (opened_to_write_) {
-        if (current_interval.offs == 0) ifs_ = new std::fstream(file_name, std::ios::out | std::ios::binary);
-        else
-            ifs_ = new std::fstream(file_name, std::ios::out | std::ios::binary | std::ios::app);
-    }
-    // std::ios::app |  std::ios::trunc
-}
-
-// 23152640
-// 225988608

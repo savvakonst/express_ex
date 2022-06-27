@@ -4,8 +4,8 @@
 #include <set>
 #include <type_traits>
 
-#include "ifs/parameterIO.h"
 #include "common/common.h"
+#include "ifs/parameterIO.h"
 
 
 class BareChunk {
@@ -57,7 +57,7 @@ class BareChunk {
 
 class Chunk : public BareChunk {
    public:
-    Chunk(DataInterval* di, const std::string* work_directory)
+    Chunk(ExDataInterval* di, const std::string* work_directory)
         : BareChunk(di->size), di_(di), work_directory_(work_directory) {
         size_of_word_ = sizeOfTy(di_->type);
     }
@@ -100,27 +100,29 @@ class Chunk : public BareChunk {
     void openToRead() {
         close();
 
-        std::string file_name = (di_->local ? *work_directory_ + "/" : "") + di_->file_name;
+        std::string file_name = di_->file_name;
         ifs_ = new std::fstream(file_name, std::ios::in | std::ios::binary);
-        if(!ifs_->is_open())
-            print_IR_error("cant open: " +file_name);
-        ifs_->seekg(di_->offs);
-
+        if (!ifs_->is_open()) print_IR_error("cant open: " + file_name);
+        ifs_->seekg(di_->offset);
     }
 
     void openToWrite() {
         close();
 
-        std::string file_name = (di_->local ? *work_directory_ + "/" : "") + di_->file_name;
-        if (di_->offs == 0) ifs_ = new std::fstream(file_name, std::ios::out | std::ios::binary);
+
+        id_ = di_->ds->openDataset(di_->file_name.c_str());
+
+
+        if (di_->offset == 0)
+            ifs_ = new std::fstream(file_name, std::ios::out | std::ios::binary);
         else
             ifs_ = new std::fstream(file_name, std::ios::out | std::ios::binary | std::ios::app);
     }
 
     ex_size_t size_of_word_ = 0;
     const std::string* work_directory_ = nullptr;
-    std::fstream* ifs_ = nullptr;
-    DataInterval* di_ = nullptr;
+    DatasetsStorage_ifs::id_t id_ = DatasetsStorage_ifs::kDefaultId;
+    ExDataInterval* di_ = nullptr;
 };
 
 class FinishChunk : public BareChunk {

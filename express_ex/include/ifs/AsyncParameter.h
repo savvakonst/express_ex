@@ -117,6 +117,8 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
         void resetPos() { current_ptr_ = base_ptr_; }
     };
 
+    std::fstream* ifs_ = nullptr;
+
     IntermediateBuffer intermediate_buffer_ = IntermediateBuffer();
     IntermediateBuffer time_buffer_         = IntermediateBuffer();
 

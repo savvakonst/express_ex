@@ -1,6 +1,6 @@
 #include "ifs/parameterIO.h"
 
-#include <ifs/parameterIfs.h>
+#include "ifs/ParameterIfs.h"
 
 #include <set>
 #include <type_traits>
@@ -122,10 +122,7 @@ std::string toString(PrmTypesEn arg) {
 #undef CASE_OP
 }
 
-bool isAsync(PrmTypesEn arg) {
-    if (arg == PrmTypesEn::PRM_TYPE_UNKNOWN) return false;
-    return (bool)(0x1000 & (uint64_t)arg);
-}
+
 
 bool fromJSON(const llvm::json::Value &DataFragment, DataInterval &dataInterval) {
     llvm::json::Path::Root root("bare");

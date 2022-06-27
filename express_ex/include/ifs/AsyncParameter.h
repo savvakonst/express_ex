@@ -13,9 +13,9 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
    public:
     AsyncParameter(const AsyncParameter& c) : ParameterIfs(c) { parent_parameter_ = this; }
     AsyncParameter() { parent_parameter_ = this; }
-    AsyncParameter(const std::string &name, const std::vector<DataInterval>& interval_list, bool save_file_names);
-    AsyncParameter(const std::string& name, const TimeInterval& time_interval,
-                   const std::vector<DataInterval>& interval_list,
+    AsyncParameter(const std::string &name, const std::vector<ExDataInterval>& interval_list, bool save_file_names);
+    AsyncParameter(const std::string& name, const ExTimeInterval& time_interval,
+                   const std::vector<ExDataInterval>& interval_list,
                    bool save_file_names = true);
      
     ~AsyncParameter() override;
@@ -40,6 +40,7 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
     friend class ParametersDB;
 
    protected:
+    //TODO
     const size_t prm_time_size_ = 4;
 
     void readFromBuffer(char* data_buffer_ptr, uint64_t points_to_read);
@@ -74,11 +75,11 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
         }
     }
 
-    const TimeInterval& getTimeInterval(int64_t interval_index) const {
-        return interval_list_[(size_t)interval_index].time_interval;
+    const ExTimeInterval& getTimeInterval(int64_t interval_index) const {
+        return interval_list_[(size_t)interval_index].ti;
     }
 
-    const DataInterval& getCurrentInterval() { return interval_list_[(size_t)current_interval_index_]; }
+    const ExDataInterval& getCurrentInterval() { return interval_list_[(size_t)current_interval_index_]; }
 
     inline void openNewInterval();
 

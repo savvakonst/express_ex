@@ -10,7 +10,7 @@
 
 
 
-SyncParameter::SyncParameter(std::string name, const std::vector<DataInterval>& interval_list, bool save_file_names) {
+SyncParameter::SyncParameter(std::string name, const std::vector<ExDataInterval>& interval_list, bool save_file_names) {
     name_ = std::move(name);
 
     interval_list_ = interval_list;
@@ -18,7 +18,6 @@ SyncParameter::SyncParameter(std::string name, const std::vector<DataInterval>& 
     if (!save_file_names) {
         for (auto& i : interval_list_) {
             i.file_name = "";
-            i.local = true;
         }
     }
 
@@ -28,8 +27,8 @@ SyncParameter::SyncParameter(std::string name, const std::vector<DataInterval>& 
         calc_min_max_ptr_ = g_calcMinMax_select(type_);
     }
 
-    auto bgn = interval_list_.front().time_interval.bgn;
-    auto end = interval_list_.back().time_interval.end;
+    auto bgn = interval_list_.front().ti.time;
+    auto end = interval_list_.back().ti.time + ;
 
     time_interval_ = {bgn, end};
     calcExtendedInfo();
@@ -38,7 +37,7 @@ SyncParameter::SyncParameter(std::string name, const std::vector<DataInterval>& 
     for (auto& i : interval_list_) {
         if (last_interval) {
             ex_size_t size =
-                ex_size_t((i.time_interval.bgn - last_interval->time_interval.bgn) * frequency_) * sizeof_data_type_ -
+                ex_size_t((i.ti.bgn - last_interval->time_interval.bgn) * frequency_) * sizeof_data_type_ -
                 ex_size_t(last_interval->time_interval.bgn);
 
             if (size) current_chunk_->addNextChunk(new BareChunk(size));
@@ -59,9 +58,10 @@ SyncParameter::SyncParameter(std::string name, const std::vector<DataInterval>& 
     current_chunk_ = chunk_;
 }
 
-SyncParameter::SyncParameter(std::string name, const TimeInterval& time_interval,
-                             const std::vector<DataInterval>& interval_list, bool save_file_names)
+SyncParameter::SyncParameter(std::string name, const ExTimeInterval& time_interval,
+                             const std::vector<ExDataInterval>& interval_list, bool save_file_names)
     : SyncParameter(std::move(name), interval_list, save_file_names) {
+
     time_interval_ = time_interval;
     calcExtendedInfo();
 }
@@ -127,7 +127,9 @@ uint64_t SyncParameter::read(char* data_buffer_ptr, uint64_t point_number) {
 uint64_t SyncParameter::getVirtualSize() const {
     if (interval_list_.size() == 1) return ((uint64_t)interval_list_.front().size) / sizeof_data_type_;
     else
-        return (uint64_t)(frequency_ * (time_interval_.end - time_interval_.bgn + additional_time_));
+        return (uint64_t)(frequency_ * (time_interval_.time - timeFromDouble(time_interval_.duration)));
+
+
 }
 
 ParameterIfs* SyncParameter::intersection(ParameterIfs* prm, PrmTypesEn target_ty, const std::string& name) {
@@ -142,26 +144,33 @@ ParameterIfs* SyncParameter::intersection(ParameterIfs* prm, PrmTypesEn target_t
     }
 
     if (parameter_a->frequency_ <= 0.0) {
-        error_info_ = "async parameter is not supported yet";
+        error_info_ = "sync parameter is has zero frequency";
         return nullptr;
     }
 
-    auto frequency = int64_t(parameter_a->frequency_);
-    std::vector<DataInterval> ret;
+    auto frequency = parameter_a->frequency_;
+    std::vector<ExDataInterval> ret;
 
-    for (const auto& a : parameter_a->interval_list_) {
-        for (const auto& b : parameter_b->interval_list_) {
-            auto t = a & b;
-            if (!isEmpty(t)) {
-                auto interval = createSyncIntervalByFrequency(t, frequency, target_ty);
-                if (!ret.empty()) {
-                    auto t2 = ret.back() || interval;
-                    if (!isEmpty(t)) ret.back() = createSyncIntervalByFrequency(t2, frequency, target_ty);
-                    else
-                        ret.push_back(interval);
-                } else
-                    ret.push_back(interval);
+
+    auto list_a = parameter_a->interval_list_;
+    auto list_b = parameter_b->interval_list_;
+
+    auto a_i= list_a.begin(),b_i= list_b.begin();
+
+
+    while ((a_i!=list_a.end()) || (b_i!=list_b.end())){
+        ExDataInterval  a = *a_i, b = *b_i;
+
+        if(a.ti.time >= b.ti.time){
+            if(a.ti.time < b.getEndTime()){
+                /*they intersect*/
+                if(b.getEndTime()
+
             }
+            else { b_i++; /*they don't intersect*/}
+        }{
+            if(b.ti.time < a.getEndTime()){ /*they intersect*/}
+            else { a_i++; }
         }
     }
 
@@ -185,7 +194,7 @@ SyncParameter* SyncParameter::enlargeFrequency(int64_t freq_factor, PrmTypesEn t
     if ((-1 <= freq_factor) && (freq_factor <= 1)) return nullptr;
     if ((freq_factor < -1) && (int64_t(this->frequency_) % freq_factor)) return nullptr;
 
-    for (const DataInterval& a : parameter_a->interval_list_) {
+    for (const ExDataInterval& a : parameter_a->interval_list_) {
         auto interval = createSyncInterval(a, freq_factor);
         data_interval.push_back(interval);
     }

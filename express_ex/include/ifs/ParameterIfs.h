@@ -22,8 +22,7 @@
 #    pragma warning(disable : 4189)
 #endif
 
-enum class PrmTypesEn : uint64_t
-{
+enum class PrmTypesEn : uint64_t {
     PRM_TYPE_U08 = 0x0001,
     PRM_TYPE_U16 = 0x0002,
     PRM_TYPE_U32 = 0x0004,
@@ -60,6 +59,14 @@ enum class PrmTypesEn : uint64_t
     PRM_TYPE_UNKNOWN = 0xffff
 };
 
+
+bool isAsync(PrmTypesEn arg) {
+    if (arg == PrmTypesEn::PRM_TYPE_UNKNOWN) return false;
+    return (bool)(0x1000 & (uint64_t)arg);
+}
+
+
+
 struct TimeInterval {
     double bgn = 0.0;
     double end = 0.0;
@@ -83,18 +90,33 @@ struct DataInterval {
     DatasetsStorage_ifs* ds = nullptr;
 };
 
+typedef int64_t ex_time_t;
+
+inline ex_time_t timeFromDouble(double arg) { return ex_time_t(arg * (1ll << 10)) << 22; }
+
 
 
 struct ExTimeInterval {
-    ExTimeInterval() : time(0), duration(0) {}
-    ExTimeInterval(int64_t begin, double duration) : time(begin), duration(duration) {}
-    ExTimeInterval(double begin, double duration) : time(int64_t(begin * (2 << 10)) << 22), duration(duration) {}
+    // ExTimeInterval() : time(0), duration(0) {}
+
+    [[maybe_unused]] ExTimeInterval(int64_t begin, double duration) : time(begin), duration(duration) {}
+    [[maybe_unused]] ExTimeInterval(double begin, double duration) : time(timeFromDouble(begin)), duration(duration) {}
+    //! Do not use this function in critical places? mabe for printing.
+    [[maybe_unused]] ExTimeInterval(int64_t begin, int64_t duration)
+        : time(begin), duration(double(begin) / double(1ll << 32)) {}
+
+    ExTimeInterval &operator=(const ExTimeInterval& i) {
+        if (this == &i) return *this;
+        time = i.time;
+        duration = i.duration;
+        return *this;
+    }
 
     union {
-        int64_t time;
+        ex_time_t time;
         struct {
-            int32_t time_int;
-            uint32_t time_frac;
+            int32_t time_int{};
+            uint32_t time_frac{};
         };
     };
 
@@ -109,15 +131,20 @@ struct ExTimeInterval {
 
 
 struct ExDataInterval {
-    ExTimeInterval time_interval;
+    ExTimeInterval ti;
     uint64_t offset;
     uint64_t size;
-    uint64_t frequency;
+    int64_t frequency; /*!< this is a signed variable for possible expansion to fractional frequencies */
     double val_max;
     double val_min;
     PrmTypesEn type;
     DatasetsStorage_ifs* ds = nullptr;
     std::string file_name;
+
+    ex_time_t getEndTime() const {
+        return isAsync(type) ? ex_time_t(ti.time + timeFromDouble(ti.duration))
+                             : ti.time + ((ex_time_t(size << 16) / frequency) << 16);
+    };
 };
 
 
@@ -141,11 +168,19 @@ inline std::stringstream& stream(std::stringstream& OS, const DataInterval& di, 
     OS << offset << "  offs: " << di.offs << "\n";
     OS << offset << "  size: " << di.size << "\n";
     OS << offset << "  frequency: " << di.frequency << "\n";
-    OS << offset << "  time_interval.end: " << di.time_interval.end << "\n";
-    OS << offset << "  time_interval.bgn: " << di.time_interval.bgn << "\n";
+    OS << offset << "  ti.end: " << di.time_interval.end << "\n";
+    OS << offset << "  ti.bgn: " << di.time_interval.bgn << "\n";
     OS << offset << "  file_name: " << di.file_name << "\n";
     OS << offset << "}\n";
     return OS;
+}
+
+inline std::stringstream& stream(std::stringstream& s, const ExTimeInterval& time_interval, const std::string& offset) {
+    s << offset << "ti.time_int: " << time_interval.time_int << "\n";
+    s << offset << "ti.time_frac " << std::setfill('0') << std::setw(5) << std::right << "0x" << std::hex
+      << time_interval.time_frac << "\n"
+      << std::dec;
+    s << offset << "ti.duration: " << std::dec << time_interval.duration << "\n";
 }
 
 inline std::stringstream& stream(std::stringstream& OS, const ExDataInterval& di, const std::string& offset) {
@@ -154,35 +189,14 @@ inline std::stringstream& stream(std::stringstream& OS, const ExDataInterval& di
     OS << offset << "  offs: " << di.offset << "\n";
     OS << offset << "  size: " << di.size << "\n";
     OS << offset << "  frequency: " << di.frequency << "\n";
-    OS << offset << "  time_interval.time_int: " << di.time_interval.time_int << "\n";
-    OS << offset << "  time_interval.time_frac " << std::setfill('0') << std::setw(5) << std::right << "0x" << std::hex
-       << di.time_interval.time_frac << "\n"
-       << std::dec;
-    OS << offset << "  time_interval.duration: " << std::dec << di.time_interval.duration << "\n";
+    ::stream(OS, di.ti, offset + "  ");
     OS << offset << "  file_name: " << di.file_name << "\n";
     OS << offset << "}\n";
     return OS;
 }
 
 
-
-inline bool isEmpty(TimeInterval i) { return i.bgn >= i.end; }
-
-inline double stdmax(double a, double b) { return a > b ? a : b; }
-inline double stdmin(double a, double b) { return a < b ? a : b; }
-
-inline TimeInterval operator&(DataInterval a, DataInterval b) {
-    TimeInterval ret = {stdmax(a.time_interval.bgn, b.time_interval.bgn),
-                        stdmin(a.time_interval.end, b.time_interval.end)};
-    return ret;
-}
-
-inline TimeInterval operator||(DataInterval a, DataInterval b) {
-    auto c = a & b;
-    if (c.bgn <= c.end)
-        return {stdmin(a.time_interval.bgn, b.time_interval.bgn), stdmax(a.time_interval.end, b.time_interval.end)};
-    return {0.0};
-}
+inline bool isEmpty(ExTimeInterval i) { return i.duration<=0; }
 
 inline DataInterval createSyncIntervalByFrequency(TimeInterval time_interval, int64_t frequency, PrmTypesEn target_ty,
                                                   int64_t offset = 0, const std::string& filename = "",
@@ -288,7 +302,7 @@ inline DataInterval createAsyncIntervalBySize(TimeInterval time_interval, int64_
 /* std::pair<uint64_t, uint64_t> getBorders(const DataInterval& di) {
     constexpr auto tick_size = 1024;
 
-    auto begin = int64_t(di.time_interval.bgn * tick_size);
+    auto begin = int64_t(di.ti.bgn * tick_size);
     auto frequency = int64_t(di.frequency);
 
     if (frequency > tick_size) {
@@ -314,12 +328,12 @@ class DLL_EXPORT ParameterIfs {
 
     const std::string& getName() const { return name_; }
 
-    const TimeInterval& getMainTimeInterval() const { return time_interval_; }
+    ExTimeInterval getMainTimeInterval() const { return time_interval_; }
 
-    const std::vector<DataInterval>& getDataIntervalList() const { return interval_list_; }
+    const std::vector<ExDataInterval>& getDataIntervalList() const { return interval_list_; }
 
     virtual PrmTypesEn getPrmType() {
-        if (interval_list_.size()) type_ = interval_list_[0].type;
+        if (!interval_list_.empty()) type_ = interval_list_[0].type;
         return type_;
     }
 
@@ -336,32 +350,29 @@ class DLL_EXPORT ParameterIfs {
 
     virtual ParameterIfs* intersection(ParameterIfs* b, PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
                                        const std::string& name = "") = 0;
+
     virtual ParameterIfs* retyping(PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
                                    const std::string& name = "") = 0;
 
-    virtual void setName(const std::string& name, const std::string & extension = ".dat") {
+    virtual void setName(const std::string& name, const std::string& extension = ".dat") {
         name_ = name;
 
-        if ((interval_list_.size() == 1) ) {
-            for (auto& i : interval_list_) i.file_name = name +".dat";
+        if ((interval_list_.size() == 1)) {
+            for (auto& i : interval_list_) i.file_name = name + ".dat";
             return;
         }
     }
 
 
-    void setLocal(bool val = true) {
-        for (auto& i : interval_list_) i.local = val;
-    }
 
-    void addInterval(const DataInterval& interval) { interval_list_.push_back(interval); }
+    void addInterval(const ExDataInterval& interval) { interval_list_.push_back(interval); }
 
     virtual ParameterIfs* newParameter() = 0;
 
     virtual std::stringstream& stream(std::stringstream& OS, const std::string& offset = "") const {
         OS << offset << "ParameterInfo{\n";
         OS << offset << "  parameter_name: " << name_ << "\n";
-        OS << offset << "  time_interval.end: " << time_interval_.end << "\n";
-        OS << offset << "  time_interval.bgn: " << time_interval_.bgn << "\n";
+        ::stream(OS, time_interval_, offset + "  ");
         OS << offset << "  interval_list: ["
            << "\n";
         for (auto interval : interval_list_) ::stream(OS, interval, "    ");
@@ -377,12 +388,18 @@ class DLL_EXPORT ParameterIfs {
 
     std::fstream* ifs_ = nullptr;
 
-    std::string name_ = "";
-    TimeInterval time_interval_;
-    std::vector<DataInterval> interval_list_;
+    std::string name_;
 
-    const double additional_time_ = 0.0009765625;  // this is very bad idea, but it will be here  until nikolay fixes
-                                                   // the problem with interval boundaries
+
+    ExTimeInterval time_interval_ = ExTimeInterval(0.0, 0.0);
+
+
+
+    std::vector<ExDataInterval> interval_list_;
+
+    const double additional_time_ =
+        0.0009765625;  // TODO this is very bad idea, but it will be here  until nikolay fixes
+                       //  the problem with interval boundaries
     PrmTypesEn type_ = PrmTypesEn::PRM_TYPE_UNKNOWN;
 
     int64_t current_interval_index_ = 0;
@@ -394,8 +411,8 @@ class DLL_EXPORT ParameterIfs {
     bool opened_to_read_ = false;
     bool opened_to_write_ = false;
 
-    std::string work_directory_ = "";
-    std::string error_info_ = "";
+    std::string work_directory_;
+    std::string error_info_;
 };
 
 

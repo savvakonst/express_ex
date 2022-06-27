@@ -6,7 +6,7 @@
 #include "ifs/parameterIO.h"
 
 
-AsyncParameter::AsyncParameter(const std::string& name, const std::vector<DataInterval>& interval_list,
+AsyncParameter::AsyncParameter(const std::string& name, const std::vector<ExDataInterval>& interval_list,
                                bool save_file_names) {
     name_ = name;
     parent_parameter_ = this;
@@ -15,7 +15,6 @@ AsyncParameter::AsyncParameter(const std::string& name, const std::vector<DataIn
     if (!save_file_names) {
         for (auto& i : interval_list_) {
             i.file_name = "";
-            i.local = true;
         }
     }
 
@@ -25,14 +24,14 @@ AsyncParameter::AsyncParameter(const std::string& name, const std::vector<DataIn
         calc_min_max_ptr_ = g_calcMinMax_select(type_);
     }
 
-    auto bgn = interval_list_.front().time_interval.bgn;
-    auto end = interval_list_.back().time_interval.end;
+    auto bgn = interval_list_.front().ti.bgn;
+    auto end = interval_list_.back().ti.end;
 
-    time_interval_ = {bgn, end};
+    time_interval_ = {bgn, interval_list_.back().getEndTime()};
 }
 
-AsyncParameter::AsyncParameter(const std::string& name, const TimeInterval& time_interval,
-                               const std::vector<DataInterval>& interval_list, bool save_file_names)
+AsyncParameter::AsyncParameter(const std::string& name, const ExTimeInterval& time_interval,
+                               const std::vector<ExDataInterval>& interval_list, bool save_file_names)
     : AsyncParameter(name, interval_list, save_file_names) {
     parent_parameter_ = this;
     time_interval_ = time_interval;
@@ -239,7 +238,7 @@ ParameterIfs* AsyncParameter::intersection(ParameterIfs* b, PrmTypesEn target_ty
 
     std::vector<DataInterval> data_interval;
     for (auto a : interval_list_) {
-        auto interval = createAsyncIntervalBySize(a.time_interval, a.size, target_ty);  // be accurately
+        auto interval = createAsyncIntervalBySize(a.ti, a.size, target_ty);  // be accurately
         data_interval.push_back(interval);
     }
 
@@ -261,7 +260,7 @@ ParameterIfs* AsyncParameter::retyping(PrmTypesEn target_ty, const std::string& 
     for (auto a : interval_list_) {
         int64_t target_size =
             (a.size / (sizeOfTy(a.type) + sizeOfTimeTy(a.type))) * (sizeOfTy(target_ty) + sizeOfTimeTy(target_ty));
-        auto interval = createAsyncIntervalBySize(a.time_interval, target_size, target_ty);  // be accurately
+        auto interval = createAsyncIntervalBySize(a.ti, target_size, target_ty);  // be accurately
         data_interval.push_back(interval);
     }
 

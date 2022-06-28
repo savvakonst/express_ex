@@ -124,7 +124,7 @@ std::string toString(PrmTypesEn arg) {
 
 
 
-bool fromJSON(const llvm::json::Value &DataFragment, DataInterval &dataInterval) {
+bool fromJSON(const llvm::json::Value &DataFragment, ExDataInterval &dataInterval) {
     llvm::json::Path::Root root("bare");
     llvm::json::ObjectMapper o(DataFragment, root);
     bool ret = true;
@@ -150,8 +150,8 @@ static std::string convertUtf8PathToWinLocate(const std::string& str){
     return ss.str();
 }
 */
-DataInterval getDataInterval(llvm::json::Value &data_fragment, llvm::json::Array &data_files_list) {
-    DataInterval data_interval;
+ExDataInterval getDataInterval(llvm::json::Value &data_fragment, llvm::json::Array &data_files_list) {
+    ExDataInterval data_interval(PrmTypesEn::PRM_TYPE_UNKNOWN);
     fromJSON(data_fragment, data_interval);
 
     int64_t data_index;
@@ -201,7 +201,7 @@ bool readParametersList(const std::string &database_f_name, std::vector<Paramete
             llvm::json::Array &data_files_list = *(p_object["Data.Files.List"].getAsArray());
             llvm::json::Array &data_fragments_list = *(p_object["Data.Fragments.List"].getAsArray());
 
-            std::vector<DataInterval> interval_list;
+            std::vector<ExDataInterval> interval_list;
             for (auto k : data_fragments_list) interval_list.push_back(getDataInterval(k, data_files_list));
 
             llvm::json::Path::Root root("bare");

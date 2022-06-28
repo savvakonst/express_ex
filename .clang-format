@@ -9,7 +9,9 @@ AlignTrailingComments: true
 AlignEscapedNewlines: Left
 AllowShortEnumsOnASingleLine: false
 IndentPPDirectives: AfterHash
-AllowShortIfStatementsOnASingleLine: Always
+
+
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 #AlignConsecutiveAssignments: AcrossComments
 #AllowShortIfStatementsOnASingleLine: false 
 #AllowShortCaseLabelsOnASingleLine: true

@@ -38,7 +38,7 @@ SyncParameter::SyncParameter(std::string name, const std::vector<ExDataInterval>
             if (bare_interval.size) current_chunk_->addNextChunk(new BareChunk(bare_interval.size));
         }
 
-        BareChunk* chunk = new Chunk(&i, &work_directory_);
+        BareChunk* chunk = new Chunk(&i);
 
         if (chunk_ == nullptr) {
             chunk_ = chunk;
@@ -120,8 +120,7 @@ uint64_t SyncParameter::read(char* data_buffer_ptr, uint64_t point_number) {
 
 uint64_t SyncParameter::getVirtualSize() const {
     if (interval_list_.size() == 1) return ((uint64_t)interval_list_.front().size) / sizeof_data_type_;
-    else
-        return (uint64_t)(frequency_ * (time_interval_.time - timeFromDouble(time_interval_.duration)));
+    else return (uint64_t)(frequency_ * (time_interval_.time - timeFromDouble(time_interval_.duration)));
 }
 
 

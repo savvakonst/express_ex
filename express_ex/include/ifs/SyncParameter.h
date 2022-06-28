@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "ifs/parameterIfs.h"
+#include "ifs/ParameterIfs.h"
 
 class DLL_EXPORT SyncParameter : public ParameterIfs {
    public:

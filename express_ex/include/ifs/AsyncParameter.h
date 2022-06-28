@@ -13,11 +13,10 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
    public:
     AsyncParameter(const AsyncParameter& c) : ParameterIfs(c) { parent_parameter_ = this; }
     AsyncParameter() { parent_parameter_ = this; }
-    AsyncParameter(const std::string &name, const std::vector<ExDataInterval>& interval_list, bool save_file_names);
+    AsyncParameter(const std::string& name, const std::vector<ExDataInterval>& interval_list, bool save_file_names);
     AsyncParameter(const std::string& name, const ExTimeInterval& time_interval,
-                   const std::vector<ExDataInterval>& interval_list,
-                   bool save_file_names = true);
-     
+                   const std::vector<ExDataInterval>& interval_list, bool save_file_names = true);
+
     ~AsyncParameter() override;
 
     bool isAsync() override { return true; }
@@ -40,7 +39,7 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
     friend class ParametersDB;
 
    protected:
-    //TODO
+    // TODO
     const size_t prm_time_size_ = 4;
 
     void readFromBuffer(char* data_buffer_ptr, uint64_t points_to_read);
@@ -93,15 +92,15 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
 
         void clear() {
             delete[] base_ptr_;
-            base_ptr_    = nullptr;
+            base_ptr_ = nullptr;
             current_ptr_ = nullptr;
         }
 
         void resize(size_t new_size) {
             if (new_size > size_) {
                 clear();
-                size_        = new_size;
-                base_ptr_    = new char[new_size];
+                size_ = new_size;
+                base_ptr_ = new char[new_size];
                 current_ptr_ = base_ptr_ + size_;
             }
         }
@@ -117,16 +116,25 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
         void resetPos() { current_ptr_ = base_ptr_; }
     };
 
-    std::fstream* ifs_ = nullptr;
+
 
     IntermediateBuffer intermediate_buffer_ = IntermediateBuffer();
-    IntermediateBuffer time_buffer_         = IntermediateBuffer();
+    IntermediateBuffer time_buffer_ = IntermediateBuffer();
+
 
     size_t unused_points_in_current_interval_ = 0;
-    size_t data_size_                         = 0;
-    size_t data_size_factor_                  = 0;
-    bool is_new_interval_                     = true;
-    AsyncParameter* parent_parameter_         = nullptr;
+    size_t data_size_ = 0;
+    size_t data_size_factor_ = 0;
+    bool is_new_interval_ = true;
+    AsyncParameter* parent_parameter_ = nullptr;
+
+
+    DatasetsStorage_ifs::id_t id_ = DatasetsStorage_ifs::kDefaultId;
+
+    /**
+     * pointer to current , this class doesn't own it
+     */
+    DatasetsStorage_ifs* ds_storage_ = nullptr;
 };
 
 #endif

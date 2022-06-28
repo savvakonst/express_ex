@@ -20,7 +20,8 @@ endif ()
 
 include(ExpressUtils.cmake)
 
-#set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+get_directory_property(hasParent PARENT_DIRECTORY)
 if (NOT hasParent)
     set(VENV_PATH bin)
 
@@ -42,7 +43,6 @@ find_package(Doxygen
 if (Doxygen_FOUND)
     message("Doxygen_FOUND")
     set(DOXYGEN_HTML_EXTRA_STYLESHEET ${CMAKE_CURRENT_SOURCE_DIR}/external_projects/doxygen-awesome-css/doxygen-awesome.css)
-    #set(DOXYGEN_HTML_EXTRA_STYLESHEET ${CMAKE_CURRENT_SOURCE_DIR}/external_projects/doxygen_theme_flat_design/src/doxygen-style.css)
 
     set(DOXYGEN_DOT_IMAGE_FORMAT svg)
     set(DOXYGEN_EXTRACT_ALL NO)

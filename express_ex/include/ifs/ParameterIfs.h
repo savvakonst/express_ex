@@ -14,13 +14,10 @@
 #include "ExStreamIfs.h"
 #include "config.h"
 
-#ifdef _MSC_VER
-#    pragma warning(push)
-#    pragma warning(disable : 5208)
-#    pragma warning(disable : 4251)
-#    pragma warning(disable : 4100)
-#    pragma warning(disable : 4189)
-#endif
+
+typedef int64_t ex_time_t;
+typedef int64_t ex_size_t;
+
 
 enum class PrmTypesEn : uint64_t
 {
@@ -66,13 +63,17 @@ bool isAsync(PrmTypesEn arg) {
     return (bool)(0x1000 & (uint64_t)arg);
 }
 
-inline size_t sizeOfTy(const PrmTypesEn arg) { return ((uint64_t)arg) & 0xf; }
+inline ex_size_t sizeOfTy(const PrmTypesEn arg) { return ex_size_t(arg) & 0xf; }
 
-inline size_t sizeOfTimeTy(PrmTypesEn arg) {
-    if (0x5000 == (((uint64_t)arg) & 0xf000)) return 0x8;
-    else
-        return 0x4;
+inline ex_size_t sizeOfTimeTy(PrmTypesEn arg) {
+    auto time_part = (ex_size_t(arg) & 0xf000);
+    if (0x5000 == time_part) return 0x8;
+    else if (0x1000 == time_part) return 0x4;
+    else return 0x0;
 }
+
+DLL_EXPORT std::string toString(PrmTypesEn arg);
+
 
 struct TimeInterval {
     double bgn = 0.0;
@@ -97,7 +98,7 @@ struct DataInterval {
     DatasetsStorage_ifs* ds = nullptr;
 };
 
-typedef int64_t ex_time_t;
+
 
 inline ex_time_t timeFromDouble(double arg) { return ex_time_t(arg * (1ll << 10)) << 22; }
 
@@ -106,9 +107,12 @@ struct ExTimeInterval {
 
     [[maybe_unused]] ExTimeInterval(ex_time_t begin, double duration) : time(begin), duration(duration) {}
     [[maybe_unused]] ExTimeInterval(double begin, double duration) : time(timeFromDouble(begin)), duration(duration) {}
+
+
     //! Do not use this function in critical places? mabe for printing.
     [[maybe_unused]] ExTimeInterval(ex_time_t begin, ex_time_t duration)
         : time(begin), duration(double(begin) / double(1ll << 32)) {}
+
 
     ExTimeInterval& operator=(const ExTimeInterval& i) {
         if (this == &i) return *this;
@@ -118,10 +122,10 @@ struct ExTimeInterval {
     }
 
     union {
-        ex_time_t time;
+        ex_time_t time; /*!< full time. One step equal 1.0/(1<<32) sec sec */
         struct {
-            int32_t time_int{};
-            uint32_t time_frac{};
+            int32_t time_int{};   /*!< integet part of time. One step equal 1 sec */
+            uint32_t time_frac{}; /*!< fractional part of time. One step equal 1.0/(1<<32) sec */
         };
     };
 
@@ -144,6 +148,7 @@ struct ExDataInterval {
     int64_t frequency = 0; /*!< this is a signed variable for possible expansion to fractional frequencies */
     PrmTypesEn type = PrmTypesEn::PRM_TYPE_UNKNOWN;
 
+
     double val_max = 0;
     double val_min = 0;
     DatasetsStorage_ifs* ds = nullptr;
@@ -151,7 +156,6 @@ struct ExDataInterval {
 
 
     /**
-     *
      * @return if sync returns the time of the point which would follow the end point
      * if async returns time of the end point.
      */
@@ -160,9 +164,16 @@ struct ExDataInterval {
                              : ti.time + ((ex_time_t((size / sizeOfTy(type)) << 24) / frequency) << 8);
     };
 
+    /**
+     * applicable for both async and sync
+     * @return return amount of points
+     */
+    uint64_t getPointsNumber() const { return size / (sizeOfTy(type) + sizeOfTimeTy(type)); }
+
 
     /**
      * it is useful only for sync parameters,
+     * It doesn't set the fields: val_max, val_min ,ds , file_name, they must be set manually
      * @return return true if successful
      */
     bool setProperties(ex_time_t begin, ex_time_t end, int64_t freq, uint64_t offs) {
@@ -177,17 +188,16 @@ struct ExDataInterval {
     }
 
     /**
-     * it is useful only for sync parameters,
+     * copies and adapts properties from the parent to its own type,
+     * by size recalculation.
+     * It doesn't set the fields: val_max, val_min ,ds , file_name, they must be set manually
      * @return return true if successful
      */
-    bool setProperties(const ExDataInterval& a, uint64_t offs) {
-        if (isAsync(type) || (a.type != type)) return false;
-
+    bool setProperties(const ExDataInterval& parent, uint64_t offs) {
         offset = offs;
-        frequency = a.frequency;
-        size = a.size;
-        ti = a.ti;
-
+        frequency = parent.frequency;
+        size = parent.getPointsNumber() * (sizeOfTy(type) + sizeOfTimeTy(type));
+        ti = parent.ti;
         return true;
     }
 };
@@ -197,20 +207,7 @@ struct ExDataInterval {
 // TypeEn      PRMType2JITType(PrmTypesEn arg);
 // PrmTypesEn  JITType2PRMType(TypeEn arg);
 
-DLL_EXPORT std::string toString(PrmTypesEn arg);
 
-inline std::stringstream& stream(std::stringstream& OS, const DataInterval& di, const std::string& offset) {
-    OS << offset << "DataInterval{\n";
-    OS << offset << "  type: " << toString(di.type) << "\n";
-    OS << offset << "  offs: " << di.offs << "\n";
-    OS << offset << "  size: " << di.size << "\n";
-    OS << offset << "  frequency: " << di.frequency << "\n";
-    OS << offset << "  ti.end: " << di.time_interval.end << "\n";
-    OS << offset << "  ti.bgn: " << di.time_interval.bgn << "\n";
-    OS << offset << "  file_name: " << di.file_name << "\n";
-    OS << offset << "}\n";
-    return OS;
-}
 
 inline std::stringstream& stream(std::stringstream& s, const ExTimeInterval& time_interval, const std::string& offset) {
     s << offset << "ti.time_int: " << time_interval.time_int << "\n";
@@ -235,78 +232,7 @@ inline std::stringstream& stream(std::stringstream& OS, const ExDataInterval& di
 
 inline bool isEmpty(ExTimeInterval i) { return i.duration <= 0; }
 
-inline DataInterval createSyncIntervalByFrequency(TimeInterval time_interval, int64_t frequency, PrmTypesEn target_ty,
-                                                  int64_t offset = 0, const std::string& filename = "",
-                                                  bool local = true) {
-    DataInterval interval{};
 
-    interval.type = target_ty;
-    interval.offs = 0;
-
-    constexpr auto tick_size = 1024;
-    auto begin = int64_t(time_interval.bgn * tick_size);
-    auto end = int64_t(time_interval.end * tick_size);
-
-    auto tick_begin = tick_size * (begin / tick_size);
-
-    if (frequency > tick_size) {
-        interval.size = int64_t(sizeOfTy(target_ty)) * (end - begin + 1) * (frequency / tick_size);
-        std::cout << "interval.size: " << interval.size << ": " << (end - begin + 1);
-    } else {
-        auto tmp = (end - tick_begin + 1) * frequency;
-        auto len = tmp / tick_size + ((tmp % tick_size) > 0);
-
-        tmp = (begin % tick_size) * frequency;
-        len -= tmp / tick_size + ((tmp % tick_size) > 0);
-
-        interval.size = int64_t(sizeOfTy(target_ty)) * len;
-    }
-
-    interval.frequency = double(frequency);
-    interval.time_interval = time_interval;
-
-    interval.file_name = filename;
-    interval.local = local;
-
-    return interval;
-}
-
-
-
-inline DataInterval createAsyncIntervalBySize(TimeInterval time_interval, int64_t size, PrmTypesEn target_ty,
-                                              const std::string& filename = "", bool local = true) {
-    DataInterval interval{};
-
-    interval.type = target_ty;
-    interval.offs = 0;
-    interval.size = (int64_t)size;
-    interval.frequency = 0;
-    interval.time_interval = time_interval;
-
-    interval.file_name = filename;
-    interval.local = local;
-
-    return interval;
-}
-
-/* std::pair<uint64_t, uint64_t> getBorders(const DataInterval& di) {
-    constexpr auto tick_size = 1024;
-
-    auto begin = int64_t(di.ti.bgn * tick_size);
-    auto frequency = int64_t(di.frequency);
-
-    if (frequency > tick_size) {
-        begin + sizeOfTy(di.type) * frequency / tick_size;
-    }
-
-    auto offset = begin % tick_size
-
-                  auto end = di.size / int64_t(sizeOfTy(di.type));
-
-    return {
-        begin,
-    };
-}*/
 
 typedef void (*calcMinMaxTy)(char* carg, int64_t Number, double& dmax, double& dmin, bool init);
 
@@ -401,7 +327,6 @@ class DLL_EXPORT ParameterIfs {
     bool opened_to_read_ = false;
     bool opened_to_write_ = false;
 
-    std::string work_directory_;
     std::string error_info_;
 };
 

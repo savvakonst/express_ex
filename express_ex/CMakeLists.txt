@@ -97,8 +97,6 @@ set(LIBRARY_HEADERS
         include/parser/parsingException.h
 
 
-        include/common/errors.h
-        include/common/errors.h
         include/common/types_jty.h
         include/common/undefWarningIgnore.h
 

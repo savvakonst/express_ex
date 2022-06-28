@@ -1,13 +1,13 @@
 #ifndef TYPES_JTS_H
 #define TYPES_JTS_H
 
-#include "parser/defWarningIgnore.h"
-#include <string>
 
-#include "common/undefWarningIgnore.h"
+#include <string>
+#include <vector>
+
 
 typedef int64_t untyped_t;
-typedef int64_t ex_size_t;
+
 
 typedef int32_t (*jit_simple)();
 typedef int (*jit_f)(char*, char*);
@@ -256,7 +256,7 @@ inline DataStructureTypeEn maxDS(const DataStructureTypeEn& var_a, const DataStr
     return var_a < var_b ? var_b : var_a;
 }
 
-#include <vector>
+
 
 class Signature : protected std::vector<TypeEn> {
    public:

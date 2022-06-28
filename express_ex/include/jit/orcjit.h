@@ -50,7 +50,6 @@ class OrcJitEngine {
 
     {
         llvm::sys::DynamicLibrary::LoadLibraryPermanently(nullptr);
-        // и подходя к самому главному, образованность вообще, повышает эту самую нравственность
     }
 
     TargetMachine &getTargetMachine() { return *TM; }

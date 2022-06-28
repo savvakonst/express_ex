@@ -24,10 +24,11 @@ AsyncParameter::AsyncParameter(const std::string& name, const std::vector<ExData
         calc_min_max_ptr_ = g_calcMinMax_select(type_);
     }
 
-    auto bgn = interval_list_.front().ti.bgn;
-    auto end = interval_list_.back().ti.end;
+    auto bgn = interval_list_.front().ti.time;
+    auto last_ti = interval_list_.back().ti;
+    auto end = last_ti.duration + double(last_ti.time) / double(1ll << 32);
 
-    time_interval_ = {bgn, interval_list_.back().getEndTime()};
+    time_interval_ = {bgn, end};
 }
 
 AsyncParameter::AsyncParameter(const std::string& name, const ExTimeInterval& time_interval,
@@ -40,15 +41,12 @@ AsyncParameter::AsyncParameter(const std::string& name, const ExTimeInterval& ti
 AsyncParameter::~AsyncParameter() = default;
 
 void AsyncParameter::readFromBuffer(char* data_buffer_ptr, uint64_t points_to_read) {
-    DataInterval& di = interval_list_[current_interval_index_];
+    ExDataInterval& di = interval_list_[current_interval_index_];
     if (calc_min_max_ptr_) calc_min_max_ptr_(data_buffer_ptr, points_to_read, di.val_max, di.val_min, is_new_interval_);
     if (data_size_ == 8) copyFromBuffer((uint64_t*)data_buffer_ptr, points_to_read);
-    else if (data_size_ == 4)
-        copyFromBuffer((uint32_t*)data_buffer_ptr, points_to_read);
-    else if (data_size_ == 2)
-        copyFromBuffer((uint16_t*)data_buffer_ptr, points_to_read);
-    else if (data_size_ == 1)
-        copyFromBuffer((uint8_t*)data_buffer_ptr, points_to_read);
+    else if (data_size_ == 4) copyFromBuffer((uint32_t*)data_buffer_ptr, points_to_read);
+    else if (data_size_ == 2) copyFromBuffer((uint16_t*)data_buffer_ptr, points_to_read);
+    else if (data_size_ == 1) copyFromBuffer((uint8_t*)data_buffer_ptr, points_to_read);
 }
 
 inline bool AsyncParameter::open(bool open_to_write) {
@@ -98,7 +96,7 @@ uint64_t AsyncParameter::write(char* data_buffer_ptr, uint64_t points_to_write) 
                 unused_points_in_current_interval_ = interval_list_[current_interval_index_].size / data_size_factor_;
                 openNewInterval();
             } else {
-                // it is error point (unpossible point)
+                // it is error case (impossible case)
                 break;
             }
             is_new_interval_ = true;
@@ -121,28 +119,28 @@ void AsyncParameter::readRawData(uint64_t points_to_read) {
 }
 
 inline void AsyncParameter::openNewInterval() {
-    if (ifs_) {
-        ifs_->close();
-        delete ifs_;
-        ifs_ = nullptr;
+    if ((id_ >= 0) && ds_storage_) {
+        ds_storage_->closeDataset(id_);
+        id_ = DatasetsStorage_ifs::kDefaultId;
     }
-    const DataInterval& current_interval = getCurrentInterval();
-    const std::string file_name = (current_interval.local ? work_directory_ + "/" : "") + current_interval.file_name;
+    const ExDataInterval& current_interval = getCurrentInterval();
+    auto file_name = current_interval.file_name;
+    ds_storage_ = current_interval.ds;
 
     if (opened_to_read_) {
+        id_ = ds_storage_->openDataset(file_name.c_str());
         ifs_ = new std::fstream(file_name, std::ios::in | std::ios::binary);
 
-        if (!ifs_->is_open()) {
+        if (id_ < 0) {
             close();
             error_info_ = file_name + "can't be opened.";
             print_IR_error(error_info_);
         }
 
-        ifs_->seekg(current_interval.offs);
+        ds_storage_->seek(id_, current_interval.offset);
     } else if (opened_to_write_) {
         if (current_interval.offs == 0) ifs_ = new std::fstream(file_name, std::ios::out | std::ios::binary);
-        else
-            ifs_ = new std::fstream(file_name, std::ios::out | std::ios::binary | std::ios::app);
+        else ifs_ = new std::fstream(file_name, std::ios::out | std::ios::binary | std::ios::app);
 
         if (!ifs_->is_open()) {
             close();
@@ -191,12 +189,9 @@ uint64_t AsyncParameter::read(char* data_buffer_ptr, uint64_t points_to_read) {
     intermediate_buffer_.resetPos();
 
     if (data_size_ == 8) copyToBuffer((uint64_t*)data_buffer_ptr, base);
-    else if (data_size_ == 4)
-        copyToBuffer((uint32_t*)data_buffer_ptr, base);
-    else if (data_size_ == 2)
-        copyToBuffer((uint16_t*)data_buffer_ptr, base);
-    else if (data_size_ == 1)
-        copyToBuffer((uint8_t*)data_buffer_ptr, base);
+    else if (data_size_ == 4) copyToBuffer((uint32_t*)data_buffer_ptr, base);
+    else if (data_size_ == 2) copyToBuffer((uint16_t*)data_buffer_ptr, base);
+    else if (data_size_ == 1) copyToBuffer((uint8_t*)data_buffer_ptr, base);
 
     time_buffer_.resetPos();
 
@@ -221,10 +216,10 @@ ParameterIfs* AsyncParameter::intersection(ParameterIfs* b, PrmTypesEn target_ty
     if (parameter_a == parameter_b) return this;
 
     if (parameter_a->interval_list_.size() == parameter_b->interval_list_.size()) {
-        auto il_size =parameter_a->interval_list_.size();
+        auto il_size = parameter_a->interval_list_.size();
         for (size_t n = 0; n < il_size; n++) {
-            DataInterval& interval_a = parameter_a->interval_list_[n];
-            DataInterval& interval_b = parameter_b->interval_list_[n];
+            ExDataInterval& interval_a = parameter_a->interval_list_[n];
+            ExDataInterval& interval_b = parameter_b->interval_list_[n];
 
             if ((interval_a.size != interval_b.size)) {
                 error_info_ = "different sizes of intervals.";
@@ -236,17 +231,20 @@ ParameterIfs* AsyncParameter::intersection(ParameterIfs* b, PrmTypesEn target_ty
         return nullptr;
     }
 
-    std::vector<DataInterval> data_interval;
-    for (auto a : interval_list_) {
-        auto interval = createAsyncIntervalBySize(a.ti, a.size, target_ty);  // be accurately
-        data_interval.push_back(interval);
+    std::vector<ExDataInterval> data_interval;
+    uint64_t offset = 0;
+    for (const auto& a : interval_list_) {
+        auto interval = ExDataInterval(a.type);
+        interval.setProperties(a, offset);
+        offset += interval.size;
+
+        data_interval.push_back(std::move(interval));
     }
 
     auto ret = new AsyncParameter(name, time_interval_, data_interval);
     ret->parent_parameter_ = parent_parameter_;
 
     return ret;
-    // return newParameter();
 }
 
 
@@ -256,12 +254,14 @@ ParameterIfs* AsyncParameter::retyping(PrmTypesEn target_ty, const std::string& 
 
     if (getPrmType() == target_ty) return this;
 
-    std::vector<DataInterval> data_interval;
+    std::vector<ExDataInterval> data_interval;
+    uint64_t offset = 0;
     for (auto a : interval_list_) {
-        int64_t target_size =
-            (a.size / (sizeOfTy(a.type) + sizeOfTimeTy(a.type))) * (sizeOfTy(target_ty) + sizeOfTimeTy(target_ty));
-        auto interval = createAsyncIntervalBySize(a.ti, target_size, target_ty);  // be accurately
-        data_interval.push_back(interval);
+        auto interval = ExDataInterval(a.type);
+        interval.setProperties(a, offset);
+        offset += interval.size;
+
+        data_interval.push_back(std::move(interval));
     }
 
     auto ret = new AsyncParameter(name, time_interval_, data_interval);
@@ -271,7 +271,7 @@ ParameterIfs* AsyncParameter::retyping(PrmTypesEn target_ty, const std::string& 
 }
 
 ParameterIfs* AsyncParameter::newParameter() {
-    AsyncParameter* p = new AsyncParameter("", this->getMainTimeInterval(), this->getDataIntervalList(), false);
+    auto* p = new AsyncParameter("", this->getMainTimeInterval(), this->getDataIntervalList(), false);
     p->parent_parameter_ = parent_parameter_;
     return p;
 }

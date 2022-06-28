@@ -846,14 +846,14 @@ class ExMemoryManager : public llvm::SectionMemoryManager {
 };
 
 bool Table::run() {
-    std::string errStr;
+    std::string err_str;
 
-    auto MM = new ExMemoryManager();
-    std::unique_ptr<llvm::SectionMemoryManager> MM_ptr(MM);
+    auto memory_manager = new ExMemoryManager();
+    std::unique_ptr<llvm::SectionMemoryManager> mm_ptr(memory_manager);
 
     llvm::ExecutionEngine* EE = llvm::EngineBuilder(std::move(module_u_ptr_))
-                                    .setMCJITMemoryManager(std::move(MM_ptr))
-                                    .setErrorStr(&errStr)
+                                    .setMCJITMemoryManager(std::move(mm_ptr))
+                                    .setErrorStr(&err_str)
                                     .create();
 
     llvm::Function* buffer_update_function = M_->getFunction("buffer_update_function");
@@ -862,7 +862,7 @@ bool Table::run() {
     llvm::Function* sub_main = M_->getFunction("sub_main");
 
     if (!EE) {
-        llvm::outs() << ": Failed to construct ExecutionEngine: " << errStr << "\n";
+        llvm::outs() << ": Failed to construct ExecutionEngine: " << err_str << "\n";
         return false;
     }
 

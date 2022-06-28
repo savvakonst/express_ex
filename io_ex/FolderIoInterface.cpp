@@ -111,7 +111,15 @@ DatasetsStorage_ifs::ds_ssize_t FolderIoInterface::getDatasetSize(id_t index) {
     return -1;
 }
 
-bool FolderIoInterface::seek(DatasetsStorage_ifs::id_t index, DatasetsStorage_ifs::ds_usize_t pos) { return false; }
+bool FolderIoInterface::seek(DatasetsStorage_ifs::id_t index, DatasetsStorage_ifs::ds_usize_t pos) {
+    if (ds_ssize_t(datasets_.size()) < index) return -1;
+
+    if (auto file = datasets_.at(index))
+        return file->seek(pos);
+    return -1;
+
+    return false;
+}
 
 std::ptrdiff_t FolderIoInterface::writeToDataset(id_t index, const char* data, std::size_t count) {
     // TODO:unsafe add limits check

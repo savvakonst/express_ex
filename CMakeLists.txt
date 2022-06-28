@@ -41,8 +41,11 @@ find_package(Doxygen
 
 if (Doxygen_FOUND)
     message("Doxygen_FOUND")
-    set(DOXYGEN_HTML_EXTRA_STYLESHEET ${CMAKE_CURRENT_SOURCE_DIR}/external_projects/doxygen_theme_flat_design/src/doxygen-style.css)
+    set(DOXYGEN_HTML_EXTRA_STYLESHEET ${CMAKE_CURRENT_SOURCE_DIR}/external_projects/doxygen-awesome-css/doxygen-awesome.css)
+    #set(DOXYGEN_HTML_EXTRA_STYLESHEET ${CMAKE_CURRENT_SOURCE_DIR}/external_projects/doxygen_theme_flat_design/src/doxygen-style.css)
+
     set(DOXYGEN_DOT_IMAGE_FORMAT svg)
+    set(DOXYGEN_EXTRACT_ALL NO)
     set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc)
     doxygen_add_docs(gen_doc_express_ex
             express_ex/include/ifs io_ex #syntaxhighlighter

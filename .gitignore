@@ -58,6 +58,9 @@ Makefile*
 
 
 #------------------- specific excludes --------------------
+
+
+
 external_binaries
 external_binaries/
 external_binaries/**
@@ -67,6 +70,7 @@ external_projects/
 external_projects/**
 
 express_ex/test/**/*.dat
+express_ex/test/sync/*.base
 old/
 /external_projects/antlr_4/
 

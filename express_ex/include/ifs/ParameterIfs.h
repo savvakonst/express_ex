@@ -324,8 +324,8 @@ class DLL_EXPORT ParameterIfs {
     int64_t sizeof_data_type_ = 0;
 
 
-    bool opened_to_read_ = false;
-    bool opened_to_write_ = false;
+
+
 
     std::string error_info_;
 };

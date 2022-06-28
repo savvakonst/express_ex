@@ -72,22 +72,18 @@ SyncParameter::~SyncParameter() {
 
 
 
-inline bool SyncParameter::open(bool open_to_write) {
-    if (opened_to_read_ | opened_to_write_) return false;
+bool SyncParameter::open(bool open_to_write) {
+    if (opened_ ) return false;
+    opened_ = true;
 
-    opened_to_read_ = !open_to_write;
-    opened_to_write_ = open_to_write;
-    return opened_to_read_;
+    return opened_;
 }
 
 inline bool SyncParameter::close() {
-    if (opened_to_read_ | opened_to_write_) {
-        opened_to_read_ = false;
-        opened_to_write_ = false;
-        return true;
-    }
+    if (!opened_ ) return false;
 
-    return false;
+    opened_ = false;
+    return true;
 }
 
 bool SyncParameter::seek(int64_t point_umber) { return false; }
@@ -136,7 +132,7 @@ ParameterIfs* SyncParameter::intersection(ParameterIfs* prm, PrmTypesEn target_t
         return nullptr;
     }
 
-    if (parameter_a->frequency_ <= 0.0) {
+    if (parameter_a->frequency_ <= 0) {
         error_info_ = "sync parameter is has zero frequency";
         return nullptr;
     }

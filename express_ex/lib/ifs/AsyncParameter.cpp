@@ -53,37 +53,32 @@ inline bool AsyncParameter::open(bool open_to_write) {
     data_size_ = sizeOfTy(this->getPrmType());
     data_size_factor_ = (data_size_ + prm_time_size_);
 
-    unused_points_in_current_interval_ = interval_list_[current_interval_index_].size / data_size_factor_;
+    unused_points_in_current_interval_ = interval_list_[current_interval_index_].getPointsNumber();
 
-    if (opened_to_read_ | opened_to_write_) return false;
-
-    opened_to_read_ = !open_to_write;
-    opened_to_write_ = open_to_write;
+    if (isOpened()) return false;
 
     openNewInterval();
-    return opened_to_read_;
+    return true;
 }
 
-inline bool AsyncParameter::close() {
-    if (opened_to_read_ | opened_to_write_) {
-        if (ifs_) ifs_->close();
-        ifs_ = nullptr;
-        opened_to_read_ = false;
-        opened_to_write_ = false;
+bool AsyncParameter::close() {
+    if (isOpened()) {
+        ds_storage_->closeDataset(id_);
+        id_ = DatasetsStorage_ifs::kDefaultId;
         return true;
     }
     return false;
 }
 
 uint64_t AsyncParameter::write(char* data_buffer_ptr, uint64_t points_to_write) {
-    if (!opened_to_write_) return points_to_write;
-    // open(true);
+    if (isOpened()) return points_to_write;
+
 
     intermediate_buffer_.resize(points_to_write * data_size_factor_);
     intermediate_buffer_.resetPos();
 
     uint64_t base = points_to_write;
-    uint8_t* ptr = (uint8_t*)data_buffer_ptr;
+    auto* ptr = (uint8_t*)data_buffer_ptr;
 
     if (interval_list_.size() <= current_interval_index_) return 0;
 
@@ -108,51 +103,42 @@ uint64_t AsyncParameter::write(char* data_buffer_ptr, uint64_t points_to_write) 
         }
     }
 
-    ifs_->write(intermediate_buffer_.base_ptr_, (base - points_to_write) * data_size_factor_);
+    ds_storage_->writeToDataset(id_, intermediate_buffer_.base_ptr_, (base - points_to_write) * data_size_factor_);
 
     return base - points_to_write;
 }
 
 void AsyncParameter::readRawData(uint64_t points_to_read) {
-    ifs_->read(intermediate_buffer_.current_ptr_, points_to_read * data_size_factor_);
+    ds_storage_->readFromDataset(id_, intermediate_buffer_.current_ptr_, points_to_read * data_size_factor_);
     intermediate_buffer_.current_ptr_ += points_to_read * data_size_factor_;
 }
 
 inline void AsyncParameter::openNewInterval() {
-    if ((id_ >= 0) && ds_storage_) {
+    if (isOpened()) {
         ds_storage_->closeDataset(id_);
         id_ = DatasetsStorage_ifs::kDefaultId;
     }
+
     const ExDataInterval& current_interval = getCurrentInterval();
     auto file_name = current_interval.file_name;
     ds_storage_ = current_interval.ds;
 
-    if (opened_to_read_) {
-        id_ = ds_storage_->openDataset(file_name.c_str());
-        ifs_ = new std::fstream(file_name, std::ios::in | std::ios::binary);
 
-        if (id_ < 0) {
-            close();
-            error_info_ = file_name + "can't be opened.";
-            print_IR_error(error_info_);
-        }
+    id_ = ds_storage_->openDataset(file_name.c_str());
 
-        ds_storage_->seek(id_, current_interval.offset);
-    } else if (opened_to_write_) {
-        if (current_interval.offs == 0) ifs_ = new std::fstream(file_name, std::ios::out | std::ios::binary);
-        else ifs_ = new std::fstream(file_name, std::ios::out | std::ios::binary | std::ios::app);
+    if (current_interval.offset > 0) ds_storage_->seek(id_, current_interval.offset);
 
-        if (!ifs_->is_open()) {
-            close();
-            error_info_ = file_name + "can't be opened.";
-            print_IR_error(error_info_);
-        }
+
+    if (id_ < 0) {
+        close();
+        error_info_ = file_name + "can't be opened.";
+        print_IR_error(error_info_);
     }
-    // std::ios::app |  std::ios::trunc
+
 }
 
 uint64_t AsyncParameter::read(char* data_buffer_ptr, uint64_t points_to_read) {
-    if (!opened_to_read_) open();
+    if (!isOpened()) AsyncParameter::open();
 
     intermediate_buffer_.resize(points_to_read * data_size_factor_);
     intermediate_buffer_.resetPos();

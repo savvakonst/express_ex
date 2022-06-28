@@ -35,7 +35,7 @@ class DLL_EXPORT SyncParameter : public ParameterIfs {
 
     ParameterIfs* newParameter() override;
 
-
+    bool opened_ = false;
 
    protected:
     bool calcExtendedInfo();

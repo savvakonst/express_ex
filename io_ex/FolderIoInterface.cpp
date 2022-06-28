@@ -68,9 +68,7 @@ DatasetsStorage_ifs::id_t FolderIoInterface::openDataset(const char* name) {
         for (auto i : datasets_) {
             if (getNameByPtr(i) == path) return false;
         }
-
     auto file = new QFile();
-
 
     file->setFileName(path.c_str());
 

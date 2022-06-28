@@ -30,14 +30,16 @@ public:
     virtual bool            removeDataset(const char* name) = 0;
 
     /**
-     * Returns dataset id, or
+     * \deprecated \attention  it deprecated use openDataset(const char* name) instead
+     * \returns dataset id, or
      * value less than 0 if an error occurred.
      */
+    [[deprecated("it deprecated use openDataset(const char* name) instead")]]
     virtual id_t            createDataset(const char *name) = 0;
 
 
     /**
-     * Returns dataset id, or
+     * \returns dataset id, or
      * value less than 0 if an error occurred.
      */
     virtual id_t            openDataset(const char* name) = 0;
@@ -47,7 +49,7 @@ public:
 
 
     /**
-     * Returns the current size of dataset, otherwise return -1.
+     * \returns the current size of dataset, otherwise return -1.
      */
     virtual ds_ssize_t      getDatasetSize(id_t id) = 0;
 
@@ -56,13 +58,13 @@ public:
 
 
     /**
-     * Returns the number of bytes that were actually written, or
+     * \returns the number of bytes that were actually written, or
      * value less than 0 if an error occurred.
      */
     virtual std::ptrdiff_t  writeToDataset(id_t id, const char* data, std::size_t count) = 0;
 
     /**
-     * returns the number of bytes read. If the end of data has already been reached it returns 0;
+     * \returns the number of bytes read. If the end of data has already been reached it returns 0;
      * If an error occurs, such as when attempting to read from a device opened in WriteOnly mode, this
      * function returns a value less than 0.
      */

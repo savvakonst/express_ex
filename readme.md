@@ -33,29 +33,30 @@
 
 Далее идут инструкции для ручного подключения зависимостей:
 
-* [llvm](https://llvm.org/docs/GettingStarted.html).  
-  Примеры конфигурирования проекта с ручным подключением llvm:
-    * с
-      ninja `cmake -DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64;путь к папке где был собран llvm"  -G "Visual Studio 16 2019" -A x64`
-    * с Visual
-      Studio  `make -DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64;путь к llvm-build" -G "Visual Studio 16 2019" -A x64`
+* [llvm](https://llvm.org/docs/GettingStarted.html).
+    * Примеры конфигурирования проекта с ручным подключением llvm:
+        * с
+          ninja `cmake -DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64;путь к папке где был собран llvm"  -G "Visual Studio 16 2019" -A x64`
+        * с Visual
+          Studio  `make -DCMAKE_PREFIX_PATH=C:/Qt/5.12.8/msvc2017_64;путь к llvm-build" -G "Visual Studio 16 2019" -A x64`
 
-  Как установить и сконфигурировать llvm не думая):
-    * извлечение LLVM:
-      необходимо скачать версию ниже 14, т.к. в ней начинается переход к "Opaque Pointers" и, как следствие, большие
-      изменения в API.
-        * для Windows: `git clone --depth 1 --config core.autocrlf=false --branch llvmorg-12.0.1
-          https://github.com/llvm/llvm-project.git`
-        * для Linux: `git clone --depth 1 --branch llvmorg-12.0.1  https://github.com/llvm/llvm-project.git`
-    * конфигурирование LLVM
-      `cmake -G "Ninja"
-      -DCMAKE_C_COMPILER="путь к C компилятору"
-      -DCMAKE_CXX_COMPILER="путь к C++ компилятору"
-      -DLLVM_INCLUDE_TESTS=OFF  
-      -DLLVM_INCLUDE_BENCHMARKS=OFF -DLLVM_INCLUDE_TOOLS=OFF  
-      -DLLVM_INCLUDE_DOCS=OFF -DLLVM_TARGETS_TO_BUILD=X86`
-    * сборка LLVM `cmake --build "путь к папке"
-      --target LLVMCore LLVMExecutionEngine LLVMInterpreter LLVMMC LLVMMCJIT LLVMSupport LLVMX86CodeGen LLVMX86Desc LLVMX86Info`
+    * Как установить и сконфигурировать llvm не думая):
+
+        * извлечение LLVM:
+          необходимо скачать версию ниже 14, т.к. в ней начинается переход к "Opaque Pointers" и, как следствие, большие
+          изменения в API.
+            * для Windows: `git clone --depth 1 --config core.autocrlf=false --branch llvmorg-12.0.1
+              https://github.com/llvm/llvm-project.git`
+            * для Linux: `git clone --depth 1 --branch llvmorg-12.0.1  https://github.com/llvm/llvm-project.git`
+        * конфигурирование LLVM
+          `cmake -G "Ninja"
+          -DCMAKE_C_COMPILER="путь к C компилятору"
+          -DCMAKE_CXX_COMPILER="путь к C++ компилятору"
+          -DLLVM_INCLUDE_TESTS=OFF  
+          -DLLVM_INCLUDE_BENCHMARKS=OFF -DLLVM_INCLUDE_TOOLS=OFF  
+          -DLLVM_INCLUDE_DOCS=OFF -DLLVM_TARGETS_TO_BUILD=X86`
+        * сборка LLVM `cmake --build "путь к папке"
+          --target LLVMCore LLVMExecutionEngine LLVMInterpreter LLVMMC LLVMMCJIT LLVMSupport LLVMX86CodeGen LLVMX86Desc LLVMX86Info`
 * [antlr 4](https://www.antlr.org/).  
   Если у вас нет внешнего проекта antlr 4 nj проще всего не делать ничего, во время генерации проекта cmake сам загрузит
   c помощью git проект antlr 4 нужной версии в папку external_projects и подключит к проекту.
@@ -72,5 +73,3 @@
 
 * QT.  
   При генерации проекта укажите путь к пакету QT. c помощью аргумента `CMAKE_PREFIX_PATH`
-
-`git filter-branch --force --index-filter "git rm --cached --ignore-unmatch *.exe" --prune-empty --tag-name-filter cat -- --all`

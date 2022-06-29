@@ -1,22 +1,21 @@
 #include "ifs/parameterIO.h"
 
-#include "ifs/ParameterIfs.h"
-
 #include <set>
 #include <type_traits>
 
 #include "common/common.h"
 #include "common/undefWarningIgnore.h"
 #include "ifs/AsyncParameter.h"
+#include "ifs/ParameterIfs.h"
 #include "ifs/SyncParameter.h"
 #include "llvm/Support/JSON.h"
 #include "parser/defWarningIgnore.h"
 
 // using namespace llvm;
 
-bool fromJSON(const llvm::json::Value &data_fragment, DataInterval &data_interval);
+bool fromJSON(const llvm::json::Value &data_fragment, ExDataInterval &data_interval);
 
-DataInterval getDataInterval(llvm::json::Value &data_fragment, llvm::json::Array &data_files_list);
+ExDataInterval getDataInterval(llvm::json::Value &data_fragment, llvm::json::Array &data_files_list);
 
 calcMinMaxTy g_calcMinMax_select(PrmTypesEn arg) {
     int sub_type = (((int)arg) >> 4);
@@ -123,6 +122,7 @@ std::string toString(PrmTypesEn arg) {
 }
 
 
+inline int64_t &transformToInt64(uint64_t &arg) { return *((int64_t *)&arg); }
 
 bool fromJSON(const llvm::json::Value &DataFragment, ExDataInterval &dataInterval) {
     llvm::json::Path::Root root("bare");
@@ -130,13 +130,18 @@ bool fromJSON(const llvm::json::Value &DataFragment, ExDataInterval &dataInterva
     bool ret = true;
 
     ret &= o.map("Frequency", dataInterval.frequency);
-    ret &= o.map("Offset", dataInterval.offs);
-    ret &= o.map("Size", dataInterval.size);
-    ret &= o.map("Type", dataInterval.int_type_representation);
 
-    ret &= o.map("sTime.Begin", dataInterval.time_interval.bgn);
-    ret &= o.map("sTime.End", dataInterval.time_interval.end);
 
+
+    ret &= o.map("Offset", transformToInt64(dataInterval.size));
+    ret &= o.map("Size", transformToInt64(dataInterval.size));
+
+    ret &= o.map("Type", *((int64_t *)&dataInterval.type));
+
+    double begin_time = 0., end_time = 0.;
+    ret &= o.map("sTime.Begin", begin_time);
+    ret &= o.map("sTime.End", end_time);
+    dataInterval.ti = ExTimeInterval(begin_time, end_time - begin_time);
     return ret;
 }
 /*
@@ -168,7 +173,8 @@ ExDataInterval getDataInterval(llvm::json::Value &data_fragment, llvm::json::Arr
         if (data_index == file_data_index) {
             // std::string tmp;
             O.map("Name", data_interval.file_name);
-            O.map("Local", data_interval.local);
+            // TODO : need to threat "Local" field
+            // O.map("Local", data_interval.local);
             // dataInterval.file_name = convertUtf8PathToWinLocate(tmp);
         }
     }
@@ -208,20 +214,22 @@ bool readParametersList(const std::string &database_f_name, std::vector<Paramete
             llvm::json::ObjectMapper O(i, root);
 
             std::string name;
-            TimeInterval time_interval;
+
 
             bool ret = true;
-            int64_t int_type_represintation = 0;
+
             ret &= O.map(" Name", name);
-            ret &= O.map("sTime.Begin", time_interval.bgn);
-            ret &= O.map("sTime.End", time_interval.end);
-            ret &= O.map("Data.Type", int_type_represintation);
+            double begin_time = 0., end_time = 0.;
+            ret &= O.map("sTime.Begin", begin_time);
+            ret &= O.map("sTime.End", end_time);
+            ExTimeInterval time_interval(begin_time, end_time - begin_time);
+            int64_t int_type_representation = 0;
+            ret &= O.map("Data.Type", int_type_representation);
 
             ParameterIfs *parameter = nullptr;
-            if (isAsync((PrmTypesEn)int_type_represintation))
+            if (isAsync(PrmTypesEn(int_type_representation)))
                 parameter = new AsyncParameter(name, time_interval, interval_list);
-            else
-                parameter = new SyncParameter(name, time_interval, interval_list);
+            else parameter = new SyncParameter(name, time_interval, interval_list);
             // parameterList.size()==47
             parameter_list.push_back(parameter);
         }
@@ -240,21 +248,20 @@ ParameterIfs *retyping(ParameterIfs *a, PrmTypesEn target_ty, const std::string 
     return a->retyping(target_ty, name);
 }
 
-ParameterIfs *newParameter(const std::string &name, const std::vector<DataInterval> &interval_list, bool save_fnames) {
+ParameterIfs *newParameter(const std::string &name, const std::vector<ExDataInterval> &interval_list,
+                           bool save_fnames) {
     if (!interval_list.empty()) {
         if (isAsync(interval_list.front().type)) return new AsyncParameter(name, interval_list, save_fnames);
-        else
-            return new SyncParameter(name, interval_list, save_fnames);
+        else return new SyncParameter(name, interval_list, save_fnames);
     }
     return nullptr;
 }
 
-ParameterIfs *newParameter(const std::string &name, const TimeInterval &time_interval,
-                           const std::vector<DataInterval> &interval_list, bool save_fnames) {
+ParameterIfs *newParameter(const std::string &name, const ExTimeInterval &time_interval,
+                           const std::vector<ExDataInterval> &interval_list, bool save_fnames) {
     if (!interval_list.empty()) {
         if (isAsync(interval_list.front().type)) return new AsyncParameter(name, time_interval, interval_list);
-        else
-            return new SyncParameter(name, time_interval, interval_list);
+        else return new SyncParameter(name, time_interval, interval_list);
     }
     return nullptr;
 }

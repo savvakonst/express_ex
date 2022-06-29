@@ -54,11 +54,12 @@ enum class PrmTypesEn : uint64_t
     PRM_TYPE_F32_TU = 0x5024,
     PRM_TYPE_F64_TU = 0x5028,
 
+
     PRM_TYPE_UNKNOWN = 0xffff
 };
 
 
-bool isAsync(PrmTypesEn arg) {
+inline bool isAsync(PrmTypesEn arg) {
     if (arg == PrmTypesEn::PRM_TYPE_UNKNOWN) return false;
     return (bool)(0x1000 & (uint64_t)arg);
 }
@@ -124,8 +125,8 @@ struct ExTimeInterval {
     union {
         ex_time_t time; /*!< full time. One step equal 1.0/(1<<32) sec sec */
         struct {
-            int32_t time_int{};   /*!< integet part of time. One step equal 1 sec */
-            uint32_t time_frac{}; /*!< fractional part of time. One step equal 1.0/(1<<32) sec */
+            int32_t time_int;   /*!< integet part of time. One step equal 1 sec */
+            uint32_t time_frac; /*!< fractional part of time. One step equal 1.0/(1<<32) sec */
         };
     };
 
@@ -215,6 +216,7 @@ inline std::stringstream& stream(std::stringstream& s, const ExTimeInterval& tim
       << time_interval.time_frac << "\n"
       << std::dec;
     s << offset << "ti.duration: " << std::dec << time_interval.duration << "\n";
+    return s;
 }
 
 inline std::stringstream& stream(std::stringstream& OS, const ExDataInterval& di, const std::string& offset) {
@@ -322,8 +324,6 @@ class DLL_EXPORT ParameterIfs {
 
 
     int64_t sizeof_data_type_ = 0;
-
-
 
 
 

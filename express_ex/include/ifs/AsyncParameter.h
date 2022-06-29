@@ -39,7 +39,7 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
     friend class ParametersDB;
 
    protected:
-    bool isOpened(){ return (id_ >= 0) && ds_storage_; }
+    bool isOpened() { return (id_ >= 0) && ds_storage_; }
     // TODO
     const size_t prm_time_size_ = 4;
 

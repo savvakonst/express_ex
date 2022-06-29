@@ -14,7 +14,7 @@ IF NOT "%1"=="" (
 )
 
 
-set EXPRESS_FILE="sync_base.express"
+set EXPRESS_FILE = "sync_base.express"
 
 ::for %%i in ("multi_arg.kex" "multi_arg_cos.kex" "single_arg_convolve.kex") do (
 for %%i in ("single_arg_convolve.kex") do (

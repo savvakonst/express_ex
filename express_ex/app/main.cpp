@@ -1,18 +1,18 @@
 ﻿
 #include <clocale>
 
+#include "ifs/ExStream.h"
+#include "ifs/express_ex.h"
+#include "ifs/parameterIO.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Path.h"
-#include "ifs/parameterIO.h"
-#include "ifs/express_ex.h"
-#include "ifs/ExStream.h"
 
 
 int main(int argc, const char *argv[]) {
-
     std::setlocale(LC_ALL, "en_US.UTF-8");
 
-    enum ShowNames {
+    enum ShowNames
+    {
         nameList,
         untypedFSR,
         activeNameList,
@@ -31,8 +31,8 @@ int main(int argc, const char *argv[]) {
                                                 llvm::cl::cat(mainCategory));
 
     static llvm::cl::opt<std::string> outputFile("o", llvm::cl::desc("output data file name"),
-                                                 llvm::cl::value_desc("filename"),llvm::cl::init("out.dat"), llvm::cl::Optional,
-                                                 llvm::cl::cat(mainCategory));
+                                                 llvm::cl::value_desc("filename"), llvm::cl::init("out.dat"),
+                                                 llvm::cl::Optional, llvm::cl::cat(mainCategory));
 
     static llvm::cl::opt<bool> optimizationEnable("opt", llvm::cl::desc("optimization enable"), llvm::cl::Optional,
                                                   llvm::cl::cat(mainCategory));
@@ -56,14 +56,14 @@ int main(int argc, const char *argv[]) {
                                       llvm::cl::cat(mainCategory));
 
     static llvm::cl::bits<ShowNames> showBits(
-            llvm::cl::desc("show:"), llvm::cl::cat(mainCategory), llvm::cl::ZeroOrMore,
-            llvm::cl::values(clEnumVal(nameList, "names list"),
-                             clEnumVal(untypedFSR, "FSR(first stage representation) without type calculation"),
-                             clEnumVal(activeNameList, "Procedure Integration"),
-                             clEnumVal(allFSR, "full FSR(first stage representation)"),
-                             clEnumVal(redusedFSR, "redused FSR code"),
-                             clEnumVal(tableSSR, "table (second stage) representation"),
-                             clEnumVal(outputPrm, "output parameters"), clEnumVal(llvmIRcode, "llvm IR ")));
+        llvm::cl::desc("show:"), llvm::cl::cat(mainCategory), llvm::cl::ZeroOrMore,
+        llvm::cl::values(clEnumVal(nameList, "names list"),
+                         clEnumVal(untypedFSR, "FSR(first stage representation) without type calculation"),
+                         clEnumVal(activeNameList, "Procedure Integration"),
+                         clEnumVal(allFSR, "full FSR(first stage representation)"),
+                         clEnumVal(redusedFSR, "redused FSR code"),
+                         clEnumVal(tableSSR, "table (second stage) representation"),
+                         clEnumVal(outputPrm, "output parameters"), clEnumVal(llvmIRcode, "llvm IR ")));
 
     llvm::cl::SetVersionPrinter([](llvm::raw_ostream &OS) { OS << "version - 0.94_6\n"; });
     llvm::cl::HideUnrelatedOptions(mainCategory);
@@ -71,7 +71,7 @@ int main(int argc, const char *argv[]) {
 
 
 
-    //g_ansi_escape_codes = ansiEscapeCodes;
+    // g_ansi_escape_codes = ansiEscapeCodes;
 
     ParametersDB parameter_db(inputDataBaseFile);
 
@@ -99,49 +99,40 @@ int main(int argc, const char *argv[]) {
 
 
     std::map<std::string, bool> modules_map;
-    for (auto i: moduleFiles) modules_map[i] = true;
+    for (auto i : moduleFiles) modules_map[i] = true;
 
-    if (!express_ex.parseText(inputFile, true, modules_map))
-        return 1;
+    if (!express_ex.parseText(inputFile, true, modules_map)) return 1;
 
     auto parameter_name_list = express_ex.getParameterLinkNamesMap();
 
     std::map<std::string, ParameterIfs *> parameters_map;
-    for (auto i: parameter_name_list) {
+    for (auto i : parameter_name_list) {
         parameters_map[i.first] = parameter_db[i.second];
-        parameters_map[i.first]->setLocal(false);
     }
 
 
-    if (!express_ex.setParameters(parameters_map))
-        return 1;
+    if (!express_ex.setParameters(parameters_map)) return 1;
 
     auto list = express_ex.getOutputParameterVector();
 
 
 
-
     llvm::SmallString<5> small_string(outputFile);
-    llvm::sys::path::replace_extension(small_string,"");
-    std::string  extension_less_output_file_path = small_string.str().str();
-    std::string  output_extension = llvm::sys::path::extension(outputFile).str();
+    llvm::sys::path::replace_extension(small_string, "");
+    std::string extension_less_output_file_path = small_string.str().str();
+    std::string output_extension = llvm::sys::path::extension(outputFile).str();
 
-    int index = 0 ;
+    int index = 0;
     if (list.size() == 1) {
-
         list.front()->setName(extension_less_output_file_path + output_extension);
-        list.front()->setLocal(false);
     } else
-        for (auto &i: express_ex.getOutputParameterVector()) {
-
-            i->setName(outputFile + std::to_string(index++)+output_extension);
-            i->setLocal(false);
+        for (auto &i : express_ex.getOutputParameterVector()) {
+            i->setName(outputFile + std::to_string(index++) + output_extension);
         }
 
 
     jit_init();
-    if (!express_ex.genJit())
-        return 1;
+    if (!express_ex.genJit()) return 1;
 
     if (runJit) express_ex.run();
 

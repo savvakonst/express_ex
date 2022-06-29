@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import json
-import matplotlib.pyplot as plt
 
 db = None
 param_list = None
 g_is_async = True
+
 
 def loadDataBase(name):
     db_loc = open(name, "rb")
@@ -21,13 +21,13 @@ def loadDataBase(name):
 
 def getNpDType(param_list, param_name):
     ret = None
-    for param in param_list:
-        if param[" Name"] == param_name:
-            ex_dtype = param["Data.Type"]
+    for parameter in param_list:
+        if parameter[" Name"] == param_name:
+            ex_dtype = parameter["Data.Type"]
             dat_field = "f{0:d}" if ex_dtype & 0x0020 else "i{0:d}"
             dat_field = dat_field.format(ex_dtype & 0xf)
 
-            if (ex_dtype & 0x1000):  # if async
+            if ex_dtype & 0x1000:  # if async
                 return np.dtype([('time', "f4"), ('data', dat_field)])
             else:
                 return np.dtype([('data', dat_field)])
@@ -38,7 +38,6 @@ g_map = {}
 
 
 def param(param_name, dt=None):
-
     f_name = param_name + ".dat"
     if dt is None:
         dt = getNpDType(param_list, param_name)
@@ -49,7 +48,7 @@ def param(param_name, dt=None):
     data = np.fromfile(f_name, dtype=dt)
     global g_is_async
 
-    g_is_async = len(dt)==2
+    g_is_async = len(dt) == 2
 
     g_map[param_name] = data
     return data["data"]
@@ -68,12 +67,11 @@ def time(param_name, dt=None):
 
 
 def double(arr):
-    
     return np.array(arr).astype("f8")
 
 
 def convolve(arr_a, arr_b):
-    return np.convolve(arr_a, arr_b,'same')
+    return np.convolve(arr_a, arr_b, 'same')
 
 
 def execFile(name):

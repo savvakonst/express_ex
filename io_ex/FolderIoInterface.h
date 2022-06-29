@@ -8,14 +8,6 @@
 
 class QFile;
 
-#define DS_STORAGE_EXPORTS
-#ifdef _WIN32
-#    ifdef DS_STORAGE_TO_EXPORT
-#        define DS_STORAGE_EXPORTS __declspec(dllexport)
-#    else
-#        define DS_STORAGE_EXPORTS __declspec(dllimport)
-#    endif
-#endif
 
 
 class DS_STORAGE_EXPORTS FolderIoInterface : public DatasetsStorage_ifs {
@@ -35,7 +27,7 @@ class DS_STORAGE_EXPORTS FolderIoInterface : public DatasetsStorage_ifs {
     bool close() override;
 
 
-    bool datasetExists(const char *name) override { return false; }
+    bool datasetExists(const char *name) override;
 
     id_t createDataset(const char *name) override;
 

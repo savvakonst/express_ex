@@ -45,8 +45,8 @@
     * извлечение LLVM:
       необходимо скачать версию ниже 14, т.к. в ней начинается переход к "Opaque Pointers" и, как следствие, большие
       изменения в API.
-        * для
-          Windows: `git clone --depth 1 --config core.autocrlf=false --branch llvmorg-12.0.1  https://github.com/llvm/llvm-project.git`
+        * для Windows: `git clone --depth 1 --config core.autocrlf=false --branch llvmorg-12.0.1
+          https://github.com/llvm/llvm-project.git`
         * для Linux: `git clone --depth 1 --branch llvmorg-12.0.1  https://github.com/llvm/llvm-project.git`
     * конфигурировани LLVM
       `cmake -G "Ninja"
@@ -55,8 +55,8 @@
       -DLLVM_INCLUDE_TESTS=OFF  
       -DLLVM_INCLUDE_BENCHMARKS=OFF -DLLVM_INCLUDE_TOOLS=OFF  
       -DLLVM_INCLUDE_DOCS=OFF -DLLVM_TARGETS_TO_BUILD=X86`
-    * сборка
-      LLVM `cmake --build "путь к папке" --target LLVMCore LLVMExecutionEngine LLVMInterpreter LLVMMC LLVMMCJIT LLVMSupport LLVMX86CodeGen LLVMX86Desc LLVMX86Info`
+    * сборка LLVM `cmake --build "путь к папке"
+      --target LLVMCore LLVMExecutionEngine LLVMInterpreter LLVMMC LLVMMCJIT LLVMSupport LLVMX86CodeGen LLVMX86Desc LLVMX86Info`
 * [antlr 4](https://www.antlr.org/).  
   Если у вас нет внешнего проекта antlr 4 nj проще всего не делать ничего, во время генерации проекта cmake сам загрузит
   c помощью git проект antlr 4 нужной версии в папку external_projects и подключит к проекту.

@@ -47,7 +47,7 @@
         * для Windows: `git clone --depth 1 --config core.autocrlf=false --branch llvmorg-12.0.1
           https://github.com/llvm/llvm-project.git`
         * для Linux: `git clone --depth 1 --branch llvmorg-12.0.1  https://github.com/llvm/llvm-project.git`
-    * конфигурировани LLVM
+    * конфигурирование LLVM
       `cmake -G "Ninja"
       -DCMAKE_C_COMPILER="путь к C компилятору"
       -DCMAKE_CXX_COMPILER="путь к C++ компилятору"

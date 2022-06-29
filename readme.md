@@ -73,4 +73,4 @@
 * QT.  
   При генерации проекта укажите путь к пакету QT. c помощью аргумента `CMAKE_PREFIX_PATH`
 
-`git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch *.exe' --prune-empty --tag-name-filter cat -- --all`
+`git filter-branch --force --index-filter "git rm --cached --ignore-unmatch *.exe" --prune-empty --tag-name-filter cat -- --all`

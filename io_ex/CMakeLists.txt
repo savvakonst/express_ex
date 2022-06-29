@@ -1,4 +1,4 @@
-
+﻿
 
 if (CMAKE_VERSION VERSION_LESS "3.7.0")
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -24,7 +24,7 @@ if (HDF5_FOUND)
             )
 
     set(DS_HDF5_C_DEFINITIONS ${HDF5_C_DEFINITIONS} HDF5_IO_INTERFACE_ENABLE)
-
+    set(DS_HDF5_C_LIBRARIES ${HDF5_C_LIBRARIES})
 endif ()
 
 
@@ -40,6 +40,6 @@ add_library(io_ex SHARED
 
 target_include_directories(io_ex INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} ${HDF5_INCLUDE_DIRS})
 
-target_link_libraries(io_ex PRIVATE Qt5::Widgets ${HDF5_C_LIBRARIES})
+target_link_libraries(io_ex PRIVATE Qt5::Widgets ${DS_HDF5_C_LIBRARIES})
 
 target_compile_definitions(io_ex PRIVATE DS_STORAGE_TO_EXPORT ${DS_HDF5_C_DEFINITIONS})

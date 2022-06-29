@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+﻿cmake_minimum_required(VERSION 3.16)
 
 project(express_ex_env)
 
@@ -37,8 +37,7 @@ add_subdirectory(syntaxhighlighter)
 
 
 find_package(Doxygen
-        REQUIRED dot
-        OPTIONAL_COMPONENTS mscgen dia)
+        OPTIONAL_COMPONENTS mscgen dia dot)
 
 if (Doxygen_FOUND)
     message("Doxygen_FOUND")

@@ -272,16 +272,13 @@ class DLL_EXPORT ParameterIfs {
     virtual ParameterIfs* retyping(PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
                                    const std::string& name = "") = 0;
 
-    virtual void setName(const std::string& name, const std::string& extension = ".dat") {
+    void setName(DatasetsStorage_ifs* datasets_storage, const std::string& name, const std::string& extension = ".dat") {
         name_ = name;
-
-        if ((interval_list_.size() == 1)) {
-            for (auto& i : interval_list_) i.file_name = name + ".dat";
-            return;
-        }
+        for (auto& i : interval_list_) {
+            i.ds = datasets_storage;
+            i.file_name = name + ".dat";
+        };
     }
-
-
 
     void addInterval(const ExDataInterval& interval) { interval_list_.push_back(interval); }
 
@@ -299,33 +296,49 @@ class DLL_EXPORT ParameterIfs {
         return OS;
     }
 
-    friend class ParametersDB;
+
+
+    bool checkDataResource(bool input, ExStreamIfs* err_stream = nullptr) {
+        bool res = true;
+        for (const auto& i : interval_list_)
+            if (i.ds) {
+                if (i.file_name.empty()) {
+                    res = false;
+                    setErrorMessage(std::string(input ? "input" : "output") + " dataset name is empty", err_stream);
+                } else if (input && !i.ds->datasetExists(i.file_name.c_str())) {
+                    res = false;
+                    setErrorMessage("\'" + i.file_name + "\" data source doesn't exists", err_stream);
+                }
+            } else {
+                res = false;
+                setErrorMessage("pointer for datasets storage doesn't exists. Dataset " + i.file_name, err_stream);
+            }
+        return res;
+    }
+
+
 
    protected:
+    void setErrorMessage(const std::string& str, ExStreamIfs* err_steam) {
+        err_steam = err_steam_ ? err_steam_ : err_steam;
+        if (err_steam) {
+            *err_steam << ExColors::RED << "parameter error: " << ExColors::RESET << str << "\n";
+            err_steam->finalize();
+        }
+    }
+
+    ExStreamIfs* err_steam_ = nullptr;
+
     calcMinMaxTy calc_min_max_ptr_ = nullptr;
 
-
-
     std::string name_;
-
-
-    ExTimeInterval time_interval_ = {0.0, 0.0};
-
-
+    ExTimeInterval time_interval_ = {0., 0.};
 
     std::vector<ExDataInterval> interval_list_;
-
-    const double additional_time_ =
-        0.0009765625;  // TODO this is very bad idea, but it will be here  until nikolay fixes
-                       //  the problem with interval boundaries
     PrmTypesEn type_ = PrmTypesEn::PRM_TYPE_UNKNOWN;
-
-    int64_t current_interval_index_ = 0;
 
 
     int64_t sizeof_data_type_ = 0;
-
-
 
     std::string error_info_;
 };

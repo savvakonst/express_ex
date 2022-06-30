@@ -34,19 +34,6 @@ add_subdirectory(io_ex)
 add_subdirectory(EGrammar)
 add_subdirectory(express_ex)
 add_subdirectory(syntaxhighlighter)
+add_subdirectory(doc)
 
 
-find_package(Doxygen
-        OPTIONAL_COMPONENTS mscgen dia dot)
-
-if (Doxygen_FOUND)
-    message("Doxygen_FOUND")
-    set(DOXYGEN_HTML_EXTRA_STYLESHEET ${CMAKE_CURRENT_SOURCE_DIR}/external_projects/doxygen-awesome-css/doxygen-awesome.css)
-
-    set(DOXYGEN_DOT_IMAGE_FORMAT svg)
-    set(DOXYGEN_EXTRACT_ALL NO)
-    set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc)
-    doxygen_add_docs(gen_doc_express_ex
-            express_ex/include/ifs io_ex #syntaxhighlighter
-            ALL)
-endif ()

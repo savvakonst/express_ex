@@ -2,6 +2,7 @@
 IF EXIST out_0.dat  DEL /f out_0.dat 
 
 exho %0
+set Path=C:\Qt\5.12.8\msvc2017_64\bin;%Path%
 
 IF "%1"=="" (
     set PATH_TO_EXE=.
@@ -14,8 +15,8 @@ IF NOT "%1"=="" (
 )
 
 
-set EXPRESS_FILE = "sync_base.express"
-
+set EXPRESS_FILE="sync_base.express"
+ --db="sync_base.express" -i="single_arg_convolve.kex"  -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit
 ::for %%i in ("multi_arg.kex" "multi_arg_cos.kex" "single_arg_convolve.kex") do (
 for %%i in ("single_arg_convolve.kex") do (
     %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i  -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit %EX_ARG%

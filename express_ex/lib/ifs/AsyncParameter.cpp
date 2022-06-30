@@ -21,7 +21,7 @@ AsyncParameter::AsyncParameter(const std::string& name, const std::vector<ExData
     if (!interval_list_.empty()) {
         sizeof_data_type_ = sizeOfTy(interval_list_.front().type);
         type_ = interval_list_.front().type;
-        calc_min_max_ptr_ = g_calcMinMax_select(type_);
+        calc_min_max_ptr_ = gCalcMinMaxSelect(type_);
     }
 
     auto bgn = interval_list_.front().ti.time;
@@ -134,7 +134,6 @@ inline void AsyncParameter::openNewInterval() {
         error_info_ = file_name + "can't be opened.";
         print_IR_error(error_info_);
     }
-
 }
 
 uint64_t AsyncParameter::read(char* data_buffer_ptr, uint64_t points_to_read) {
@@ -145,7 +144,6 @@ uint64_t AsyncParameter::read(char* data_buffer_ptr, uint64_t points_to_read) {
     time_buffer_.resize(points_to_read * prm_time_size_);
 
     uint64_t base = points_to_read;
-    uint8_t* ptr = (uint8_t*)data_buffer_ptr;
 
     if (interval_list_.size() <= current_interval_index_) return 0;
 
@@ -242,7 +240,7 @@ ParameterIfs* AsyncParameter::retyping(PrmTypesEn target_ty, const std::string& 
 
     std::vector<ExDataInterval> data_interval;
     uint64_t offset = 0;
-    for (auto a : interval_list_) {
+    for (const auto& a : interval_list_) {
         auto interval = ExDataInterval(a.type);
         interval.setProperties(a, offset);
         offset += interval.size;

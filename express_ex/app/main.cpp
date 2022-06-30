@@ -1,14 +1,57 @@
 ﻿
+
+
 #include <clocale>
 
+#include "DatasetsStorage_ifs.h"
 #include "ifs/ExStream.h"
 #include "ifs/express_ex.h"
-#include "ifs/parameterIO.h"
 #include "llvm/Support/CommandLine.h"
-#include "llvm/Support/Path.h"
 
 
-int main(int argc, const char *argv[]) {
+class DLL_EXPORT ParametersDB {
+   public:
+    explicit ParametersDB(const std::vector<std::string>& file_name_list) { addParametersSet(file_name_list); }
+
+
+    ~ParametersDB() {
+        for (const auto& u : list_)
+            for (const auto& i : u.db_parameters) delete i;
+    }
+
+    bool addParametersSet(const std::vector<std::string>& file_name_list) {
+        auto ret = true;
+        for (auto& file_name : file_name_list) {
+            DbUnit unit;
+            unit.storage = openDatasetsStorage(file_name, true);
+
+            std::string name = llvm::sys::path::filename(file_name).str();
+            if (llvm::sys::path::extension(file_name) == ".h5") name = "__$Header";
+
+            ret &= readParametersList(unit.storage.get(), name, unit.db_parameters);
+            list_.push_back(std::move(unit));
+        }
+        return ret;
+    }
+
+    ParameterIfs* operator[](const std::string& name) {
+        for (const auto& u : list_)
+            for (const auto& i : u.db_parameters)
+                if (i->getName() == name) return i;
+        return nullptr;
+    }
+
+   private:
+    struct DbUnit {
+        std::unique_ptr<DatasetsStorage_ifs> storage;
+        std::vector<ParameterIfs*> db_parameters;
+    };
+
+    std::list<DbUnit> list_;
+};
+
+
+int main(int argc, const char* argv[]) {
     std::setlocale(LC_ALL, "en_US.UTF-8");
 
     enum ShowNames
@@ -65,7 +108,7 @@ int main(int argc, const char *argv[]) {
                          clEnumVal(tableSSR, "table (second stage) representation"),
                          clEnumVal(outputPrm, "output parameters"), clEnumVal(llvmIRcode, "llvm IR ")));
 
-    llvm::cl::SetVersionPrinter([](llvm::raw_ostream &OS) { OS << "version - 0.94_6\n"; });
+    llvm::cl::SetVersionPrinter([](llvm::raw_ostream& OS) { OS << "version - 0.94_6\n"; });
     llvm::cl::HideUnrelatedOptions(mainCategory);
     llvm::cl::ParseCommandLineOptions(argc, argv, "express jit");
 
@@ -74,6 +117,9 @@ int main(int argc, const char *argv[]) {
     // g_ansi_escape_codes = ansiEscapeCodes;
 
     ParametersDB parameter_db(inputDataBaseFile);
+
+    auto storage = openDatasetsStorage(llvm::sys::path::parent_path(inputDataBaseFile[0]).str(), true);
+
 
     ExStream ex_stream;
     ExErrorStream ex_error_stream;
@@ -105,7 +151,7 @@ int main(int argc, const char *argv[]) {
 
     auto parameter_name_list = express_ex.getParameterLinkNamesMap();
 
-    std::map<std::string, ParameterIfs *> parameters_map;
+    std::map<std::string, ParameterIfs*> parameters_map;
     for (auto i : parameter_name_list) {
         parameters_map[i.first] = parameter_db[i.second];
     }
@@ -122,12 +168,16 @@ int main(int argc, const char *argv[]) {
     std::string extension_less_output_file_path = small_string.str().str();
     std::string output_extension = llvm::sys::path::extension(outputFile).str();
 
+
+
+    auto output_storage = openDatasetsStorage(llvm::sys::path::parent_path(outputFile).str(), true);
+
     int index = 0;
     if (list.size() == 1) {
-        list.front()->setName(extension_less_output_file_path + output_extension);
+        list.front()->setName(output_storage.get(), extension_less_output_file_path, output_extension);
     } else
-        for (auto &i : express_ex.getOutputParameterVector()) {
-            i->setName(outputFile + std::to_string(index++) + output_extension);
+        for (auto& i : express_ex.getOutputParameterVector()) {
+            i->setName(output_storage.get(), outputFile + std::to_string(index++), output_extension);
         }
 
 
@@ -137,7 +187,7 @@ int main(int argc, const char *argv[]) {
     if (runJit) express_ex.run();
 
 
-    llvm::outs() << "complete";
+    ex_stream << "complete";
 
 
     return 0;

@@ -74,6 +74,12 @@ express_ex/test/sync/*.base
 old/
 /external_projects/antlr_4/
 
+doc/source/api
+doc/source/api
+
+doc/xml
+doc/xml/
+doc/xml/**
 doc/html
 doc/html/
 doc/html/**

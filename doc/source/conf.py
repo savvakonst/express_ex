@@ -33,8 +33,13 @@ author = 'SVK'
 extensions = ["breathe", "sphinx.ext.graphviz"]
 
 # Breathe Configuration
-breathe_projects = {"express-ex": "./xml/"}
+breathe_projects = {"express-ex": "../xml/"}
 breathe_default_project = "express-ex"
+
+# breathe_projects_source = {
+#    "auto": ("../examples/specific", ["auto_function.h", "auto_class.h"])
+# }
+
 graphviz_output_format = "svg"
 
 # graphviz_dot = "C:/Program Files/Graphviz/bin/dot.bat"
@@ -55,7 +60,7 @@ highlight_language = 'cpp'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'ru'
+language = 'en'
 
 
 # somewhere in `conf.py`, *BERORE* declaring `exhale_args`
@@ -133,7 +138,10 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'CMakeLists.txt']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+# html_theme = 'alabaster'
+# html_theme = 'classic'
+
+html_theme = 'sphinxdoc'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

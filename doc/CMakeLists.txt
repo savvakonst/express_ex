@@ -27,14 +27,13 @@ if (Doxygen_FOUND)
             "Failed to find sphinx-build executable"
             SPHINX_EXECUTABLE)
 
-    set(SPHINX_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/build)
-    set(SPHINX_BUILD ${CMAKE_CURRENT_BINARY_DIR}/doc/sphinx)
+    set(SPHINX_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
+    set(SPHINX_BUILD ${CMAKE_CURRENT_SOURCE_DIR}/build)
 
 
     add_custom_target(Sphinx ALL
             COMMAND
             ${SPHINX_EXECUTABLE} -b html
-
             -Dbreathe_projects.exrt=${DOXYGEN_OUTPUT_DIRECTORY}/xml
             ${SPHINX_SOURCE} ${SPHINX_BUILD}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

@@ -40,6 +40,7 @@ breathe_default_project = "express-ex"
 #    "auto": ("../examples/specific", ["auto_function.h", "auto_class.h"])
 # }
 
+
 graphviz_output_format = "svg"
 
 # graphviz_dot = "C:/Program Files/Graphviz/bin/dot.bat"
@@ -61,72 +62,6 @@ highlight_language = 'cpp'
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
 language = 'en'
-
-
-# somewhere in `conf.py`, *BERORE* declaring `exhale_args`
-def specificationsForKind(kind):
-    '''
-    For a given input ``kind``, return the list of reStructuredText specifications
-    for the associated Breathe directive.
-    '''
-    # Change the defaults for .. doxygenclass:: and .. doxygenstruct::
-    if kind == "class" or kind == "struct":
-        return [
-            ":members:",
-            ":protected-members:",
-            ":private-members:",
-            ":allow-dot-graphs:",
-            ":undoc-members:"
-        ]
-    # Change the defaults for .. doxygenenum::
-    elif kind == "enum":
-        return [":no-link:"]
-    # An empty list signals to Exhale to use the defaults
-    else:
-        return []
-
-
-"""
-    "exhaleDoxygenStdin": textwrap.dedent('''
-        EXTRACT_ALL = YES
-        SOURCE_BROWSER = YES
-        EXTRACT_STATIC = YES
-        OPTIMIZE_OUTPUT_FOR_C  = YES
-        HIDE_SCOPE_NAMES = YES
-        QUIET = YES
-        INPUT = ../include ../src
-        FILE_PATTERNS = *.c *.h
-        EXAMPLE_RECURSIVE = YES
-        GENERATE_TREEVIEW = YES
-    '''),
-"""
-
-# Setup the exhale extension
-exhale_args = {
-    # These arguments are required
-    "containmentFolder": "./api",
-    "rootFileName": "library_root.rst",
-    "doxygenStripFromPath": "..",
-    # Heavily encouraged optional argument (see docs)
-    "rootFileTitle": u"API библиотеки",
-
-    # Suggested optional arguments
-    "createTreeView": True,
-    # TIP: if using the sphinx-bootstrap-theme, you need
-    # "treeViewIsBootstrap": True,
-    "exhaleExecutesDoxygen": True,
-    "exhaleDoxygenStdin": "INPUT = ../../io_ex",
-    "customSpecificationsMapping": utils.makeCustomSpecificationsMapping(
-        specificationsForKind
-    )
-
-}
-
-# Tell sphinx what the primary language being documented is.
-# primary_domain = 'cpp'
-
-# Tell sphinx what the pygments highlight language should be.
-# highlight_language = 'cpp'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

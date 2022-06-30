@@ -11,8 +11,8 @@ if (Doxygen_FOUND)
     set(DOXYGEN_GENERATE_XML YES)
     set(DOXYGEN_EXTRACT_ALL NO)
     set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-    doxygen_add_docs(gen_doc_express_ex
-            express_ex/include/ifs io_ex #syntaxhighlighter
+    doxygen_add_docs(gen_doxygen_doc
+            ../express_ex/include/ifs ../io_ex #syntaxhighlighter
             ALL)
 
 
@@ -31,7 +31,7 @@ if (Doxygen_FOUND)
     set(SPHINX_BUILD ${CMAKE_CURRENT_SOURCE_DIR}/build)
 
 
-    add_custom_target(Sphinx ALL
+    add_custom_target(gen_sphinx_doc ALL
             COMMAND
             ${SPHINX_EXECUTABLE} -b html
             -Dbreathe_projects.exrt=${DOXYGEN_OUTPUT_DIRECTORY}/xml
@@ -39,4 +39,5 @@ if (Doxygen_FOUND)
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             COMMENT "Generating documentation with Sphinx")
 
+    add_dependencies(gen_sphinx_doc gen_doxygen_doc)
 endif ()

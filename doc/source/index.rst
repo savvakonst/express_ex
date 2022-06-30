@@ -6,6 +6,16 @@ Welcome to express-ex's documentation!
    :caption: Contents:
 
 
+.. doxygenclass:: ParameterIfs
+   :members:
+
+
+.. doxygenstruct:: ExDataInterval
+   :members:
+
+
+.. doxygenclass:: Express_ex
+   :members:
 
 
 

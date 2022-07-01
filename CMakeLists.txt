@@ -24,10 +24,11 @@ include(ExpressUtils.cmake)
 get_directory_property(hasParent PARENT_DIRECTORY)
 if (NOT hasParent)
     set(VENV_PATH bin)
-
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${VENV_PATH})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${VENV_PATH})
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${VENV_PATH})
+
+
 endif ()
 
 add_subdirectory(io_ex)

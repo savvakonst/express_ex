@@ -18,26 +18,27 @@ if (Doxygen_FOUND)
 
     find_program(SPHINX_EXECUTABLE
             NAMES sphinx-build
-            DOC "Path to sphinx-build executable")
+            DOC "Path to sphinx-build executable"
+            NO_CACHE)
 
     include(FindPackageHandleStandardArgs)
-
-    #Handle standard arguments to find_package like REQUIRED and QUIET
-    find_package_handle_standard_args(Sphinx
+    find_package_handle_standard_args(gen_sphinx_doc
             "Failed to find sphinx-build executable"
             SPHINX_EXECUTABLE)
 
-    set(SPHINX_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
-    set(SPHINX_BUILD ${CMAKE_CURRENT_SOURCE_DIR}/build)
+    if (gen_sphinx_doc_FOUND)
 
+        set(SPHINX_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
+        set(SPHINX_BUILD ${CMAKE_CURRENT_SOURCE_DIR}/build)
 
-    add_custom_target(gen_sphinx_doc ALL
-            COMMAND
-            ${SPHINX_EXECUTABLE} -b html
-            -Dbreathe_projects.exrt=${DOXYGEN_OUTPUT_DIRECTORY}/xml
-            ${SPHINX_SOURCE} ${SPHINX_BUILD}
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-            COMMENT "Generating documentation with Sphinx")
+        add_custom_target(gen_sphinx_doc ALL
+                COMMAND
+                ${SPHINX_EXECUTABLE} -b html
+                -Dbreathe_projects.exrt=${DOXYGEN_OUTPUT_DIRECTORY}/xml
+                ${SPHINX_SOURCE} ${SPHINX_BUILD}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                COMMENT "Generating documentation with Sphinx")
 
-    add_dependencies(gen_sphinx_doc gen_doxygen_doc)
+        add_dependencies(gen_sphinx_doc gen_doxygen_doc)
+    endif ()
 endif ()

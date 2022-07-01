@@ -141,25 +141,25 @@ int main(int argc, const char* argv[]) {
     express_ex.reduced_fsr_ = showBits.isSet(redusedFSR);
     express_ex.output_prm_ = showBits.isSet(outputPrm);
     express_ex.llvm_ir_code_ = showBits.isSet(llvmIRcode);
-    express_ex.optimization_enable_ = optimizationEnable;
 
 
-    std::map<std::string, bool> modules_map;
-    for (auto i : moduleFiles) modules_map[i] = true;
+
+    std::list<std::pair<std::string, bool /*is_file_name*/>> modules_map;
+    for (const auto& i : moduleFiles) modules_map.push_back({i, true});
 
     if (!express_ex.parseText(inputFile, true, modules_map)) return 1;
 
     auto parameter_name_list = express_ex.getParameterLinkNamesMap();
 
     std::map<std::string, ParameterIfs*> parameters_map;
-    for (auto i : parameter_name_list) {
+    for (const auto& i : parameter_name_list) {
         parameters_map[i.first] = parameter_db[i.second];
     }
 
 
     if (!express_ex.setParameters(parameters_map)) return 1;
 
-    auto list = express_ex.getOutputParameterVector();
+    auto list = express_ex.getOutputParameters();
 
 
 
@@ -176,13 +176,13 @@ int main(int argc, const char* argv[]) {
     if (list.size() == 1) {
         list.front()->setName(output_storage.get(), extension_less_output_file_path, output_extension);
     } else
-        for (auto& i : express_ex.getOutputParameterVector()) {
+        for (auto& i : express_ex.getOutputParameters()) {
             i->setName(output_storage.get(), outputFile + std::to_string(index++), output_extension);
         }
 
 
     jit_init();
-    if (!express_ex.genJit()) return 1;
+    if (!express_ex.genJit(optimizationEnable)) return 1;
 
     if (runJit) express_ex.run();
 

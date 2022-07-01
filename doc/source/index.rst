@@ -1,26 +1,47 @@
-Welcome to express-ex's documentation!
+express-ex's documentation
 ======================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+    :maxdepth: 2
+    :caption: Contents:
+    io_ex
 
 
-.. doxygenclass:: ParameterIfs
-   :members:
+main part of api:
+####################
+
+.. doxygenclass:: Express_ex
+    :members:
+    :protected-members:
+    :private-members:
+    :allow-dot-graphs:
+
+
+components:
+####################
 
 
 .. doxygenstruct:: ExDataInterval
-   :members:
+    :members:
+    :protected-members:
+    :private-members:
+    :allow-dot-graphs:
 
 
-.. doxygenclass:: Express_ex
-   :members:
+.. doxygenclass:: ParameterIfs
+    :members:
+    :protected-members:
+    :private-members:
+    :allow-dot-graphs:
 
 
 
-.. doxygenclass:: DatasetsStorage_ifs
-   :members:
+.. doxygenclass:: ExStreamIfs
+    :members:
+    :protected-members:
+    :private-members:
+    :allow-dot-graphs:
+
 
 
 Indices and tables

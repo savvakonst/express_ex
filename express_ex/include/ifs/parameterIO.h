@@ -16,10 +16,10 @@ DLL_EXPORT ParameterIfs* intersection(ParameterIfs* a, ParameterIfs* b, PrmTypes
 DLL_EXPORT ParameterIfs* intersection(std::vector<ParameterIfs*> arg_list, PrmTypesEn target_ty,
                                       const std::string& name);
 DLL_EXPORT ParameterIfs* retyping(ParameterIfs* a, PrmTypesEn target_ty, const std::string& name);
-DLL_EXPORT ParameterIfs* newParameter(const std::string& name, const std::vector<DataInterval>& interval_list,
+DLL_EXPORT ParameterIfs* newParameter(const std::string& name, const std::vector<ExDataInterval>& interval_list,
                                       bool save_fnames);
-DLL_EXPORT ParameterIfs* newParameter(const std::string& name, const TimeInterval& time_interval,
-                                      const std::vector<DataInterval>& interval_list, bool save_fnames = true);
+DLL_EXPORT ParameterIfs* newParameter(const std::string& name, const ExTimeInterval& time_interval,
+                                      const std::vector<ExDataInterval>& interval_list, bool save_fnames = true);
 
 calcMinMaxTy gCalcMinMaxSelect(PrmTypesEn arg);
 

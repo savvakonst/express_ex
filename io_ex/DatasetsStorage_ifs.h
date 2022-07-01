@@ -6,7 +6,9 @@
 #include <string>
 
 #ifdef _WIN32
-#    ifdef DS_STORAGE_TO_EXPORT
+#    ifdef DS_STORAGE_STATIC
+#        define DS_STORAGE_EXPORTS
+#    elif DS_STORAGE_TO_EXPORT
 #        define DS_STORAGE_EXPORTS __declspec(dllexport)
 #    else
 #        define DS_STORAGE_EXPORTS __declspec(dllimport)

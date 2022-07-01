@@ -38,7 +38,7 @@ add_library(syntaxhighlighter SHARED
 
 
 target_compile_definitions(syntaxhighlighter PRIVATE QUILIB_LIBRARY)
-target_include_directories(syntaxhighlighter PRIVATE include)
+target_include_directories(syntaxhighlighter PUBLIC include)
 #Qt5Core Qt5Widgets Qt5Gui
 target_link_libraries(syntaxhighlighter
         PRIVATE antlr4_shared

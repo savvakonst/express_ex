@@ -213,11 +213,11 @@ class DLL_EXPORT ParameterIfs {
    public:
     virtual ~ParameterIfs() = default;
 
-    const std::string& getName() const { return name_; }
+    [[nodiscard]] const std::string& getName() const { return name_; }
 
-    ExTimeInterval getMainTimeInterval() const { return time_interval_; }
+    [[nodiscard]] ExTimeInterval getMainTimeInterval() const { return time_interval_; }
 
-    const std::vector<ExDataInterval>& getDataIntervalList() const { return interval_list_; }
+    [[nodiscard]] const std::vector<ExDataInterval>& getDataIntervalList() const { return interval_list_; }
 
     virtual PrmTypesEn getPrmType() {
         if (!interval_list_.empty()) type_ = interval_list_[0].type;

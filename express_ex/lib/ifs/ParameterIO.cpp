@@ -4,25 +4,19 @@
 #include <type_traits>
 
 #include "common/common.h"
-#include "common/undefWarningIgnore.h"
 #include "ifs/AsyncParameter.h"
-#include "ifs/ParameterIfs.h"
 #include "ifs/SyncParameter.h"
 #include "llvm/Support/JSON.h"
-#include "parser/defWarningIgnore.h"
 
-// using namespace llvm;
 
-bool fromJSON(const llvm::json::Value &data_fragment, ExDataInterval &data_interval);
 
 ExDataInterval getDataInterval(llvm::json::Value &data_fragment, llvm::json::Array &data_files_list);
 
-calcMinMaxTy g_calcMinMax_select(PrmTypesEn arg) {
-    int sub_type = (((int)arg) >> 4);
+calcMinMaxTy gCalcMinMaxSelect(PrmTypesEn arg) {
     int code = 0xFF & ((int)arg);
 
-#define CALC_CASE_OP(T, SUB_T)       \
-    case (sizeof(T) | (SUB_T << 4)): \
+#define CALC_CASE_OP(T, SUB_T)         \
+    case (sizeof(T) | ((SUB_T) << 4)): \
         return calcMinMax<T>
 
     switch (code) {
@@ -35,6 +29,7 @@ calcMinMaxTy g_calcMinMax_select(PrmTypesEn arg) {
     default:
         return nullptr;
     };
+#undef CALC_CASE_OP
 }
 
 TypeEn PRMType2JITType(PrmTypesEn arg) {
@@ -182,12 +177,20 @@ ExDataInterval getDataInterval(llvm::json::Value &data_fragment, llvm::json::Arr
     return data_interval;
 }
 
-bool readParametersList(const std::string &database_f_name, std::vector<ParameterIfs *> &parameter_list) {
-    std::ifstream ifs(database_f_name);
-    if (ifs.bad()) return false;
-    std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+bool readParametersList(DatasetsStorage_ifs *storage, const std::string &express_f_name,
+                        std::vector<ParameterIfs *> &parameter_list) {
+    std::ifstream ifs(express_f_name);
+    auto id = storage->openDataset(express_f_name.c_str());
+    if (id < 0) return false;
 
-    auto e = llvm::json::parse(content);
+    auto size = storage->getDatasetSize(id);
+
+    std::unique_ptr<char[]> content = std::make_unique<char[]>(size);
+
+    storage->readFromDataset(id, content.get(), size);
+
+
+    auto e = llvm::json::parse(llvm::StringRef(content.get(), size));
 
     // llvm::outs()<<e.takeError();
     if (auto E = e.takeError()) {
@@ -208,8 +211,12 @@ bool readParametersList(const std::string &database_f_name, std::vector<Paramete
             llvm::json::Array &data_fragments_list = *(p_object["Data.Fragments.List"].getAsArray());
 
             std::vector<ExDataInterval> interval_list;
-            for (auto k : data_fragments_list) interval_list.push_back(getDataInterval(k, data_files_list));
 
+            for (auto k : data_fragments_list) {
+                auto interval = getDataInterval(k, data_files_list);
+                interval.ds = storage;
+                interval_list.push_back(std::move(interval));
+            }
             llvm::json::Path::Root root("bare");
             llvm::json::ObjectMapper O(i, root);
 
@@ -235,12 +242,6 @@ bool readParametersList(const std::string &database_f_name, std::vector<Paramete
         }
     }
     return true;
-}
-
-std::vector<ParameterIfs *> readParametersList(const std::string &databaseFName) {
-    std::vector<ParameterIfs *> parameter_info_list;
-    readParametersList(databaseFName, parameter_info_list);
-    return parameter_info_list;
 }
 
 ParameterIfs *retyping(ParameterIfs *a, PrmTypesEn target_ty, const std::string &name) {

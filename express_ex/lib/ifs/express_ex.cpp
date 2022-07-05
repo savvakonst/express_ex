@@ -20,7 +20,7 @@ Express_ex::~Express_ex() {
 }
 
 bool Express_ex::parseText(const std::string &str, bool is_file_name,
-                           std::map<std::string, bool /*is_file_name*/> lib_str_map) {
+                           std::list<std::pair<std::string, bool /*is_file_name*/>> lib_str_map) {
     //
     bool status = false;
 
@@ -53,10 +53,21 @@ bool Express_ex::parseText(const std::string &str, bool is_file_name,
     return status;
 }
 
+std::map<std::string, std::string> Express_ex::getParameterLinkNamesMap(bool hide_unused) const {
+    if (body_template_) return body_template_->getParameterLinkNames(hide_unused);
+    else return {};
+}
+
+
 bool Express_ex::setParameters(const std::map<std::string, ParameterIfs *> &parameters_map) {
     bool status = false;
 
     stack<Value *> args;
+
+    for (auto i : parameters_map)
+        if (!i.second->checkDataResource(true, error_stream_)) return false;
+
+
     for (auto p : parameters_map)
         if (p.second != nullptr) args.push(new Line(p.first, p.second));
         else {
@@ -86,8 +97,8 @@ bool Express_ex::setParameters(const std::map<std::string, ParameterIfs *> &para
 
         body_->genTable(&context);
 
-        int index = 0;
-        for (auto i : body_->getOutputParameterList()) i->setName("out_" + std::to_string(index++));
+        // int index = 0;
+        // for (auto i : body_->getOutputParameterList()) i->setName(nullptr, "out_" + std::to_string(index++));
 
         if (info_stream_) {
             if (output_prm_) {
@@ -95,36 +106,43 @@ bool Express_ex::setParameters(const std::map<std::string, ParameterIfs *> &para
                 for (auto i : args) {
                     *info_stream_ << Delimiter::GREEN << *(i->getParameter());
                 }
-                *info_stream_ << Delimiter::GREEN << "output_prm:";
-                for (auto i : body_->getOutputParameterList()) {
-                    *info_stream_ << Delimiter::GREEN << *i;
-                }
             }
             if (table_ssr_) *info_stream_ << Delimiter::GREEN << table_->print();
         }
 
         status = true;
+
+
+
     } catch (size_t) {
         // TODO
         // error_str_ = g_error_str;
     }
 
+
     return status;
 }
 
-std::map<std::string, std::string> Express_ex::getParameterLinkNamesMap(bool hide_unused) {
-    if (body_template_) return body_template_->getParameterLinkNames(hide_unused);
-    else
-        return {};
-}
 
-std::vector<ParameterIfs *> Express_ex::getOutputParameterVector() {
+
+std::list<ParameterIfs *> Express_ex::getOutputParameters() const {
     if (body_) return body_->getOutputParameterList();
-    else
-        return {};
+    else return {};
 }
 
 bool Express_ex::genJit(bool optimization_enable) {
+    for (auto i : body_->getOutputParameterList())
+        if (!i->checkDataResource(false, error_stream_)) return false;
+
+    if (info_stream_) {
+        if (output_prm_) {
+            *info_stream_ << Delimiter::GREEN << "output_prm:";
+            for (auto i : body_->getOutputParameterList()) {
+                *info_stream_ << Delimiter::GREEN << *i;
+            }
+        }
+    }
+
     bool status = false;
     try {
         table_->calculateBufferLength();

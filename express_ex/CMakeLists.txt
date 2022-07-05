@@ -292,34 +292,5 @@ target_compile_definitions(express_ex PRIVATE
         DLL_express_ex_EXPORT
         )
 
-
-message("LLVM_LIBS__ ${LLVM_LIBS__}")
-message("LLVM_DEFINITIONS_LIST__ ${LLVM_DEFINITIONS_LIST__}")
-message("LLVM_BUILD_TYPE ${CMAKE_BUILD_TYPE}")
-message("CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
-message("GENERATOR_IS_MULTI_CONFIG ${IS_MULTI_CONFIG}")
-message("CMAKE_CONFIGURATION_TYPES ${CMAKE_CONFIGURATION_TYPES}")
-message("llvm_prj_BINARY_DIR ${llvm_prj_BINARY_DIR}")
-
-
-add_executable(express_ex_app
-        app/main.cpp
-        )
-
-
-target_include_directories(express_ex_app
-        PRIVATE ${LLVM_INCLUDE_DIRS}
-        )
-
-
-llvm_map_components_to_libnames(LLVM_LIBS_FOR_APP_
-        Support
-        )
-
-target_link_libraries(express_ex_app PRIVATE
-        express_ex
-        ${LLVM_LIBS_FOR_APP_}
-        )
-
-
+add_subdirectory(app)
 #set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "express_ex") ???

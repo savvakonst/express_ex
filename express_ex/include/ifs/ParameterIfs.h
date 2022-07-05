@@ -76,41 +76,15 @@ inline ex_size_t sizeOfTimeTy(PrmTypesEn arg) {
 DLL_EXPORT std::string toString(PrmTypesEn arg);
 
 
-struct TimeInterval {
-    double bgn = 0.0;
-    double end = 0.0;
-};
-
-
-
-struct DataInterval {
-    union {
-        int64_t int_type_representation;
-        PrmTypesEn type;
-    };
-    int64_t offs;
-    int64_t size;
-    double frequency;
-    double val_max;
-    double val_min;
-    TimeInterval time_interval;
-    std::string file_name;
-    bool local;
-    DatasetsStorage_ifs* ds = nullptr;
-};
-
-
 
 inline ex_time_t timeFromDouble(double arg) { return ex_time_t(arg * (1ll << 10)) << 22; }
 
 struct ExTimeInterval {
-    // ExTimeInterval() : time(0), duration(0) {}
-
     [[maybe_unused]] ExTimeInterval(ex_time_t begin, double duration) : time(begin), duration(duration) {}
     [[maybe_unused]] ExTimeInterval(double begin, double duration) : time(timeFromDouble(begin)), duration(duration) {}
 
 
-    //! Do not use this function in critical places? mabe for printing.
+    //! Do not use this function in critical places. maybe for printing.
     [[maybe_unused]] ExTimeInterval(ex_time_t begin, ex_time_t duration)
         : time(begin), duration(double(begin) / double(1ll << 32)) {}
 
@@ -205,11 +179,6 @@ struct ExDataInterval {
 
 
 
-// TypeEn      PRMType2JITType(PrmTypesEn arg);
-// PrmTypesEn  JITType2PRMType(TypeEn arg);
-
-
-
 inline std::stringstream& stream(std::stringstream& s, const ExTimeInterval& time_interval, const std::string& offset) {
     s << offset << "ti.time_int: " << time_interval.time_int << "\n";
     s << offset << "ti.time_frac " << std::setfill('0') << std::setw(5) << std::right << "0x" << std::hex
@@ -234,11 +203,11 @@ inline std::stringstream& stream(std::stringstream& OS, const ExDataInterval& di
 
 inline bool isEmpty(ExTimeInterval i) { return i.duration <= 0; }
 
-
-
 typedef void (*calcMinMaxTy)(char* carg, int64_t Number, double& dmax, double& dmin, bool init);
 
 class BareChunk;
+
+
 
 class DLL_EXPORT ParameterIfs {
    public:
@@ -272,16 +241,22 @@ class DLL_EXPORT ParameterIfs {
     virtual ParameterIfs* retyping(PrmTypesEn target_ty = PrmTypesEn::PRM_TYPE_UNKNOWN,
                                    const std::string& name = "") = 0;
 
-    virtual void setName(const std::string& name, const std::string& extension = ".dat") {
+
+    /**
+     *
+     * @param datasets_storage is used to set 'ds' field of all intervals wit
+     * @param name it determine name of ParameterIfs instance and
+     * is used to fill 'file_name' field of all intervals
+     * @param extension extension which will be added to name to fill 'file_name' field of all intervals
+     */
+    void setName(DatasetsStorage_ifs* datasets_storage, const std::string& name,
+                 const std::string& extension = ".dat") {
         name_ = name;
-
-        if ((interval_list_.size() == 1)) {
-            for (auto& i : interval_list_) i.file_name = name + ".dat";
-            return;
-        }
+        for (auto& i : interval_list_) {
+            i.ds = datasets_storage;
+            i.file_name = name + ".dat";
+        };
     }
-
-
 
     void addInterval(const ExDataInterval& interval) { interval_list_.push_back(interval); }
 
@@ -299,33 +274,56 @@ class DLL_EXPORT ParameterIfs {
         return OS;
     }
 
-    friend class ParametersDB;
+
+    /**
+     *
+     * @param input  it determine what type of check will be bone, if
+     * instance of ParameterIfs is input interface use true otherwise (output interface use false)
+     * @param err_stream you can temporary change standard output stream.
+     * if err_stream is nullptr it will try tu use their own output stream if it exists
+     * @return true if check successful
+     */
+    bool checkDataResource(bool input, ExStreamIfs* err_stream = nullptr) {
+        bool res = true;
+        for (const auto& i : interval_list_)
+            if (i.ds) {
+                if (i.file_name.empty()) {
+                    res = false;
+                    setErrorMessage(std::string(input ? "input" : "output") + " dataset name is empty", err_stream);
+                } else if (input && !i.ds->datasetExists(i.file_name.c_str())) {
+                    res = false;
+                    setErrorMessage("\'" + i.file_name + "\" data source doesn't exists", err_stream);
+                }
+            } else {
+                res = false;
+                setErrorMessage("pointer for datasets storage doesn't exists. Dataset " + i.file_name, err_stream);
+            }
+        return res;
+    }
+
+
 
    protected:
+    void setErrorMessage(const std::string& str, ExStreamIfs* err_steam) {
+        err_steam = err_steam ? err_steam : err_steam_;
+        if (err_steam) {
+            *err_steam << ExColors::RED << "parameter error: " << ExColors::RESET << str << "\n";
+            err_steam->finalize();
+        }
+    }
+
+    ExStreamIfs* err_steam_ = nullptr;
+
     calcMinMaxTy calc_min_max_ptr_ = nullptr;
 
-
-
     std::string name_;
-
-
-    ExTimeInterval time_interval_ = {0.0, 0.0};
-
-
+    ExTimeInterval time_interval_ = {0., 0.};
 
     std::vector<ExDataInterval> interval_list_;
-
-    const double additional_time_ =
-        0.0009765625;  // TODO this is very bad idea, but it will be here  until nikolay fixes
-                       //  the problem with interval boundaries
     PrmTypesEn type_ = PrmTypesEn::PRM_TYPE_UNKNOWN;
-
-    int64_t current_interval_index_ = 0;
 
 
     int64_t sizeof_data_type_ = 0;
-
-
 
     std::string error_info_;
 };

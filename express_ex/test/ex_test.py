@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import argparse
 from ex_lib import *
+import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 
 parser = argparse.ArgumentParser()
 
-#parser.add_argument('--executable', help='path to express_ex_app', required=True, type=str)
+# parser.add_argument('--executable', help='path to express_ex_app', required=True, type=str)
 
 parser.add_argument('--db', help='database path', required=True, type=str)
 parser.add_argument('-i', help='input *.kex file',
@@ -14,13 +15,8 @@ parser.add_argument(
     '--otype', help='output type file.\npossible values: f8,f4,..,f1,i8,..,u8,.. ', default="f8", type=str)
 args = parser.parse_args()
 
-
-
-
 loadDataBase(args.db)
 py_data = execFile(args.i)
-
-
 
 express_data = param("out", np.dtype([('time', "f4"), ('data', args.otype)])
 if isAsync() else np.dtype([('data', args.otype)]))

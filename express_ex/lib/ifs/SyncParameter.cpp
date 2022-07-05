@@ -21,7 +21,7 @@ SyncParameter::SyncParameter(std::string name, const std::vector<ExDataInterval>
     if (!interval_list_.empty()) {
         sizeof_data_type_ = sizeOfTy(interval_list_.front().type);
         type_ = interval_list_.front().type;
-        calc_min_max_ptr_ = g_calcMinMax_select(type_);
+        calc_min_max_ptr_ = gCalcMinMaxSelect(type_);
     }
 
     auto bgn = interval_list_.front().ti.time;
@@ -73,14 +73,14 @@ SyncParameter::~SyncParameter() {
 
 
 bool SyncParameter::open(bool open_to_write) {
-    if (opened_ ) return false;
+    if (opened_) return false;
     opened_ = true;
 
     return opened_;
 }
 
 inline bool SyncParameter::close() {
-    if (!opened_ ) return false;
+    if (!opened_) return false;
 
     opened_ = false;
     return true;

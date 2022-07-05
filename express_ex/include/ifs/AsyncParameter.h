@@ -117,7 +117,7 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
         void resetPos() { current_ptr_ = base_ptr_; }
     };
 
-
+    int64_t current_interval_index_ = 0;
 
     IntermediateBuffer intermediate_buffer_ = IntermediateBuffer();
     IntermediateBuffer time_buffer_ = IntermediateBuffer();

@@ -40,12 +40,6 @@ class DLL_EXPORT SyncParameter : public ParameterIfs {
    protected:
     bool calcExtendedInfo();
 
-    const ExTimeInterval& getTimeInterval(int64_t interval_index) const {
-        return interval_list_[(size_t)interval_index].ti;
-    }
-
-    const ExDataInterval& getCurrentInterval() { return interval_list_[(size_t)current_interval_index_]; }
-
 
 
     BareChunk* chunk_ = nullptr;

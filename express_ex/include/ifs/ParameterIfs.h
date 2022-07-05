@@ -86,7 +86,7 @@ struct ExTimeInterval {
 
     //! Do not use this function in critical places. maybe for printing.
     [[maybe_unused]] ExTimeInterval(ex_time_t begin, ex_time_t duration)
-        : time(begin), duration(double(begin) / double(1ll << 32)) {}
+        : time(begin), duration(double(duration) / double(1ll << 32)) {}
 
 
     ExTimeInterval& operator=(const ExTimeInterval& i) {

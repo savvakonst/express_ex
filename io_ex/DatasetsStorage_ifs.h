@@ -3,10 +3,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
-<<<<<<< HEAD
-=======
+
 #include <string>
->>>>>>> 2d5c0bf93e6fda9215fba73379d67125be609691
 
 #ifdef _WIN32
 #    ifdef DS_STORAGE_STATIC

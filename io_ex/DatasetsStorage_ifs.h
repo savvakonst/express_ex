@@ -1,8 +1,8 @@
-#ifndef DATASETSSTORAGE_IFS
+﻿#ifndef DATASETSSTORAGE_IFS
 #define DATASETSSTORAGE_IFS
 #include <cstddef>
 #include <cstdint>
-
+#include <memory>
 
 #ifdef _WIN32
 #    ifdef DS_STORAGE_TO_EXPORT

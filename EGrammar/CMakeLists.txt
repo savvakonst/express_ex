@@ -28,6 +28,7 @@ if (NOT antlr4-runtime_FOUND)
     set(WITH_STATIC_CRT OFF)
     set(antlr_4_SOURCE_SUBDIR runtime/Cpp)
     set(EXTERNAL_ANTLR_4_SOURCE_DIR ${EXTERNAL_PROJECTS_DIRECTORY__}/antlr_4)
+    message("show EXTERNAL_PROJECTS_DIRECTORY__ ${EXTERNAL_PROJECTS_DIRECTORY__}")
 
     if (NOT EXISTS ${EXTERNAL_ANTLR_4_SOURCE_DIR}/${antlr_4_SOURCE_SUBDIR}/CMakeLists.txt)
         set(ANTLR_4_GIT_REPOSITORY https://github.com/antlr/antlr4.git)

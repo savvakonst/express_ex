@@ -17,19 +17,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 
-if (NOT TARGET CONAN_PKG::hdf5)
-    message("TARGET CONAN_PKG::hdf5")
-    set(DS_HDF5_IO_INTERFACE_SOURCES
-            Hdf5IoInterface.cpp
-            Hdf5IoInterface.h
-            )
-
-    set(DS_HDF5_C_DEFINITIONS HDF5_IO_INTERFACE_ENABLE)
-    set(DS_HDF5_C_LIBRARIES CONAN_PKG::hdf5)
-
-
-
-elseif (HDF5_FOUND)
+if (HDF5_FOUND)
     set(DS_HDF5_IO_INTERFACE_SOURCES
             Hdf5IoInterface.cpp
             Hdf5IoInterface.h
@@ -41,9 +29,20 @@ elseif (HDF5_FOUND)
     message("HDF5_C_LIBRARIES ${HDF5_C_LIBRARIES}")
 
     add_custom_target(deploy_hdf_5
-            ${CMAKE_COMMAND} -E copy_if_different  "$<TARGET_FILE_DIR:${HDF5_C_LIBRARIES}>/$<TARGET_FILE_NAME:${HDF5_C_LIBRARIES}>"  "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_FILE_NAME:${HDF5_C_LIBRARIES}>"
+            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE_DIR:${HDF5_C_LIBRARIES}>/$<TARGET_FILE_NAME:${HDF5_C_LIBRARIES}>" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_FILE_NAME:${HDF5_C_LIBRARIES}>"
             USES_TERMINAL
             )
+
+
+elseif (TARGET CONAN_PKG::hdf5)
+    #message("TARGET CONAN_PKG::hdf5")
+    set(DS_HDF5_IO_INTERFACE_SOURCES
+            Hdf5IoInterface.cpp
+            Hdf5IoInterface.h
+            )
+
+    set(DS_HDF5_C_DEFINITIONS HDF5_IO_INTERFACE_ENABLE)
+    set(DS_HDF5_C_LIBRARIES CONAN_PKG::hdf5)
 
 endif ()
 
@@ -58,7 +57,7 @@ add_library(io_ex SHARED
         )
 
 
-get_target_property(TEMP_VAR io_ex INTERFACE_LINK_LIBRARIES )
+get_target_property(TEMP_VAR io_ex INTERFACE_LINK_LIBRARIES)
 #get_target_property(TEMP_VAR CONAN_PKG::hdf5 IMPORTED_LOCATION )
 message("IMPORTED_LOCATION_DEBUG ${TEMP_VAR}")
 
@@ -68,6 +67,6 @@ target_link_libraries(io_ex PRIVATE Qt5::Widgets ${DS_HDF5_C_LIBRARIES})
 
 target_compile_definitions(io_ex PRIVATE DS_STORAGE_TO_EXPORT ${DS_HDF5_C_DEFINITIONS})
 
-if ( TARGET deploy_hdf_5)
+if (TARGET deploy_hdf_5)
     add_dependencies(io_ex deploy_hdf_5)
-endif()
+endif ()

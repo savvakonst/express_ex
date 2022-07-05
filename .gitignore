@@ -21,6 +21,8 @@ Testing/
 *.psro.user
 *.prso.user.*
 
+CMakeLists.txt.user
+
 object_script.*.Release
 object_script.*.Debug
 *_plugin_import.cpp

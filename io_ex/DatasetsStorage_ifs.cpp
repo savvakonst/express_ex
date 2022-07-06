@@ -21,10 +21,11 @@ std::unique_ptr<DatasetsStorage_ifs> openDatasetsStorage(const std::string& file
     if (file_info.suffix() == "h5") {
 #ifdef HDF5_IO_INTERFACE_ENABLE
         ds_storage = std::make_unique<Hdf5IoInterface>();
-#elif
-        return nullptr;
+#else
+        return ds_storage;
 #endif
-    } else {
+    }
+    else {
         if (file_info.suffix() == "express") local_name = file_info.path().toStdString();
         ds_storage = std::make_unique<FolderIoInterface>();
     }

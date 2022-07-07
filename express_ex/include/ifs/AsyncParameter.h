@@ -11,7 +11,6 @@
 
 class DLL_EXPORT AsyncParameter : public ParameterIfs {
    public:
-    AsyncParameter(const AsyncParameter& c) : ParameterIfs(c) { parent_parameter_ = this; }
     AsyncParameter() { parent_parameter_ = this; }
     AsyncParameter(const std::string& name, const std::vector<ExDataInterval>& interval_list, bool save_file_names);
     AsyncParameter(const std::string& name, const ExTimeInterval& time_interval,

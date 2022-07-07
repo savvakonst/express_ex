@@ -187,7 +187,7 @@ int main(int argc, const char* argv[]) {
     if (runJit) express_ex.run();
 
 
-    ex_stream << "complete";
+    ex_stream << "complete\n";
 
 
     return 0;

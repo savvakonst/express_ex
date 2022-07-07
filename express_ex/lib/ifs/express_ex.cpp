@@ -2,7 +2,6 @@
 
 #include "ifs/express_ex.h"
 
-#include "ifs/parameterIO.h"
 #include "parser/KexParser.h"
 #include "parser/body.h"
 #include "parser/bodyTemplate.h"
@@ -37,11 +36,12 @@ bool Express_ex::parseText(const std::string &str, bool is_file_name,
 
         if (info_stream_) {
             if (name_list_)
-                *info_stream_ << Delimiter::GREEN << "names list: \n  " << body_template_->getParameterLinkNames()
-                              << " \n";
+                (*info_stream_ << Delimiter::GREEN << "names list: \n  " << body_template_->getParameterLinkNames()
+                               << " \n")
+                    .finalize();
 
             if (untyped_fsr_)
-                *info_stream_ << Delimiter::GREEN << body_template_->print("") << Delimiter::GREEN << "\n";
+                (*info_stream_ << Delimiter::GREEN << body_template_->print("") << Delimiter::GREEN << "\n").finalize();
         }
 
         status = true;
@@ -72,7 +72,9 @@ bool Express_ex::setParameters(const std::map<std::string, ParameterIfs *> &para
         if (p.second != nullptr) args.push(new Line(p.first, p.second));
         else {
             if (error_stream_)
-                *error_stream_ << ExColors::RED << "Error: null_ptr in parameters_map \n" << ExColors::RESET;
+                (*error_stream_ << ExColors::RED << "Error: null_ptr in parameters_map \n"
+                                << ExColors::RESET)
+                    .finalize();
             return false;
         }
 
@@ -87,7 +89,8 @@ bool Express_ex::setParameters(const std::map<std::string, ParameterIfs *> &para
 
         if (info_stream_) {
             if (active_name_list_)
-                *info_stream_ << Delimiter::GREEN << "names list: \n  " << body_->getParameterLinkNames(true) << " \n";
+                (*info_stream_ << Delimiter::GREEN << "names list: \n  " << body_->getParameterLinkNames(true) << " \n")
+                    .finalize();
             if (all_fsr_) *info_stream_ << Delimiter::GREEN << body_->print("");
             if (reduced_fsr_) *info_stream_ << Delimiter::GREEN << body_->print("", false, true);
         }
@@ -102,7 +105,7 @@ bool Express_ex::setParameters(const std::map<std::string, ParameterIfs *> &para
 
         if (info_stream_) {
             if (output_prm_) {
-                *info_stream_ << Delimiter::GREEN << "input_prm:";
+                (*info_stream_ << Delimiter::GREEN << "input_prm:").finalize();
                 for (auto i : args) {
                     *info_stream_ << Delimiter::GREEN << *(i->getParameter());
                 }
@@ -136,7 +139,7 @@ bool Express_ex::genJit(bool optimization_enable) {
 
     if (info_stream_) {
         if (output_prm_) {
-            *info_stream_ << Delimiter::GREEN << "output_prm:";
+            (*info_stream_ << Delimiter::GREEN << "output_prm:").finalize();
             for (auto i : body_->getOutputParameterList()) {
                 *info_stream_ << Delimiter::GREEN << *i;
             }
@@ -151,8 +154,9 @@ bool Express_ex::genJit(bool optimization_enable) {
         if (optimization_enable) table_->runOptimization();
 
         if (info_stream_ && llvm_ir_code_)
-            *info_stream_ << ExColors::GREEN << "\n\n----------------------LLVM module:--------------------\n"
-                          << ExColors::RESET << table_->printllvmIr();
+            (*info_stream_ << ExColors::GREEN << "\n\n----------------------LLVM module:--------------------\n"
+                           << ExColors::RESET << table_->printllvmIr())
+                .finalize();
 
         status = true;
     } catch (size_t) {

@@ -42,13 +42,13 @@ expr:   ID '(' (expr (','expr)*) ')'                                    # callFu
     |   expr ('**'|'^')   expr                                          # pow
     |   expr op=('*'|'/') expr                                          # mulDiv
     |   expr op=('+'|'-') expr                                          # addSub
-    |   expr  op=('<<'|'>>') expr                                       # bitwiseShift
+    |   expr op=('<<'|'>>') expr                                        # bitwiseShift
     |   expr op=('>'|'<') expr                                          # moreLess
     |   expr op=('>='|'<=') expr                                        # moreeqLesseq
     |   expr  op=('=='|'!=') expr                                       # equality
     |   expr  '&' expr                                                  # bitwiseAnd
     |   expr  '|' expr                                                  # bitwiseOr
-    |   expr  'bxor' expr                                                # bitwiseXor
+    |   expr  'bxor' expr                                               # bitwiseXor
     |   expr '?' left_expr ':' right_expr                               # condExpr
     |   '-' expr                                                        # inv
     |   (DOUBLE|FLOAT|INT64|INT)                                        # const

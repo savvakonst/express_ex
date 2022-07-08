@@ -3,10 +3,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
-<<<<<<< HEAD
-=======
-
->>>>>>> 99fef328468b69d90cb1ad5f7a6320d6ee204d3d
 #include <string>
 
 #ifdef _WIN32

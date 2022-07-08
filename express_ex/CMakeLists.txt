@@ -66,8 +66,6 @@ set(LIBRARY_SOURCES
         lib/jit/IR_generator.cpp
         lib/jit/getWin32Intrinsinc.cpp
         lib/jit/table.cpp
-
-
         )
 
 

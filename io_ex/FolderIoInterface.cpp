@@ -1,4 +1,4 @@
-#include "FolderIoInterface.h"
+﻿#include "FolderIoInterface.h"
 
 #include <QDir>
 #include <QFile>
@@ -88,7 +88,7 @@ DatasetsStorage_ifs::id_t FolderIoInterface::openDataset(const char* name) {
 }
 
 bool FolderIoInterface::closeDataset(id_t index) {
-    if (id_t(datasets_.size()) > index) {
+    if ((kDefaultId < index) && (id_t(datasets_.size()) > index)) {
         auto i = datasets_[index];
         i->close();
         datasets_[index] = nullptr;

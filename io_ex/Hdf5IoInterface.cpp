@@ -81,7 +81,7 @@ DatasetsStorage_ifs::id_t Hdf5IoInterface::openDataset(const char *name) {
 }
 
 bool Hdf5IoInterface::closeDataset(id_t index) {
-    if (id_t(datasets_.size()) > index) {
+    if ((kDefaultId < index) && (id_t(datasets_.size()) > index)) {
         auto status = H5Dclose(datasets_[index].id_);
         datasets_[index].id_ = -1;
         return true;

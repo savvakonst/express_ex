@@ -17,7 +17,18 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 
-if (HDF5_FOUND)
+if(TARGET CONAN_PKG::hdf5)
+    message("TARGET CONAN_PKG::hdf5")
+    set(DS_HDF5_IO_INTERFACE_SOURCES
+            Hdf5IoInterface.cpp
+            Hdf5IoInterface.h
+            )
+
+    set(DS_HDF5_C_DEFINITIONS HDF5_IO_INTERFACE_ENABLE)
+    set(DS_HDF5_C_LIBRARIES CONAN_PKG::hdf5)
+
+
+elseif (HDF5_FOUND)
     set(DS_HDF5_IO_INTERFACE_SOURCES
             Hdf5IoInterface.cpp
             Hdf5IoInterface.h
@@ -33,17 +44,6 @@ if (HDF5_FOUND)
             USES_TERMINAL
             )
 
-
-elseif (TARGET CONAN_PKG::hdf5)
-    #message("TARGET CONAN_PKG::hdf5")
-    set(DS_HDF5_IO_INTERFACE_SOURCES
-            Hdf5IoInterface.cpp
-            Hdf5IoInterface.h
-            )
-
-    set(DS_HDF5_C_DEFINITIONS HDF5_IO_INTERFACE_ENABLE)
-    set(DS_HDF5_C_LIBRARIES CONAN_PKG::hdf5)
-
 endif ()
 
 
@@ -58,7 +58,7 @@ add_library(io_ex SHARED
 
 
 get_target_property(TEMP_VAR io_ex INTERFACE_LINK_LIBRARIES)
-#get_target_property(TEMP_VAR CONAN_PKG::hdf5 IMPORTED_LOCATION )
+
 message("IMPORTED_LOCATION_DEBUG ${TEMP_VAR}")
 
 target_include_directories(io_ex INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} ${HDF5_INCLUDE_DIRS})

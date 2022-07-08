@@ -1,5 +1,5 @@
 x = param("#1_A01__2")
-v = double(x)
+v = double(x**2 +cos(x))
 z = convolve(double([-3,2,1]),v)  
 return double(z)
 

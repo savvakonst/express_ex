@@ -140,6 +140,7 @@ int main(int argc, const char* argv[]) {
     express_ex.all_fsr_ = showBits.isSet(allFSR);
     express_ex.reduced_fsr_ = showBits.isSet(redusedFSR);
     express_ex.output_prm_ = showBits.isSet(outputPrm);
+    express_ex.table_ssr_ = showBits.isSet(tableSSR);
     express_ex.llvm_ir_code_ = showBits.isSet(llvmIRcode);
 
 

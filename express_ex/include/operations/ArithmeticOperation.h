@@ -11,20 +11,7 @@ Value* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn target
 class ArithmeticOperation : public Operation_ifs {
    public:
     // constructor of arithmetic, logic or comparision operation
-    ArithmeticOperation(OpCodeEn op, Value* var_a, Value* var_b) : Operation_ifs() {
-        commonSetup(op, maxDSVar(var_a, var_b));
-
-        type_ = maxTypeVar(var_a, var_b)->getType();
-        type_ = isComparison(op) && !isUnknownTy(type_) ? TypeEn::int1_jty : type_;
-
-        level_ = maxLevelVar(var_a, var_b)->getLevel();
-
-        operand_.push_back(var_a);
-        operand_.push_back(var_b);
-
-        for (auto i : operand_)
-            if (i->getLevel() < level_) i->getAssignedVal(true)->setBuffered();
-    }
+    ArithmeticOperation(OpCodeEn op, Value* var_a, Value* var_b);
 
     // void visitEnterSetupBuffer(stack<Value*>* visitor_stack) override;
     void visitEnterStackUpdate(stack<Value*>* visitor_stack) override;

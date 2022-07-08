@@ -45,6 +45,10 @@ std::string IntegrateOperation::printUint() {
     return getUniqueName() + " = integrate( " + name_op_a + ")";
 }
 
-void IntegrateOperation::setupIR(IRGenerator& builder) { Operation_ifs::setupIR(builder); }
+void IntegrateOperation::setupIR(IRGenerator& builder) {
+    auto ir_op_a = operand_[0]->getAssignedVal(true)->getIRValue(builder, level_);
+    Operation_ifs::setupIR(builder);
+    finishSetupIR(builder);
+}
 
 void IntegrateOperation::calculate() {}

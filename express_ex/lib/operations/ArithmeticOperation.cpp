@@ -50,6 +50,21 @@ Value* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn target
     return garbage_container->add(new ArithmeticOperation(local_op_type, arg_a, arg_b));
 }
 
+ArithmeticOperation::ArithmeticOperation(OpCodeEn op, Value* var_a, Value* var_b) : Operation_ifs() {
+    commonSetup(op, maxDSVar(var_a, var_b));
+
+    type_ = maxTypeVar(var_a, var_b)->getType();
+    type_ = isComparison(op) && !isUnknownTy(type_) ? TypeEn::int1_jty : type_;
+
+    level_ = maxLevelVar(var_a, var_b)->getLevel();
+
+    operand_.push_back(var_a);
+    operand_.push_back(var_b);
+
+    for (auto i : operand_)
+        if (i->getLevel() < level_) i->getAssignedVal(true)->setBuffered();
+}
+
 void ArithmeticOperation::visitEnterStackUpdate(stack<Value*>* visitor_stack) {
     visitor_stack->push(operand_[1]);
     visitor_stack->push(operand_[0]);
@@ -130,3 +145,4 @@ void ArithmeticOperation::calculate() {
         buffer_ptr_ = calcArithmeticSmallArray(op_code_, type_, buffer_ptr_, op_a->getBinaryValue(),
                                                op_b->getBufferPtr(), length);
 }
+

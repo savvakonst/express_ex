@@ -6,10 +6,10 @@
 #include <vector>
 
 #include "buffer.h"
-#include "llvm/IR/IRBuilder.h"
-#include "parser/defWarningIgnore.h"
 #include "common/types_jty.h"
 #include "common/undefWarningIgnore.h"
+#include "llvm/IR/IRBuilder.h"
+#include "parser/defWarningIgnore.h"
 
 class Table;
 class Value;
@@ -78,9 +78,36 @@ class IRGenerator : public llvm::IRBuilder<> {
         return createNewBb(store_block_, "store_" + postfix);
     }
 
+    /**
+     * Setup commands insertion point in the first part of loop body - load_block.
+     * Loop body consists of the three parts: load_block, calc_block, store_block
+     * @param bb when bb is not equal nullptr it stores bb value and setup setup command insertion point to bb, if
+     * bb is omitted or equal nullptr it setup command insertion point to last stored bb
+     */
     void setInitInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(init_bock_, bb); }
+
+    /**
+     * Setup commands insertion point in the first part of loop body - load_block.
+     * Loop body consists of the three parts: load_block, calc_block, store_block
+     * @param bb when bb is not equal nullptr it stores bb value and setup setup command insertion point to bb, if
+     * bb is omitted or equal nullptr it setup command insertion point to last stored bb
+     */
     void setLoadInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(load_block_, bb); }
+
+    /**
+     * Setup commands insertion point in the middle of loop body - calc_block.
+     * Loop body consists of the three parts: load_block, calc_block, store_block.
+     * @param bb when bb is not equal nullptr it stores bb value and setup setup command insertion point to bb, if
+     * bb is omitted or equal nullptr it setup command insertion point to last stored bb
+     */
     void setCalcInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(calc_block_, bb); }
+
+    /**
+     * Setup commands insertion point in the end of loop body - store_block.
+     * Loop body consists of the three parts: load_block, calc_block, store_block
+     * @param bb when bb is not equal nullptr it stores bb value and setup setup command insertion point to bb, if
+     * bb is omitted or equal nullptr it setup command insertion point to last stored bb
+     */
     void setStoreInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(store_block_, bb); }
     void setTerminalOpInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(terminal_op_block_, bb); }
 

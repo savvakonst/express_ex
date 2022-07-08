@@ -28,6 +28,23 @@ Value* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target_t
     return nullptr;
 }
 
+ConvolveOperation::ConvolveOperation(Value* large_arr, Value* small_arr, int64_t shift) : Operation_ifs() {
+    commonSetup(OpCodeEn::convolve, maxDSVar(large_arr, small_arr));
+
+    shift_parameter_ = shift;
+    level_ = large_arr->getLevel() + 1;
+
+    type_ = large_arr->getType();
+    if (data_structure_type_ == DataStructureTypeEn::kLargeArr) length_ = large_arr->getLength();
+    else
+        length_ = maxInt(large_arr->getLength(), small_arr->getLength());
+
+    shift_parameter_ = shift;
+
+    operand_.push_back(large_arr);
+    operand_.push_back(small_arr);
+}
+
 void ConvolveOperation::visitEnterSetupBuffer(stack<Value*>* visitor_stack) {
     auto small_array = operand_[1];
     auto shift = shift_parameter_;
@@ -104,3 +121,4 @@ void ConvolveOperation::calculate() {
     buffer_ptr_ = calcConvolveSmallArray(type_, buffer_ptr_, op_a->getBufferPtr(), op_b->getBufferPtr(),
                                          (int)op_a->getLength(), (int)op_b->getLength());
 }
+

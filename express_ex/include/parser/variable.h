@@ -57,6 +57,14 @@ class Value : public SmallArr {
     llvm::Value* getIrValuePtr(IRGenerator& builder, int64_t parent_level);
 
     virtual NodeTypeEn getNodeType() const { return NodeTypeEn::kValue; }
+
+    /**
+     * if object is Line object it will return pointer to assigned value
+     * otherwise it returns pointer to itself
+     * @param deep if is true it will return first non-Line object in case when Line object points to Another Line
+     * object
+     * @return pointer to assigned value
+     */
     virtual Value* getAssignedVal(bool deep = false) { return this; }
 
     bool isUnused() const { return is_unused_; }
@@ -113,8 +121,7 @@ class Value : public SmallArr {
    protected:
     std::string checkBuffer(std::string arg) const {
         if (is_buffered_) return "storeToBuffer(" + arg + ")";
-        else
-            return arg;
+        else return arg;
     }
 
     bool is_unused_ = true;

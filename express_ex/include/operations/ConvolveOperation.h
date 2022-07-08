@@ -10,22 +10,7 @@ Value* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target_t
 
 class ConvolveOperation : public Operation_ifs {
    public:
-    ConvolveOperation(Value* large_arr, Value* small_arr, int64_t shift) : Operation_ifs() {
-        commonSetup(OpCodeEn::convolve, maxDSVar(large_arr, small_arr));
-
-        shift_parameter_ = shift;
-        level_ = large_arr->getLevel() + 1;
-
-        type_ = large_arr->getType();
-        if (data_structure_type_ == DataStructureTypeEn::kLargeArr) length_ = large_arr->getLength();
-        else
-            length_ = maxInt(large_arr->getLength(), small_arr->getLength());
-
-        shift_parameter_ = shift;
-
-        operand_.push_back(large_arr);
-        operand_.push_back(small_arr);
-    }
+    ConvolveOperation(Value* large_arr, Value* small_arr, int64_t shift);
 
     ~ConvolveOperation() override = default;
 

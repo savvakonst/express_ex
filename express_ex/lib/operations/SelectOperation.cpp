@@ -17,6 +17,27 @@ Value* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, Valu
     return garbage_container->add(new SelectOperation(OpCodeEn::select, i1, arg_b, arg_c, target_type, rec_call));
 }
 
+SelectOperation::SelectOperation(OpCodeEn op, Value* var_a, Value* var_b, Value* var_c, TypeEn target_type,
+                                 bool rec_call)
+    : Operation_ifs() {
+    commonSetup(op, maxDSVar(var_a, var_b));
+    type_ = target_type;
+    level_ = maxLevelVar(maxLevelVar(var_a, var_b), var_c)->getLevel();
+    contain_rec_call_ = rec_call;
+
+    operand_.push_back(var_a);
+
+    if (rec_call && !isUnknownTy(type_))  // it is a dirty hack
+        if (var_b->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall) type_ = var_c->getType();
+        else type_ = var_b->getType();
+
+    operand_.push_back(var_b);
+    operand_.push_back(var_c);
+
+    for (auto i : operand_)
+        if (i->getLevel() < level_) i->getAssignedVal(true)->setBuffered();
+}
+
 void SelectOperation::visitEnterStackUpdate(stack<Value*>* visitor_stack) {
     visitor_stack->push(operand_[2]);
     visitor_stack->push(operand_[1]);
@@ -100,8 +121,7 @@ void SelectOperation::setupIR(IRGenerator& builder) {
         builder.setExitInsertPoint();
         builder.CreateRet(ret_val);
         builder.setCalcInsertPoint();
-    } else
-        IR_value_ = builder.CreateSelect(ir_op_a, ir_op_b, ir_op_c, getUniqueName());
+    } else IR_value_ = builder.CreateSelect(ir_op_a, ir_op_b, ir_op_c, getUniqueName());
 
     finishSetupIR(builder);
 }

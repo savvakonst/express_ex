@@ -70,7 +70,7 @@ DatasetsStorage_ifs::id_t Hdf5IoInterface::openDataset(const char *name)
     hid_t id = kDefaultId;
     if (datasetExists(name)) {
         id = H5Dopen1(file_id_, name);
-        if(rw_ && (id<0))
+        if(rw_ && (id<0)) //when dataset was already exists but it is empty H5Dopen1(file_id_, name); returns -1;
             id = ::H5Dcreate(file_id_, name, H5T_NATIVE_UCHAR, file_space_id_, H5P_DEFAULT, prop_list_id_, H5P_DEFAULT);
     }
     else if (rw_)

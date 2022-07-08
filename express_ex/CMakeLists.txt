@@ -292,5 +292,12 @@ target_compile_definitions(express_ex PRIVATE
         DLL_express_ex_EXPORT
         )
 
+if (PRINT_EX_DEBUG_INFO)
+    message("PRINT_EX_DEBUG_INFO ${PRINT_EX_DEBUG_INFO}")
+    target_compile_definitions(express_ex PUBLIC
+            "$<$<CONFIG:Debug>:EX_DEBUG>"
+            )
+endif ()
+
 add_subdirectory(app)
 #set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "express_ex") ???

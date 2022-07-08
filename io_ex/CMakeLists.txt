@@ -17,6 +17,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 
+<<<<<<< HEAD
 if(TARGET CONAN_PKG::hdf5)
     message("TARGET CONAN_PKG::hdf5")
     set(DS_HDF5_IO_INTERFACE_SOURCES
@@ -29,6 +30,25 @@ if(TARGET CONAN_PKG::hdf5)
 
 
 elseif (HDF5_FOUND)
+=======
+if (TARGET CONAN_PKG::hdf5)
+    #message("TARGET CONAN_PKG::hdf5")
+>>>>>>> 99fef328468b69d90cb1ad5f7a6320d6ee204d3d
+    set(DS_HDF5_IO_INTERFACE_SOURCES
+            Hdf5IoInterface.cpp
+            Hdf5IoInterface.h
+            )
+
+    set(DS_HDF5_C_DEFINITIONS HDF5_IO_INTERFACE_ENABLE)
+    set(DS_HDF5_C_LIBRARIES CONAN_PKG::hdf5)
+
+
+elseif (HDF5_FOUND)
+
+
+<<<<<<< HEAD
+=======
+
     set(DS_HDF5_IO_INTERFACE_SOURCES
             Hdf5IoInterface.cpp
             Hdf5IoInterface.h
@@ -44,6 +64,7 @@ elseif (HDF5_FOUND)
             USES_TERMINAL
             )
 
+>>>>>>> 99fef328468b69d90cb1ad5f7a6320d6ee204d3d
 endif ()
 
 

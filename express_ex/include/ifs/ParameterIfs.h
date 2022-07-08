@@ -208,10 +208,14 @@ typedef void (*calcMinMaxTy)(char* carg, int64_t Number, double& dmax, double& d
 class BareChunk;
 
 
-
 class DLL_EXPORT ParameterIfs {
    public:
-    virtual ~ParameterIfs() = default;
+    DEFINE_DCOUNTER();
+
+    ParameterIfs(){ INCREMENT_DCOUNTER(ParameterIfs)}
+    virtual ~ParameterIfs() { DECREMENT_DCOUNTER(ParameterIfs); };
+
+
 
     [[nodiscard]] const std::string& getName() const { return name_; }
 
@@ -307,7 +311,7 @@ class DLL_EXPORT ParameterIfs {
     void setErrorMessage(const std::string& str, ExStreamIfs* err_steam) {
         err_steam = err_steam ? err_steam : err_steam_;
         if (err_steam) {
-            *err_steam << ExColors::RED << "parameter error: " << ExColors::RESET << str << "\n";
+            (*err_steam << ExColors::RED << "parameter error: " << ExColors::RESET << str << "\n").finalize();
             err_steam->finalize();
         }
     }

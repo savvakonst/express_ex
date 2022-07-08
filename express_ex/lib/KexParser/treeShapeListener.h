@@ -41,7 +41,11 @@ class TreeShapeListener : public EGrammarBaseListener {
     void exitConst(EGrammarParser::ConstContext* ctx) override;
     void exitCallTConvBInFunc(EGrammarParser::CallTConvBInFuncContext* ctx) override;
     void exitCallUnaryBInFunc(EGrammarParser::CallUnaryBInFuncContext* ctx) override;
+
+    void enterCallIntegrate(EGrammarParser::CallIntegrateContext * ctx) override { }
     void exitCallIntegrate(EGrammarParser::CallIntegrateContext* ctx) override;
+
+
     // arithmetic operations
     void exitInv(EGrammarParser::InvContext* ctx) override;
     void exitMulDiv(EGrammarParser::MulDivContext* ctx) override;

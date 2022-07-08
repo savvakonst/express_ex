@@ -40,7 +40,10 @@ bool FolderIoInterface::close() {
     return true;
 }
 
-bool FolderIoInterface::datasetExists(const char* name) { return QFileInfo::exists(name); }
+bool FolderIoInterface::datasetExists(const char* name) {
+    auto path = folder_name_ + "/" + std::string(name);
+    return QFileInfo::exists(QString::fromStdString(path));
+}
 
 DatasetsStorage_ifs::id_t FolderIoInterface::createDataset(const char* name) {
     // TODO: add check for relative path
@@ -68,7 +71,7 @@ DatasetsStorage_ifs::id_t FolderIoInterface::openDataset(const char* name) {
 
     if (rw_)
         for (auto i : datasets_) {
-            if (getNameByPtr(i) == path) return false;
+            if (i && (getNameByPtr(i) == path)) return false;
         }
     auto file = new QFile();
 

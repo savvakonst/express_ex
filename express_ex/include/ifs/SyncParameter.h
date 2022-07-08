@@ -8,7 +8,6 @@
 
 class DLL_EXPORT SyncParameter : public ParameterIfs {
    public:
-    SyncParameter() = default;
 
     SyncParameter(std::string name, const std::vector<ExDataInterval>& interval_list, bool save_file_names);
     SyncParameter(std::string name, const ExTimeInterval& time_interval,

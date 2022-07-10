@@ -21,26 +21,26 @@ Body::Body(const std::string& name, const std::list<std::string>& names_of_defin
 Body::~Body() { delete garbage_contaiiner_; }
 
 // varStack push/pop
-void Body::push(Value* line) {
+void Body::push(ExValue* line) {
     garbage_contaiiner_->add(line);
     var_stack_.push_back(line);
 }
 
-Value* Body::pop() {
+ExValue* Body::pop() {
     if (var_stack_.empty()) print_error("stack is empty");
     return var_stack_.pop();
 }
 
-stack<Value*> Body::pop(size_t length) { return var_stack_.pop(length); }
+stack<ExValue*> Body::pop(size_t length) { return var_stack_.pop(length); }
 
 
-void Body::addLine(const std::string& name, Value* var) {
+void Body::addLine(const std::string& name, ExValue* var) {
     auto line = new Line(name, var);
     garbage_contaiiner_->add(line);
     lines_.push_back(line);
 }
 
-void Body::addVariableLine(const std::string& name, Value* var) {
+void Body::addVariableLine(const std::string& name, ExValue* var) {
     Line* line = new Line(name, var->getType(), DataStructureTypeEn::kVariable, 1);
     garbage_contaiiner_->add(line);
     lines_.push_back(line);
@@ -52,7 +52,7 @@ void Body::addParam(Line* line) {  //?delete
     lines_.push_back(line);
 }
 
-void Body::addReturn(const std::string& name, Value* var) {  //?remove Value param
+void Body::addReturn(const std::string& name, ExValue* var) {  //?remove Value param
     auto line = new Line(name, var);
 
     if (is_tail_callable_) {
@@ -120,7 +120,7 @@ Body* Body::getPureFunctionBody(const std::string& name, const Signature& signat
 // tree walker methods
 std::string Body::print(const string& tab, bool DSTEna, bool hide_unused_lines) {
     PrintBodyContext context(tab, DSTEna, hide_unused_lines);
-    stack<Value*> visitor_stack;
+    stack<ExValue*> visitor_stack;
 
     context.setName(getName());
 
@@ -155,7 +155,7 @@ std::string Body::print(const string& tab, bool DSTEna, bool hide_unused_lines) 
 
 
 void Body::symplyfy() {
-    stack<Value*> visitor_stack;
+    stack<ExValue*> visitor_stack;
     for (auto& value : return_stack_) {
         visitor_stack.push(value->getAssignedVal());
         do {
@@ -168,7 +168,7 @@ void Body::symplyfy() {
 
 
 void Body::genTable(TableGenContext* context) {
-    stack<Value*> visitor_stack;
+    stack<ExValue*> visitor_stack;
 
     if (name_ == "main")
         for (auto& value : return_stack_) value->getAssignedVal(true)->setReturned();

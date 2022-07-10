@@ -9,8 +9,9 @@ static std::string txtBuiltInOp(OpCodeEn op_code) {
     return ar_built_in_[((int)op_code - (int)TypeOpCodeEn::builtInFunc)];
 }
 
-Value* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn target_type, Value* arg, OpCodeEn op_type) {
-    Value* var = arg;
+ExValue* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg,
+                                 OpCodeEn op_type) {
+    ExValue* var = arg;
     if (TypeEn::float_jty > target_type) {
         var = newTypeConvOp(garbage_container, TypeEn::double_jty, arg);
         target_type = var->getType();
@@ -20,13 +21,13 @@ Value* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn targe
         if (!isFloating(target_type)) print_error("type is not float");
 
         return garbage_container->add(
-            new Value(calcBuiltInFuncConst(op_type, target_type, var->getBinaryValue()), target_type));
+            new ExValue(calcBuiltInFuncConst(op_type, target_type, var->getBinaryValue()), target_type));
     }
 
     return garbage_container->add(new BuiltInCallOperation(op_type, var, target_type));
 }
 
-void BuiltInCallOperation::visitEnterStackUpdate(stack<Value*>* visitor_stack) { visitor_stack->push(operand_[0]); }
+void BuiltInCallOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) { visitor_stack->push(operand_[0]); }
 
 void BuiltInCallOperation::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;
@@ -40,7 +41,7 @@ void BuiltInCallOperation::genBodyVisitExit(BodyGenContext* context) {
     }
     TypeEn target_type = op1->getType();
 
-    Value* ret = newBuiltInFuncOperation(garbage_container, target_type, op1, op_code_);
+    ExValue* ret = newBuiltInFuncOperation(garbage_container, target_type, op1, op_code_);
 
     context->push(ret);
 }

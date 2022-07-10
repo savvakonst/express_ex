@@ -6,12 +6,12 @@ static const std::string ar_t_conv_[10] = {"trunc", "zext",   "sext",   "fptrunc
                                            "fptoi", "fptosi", "uitofp", "sitofp",  "common_cast"};
 static std::string txtTypeCastOp(OpCodeEn op_code) { return ar_t_conv_[((int)op_code - (int)TypeOpCodeEn::type_conv)]; }
 
-Value* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, Value* arg) {
+ExValue* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg) {
     const TypeEn arg_type = arg->getType();
-    Value* ret_val = nullptr;
+    ExValue* ret_val = nullptr;
 
     if (!isUnknownTy(arg_type) && isConst(arg)) {
-        ret_val = new Value(calcTypeConvConst(target_type, arg_type, arg->getBinaryValue()), target_type);
+        ret_val = new ExValue(calcTypeConvConst(target_type, arg_type, arg->getBinaryValue()), target_type);
         return garbage_container->add(ret_val);
     }
 
@@ -21,8 +21,7 @@ Value* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, Va
         ret_val = new TypeCastOperation(OpCodeEn::common_cast, arg, target_type);
     } else if (isFloating(target_type) && isFloating(arg_type)) {
         if (target_type < arg_type) ret_val = new TypeCastOperation(OpCodeEn::fptrunc, arg, target_type);
-        else
-            ret_val = new TypeCastOperation(OpCodeEn::fpext, arg, target_type);
+        else ret_val = new TypeCastOperation(OpCodeEn::fpext, arg, target_type);
     } else if (isFloating(target_type) && isInteger(arg_type)) {
         ret_val = new TypeCastOperation(OpCodeEn::sitofp, arg, target_type);
         ;
@@ -30,8 +29,7 @@ Value* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, Va
         ret_val = new TypeCastOperation(OpCodeEn::fptosi, arg, target_type);
     } else if (isInteger(target_type) && isInteger(arg_type)) {
         if (target_type < arg_type) ret_val = new TypeCastOperation(OpCodeEn::trunc, arg, target_type);
-        else
-            ret_val = new TypeCastOperation(OpCodeEn::sext, arg, target_type);
+        else ret_val = new TypeCastOperation(OpCodeEn::sext, arg, target_type);
     } else {
         print_error("newTypeConvOp");
     }
@@ -39,7 +37,7 @@ Value* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, Va
     return garbage_container->add(ret_val);
 }
 
-void TypeCastOperation::visitEnterStackUpdate(stack<Value*>* visitor_stack) { visitor_stack->push(operand_[0]); }
+void TypeCastOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) { visitor_stack->push(operand_[0]); }
 
 void TypeCastOperation::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;

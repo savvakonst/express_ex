@@ -24,7 +24,7 @@ BodyTemplate::~BodyTemplate() {
     */
 }
 
-void BodyTemplate::addLine(const std::string& name, Value* var) {
+void BodyTemplate::addLine(const std::string& name, ExValue* var) {
     auto line = new Line(name, var);
     garbage_container_->add(line);
     lines_.push_back(line);
@@ -57,7 +57,7 @@ void BodyTemplate::addParam(const std::string& name, const std::string& linkName
     lines_.push_back(line);
 }
 
-void BodyTemplate::addReturn(const std::string& name, Value* var) {  //?remove Value param
+void BodyTemplate::addReturn(const std::string& name, ExValue* var) {  //?remove Value param
     auto line = new Line(name, var);
 
     if (is_tail_callable_) {
@@ -72,17 +72,17 @@ void BodyTemplate::addReturn(const std::string& name, Value* var) {  //?remove V
 }
 
 // varStack push/pop
-void BodyTemplate::push(Value* line) {
+void BodyTemplate::push(ExValue* line) {
     garbage_container_->add(line);
     var_stack_.push_back(line);
 }
 
-Value* BodyTemplate::pop() {
+ExValue* BodyTemplate::pop() {
     if (var_stack_.empty()) print_error("stack is empty");
     return var_stack_.pop();
 }
 
-stack<Value*> BodyTemplate::pop(size_t length) { return var_stack_.pop(length); }
+stack<ExValue*> BodyTemplate::pop(size_t length) { return var_stack_.pop(length); }
 
 std::map<std::string, std::string> BodyTemplate::getParameterLinkNames(bool hide_unused) const {
     std::map<std::string, std::string> ret;
@@ -94,50 +94,50 @@ std::map<std::string, std::string> BodyTemplate::getParameterLinkNames(bool hide
 
 // create operation and push to varStack
 void BodyTemplate::addTypeConvOp(TypeEn target_type) {
-    Value* arg1 = pop();
+    ExValue* arg1 = pop();
     push(newTypeConvOp(garbage_container_, target_type, arg1));
 }
 
 void BodyTemplate::addBuiltInFuncOp(OpCodeEn u_type_op) {
-    Value* arg = pop();
+    ExValue* arg = pop();
     auto target_type = TypeEn::DEFAULT_JTY;
     push(newBuiltInFuncOperation(garbage_container_, target_type, arg, u_type_op));
 }
 
 void BodyTemplate::addIntegrateOp() {
-    Value* arg = pop();
+    ExValue* arg = pop();
     push(newIntegrateOperation(garbage_container_, arg));
 }
 
 void BodyTemplate::addInvOp() {
-    Value* arg = pop();
-    Value* zero = garbage_container_->add(new Value("0", TypeEn::int32_jty));
+    ExValue* arg = pop();
+    ExValue* zero = garbage_container_->add(new ExValue("0", TypeEn::int32_jty));
     push(newArithmeticOperation(garbage_container_, TypeEn::DEFAULT_JTY, zero, arg, OpCodeEn::sub));
 }
 
 void BodyTemplate::addArithmeticOp(OpCodeEn u_type_op) {
-    Value* arg_b = pop();
-    Value* arg_a = pop();
+    ExValue* arg_b = pop();
+    ExValue* arg_a = pop();
     push(newArithmeticOperation(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op));
 }
 
 void BodyTemplate::addComparisonOp(OpCodeEn u_type_op) {
-    Value* arg_b = pop();
-    Value* arg_a = pop();
+    ExValue* arg_b = pop();
+    ExValue* arg_a = pop();
     push(newComparisonOperation(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op));
 }
 
 void BodyTemplate::addConvolveOp(OpCodeEn u_type_op, uint32_t shift) {  // necessary to add type maching
-    Value* arg_b = pop();
-    Value* arg_a = pop();
+    ExValue* arg_b = pop();
+    ExValue* arg_a = pop();
     is_operator_ = true;
     push(newConvolveOperation(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, shift, u_type_op));
 }
 
 void BodyTemplate::addSelectOp() {
-    Value* arg_c = pop();
-    Value* arg_b = pop();
-    Value* arg_a = pop();
+    ExValue* arg_c = pop();
+    ExValue* arg_b = pop();
+    ExValue* arg_a = pop();
 
     bool valid_recursion = false;
 
@@ -153,26 +153,26 @@ void BodyTemplate::addSelectOp() {
 void BodyTemplate::addRangeOp(size_t arg_count) {
     if ((arg_count < 1) || (arg_count > 3)) print_error("invalid signature of range(..) function");
 
-    stack<Value*> v = pop(arg_count);
+    stack<ExValue*> v = pop(arg_count);
     push(newSmallArrayDefOp(garbage_container_, v, OpCodeEn::smallArrayRange));
 }
 
 void BodyTemplate::addShiftOp() {
-    Value* arg2 = pop();
-    Value* arg1 = pop();
+    ExValue* arg2 = pop();
+    ExValue* arg1 = pop();
     print_error("addShiftOp");
     // push(newSliceOp(garbage_container_, arg1, arg2, OpCodeEn::shift));
 }
 
 void BodyTemplate::addDecimationOp() {
-    Value* arg2 = pop();
-    Value* arg1 = pop();
+    ExValue* arg2 = pop();
+    ExValue* arg1 = pop();
     print_error("addShiftOp");
     // push(newSliceOp(garbage_container_, arg1, arg2, OpCodeEn::decimation));
 }
 
 void BodyTemplate::addSmallArrayDefinitionOp(size_t length) {
-    stack<Value*> op;
+    stack<ExValue*> op;
     is_operator_ = true;
     for (size_t i = 0; i < length; i++) op.push(pop());
     std::reverse(op.begin(), op.end());
@@ -180,7 +180,7 @@ void BodyTemplate::addSmallArrayDefinitionOp(size_t length) {
 }
 
 void BodyTemplate::addCall(BodyTemplate* body) {
-    stack<Value*> a;
+    stack<ExValue*> a;
     a.resize(body->getArgCount());
     for (int i = body->getArgCount() - 1; i >= 0; i--) {
         a[i] = pop();
@@ -189,12 +189,11 @@ void BodyTemplate::addCall(BodyTemplate* body) {
     is_operator_ = is_operator_ || body->is_operator_;
 
     if (body->is_tail_callable_) push(garbage_container_->add(new CallRecursiveFunctionTemplate(body, a)));
-    else
-        push(garbage_container_->add(new CallTemplate(body, a)));
+    else push(garbage_container_->add(new CallTemplate(body, a)));
 }
 
 void BodyTemplate::addTailCall() {
-    stack<Value*> a;
+    stack<ExValue*> a;
     a.resize(this->getArgCount());
     for (int i = this->getArgCount() - 1; i >= 0; i--) {
         a[i] = pop();
@@ -226,7 +225,7 @@ BodyTemplate* BodyTemplate::getFunctionBody(const std::string& name) const {
 
 std::string BodyTemplate::print(const std::string& tab, bool DST_ena, bool hide_unused_lines) const {
     PrintBodyContext context(tab, DST_ena, hide_unused_lines);
-    stack<Value*> visitor_stack;
+    stack<ExValue*> visitor_stack;
 
     context.setName(getName());
 
@@ -238,8 +237,7 @@ std::string BodyTemplate::print(const std::string& tab, bool DST_ena, bool hide_
             do {
                 auto var = visitor_stack.pop();
                 if (var->isVisited()) var->printVisitExit(&context);
-                else
-                    var->visitEnter(&visitor_stack);
+                else var->visitEnter(&visitor_stack);
             } while (!visitor_stack.empty());
 
             context.createLine(value);
@@ -251,8 +249,7 @@ std::string BodyTemplate::print(const std::string& tab, bool DST_ena, bool hide_
         do {
             auto var = visitor_stack.pop();
             if (var->isVisited()) var->printVisitExit(&context);
-            else
-                var->visitEnter(&visitor_stack);
+            else var->visitEnter(&visitor_stack);
         } while (!visitor_stack.empty());
         context.createReturn(value);
     }
@@ -268,14 +265,14 @@ std::list<std::string> BodyTemplate::getNamesOfDefinedFunctions() const {
     return ret;
 }
 
-Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<Value*> args, bool is_pure_function) const {
+Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue*> args, bool is_pure_function) const {
     // try replacing the "var_stack_" member with the "var_stack" local value
     // it might be worth moving this value to BodyGenContext
 
     auto body = new Body(name_, getNamesOfDefinedFunctions(), parent_body, is_operator_);
     BodyGenContext context(body, is_pure_function);
 
-    stack<Value*> visitor_stack;
+    stack<ExValue*> visitor_stack;
 
     auto arg = args.begin();
     for (auto& value : lines_) {
@@ -285,8 +282,7 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<Value*> args, boo
                 ++arg;
             } else {
                 if (is_pure_function) body->addVariableLine(value->getName(), *(arg));
-                else
-                    body->addLine(value->getName(), *(arg));  // in line
+                else body->addLine(value->getName(), *(arg));  // in line
 
                 ++arg;
             }
@@ -295,8 +291,7 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<Value*> args, boo
             do {
                 auto var = visitor_stack.pop();
                 if (var->isVisited()) var->genBodyVisitExit(&context);
-                else
-                    var->visitEnter(&visitor_stack);
+                else var->visitEnter(&visitor_stack);
             } while (!visitor_stack.empty());
             body->addLine(value->getName(), context.pop());
         }
@@ -306,8 +301,7 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<Value*> args, boo
         do {
             auto var = visitor_stack.pop();
             if (var->isVisited()) var->genBodyVisitExit(&context);
-            else
-                var->visitEnter(&visitor_stack);
+            else var->visitEnter(&visitor_stack);
         } while (!visitor_stack.empty());
         body->addReturn(return_stack_[0]->getName(), context.pop());
     }
@@ -315,8 +309,8 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<Value*> args, boo
     return body;
 }
 
-untyped_t BodyTemplate::genConstRecursiveByTemplate(stack<Value*>& args) const {
-    stack<Value*> visitor_stack;
+untyped_t BodyTemplate::genConstRecursiveByTemplate(stack<ExValue*>& args) const {
+    stack<ExValue*> visitor_stack;
     RecursiveGenContext context(is_tail_callable_);
 
     auto arg = args.begin();
@@ -330,8 +324,7 @@ untyped_t BodyTemplate::genConstRecursiveByTemplate(stack<Value*>& args) const {
             do {
                 auto var = visitor_stack.pop();
                 if (var->isVisited()) var->genRecursiveVisitExit(&context);
-                else
-                    var->visitEnter(&visitor_stack);
+                else var->visitEnter(&visitor_stack);
             } while (!visitor_stack.empty());
             context.setUint(line);
         }
@@ -342,8 +335,7 @@ untyped_t BodyTemplate::genConstRecursiveByTemplate(stack<Value*>& args) const {
         do {
             auto var = visitor_stack.pop();
             if (var->isVisited()) var->genRecursiveVisitExit(&context);
-            else
-                var->visitEnter(&visitor_stack);
+            else var->visitEnter(&visitor_stack);
         } while (!visitor_stack.empty());
         context.setUint(value);
     }

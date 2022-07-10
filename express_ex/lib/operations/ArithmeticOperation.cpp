@@ -6,14 +6,14 @@
 static const std::string kArSym[14] = {"+", "+.", "-", "-.", "*", "*.", "/", "/", "/.", "%", "%", "%.", "**", "**."};
 static std::string txtArOp(OpCodeEn op_code) { return kArSym[((int)op_code - (int)TypeOpCodeEn::arithetic)]; }
 
-Value* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn target_type, Value* arg_a, Value* arg_b,
-                              OpCodeEn op_type) {
+ExValue* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
+                                OpCodeEn op_type) {
     if (!isCompatible(arg_a, arg_b)) print_error("incompatible values");
 
     if (isConst(arg_a) && isConst(arg_b) && !isUnknownTy(target_type)) {
         if (isBool(target_type)) print_error("invalid type: Int1_jty ");
 
-        return garbage_container->add(new Value(
+        return garbage_container->add(new ExValue(
             calcArithmeticConst(op_type, target_type, arg_a->getBinaryValue(), arg_b->getBinaryValue()), target_type));
     }
 
@@ -50,7 +50,7 @@ Value* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn target
     return garbage_container->add(new ArithmeticOperation(local_op_type, arg_a, arg_b));
 }
 
-ArithmeticOperation::ArithmeticOperation(OpCodeEn op, Value* var_a, Value* var_b) : Operation_ifs() {
+ArithmeticOperation::ArithmeticOperation(OpCodeEn op, ExValue* var_a, ExValue* var_b) : Operation_ifs() {
     commonSetup(op, maxDSVar(var_a, var_b));
 
     type_ = maxTypeVar(var_a, var_b)->getType();
@@ -65,7 +65,7 @@ ArithmeticOperation::ArithmeticOperation(OpCodeEn op, Value* var_a, Value* var_b
         if (i->getLevel() < level_) i->getAssignedVal(true)->setBuffered();
 }
 
-void ArithmeticOperation::visitEnterStackUpdate(stack<Value*>* visitor_stack) {
+void ArithmeticOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) {
     visitor_stack->push(operand_[1]);
     visitor_stack->push(operand_[0]);
 }
@@ -145,4 +145,3 @@ void ArithmeticOperation::calculate() {
         buffer_ptr_ = calcArithmeticSmallArray(op_code_, type_, buffer_ptr_, op_a->getBinaryValue(),
                                                op_b->getBufferPtr(), length);
 }
-

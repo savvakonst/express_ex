@@ -3,9 +3,9 @@
 
 #include "jit/IR_generator.h"
 
-void Operation_ifs::visitEnterStackUpdate(stack<Value*>* visitor_stack) { print_error("visitEnter unknown command"); }
+void Operation_ifs::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) { print_error("visitEnter unknown command"); }
 
-void Operation_ifs::markUnusedVisitEnter(stack<Value*>* visitor_stack) {
+void Operation_ifs::markUnusedVisitEnter(stack<ExValue*>* visitor_stack) {
     commonMarkUnusedVisitEnter(visitor_stack);
     visitEnterSetupBuffer(visitor_stack);
     visitEnterStackUpdate(visitor_stack);
@@ -39,8 +39,7 @@ void Operation_ifs::finishSetupIR(IRGenerator& builder) {
     if (isBuffered() || isReturned()) {
         if (!is_initialized_) {
             if (isReturned()) builder.addBufferAlloca(new OutputBuffer(this));
-            else
-                builder.addBufferAlloca(new Buffer(this));
+            else builder.addBufferAlloca(new Buffer(this));
 
             IR_buffer_base_ptr_ = builder.createBufferInit(type_, "internal_");
             is_initialized_ = true;

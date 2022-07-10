@@ -5,12 +5,12 @@
 
 #include "Operation_ifs.h"
 
-Value* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<Value*>& args, OpCodeEn op_type,
-                          bool is_template = false);
+ExValue* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExValue*>& args, OpCodeEn op_type,
+                            bool is_template = false);
 
 class SmallArrayDefOperation : public Operation_ifs {
    public:
-    SmallArrayDefOperation(OpCodeEn op, stack<Value*>& args, TypeEn target_type) : Operation_ifs() {
+    SmallArrayDefOperation(OpCodeEn op, stack<ExValue*>& args, TypeEn target_type) : Operation_ifs() {
         size_t args_size = args.size();
         op_code_ = op;
 
@@ -39,7 +39,7 @@ class SmallArrayDefOperation : public Operation_ifs {
     ~SmallArrayDefOperation() override = default;
 
     // void visitEnterSetupBuffer(stack<Value*>* visitor_stack) override;
-    void visitEnterStackUpdate(stack<Value*>* visitor_stack) override;
+    void visitEnterStackUpdate(stack<ExValue*>* visitor_stack) override;
 
     void genBodyVisitExit(BodyGenContext* context) override;
     void calculateConstRecursive(RecursiveGenContext* context) override;
@@ -54,9 +54,9 @@ class SmallArrayDefOperation : public Operation_ifs {
    private:
     void smallArrayGen();
     void smallArray();
-    void smallArray(Value* arg1, Value* arg2, Value* arg3);
-    void smallArray(Value* arg1, Value* arg2);
-    void smallArray(Value* arg1);
+    void smallArray(ExValue* arg1, ExValue* arg2, ExValue* arg3);
+    void smallArray(ExValue* arg1, ExValue* arg2);
+    void smallArray(ExValue* arg1);
 
     // int64_t shift_parameter_ = 0;
 };

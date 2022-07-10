@@ -62,7 +62,7 @@ std::map<std::string, std::string> Express_ex::getParameterLinkNamesMap(bool hid
 bool Express_ex::setParameters(const std::map<std::string, ParameterIfs *> &parameters_map) {
     bool status = false;
 
-    stack<Value *> args;
+    stack<ExValue *> args;
 
     for (auto i : parameters_map)
         if (!i.second->checkDataResource(true, error_stream_)) return false;

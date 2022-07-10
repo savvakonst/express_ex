@@ -90,7 +90,7 @@ void TreeShapeListener::exitConst(EGrammarParser::ConstContext* ctx) {
         CONV_TY(EGrammarParser::INT64, TypeEn::int64_jty);
     default:;
     }
-    activ_body_->push(new Value(ctx->getText(), targetType));
+    activ_body_->push(new ExValue(ctx->getText(), targetType));
 #undef CONV_TY
 }
 

@@ -3,11 +3,11 @@
 #include "jit/IR_generator.h"
 #include "operations/TypeCastOperation.h"
 
-Value* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<Value*>& args, OpCodeEn op_type,
-                          bool is_template) {
+ExValue* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExValue*>& args, OpCodeEn op_type,
+                            bool is_template) {
     if (args.empty()) print_error("SmallArray is empty");
 
-    Value* var = args[0];
+    ExValue* var = args[0];
 
     bool allIsConst = true;
     for (auto i : args) {
@@ -25,13 +25,13 @@ Value* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<Value*>& ar
     if (is_template)
         return garbage_container->add(new SmallArrayDefOperation(OpCodeEn::smallArrayDef, args, target_type));
 
-    stack<Value*> typedArgs;
+    stack<ExValue*> typedArgs;
     for (auto i : args) typedArgs.push(newTypeConvOp(garbage_container, target_type, i));
 
     return garbage_container->add(new SmallArrayDefOperation(OpCodeEn::smallArrayDef, typedArgs, target_type));
 }
 
-void SmallArrayDefOperation::visitEnterStackUpdate(stack<Value*>* visitor_stack) {
+void SmallArrayDefOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) {
     for (auto i = operand_.rbegin(); i != operand_.rend(); i++) visitor_stack->push(*i);
 }
 
@@ -42,11 +42,11 @@ void SmallArrayDefOperation::genBodyVisitExit(BodyGenContext* context) {
     g_pos = pos;
 
     size_t size = operand_.size();
-    stack<Value*> op;
+    stack<ExValue*> op;
     for (size_t i = 0; i < size; i++) op.push(context->pop());
     std::reverse(op.begin(), op.end());
 
-    Value* ret = newSmallArrayDefOp(garbage_container, op, op_code_);
+    ExValue* ret = newSmallArrayDefOp(garbage_container, op, op_code_);
 
     context->push(ret);
 }
@@ -68,8 +68,7 @@ void SmallArrayDefOperation::printVisitExit(PrintBodyContext* context) {
     for (auto& i : op) out += i + ", ";
 
     if (op_code_ == OpCodeEn::smallArrayDef) context->push("[" + out + "]");
-    else
-        context->push("range[" + out + "]");
+    else context->push("range[" + out + "]");
 }
 
 void SmallArrayDefOperation::genBlocksVisitExit(TableGenContext* context) {
@@ -107,17 +106,14 @@ void SmallArrayDefOperation::setupIR(IRGenerator& builder) {
 
 void SmallArrayDefOperation::calculate() { /*do nothing*/
     if (op_code_ == OpCodeEn::smallArrayDef) buffer_ptr_ = calcSmallArrayDef(type_, operand_);
-    else
-        smallArrayGen();
+    else smallArrayGen();
 }
 
 void SmallArrayDefOperation::smallArray() {
     size_t args_size = operand_.size();
     if (args_size == 1) smallArray(operand_[0]);
-    else if (args_size == 2)
-        smallArray(operand_[0], operand_[1]);
-    else if (args_size == 3)
-        smallArray(operand_[0], operand_[1], operand_[2]);
+    else if (args_size == 2) smallArray(operand_[0], operand_[1]);
+    else if (args_size == 3) smallArray(operand_[0], operand_[1], operand_[2]);
 }
 
 void SmallArrayDefOperation::smallArrayGen() {
@@ -138,7 +134,7 @@ void SmallArrayDefOperation::smallArrayGen() {
 #undef OP
 };
 
-void SmallArrayDefOperation::smallArray(Value* arg1, Value* arg2, Value* arg3) {
+void SmallArrayDefOperation::smallArray(ExValue* arg1, ExValue* arg2, ExValue* arg3) {
     if ((isConst(arg1) && isConst(arg2) && isConst(arg3) && isInteger(arg3))) {
         start_ = arg1->getDoubleValue();
         stop_ = arg2->getDoubleValue();
@@ -152,7 +148,7 @@ void SmallArrayDefOperation::smallArray(Value* arg1, Value* arg2, Value* arg3) {
     }
 };
 
-void SmallArrayDefOperation::smallArray(Value* arg1, Value* arg2) {
+void SmallArrayDefOperation::smallArray(ExValue* arg1, ExValue* arg2) {
     if (isConst(arg1) && isConst(arg2) && isInteger(arg1) && isInteger(arg2)) {
         start_ = arg1->getDoubleValue();
         stop_ = arg2->getDoubleValue();
@@ -164,7 +160,7 @@ void SmallArrayDefOperation::smallArray(Value* arg1, Value* arg2) {
     }
 };
 
-void SmallArrayDefOperation::smallArray(Value* arg1) {
+void SmallArrayDefOperation::smallArray(ExValue* arg1) {
     if (isConst(arg1) && isInteger(arg1)) {
         start_ = 0;
         stop_ = (double)arg1->getBinaryValue();

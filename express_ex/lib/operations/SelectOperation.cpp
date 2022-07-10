@@ -3,8 +3,8 @@
 #include "jit/IR_generator.h"
 #include "operations/TypeCastOperation.h"
 
-Value* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, Value* arg_a, Value* arg_b, Value* arg_c,
-                   bool rec_call) {
+ExValue* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
+                     ExValue* arg_c, bool rec_call) {
     if (!isCompatible(arg_b, arg_c) || !isCompatible(arg_a, arg_b)) print_error("incompatible values");
 
     auto i1 = newTypeConvOp(garbage_container, TypeEn::int1_jty, arg_a);
@@ -17,7 +17,7 @@ Value* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, Valu
     return garbage_container->add(new SelectOperation(OpCodeEn::select, i1, arg_b, arg_c, target_type, rec_call));
 }
 
-SelectOperation::SelectOperation(OpCodeEn op, Value* var_a, Value* var_b, Value* var_c, TypeEn target_type,
+SelectOperation::SelectOperation(OpCodeEn op, ExValue* var_a, ExValue* var_b, ExValue* var_c, TypeEn target_type,
                                  bool rec_call)
     : Operation_ifs() {
     commonSetup(op, maxDSVar(var_a, var_b));
@@ -38,7 +38,7 @@ SelectOperation::SelectOperation(OpCodeEn op, Value* var_a, Value* var_b, Value*
         if (i->getLevel() < level_) i->getAssignedVal(true)->setBuffered();
 }
 
-void SelectOperation::visitEnterStackUpdate(stack<Value*>* visitor_stack) {
+void SelectOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) {
     visitor_stack->push(operand_[2]);
     visitor_stack->push(operand_[1]);
     visitor_stack->push(operand_[0]);

@@ -5,11 +5,11 @@
 
 #include "Operation_ifs.h"
 
-Value* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, Value* arg);
+ExValue* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg);
 
 class TypeCastOperation : public Operation_ifs {
    public:
-    TypeCastOperation(OpCodeEn op, Value* var, TypeEn target_type) : Operation_ifs() {
+    TypeCastOperation(OpCodeEn op, ExValue* var, TypeEn target_type) : Operation_ifs() {
         commonSetup(op, var);
         type_ = target_type;
 
@@ -21,7 +21,7 @@ class TypeCastOperation : public Operation_ifs {
     ~TypeCastOperation() override = default;
 
     // void visitEnterSetupBuffer(stack<Value*>* visitor_stack) override;
-    void visitEnterStackUpdate(stack<Value*>* visitor_stack) override;
+    void visitEnterStackUpdate(stack<ExValue*>* visitor_stack) override;
 
     void genBodyVisitExit(BodyGenContext* context) override;
     void calculateConstRecursive(RecursiveGenContext* context) override;

@@ -4,69 +4,68 @@
 #include <iostream>
 #include <vector>
 
-#include "variable.h"
 #include "ifs/AsyncParameter.h"
 #include "ifs/SyncParameter.h"
+#include "variable.h"
 
-class Line : public Value {
+class Line : public ExValue {
    public:
-    Line(const std::string& name, Value* var) : Value() {
+    Line(const std::string& name, ExValue* var) : ExValue() {
         names_.push_back(name);
         name_ = name;
         if (isConst(var)) {
             binary_value_ = var->getBinaryValue();
-            text_value_   = var->getTextValue();
+            text_value_ = var->getTextValue();
         }
-        assigned_val_        = var;
-        level_               = var->getLevel();
-        type_                = var->getType();
+        assigned_val_ = var;
+        level_ = var->getLevel();
+        type_ = var->getType();
         data_structure_type_ = var->getDSType();
-        length_              = var->getLength();
+        length_ = var->getLength();
     }
 
-    Line(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len) : Value() {
+    Line(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len) : ExValue() {
         names_.push_back(name);
-        name_                = name;
+        name_ = name;
         data_structure_type_ = dsty;
-        type_                = ty;
-        length_              = int64_t(len);
-        is_arg_              = true;
+        type_ = ty;
+        length_ = int64_t(len);
+        is_arg_ = true;
     }
 
-    Line(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty) : Value() {
+    Line(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty) : ExValue() {
         names_.push_back(name);
-        name_                = name;
-        link_name_           = link_name;
+        name_ = name;
+        link_name_ = link_name;
         data_structure_type_ = dsty;
-        is_arg_              = true;
+        is_arg_ = true;
     }
 
-    Line(const std::string& name, ParameterIfs* parameter) : Value() {
+    Line(const std::string& name, ParameterIfs* parameter) : ExValue() {
         names_.push_back(name);
-        name_                = name;
-        link_name_           = parameter->getName();
-        type_                = PRMType2JITType(parameter->getPrmType());
-        length_              = int64_t(parameter->getVirtualSize());
+        name_ = name;
+        link_name_ = parameter->getName();
+        type_ = PRMType2JITType(parameter->getPrmType());
+        length_ = int64_t(parameter->getVirtualSize());
         data_structure_type_ = DataStructureTypeEn::kLargeArr;
-        is_arg_              = true;
+        is_arg_ = true;
 
         if (parameter->isAsync()) {
             parameter_ = new AsyncParameter(*(AsyncParameter*)parameter);
-        } else
-            parameter_ = new SyncParameter(*(SyncParameter*)parameter);
+        } else parameter_ = new SyncParameter(*(SyncParameter*)parameter);
     }
 
-    explicit Line(const std::string& name) : Value() {
+    explicit Line(const std::string& name) : ExValue() {
         names_.push_back(name);
-        name_   = name;
-        type_   = TypeEn::unknown_jty;
+        name_ = name;
+        type_ = TypeEn::unknown_jty;
         is_arg_ = true;
     }
 
     ~Line() override = default;
 
-    void assignValue(Value* var);
-    Value* getAssignedVal(bool deep = false) override;
+    void assignValue(ExValue* var);
+    ExValue* getAssignedVal(bool deep = false) override;
 
     bool isArg() const;
     bool checkName(const std::string&) const;
@@ -78,16 +77,16 @@ class Line : public Value {
     untyped_t* getBinaryValuePtr() { return &binary_value_; }
 
     // safe functions .external stack is used
-    void visitEnter(stack<Value*>* visitor_stack) override;
-    void markUnusedVisitEnter(stack<Value*>* visitor_stack) override;
+    void visitEnter(stack<ExValue*>* visitor_stack) override;
+    void markUnusedVisitEnter(stack<ExValue*>* visitor_stack) override;
 
     void genBodyVisitExit(BodyGenContext* context) override;
     void printVisitExit(PrintBodyContext* context) override;
     void genBlocksVisitExit(TableGenContext* context) override;
     void setupIR(IRGenerator& builder) override;
 
-    virtual void setTempTypeAndBinaryValue(Value* var) {
-        temp_type_    = var->getType();
+    virtual void setTempTypeAndBinaryValue(ExValue* var) {
+        temp_type_ = var->getType();
         binary_value_ = var->getBinaryValue();
     }
 
@@ -101,7 +100,7 @@ class Line : public Value {
 
     void calculateConstRecursive(RecursiveGenContext* context) override {
         binary_value_ = is_arg_ ? binary_value_ : assigned_val_->getBinaryValue();
-        temp_type_    = assigned_val_->getTempType();
+        temp_type_ = assigned_val_->getTempType();
     }
 
     std::string printUint() override {
@@ -111,11 +110,11 @@ class Line : public Value {
    private:
     bool is_arg_ = false;
 
-    Value* assigned_val_ = nullptr;
+    ExValue* assigned_val_ = nullptr;
 
     std::vector<std::string> names_;
 
-    std::string name_      = std::string();
+    std::string name_ = std::string();
     std::string link_name_ = std::string();
 };
 

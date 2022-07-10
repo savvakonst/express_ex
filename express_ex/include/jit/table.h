@@ -1,20 +1,20 @@
 #ifndef BLOCK_H
 #define BLOCK_H
- 
+
 #include <iostream>
 #include <map>
 #include <set>
 #include <vector>
 
+#include "common/common.h"
+#include "common/undefWarningIgnore.h"
 #include "ifs/parameterIO.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
-#include "common/common.h"
 #include "parser/defWarningIgnore.h"
-#include "common/undefWarningIgnore.h"
 
 using std::string;
-class Value;
+class ExValue;
 
 enum class CycleStageEn
 {
@@ -45,11 +45,11 @@ class IRGenerator;
 typedef std::map<OpCodeEn, llvm::Function*> BuiltInFuncMap;
 class SubBlock {
    public:
-    explicit SubBlock(Value* var);
+    explicit SubBlock(ExValue* var);
 
     ~SubBlock() = default;
 
-    void setUint(Value* var);
+    void setUint(ExValue* var);
     void setBufferLength(uint64_t buffer_length) { buffer_length_ = buffer_length; }
     uint64_t getLevel() const { return 0; }
     uint64_t getLength() const { return length_; }
@@ -62,7 +62,7 @@ class SubBlock {
                     const std::string& basic_block_prefix = "", const std::string& basic_block_postfix = "");
 
    private:
-    stack<Value*> uint_list_;
+    stack<ExValue*> uint_list_;
 
     uint64_t left_length_;
     uint64_t right_length_;
@@ -73,13 +73,13 @@ class SubBlock {
 class Block {
    public:
     // Block (uint64_t l) {level =l; }
-    explicit Block(Value* var);
+    explicit Block(ExValue* var);
 
     ~Block() {
         for (auto i : sub_block_list_) delete i;
     }
 
-    void setUint(Value* var);
+    void setUint(ExValue* var);
     void setBufferLength(uint64_t buffer_length);
     uint64_t getLevel() const { return level_; };
     uint64_t getLength() const { return length_; };
@@ -90,9 +90,9 @@ class Block {
                     const std::string& basic_block_prefix = "");
 
    private:
-    void setUintToSubtable(Value* var);
+    void setUintToSubtable(ExValue* var);
 
-    stack<Value*> uint_list_;
+    stack<ExValue*> uint_list_;
     stack<SubBlock*> sub_block_list_;
 
     uint64_t left_length_;
@@ -105,13 +105,13 @@ class Block {
 class TableColumn {
    public:
     explicit TableColumn(uint64_t len) { length_ = len; }
-    explicit TableColumn(Value* var);
+    explicit TableColumn(ExValue* var);
 
     ~TableColumn() {
         for (auto i : block_list_) delete i;
     }
 
-    void setUint(Value* var);
+    void setUint(ExValue* var);
     void setBufferLength(uint64_t buffer_length) const {
         for (auto i : block_list_) i->setBufferLength(buffer_length);
     }
@@ -161,7 +161,7 @@ class Table {
         return false;
     }
 
-    void setUint(Value* var);
+    void setUint(ExValue* var);
 
     void recalcLeftRightBufferLengths() {
         for (auto i : column_list_) i->recalcLeftRightBufferLengths();
@@ -239,8 +239,8 @@ class Table {
     llvm::Type* fTy_ = nullptr;  // external
     llvm::Type* dTy_ = nullptr;  // external
 
-    stack<Value*> const_list_;        // external
-    stack<Value*> small_array_list_;  // external
+    stack<ExValue*> const_list_;        // external
+    stack<ExValue*> small_array_list_;  // external
 
     // uint64_t* max_column_depth_ = nullptr;
     stack<TableColumn*> column_list_;  // internal
@@ -263,7 +263,7 @@ class TableGenContext {
     ~TableGenContext() = default;
 
     uint64_t getUniqueIndex() { return unique_name_counter_++; }
-    void setUint(Value* var) const { table_->setUint(var); };
+    void setUint(ExValue* var) const { table_->setUint(var); };
     void setParameter(ParameterIfs* var) const { table_->parameter_set_.insert(var); };
     void setMaxBufferLength(int64_t length) const {
         int64_t temp = (int64_t)1 << (int8_t)(floor(log2(length)) - 1);

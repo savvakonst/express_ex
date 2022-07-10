@@ -5,12 +5,13 @@
 
 #include "Operation_ifs.h"
 
-Value* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn target_type, Value* arg, OpCodeEn op_type);
+ExValue* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg,
+                                 OpCodeEn op_type);
 
 class BuiltInCallOperation : public Operation_ifs {
    public:
     // constructor of type conversion operation or shift and decimation
-    BuiltInCallOperation(OpCodeEn op, Value* var, TypeEn target_type) : Operation_ifs() {
+    BuiltInCallOperation(OpCodeEn op, ExValue* var, TypeEn target_type) : Operation_ifs() {
         commonSetup(op, var);
         type_ = target_type;
         level_ = var->getLevel();
@@ -20,7 +21,7 @@ class BuiltInCallOperation : public Operation_ifs {
     ~BuiltInCallOperation() override = default;
 
     // void visitEnterSetupBuffer(stack<Value*>* visitor_stack) override;
-    void visitEnterStackUpdate(stack<Value*>* visitor_stack) override;
+    void visitEnterStackUpdate(stack<ExValue*>* visitor_stack) override;
 
     void genBodyVisitExit(BodyGenContext* context) override;
     void calculateConstRecursive(RecursiveGenContext* context) override;

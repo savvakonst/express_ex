@@ -5,11 +5,11 @@
 
 #include "Operation_ifs.h"
 
-Value* newIntegrateOperation(GarbageContainer* garbage_container, Value* value);
+ExValue* newIntegrateOperation(GarbageContainer* garbage_container, ExValue* value);
 
 class IntegrateOperation : public Operation_ifs {
    public:
-    explicit IntegrateOperation(Value* var) : Operation_ifs() {
+    explicit IntegrateOperation(ExValue* var) : Operation_ifs() {
         commonSetup(OpCodeEn::integrate, var);
         type_ = var->getType();
         operand_.push_back(var);
@@ -17,8 +17,8 @@ class IntegrateOperation : public Operation_ifs {
 
     ~IntegrateOperation() override = default;
 
-    void visitEnterSetupBuffer(stack<Value*>* visitor_stack) override;
-    void visitEnterStackUpdate(stack<Value*>* visitor_stack) override;
+    void visitEnterSetupBuffer(stack<ExValue*>* visitor_stack) override;
+    void visitEnterStackUpdate(stack<ExValue*>* visitor_stack) override;
 
     void genBodyVisitExit(BodyGenContext* context) override;
     void calculateConstRecursive(RecursiveGenContext* context) override;

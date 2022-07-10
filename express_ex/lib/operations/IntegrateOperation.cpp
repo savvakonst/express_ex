@@ -4,15 +4,15 @@
 #include "operations/ArithmeticOperation.h"
 #include "operations/TypeCastOperation.h"
 
-Value* newIntegrateOperation(GarbageContainer* garbage_container, Value* value) {
+ExValue* newIntegrateOperation(GarbageContainer* garbage_container, ExValue* value) {
     return new IntegrateOperation(value);
 }
 
-void IntegrateOperation::visitEnterSetupBuffer(stack<Value*>* visitor_stack) {
+void IntegrateOperation::visitEnterSetupBuffer(stack<ExValue*>* visitor_stack) {
     Operation_ifs::visitEnterSetupBuffer(visitor_stack);
 }
 
-void IntegrateOperation::visitEnterStackUpdate(stack<Value*>* visitor_stack) { visitor_stack->push(operand_[0]); }
+void IntegrateOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) { visitor_stack->push(operand_[0]); }
 
 void IntegrateOperation::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;

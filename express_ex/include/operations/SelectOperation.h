@@ -5,17 +5,18 @@
 
 #include "Operation_ifs.h"
 
-Value* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, Value* arg_a, Value* arg_b, Value* arg_c,
-                   bool rec_call = false);
+ExValue* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
+                     ExValue* arg_c, bool rec_call = false);
 
 class SelectOperation : public Operation_ifs {
    public:
-    SelectOperation(OpCodeEn op, Value* var_a, Value* var_b, Value* var_c, TypeEn target_type, bool rec_call = false);
+    SelectOperation(OpCodeEn op, ExValue* var_a, ExValue* var_b, ExValue* var_c, TypeEn target_type,
+                    bool rec_call = false);
 
     ~SelectOperation() override = default;
 
     // void visitEnterSetupBuffer(stack<Value*>* visitor_stack) override;
-    void visitEnterStackUpdate(stack<Value*>* visitor_stack) override;
+    void visitEnterStackUpdate(stack<ExValue*>* visitor_stack) override;
 
     void genBodyVisitExit(BodyGenContext* context) override;
     void calculateConstRecursive(RecursiveGenContext* context) override;

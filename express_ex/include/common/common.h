@@ -16,13 +16,13 @@ void print_SA_error(const std::string& content);
 
 
 class Line;
-class Value;
+class ExValue;
 
 typedef struct {
-    int64_t start_line     = -1;
-    int64_t stop_line      = -1;
+    int64_t start_line = -1;
+    int64_t stop_line = -1;
     int64_t start_char_pos = -1;
-    int64_t stop_char_pos  = -1;
+    int64_t stop_char_pos = -1;
     std::string txt;
 } PosInText;
 
@@ -46,10 +46,10 @@ class stack : public std::vector<T> {
     void push(T var) { std::vector<T>::push_back(var); }
 };
 
-bool operator==(const Value* var_a, DataStructureTypeEn var_b);
-bool operator==(DataStructureTypeEn var_a, const Value* var_b);
-bool operator<(TypeEn var_a, const Value* var_b);
-bool operator<(const Value* var_a, TypeEn var_b);
+bool operator==(const ExValue* var_a, DataStructureTypeEn var_b);
+bool operator==(DataStructureTypeEn var_a, const ExValue* var_b);
+bool operator<(TypeEn var_a, const ExValue* var_b);
+bool operator<(const ExValue* var_a, TypeEn var_b);
 /*
 bool isConst(const Value* var_a);
 bool isSmallArr(const Value* var_a);
@@ -62,10 +62,10 @@ bool isFloating(TypeEn type);
 bool isInteger(TypeEn type);
 bool isUInteger(TypeEn type);
 */
-bool isUnknownTy(const Value* var);
-bool isFloating(const Value* var);
-bool isInteger(const Value* var);
-bool isUInteger(const Value* var);
+bool isUnknownTy(const ExValue* var);
+bool isFloating(const ExValue* var);
+bool isInteger(const ExValue* var);
+bool isUInteger(const ExValue* var);
 
 template <typename Int_T_>
 inline Int_T_ maxInt(Int_T_ var1, Int_T_ var2) {
@@ -76,10 +76,10 @@ inline Int_T_ minInt(Int_T_ var1, Int_T_ var2) {
     return (var1 < var2) ? var2 : var2;
 }
 
-Value* maxTypeVar(Value* var_a, Value* var_b);
-Value* maxDSVar(Value* var_a, Value* var_b);
-Value* maxLevelVar(Value* var_a, Value* var_b);
-Value* minLevelVar(Value* var_a, Value* var_b);
+ExValue* maxTypeVar(ExValue* var_a, ExValue* var_b);
+ExValue* maxDSVar(ExValue* var_a, ExValue* var_b);
+ExValue* maxLevelVar(ExValue* var_a, ExValue* var_b);
+ExValue* minLevelVar(ExValue* var_a, ExValue* var_b);
 
 #define CASE_OP_GLOBAL(depend, target) \
 case (depend):                         \
@@ -238,7 +238,7 @@ uint64_t calcComparisonOperation(T arg1, T arg2, OpCodeEn uTypeOp) {
 
 template <typename T>
 uint64_t calcBuiltInFuncOperation(T arg, OpCodeEn uTypeOp) {
-    T value              = (T)0;
+    T value = (T)0;
     uint64_t binaryValue = 0;
     BI_SWITCH_OP(uTypeOp, ;, value, arg);
     *((T*)(&binaryValue)) = value;
@@ -312,10 +312,10 @@ void convolveTemplate_(T* ret, T* a, T* b, int na, int nb, int offset = 0) {
     int n_max = na, n_min = nb;
     T *main_arr = a, *sub_arr = b;
     if (nb > na) {
-        n_max    = nb;
-        n_min    = na;
+        n_max = nb;
+        n_min = na;
         main_arr = b;
-        sub_arr  = a;
+        sub_arr = a;
     }
 
     int left_offset = (n_min / 2) + offset - (n_min - 1);
@@ -368,7 +368,7 @@ char* calcConvolveSmallArray(TypeEn target_type, char* ret, char* a, char* b, in
 
 char* calcTypeConvSmallArray(TypeEn ret_type, TypeEn arg_type, char* ret, char* arg, int n);
 untyped_t calcTypeConvConst(TypeEn ret_type, TypeEn arg_type, untyped_t arg_int);
-char* calcSmallArrayDef(TypeEn targetType, const std::vector<Value*>& operand);
+char* calcSmallArrayDef(TypeEn targetType, const std::vector<ExValue*>& operand);
 
 inline size_t tEnSizeof(TypeEn type) {
     size_t size = 0;
@@ -401,8 +401,8 @@ void calcMinMax(char* carg, int64_t Number, double& dmax, double& dmin, bool ini
     }
     for (int i = 0; i < Number; i++) {
         T var = arg[i];
-        max   = max > var ? max : var;
-        min   = min < var ? min : var;
+        max = max > var ? max : var;
+        min = min < var ? min : var;
     }
     dmax = (double)max;
     dmin = (double)min;

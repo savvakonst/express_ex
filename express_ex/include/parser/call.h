@@ -10,12 +10,12 @@ class Function;
 }
 class IRGenerator;
 
-class CallI_ifs : public Value {
+class CallI_ifs : public ExValue {
    public:
-    CallI_ifs() : Value() {}
+    CallI_ifs() : ExValue() {}
     ~CallI_ifs() override = default;
 
-    void visitEnter(stack<Value*>* visitor_stack) override {
+    void visitEnter(stack<ExValue*>* visitor_stack) override {
         visitor_stack->push(this);
         for (int64_t i = ((int64_t)args_.size() - 1); i >= 0; i--) {
             visitor_stack->push(args_[(size_t)i]);
@@ -34,7 +34,7 @@ class CallI_ifs : public Value {
         }
     }
 
-    Value* getAssignedVal(bool deep = false) override {
+    ExValue* getAssignedVal(bool deep = false) override {
         if (body_ == nullptr) return nullptr;
 
         if (is_buffered_ & deep) {
@@ -55,15 +55,15 @@ class CallI_ifs : public Value {
 
    protected:
     Body* body_ = nullptr;
-    stack<Value*> args_;
+    stack<ExValue*> args_;
 };
 
 class Call : public CallI_ifs {
    public:
-    Call(Body* body, const stack<Value*>& args = {});
+    Call(Body* body, const stack<ExValue*>& args = {});
     ~Call() override = default;
 
-    void markUnusedVisitEnter(stack<Value*>* visitor_stack) override;
+    void markUnusedVisitEnter(stack<ExValue*>* visitor_stack) override;
     void genBlocksVisitExit(TableGenContext* context) override;
     void setupIR(IRGenerator& builder) override;
 
@@ -72,20 +72,20 @@ class Call : public CallI_ifs {
 
 class CallRecursiveFunction : public CallI_ifs {
    public:
-    explicit CallRecursiveFunction(Body* body, const stack<Value*>& args = {});
+    explicit CallRecursiveFunction(Body* body, const stack<ExValue*>& args = {});
     ~CallRecursiveFunction() override = default;
 
-    void markUnusedVisitEnter(stack<Value*>* visitor_stack) override;
+    void markUnusedVisitEnter(stack<ExValue*>* visitor_stack) override;
     void genBlocksVisitExit(TableGenContext* context) override;
     void setupIR(IRGenerator& builder) override;
 
-    Value* getAssignedVal(bool deep = false) override { return this; }
+    ExValue* getAssignedVal(bool deep = false) override { return this; }
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kCall; }
 };
 
 class TailCallDirective : public CallI_ifs {
    public:
-    explicit TailCallDirective(const stack<Value*>& args) : CallI_ifs() {
+    explicit TailCallDirective(const stack<ExValue*>& args) : CallI_ifs() {
         type_ = TypeEn::unknown_jty;
         args_ = (args);
     }
@@ -93,7 +93,7 @@ class TailCallDirective : public CallI_ifs {
 
     void setupIR(IRGenerator& builder) override;
 
-    Value* getAssignedVal(bool deep = false) override { return this; }
+    ExValue* getAssignedVal(bool deep = false) override { return this; }
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kTailCall; }
 };
 

@@ -9,7 +9,7 @@
 #include "body.h"
 #include "common/types_jty.h"
 
-class Value;
+class ExValue;
 class Line;
 class Body;
 
@@ -22,13 +22,13 @@ class GarbageContainer {
             delete i;
     }
     */
-    Value* add(Value* var) {
+    ExValue* add(ExValue* var) {
         if (var != nullptr) value_set_.insert(var);
         return var;
     }
 
    protected:
-    std::set<Value*> value_set_;
+    std::set<ExValue*> value_set_;
 };
 
 class CallRecursiveFunctionTemplate;
@@ -78,8 +78,8 @@ class BodyGenContext {
 
     ~BodyGenContext() = default;
 
-    inline void push(Value* var) { var_stack_.push(var); }
-    inline Value* pop() { return var_stack_.pop(); }
+    inline void push(ExValue* var) { var_stack_.push(var); }
+    inline ExValue* pop() { return var_stack_.pop(); }
     inline std::vector<Line*>& getNamespace() const { return *namespace_ptr_; }
     inline GarbageContainer* getGarbageContainer() const { return garbage_container_; }
     inline Body* getPureFunctionBody(const std::string& name, const Signature& signature) const {
@@ -95,7 +95,7 @@ class BodyGenContext {
 
    private:
     GarbageContainer* garbage_container_ = nullptr;
-    stack<Value*> var_stack_;
+    stack<ExValue*> var_stack_;
     Body* current_body_ = nullptr;
     std::vector<Line*>* namespace_ptr_ = nullptr;
 
@@ -111,15 +111,15 @@ class RecursiveGenContext {
 
     ~RecursiveGenContext() = default;
 
-    void setUint(Value* var) { instructions_list_.push(var); }
+    void setUint(ExValue* var) { instructions_list_.push(var); }
     uint32_t getReference() { return reference_cnt_++; }
 
-    void addArg(Value* arg) {
+    void addArg(ExValue* arg) {
         if (!hide_const_values_) instructions_list_.push(arg);
         args_reference_.push(arg);
     }
     bool exitFromLoop() const { return exit_from_loop_; }
-    stack<Value*> instructions_list_;
+    stack<ExValue*> instructions_list_;
     const bool hide_const_values_;
 
     bool exit_from_loop_;
@@ -127,7 +127,7 @@ class RecursiveGenContext {
    private:
     uint32_t reference_cnt_ = 0;
 
-    stack<Value*> args_reference_;
+    stack<ExValue*> args_reference_;
 
     friend class TailCallDirectiveTemplate;
 

@@ -1,8 +1,8 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#include "ifs/parameterIO.h"
 #include "common/common.h"
+#include "ifs/parameterIO.h"
 #include "parser/variable.h"
 
 enum class BufferTypeEn
@@ -25,7 +25,7 @@ enum class BufferTypeEn
 
 class Buffer {
    public:
-    explicit Buffer(Value* var) {
+    explicit Buffer(ExValue* var) {
         length_ = var->getBufferLen();
         left_offset_ = var->getLeftBufferLen();
         right_offset_ = var->getRightBufferLen();
@@ -94,7 +94,7 @@ class Buffer {
 
 class InputBuffer : public Buffer {
    public:
-    explicit InputBuffer(Value* var) : Buffer(var) { parameter_ = var->getParameter(); }
+    explicit InputBuffer(ExValue* var) : Buffer(var) { parameter_ = var->getParameter(); }
     ~InputBuffer() override = default;
 
     int64_t init() override {
@@ -126,7 +126,7 @@ class InputBuffer : public Buffer {
 
 class OutputBuffer : public Buffer {
    public:
-    explicit OutputBuffer(Value* var) : Buffer(var) { parameter_ = var->getParameter(); }
+    explicit OutputBuffer(ExValue* var) : Buffer(var) { parameter_ = var->getParameter(); }
 
     ~OutputBuffer() override {}
 

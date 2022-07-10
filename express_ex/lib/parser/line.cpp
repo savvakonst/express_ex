@@ -11,9 +11,9 @@ const T& max(const T& a, const T& b) {
 
 bool Line::isArg() const { return is_arg_; }
 
-void Line::assignValue(Value* var) {
+void Line::assignValue(ExValue* var) {
     assigned_val_ = var;
-    type_         = var->getType();
+    type_ = var->getType();
 }
 
 bool Line::checkName(const std::string& name) const {
@@ -21,7 +21,7 @@ bool Line::checkName(const std::string& name) const {
     return false;
 }
 
-Value* Line::getAssignedVal(bool deep) {
+ExValue* Line::getAssignedVal(bool deep) {
     if (is_arg_) return this;
 
     if (deep) return assigned_val_->getAssignedVal(true);
@@ -31,7 +31,7 @@ Value* Line::getAssignedVal(bool deep) {
 
 // safe functions .external stack is used
 
-void Line::markUnusedVisitEnter(stack<Value*>* visitor_stack) {
+void Line::markUnusedVisitEnter(stack<ExValue*>* visitor_stack) {
     commonMarkUnusedVisitEnter(visitor_stack);
     if (!is_arg_) {
         visitor_stack->push(assigned_val_);
@@ -43,16 +43,16 @@ void Line::markUnusedVisitEnter(stack<Value*>* visitor_stack) {
 void Line::genBlocksVisitExit(TableGenContext* context) {
     unique_name_ = (isLargeArr(this) ? "vb" : "vs") + std::to_string(context->getUniqueIndex()) + "." + name_;
     // context_->setUint(this);
-    is_visited_  = false;
+    is_visited_ = false;
 }
 
-void Line::visitEnter(stack<Value*>* visitor_stack) {
+void Line::visitEnter(stack<ExValue*>* visitor_stack) {
     visitor_stack->push(this);
     is_visited_ = true;
 }
 
 void Line::genBodyVisitExit(BodyGenContext* context) {
-    is_visited_                   = false;
+    is_visited_ = false;
     std::vector<Line*> namespace_l = context->getNamespace();
 
     std::string name = getName(true);
@@ -63,7 +63,7 @@ void Line::genBodyVisitExit(BodyGenContext* context) {
             return;
         }
     }
-    print_error("visitExit can't find var name: "+name);
+    print_error("visitExit can't find var name: " + name);
 }
 
 void Line::printVisitExit(PrintBodyContext* context) {

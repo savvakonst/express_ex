@@ -9,16 +9,16 @@ static const std::string kArComp[17] = {
 };
 static std::string txtCompOp(OpCodeEn op_code) { return kArComp[((int)op_code - (int)TypeOpCodeEn::comparsion)]; }
 
-Value* newComparisonOperation(GarbageContainer* garbage_container, TypeEn target_type, Value* arg_a, Value* arg_b,
-                              OpCodeEn op_type) {
+ExValue* newComparisonOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
+                                OpCodeEn op_type) {
     if (!isCompatible(arg_a, arg_b)) print_error("incompatible values");
 
     if (isConst(arg_a) && isConst(arg_b) && !isUnknownTy(target_type)) {
         if (isBool(target_type)) print_error("invalid type: Int1_jty ");
 
         return garbage_container->add(
-            new Value(calcComparisonConst(op_type, target_type, arg_a->getBinaryValue(), arg_b->getBinaryValue()),
-                      TypeEn::int1_jty));
+            new ExValue(calcComparisonConst(op_type, target_type, arg_a->getBinaryValue(), arg_b->getBinaryValue()),
+                        TypeEn::int1_jty));
     }
 
     OpCodeEn local_op_type = OpCodeEn::none_op;
@@ -54,7 +54,7 @@ Value* newComparisonOperation(GarbageContainer* garbage_container, TypeEn target
     return garbage_container->add(new ComparisonOperation(local_op_type, arg_a, arg_b));
 }
 
-ComparisonOperation::ComparisonOperation(OpCodeEn op, Value* var_a, Value* var_b) : Operation_ifs() {
+ComparisonOperation::ComparisonOperation(OpCodeEn op, ExValue* var_a, ExValue* var_b) : Operation_ifs() {
     commonSetup(op, maxDSVar(var_a, var_b));
 
     type_ = isUnknownTy(var_a) || isUnknownTy(var_b) ? TypeEn::unknown_jty : TypeEn::int1_jty;
@@ -68,7 +68,7 @@ ComparisonOperation::ComparisonOperation(OpCodeEn op, Value* var_a, Value* var_b
         if (i->getLevel() < level_) i->getAssignedVal(true)->setBuffered();
 }
 
-void ComparisonOperation::visitEnterStackUpdate(stack<Value*>* visitor_stack) {
+void ComparisonOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) {
     visitor_stack->push(operand_[1]);
     visitor_stack->push(operand_[0]);
 }
@@ -157,4 +157,3 @@ void ComparisonOperation::calculate() {
         buffer_ptr_ = calcComparisonSmallArray(op_code_, local_type, buffer_ptr_, op_a->getBinaryValue(),
                                                op_b->getBufferPtr(), length);
 }
-

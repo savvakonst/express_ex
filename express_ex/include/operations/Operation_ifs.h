@@ -8,12 +8,12 @@
 
 // extern bool g_gpu_acceleration_enable;
 
-class Operation_ifs : public Value {
+class Operation_ifs : public ExValue {
    public:
     // constructor of arithmetic, logic or comparision operation
-    Operation_ifs() : Value() {}
+    Operation_ifs() : ExValue() {}
 
-    void commonSetup(OpCodeEn op, const Value* var) {
+    void commonSetup(OpCodeEn op, const ExValue* var) {
         op_code_ = op;
         data_structure_type_ = var->getDSType();
         length_ = var->getLength();
@@ -30,21 +30,21 @@ class Operation_ifs : public Value {
 
     // safe functions .external stack is used
 
-    virtual void visitEnterSetupBuffer(stack<Value*>* visitor_stack) {
+    virtual void visitEnterSetupBuffer(stack<ExValue*>* visitor_stack) {
         for (auto i : operand_) {
             i->setBufferLength(this);
         }
     }
 
-    virtual void visitEnterStackUpdate(stack<Value*>* visitor_stack);
+    virtual void visitEnterStackUpdate(stack<ExValue*>* visitor_stack);
 
-    void visitEnter(stack<Value*>* visitor_stack) override {
+    void visitEnter(stack<ExValue*>* visitor_stack) override {
         is_visited_ = true;
         visitor_stack->push(this);
         visitEnterStackUpdate(visitor_stack);
     }
 
-    void markUnusedVisitEnter(stack<Value*>* visitor_stack) override;
+    void markUnusedVisitEnter(stack<ExValue*>* visitor_stack) override;
 
     void genBodyVisitExit(BodyGenContext* context) override {
         print_error("visitExit unknown command. In line : " + std::to_string(context->getNamespace().size()));
@@ -63,7 +63,7 @@ class Operation_ifs : public Value {
         is_visited_ = false;
     }
 
-    Value* getAssignedVal(bool deep = false) override { return this; }
+    ExValue* getAssignedVal(bool deep = false) override { return this; }
 
     std::string printUint() override {
         print_error("printUint unknown command .");
@@ -85,8 +85,8 @@ class Operation_ifs : public Value {
      */
     void finishSetupIR(IRGenerator& builder);
 
-    std::vector<Value*> operand_;
-    std::vector<Value*> simplified_operand_;
+    std::vector<ExValue*> operand_;
+    std::vector<ExValue*> simplified_operand_;
 
     OpCodeEn op_code_ = OpCodeEn::none_op;
 

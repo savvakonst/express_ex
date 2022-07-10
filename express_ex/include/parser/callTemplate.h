@@ -4,12 +4,12 @@
 #include "body.h"
 #include "bodyTemplate.h"
 
-class CallTemplate_ifs : public Value {
+class CallTemplate_ifs : public ExValue {
    public:
-    CallTemplate_ifs() : Value() {}
+    CallTemplate_ifs() : ExValue() {}
     ~CallTemplate_ifs() override = default;
 
-    void visitEnter(stack<Value*>* visitor_stack) override {
+    void visitEnter(stack<ExValue*>* visitor_stack) override {
         visitor_stack->push(this);
         for (int64_t i = ((int64_t)args_.size() - 1); i >= 0; i--) {
             visitor_stack->push(args_[(size_t)i]);
@@ -41,37 +41,37 @@ class CallTemplate_ifs : public Value {
 
    protected:
     BodyTemplate* body_template_ = nullptr;
-    stack<Value*> args_;
+    stack<ExValue*> args_;
 };
 
 class CallRecursiveFunctionTemplate : public CallTemplate_ifs {
    public:
-    explicit CallRecursiveFunctionTemplate(BodyTemplate* body, const stack<Value*>& args = {}) : CallTemplate_ifs() {
+    explicit CallRecursiveFunctionTemplate(BodyTemplate* body, const stack<ExValue*>& args = {}) : CallTemplate_ifs() {
         body_template_ = body;
-        args_          = args;
+        args_ = args;
 
         if (body_template_->getRet().empty()) return;
         auto ret = body_template_->getRet().front();
 
-        level_               = ret->getLevel();
-        type_                = ret->getType();
+        level_ = ret->getLevel();
+        type_ = ret->getType();
         data_structure_type_ = ret->getDSType();
-        length_              = ret->getLength();
+        length_ = ret->getLength();
 
         if (isConst(ret)) {
             binary_value_ = ret->getBinaryValue();
-            text_value_   = ret->getTextValue();
+            text_value_ = ret->getTextValue();
         }
     }
 
     ~CallRecursiveFunctionTemplate() override = default;
 
     void genBodyVisitExit(BodyGenContext* context) override {
-        stack<Value*> a;
+        stack<ExValue*> a;
         bool large_array = false, small_array = false;
 
         for (auto i : args_) {
-            Value* var = context->pop();
+            ExValue* var = context->pop();
             large_array |= isLargeArr(var);
             small_array |= isSmallArr(var);
             a.push(var);
@@ -96,7 +96,7 @@ class CallRecursiveFunctionTemplate : public CallTemplate_ifs {
             binary_value_ = body_template_->genConstRecursiveByTemplate(a);
 
             context->push(context->getGarbageContainer()->add(
-                new Value(binary_value_, body_template_->getRet().front()->getTempType())));
+                new ExValue(binary_value_, body_template_->getRet().front()->getTempType())));
         }
 
         is_visited_ = false;
@@ -104,8 +104,8 @@ class CallRecursiveFunctionTemplate : public CallTemplate_ifs {
 
     void calculateConstRecursive(RecursiveGenContext* context) override {
         binary_value_ = body_template_->genConstRecursiveByTemplate(args_);  // it might be worth changing the order
-        type_         = body_template_->getRet().front()->getTempType();
-        is_visited_   = false;
+        type_ = body_template_->getRet().front()->getTempType();
+        is_visited_ = false;
     }
 
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kCall; }
@@ -113,7 +113,7 @@ class CallRecursiveFunctionTemplate : public CallTemplate_ifs {
 
 class TailCallDirectiveTemplate : public CallTemplate_ifs {
    public:
-    TailCallDirectiveTemplate(const stack<Value*>& args) : CallTemplate_ifs() {
+    TailCallDirectiveTemplate(const stack<ExValue*>& args) : CallTemplate_ifs() {
         args_ = args;
         type_ = TypeEn::unknown_jty;
     }
@@ -121,7 +121,7 @@ class TailCallDirectiveTemplate : public CallTemplate_ifs {
     ~TailCallDirectiveTemplate() override = default;
 
     void genBodyVisitExit(BodyGenContext* context) override {
-        stack<Value*> a;
+        stack<ExValue*> a;
         for (auto& i : args_) a.push(context->pop());
 
         context->push(context->getGarbageContainer()->add(new TailCallDirective(a)));
@@ -138,28 +138,28 @@ class TailCallDirectiveTemplate : public CallTemplate_ifs {
 
 class CallTemplate : public CallTemplate_ifs {
    public:
-    explicit CallTemplate(BodyTemplate* body, const stack<Value*>& args = {}) : CallTemplate_ifs() {
+    explicit CallTemplate(BodyTemplate* body, const stack<ExValue*>& args = {}) : CallTemplate_ifs() {
         body_template_ = body;
-        args_          = args;
+        args_ = args;
 
         if (body_template_->getRet().empty()) return;
         auto ret = body_template_->getRet().front();
 
-        level_               = ret->getLevel();
-        type_                = ret->getType();
+        level_ = ret->getLevel();
+        type_ = ret->getType();
         data_structure_type_ = ret->getDSType();
-        length_              = ret->getLength();
+        length_ = ret->getLength();
 
         if (isConst(ret)) {
             binary_value_ = ret->getBinaryValue();
-            text_value_   = ret->getTextValue();
+            text_value_ = ret->getTextValue();
         }
     }
 
     ~CallTemplate() override = default;
 
     void genBodyVisitExit(BodyGenContext* context) override {
-        stack<Value*> a;
+        stack<ExValue*> a;
         for (auto& i : args_) a.push(context->pop());
 
         Body* body = body_template_->genBodyByTemplate(context->current_body_, a, context->is_pure_function_);
@@ -176,8 +176,8 @@ class CallTemplate : public CallTemplate_ifs {
 
     void calculateConstRecursive(RecursiveGenContext* context) override {
         binary_value_ = body_template_->genConstRecursiveByTemplate(args_);  // it might be worth changing the order
-        type_         = body_template_->getRet().front()->getTempType();
-        is_visited_   = false;
+        type_ = body_template_->getRet().front()->getTempType();
+        is_visited_ = false;
     }
 
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kCall; }

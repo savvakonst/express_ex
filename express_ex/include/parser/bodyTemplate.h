@@ -10,7 +10,7 @@
 
 class BodyGenContext;
 class GarbageContainer;
-class Value;
+class ExValue;
 class Line;
 class Body;
 
@@ -23,20 +23,21 @@ class BodyTemplate {
     bool isRetStackEmpty() const { return return_stack_.empty(); }
 
     // var_stack_ push/pop
-    void push(Value*);
-    Value* pop();
-    stack<Value*> pop(size_t length);
+    void push(ExValue*);
+    ExValue* pop();
+    stack<ExValue*> pop(size_t length);
 
     //
-    void addLine(const std::string& name, Value* var);
+    void addLine(const std::string& name, ExValue* var);
     void addArg(const std::string&
                     name);  // is necessary to add returned status_ value with line ,pos end error code and string;
     void addParam(Line* line);
     void addParam(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len);
     void addParam(const std::string& name, const std::string& linkName,
                   DataStructureTypeEn dsty = DataStructureTypeEn::kConstant);
-    void addReturn(const std::string& name,
-                   Value* var);  // is necessary to add returned status_ value with line ,pos end error code and string;
+    void addReturn(
+        const std::string& name,
+        ExValue* var);  // is necessary to add returned status_ value with line ,pos end error code and string;
     // create operation and push to varStack
     void addTypeConvOp(TypeEn target_type);
     void addBuiltInFuncOp(OpCodeEn u_type_op);
@@ -70,8 +71,8 @@ class BodyTemplate {
 
     std::string print(const std::string& tab = "", bool DSTEna = false, bool hide_unused_lines = false) const;
     std::list<std::string> getNamesOfDefinedFunctions() const;
-    Body* genBodyByTemplate(Body* parent_body, stack<Value*> args, bool pure_function) const;
-    untyped_t genConstRecursiveByTemplate(stack<Value*>& args) const;
+    Body* genBodyByTemplate(Body* parent_body, stack<ExValue*> args, bool pure_function) const;
+    untyped_t genConstRecursiveByTemplate(stack<ExValue*>& args) const;
 
     std::list<BodyTemplate*> child_body_template_list_;
 
@@ -83,7 +84,7 @@ class BodyTemplate {
     bool is_operator_ = false;
     bool is_tail_callable_ = false;
 
-    stack<Value*> var_stack_;
+    stack<ExValue*> var_stack_;
     stack<Line*> lines_;
     stack<Line*> return_stack_;
 

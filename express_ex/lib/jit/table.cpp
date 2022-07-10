@@ -3,20 +3,15 @@
 
 #include <sstream>
 
-
 #include "jit/IR_generator.h"
 #include "jit/buffer.h"
 #include "jit/llvmHdrs.h"
 #include "llvm/ExecutionEngine/SectionMemoryManager.h"
 #include "llvm/Support/DynamicLibrary.h"
-
 #include "parser/basic.h"
 #include "parser/body.h"
 #include "parser/call.h"
 #include "parser/line.h"
-
-
-
 
 
 
@@ -116,21 +111,25 @@ bool SubBlock::generateIR(IRGenerator& builder, CycleStageEn type, const std::st
     builder.clearInitializedValueList();
 
     builder.setIntermediateInsertPoint(bb_intermediate);
+    builder.setOffsetTo(-(int64_t)left_length_);
+
     builder.setLoadInsertPoint(bb_load);
     builder.setCalcInsertPoint(bb_calc);
     builder.setStoreInsertPoint(bb_store);
     // builder.SetTerminalOpInsertPoint(bb_terminal_op);
 
-    builder.setCalcInsertPoint();
 
-    llvm::Value* alloc = builder.createPositionalOffset(basic_block_prefix + level_txt, -(int64_t)left_length_);
-    // Value* alloc =builder.CreatePositionalOffset(basic_block_prefix + level_txt, 0);
+    llvm::Value* offset_alloc = builder.getCurrentOffsetValueAlloca();
+    llvm::Value* offset = builder.createLoadOffset();
+
     builder.setStoreInsertPoint();
-    llvm::Value* next_offset = builder.CreateAdd(builder.getCurrentOffsetValue(), builder.getInt64(1));
-    builder.CreateStore(next_offset, alloc);
-    builder.setCurrentCmpRes(builder.CreateICmpSLT(next_offset,
-                                                   builder.getInt64(buffer_length_ + right_length_)));  // not true
-    // builder.getInt64(buffer_length_ + right_length_)));
+    llvm::Value* next_offset = builder.CreateAdd(offset, builder.getInt64(1));
+    builder.CreateStore(next_offset, offset_alloc);
+
+    uint64_t len = buffer_length_;
+    builder.setCurrentCmpRes(builder.CreateICmpSLT(next_offset, builder.getInt64(len + right_length_)));
+
+
     builder.setCalcInsertPoint();
 
     for (auto i : uint_list_) i->setupIR(builder);
@@ -190,84 +189,10 @@ string Block::print() const {
     for (auto i : sub_block_list_) {
         out += i->print();
     }
-    /*
-    for (auto i : uint_list_) {
-        std::string txt       = i->printUint() + ";" + (i->isBuffered() ? " store" : "");
-        std::string txtShifts = std::to_string(i->getLeftBufferLen()) + " : " + std::to_string(i->getRightBufferLen());
-        std::string txtSkip   = std::string(max_line_length - ((txt.length_() > max_line_length) ? 0 : txt.length_()), '
-    ');
-
-        out+="\t\t" + txt+ txtSkip+ txtShifts+ "\n";
-    }
-   */
     return out;
 }
 
-/*
-bool Block::generateIR(IRGenerator &builder, CycleStageEn type, std::string basic_block_prefix)
-{
-    llvm::LLVMContext & context = builder.getContext();
 
-    std::string  level_txt=std::to_string(level_);
-
-    if ( (type == CycleStageEn::midle) || (type == CycleStageEn::end) ){
-
-        if ((type == CycleStageEn::end) & (0 == ( length_ % buffer_length_ )))
-            return false;
-
-
-        const std::string postfix = basic_block_prefix + level_txt;
-
-        llvm::BasicBlock * bb_intermediate = builder.CreateNewIntermediateBB(postfix);
-        builder.CreateNewLoadBB(postfix);
-        builder.CreateNewCalcBB(postfix);
-        builder.CreateNewStoreBB(postfix);
-
-
-        if (nullptr != builder.getStoreBlock()) {
-            builder.CreateMidleBRs();
-            builder.CreateCondBr(builder.getCurrentCMPRes(), builder.getLoadBlock(), bb_intermediate);
-        } else {
-            builder.SetLoopEnterInsertPoint();
-            builder.CreateBr(bb_intermediate);
-        }
-
-        builder.ClearInitializedValueList();
-
-        builder.SetIntermediateInsertPoint();
-        builder.SetOffsetTo(right_length_);
-        builder.SetLoadInsertPoint();
-
-        llvm::Value* offset_alloc = builder.getCurrentOffsetValueAlloca();
-        llvm::Value* offset= builder.CreateLoadOffset();
-
-        builder.SetStoreInsertPoint();
-
-        llvm::Value* next_offset =builder.CreateAdd(offset, builder.getInt64(1));
-        builder.CreateStore(next_offset, offset_alloc);
-
-        uint64_t len = (type == CycleStageEn::midle) ? buffer_length_ : length_ % buffer_length_ ;
-        builder.SetCurrentCMPRes(
-            builder.CreateICmpSLT(
-                next_offset,
-                builder.getInt64(len + right_length_)));
-        builder.SetCalcInsertPoint();
-
-        for (auto i : uint_list_)
-            i->setupIR(builder);
-
-    }else if(type == CycleStageEn::start){
-        std::string  levelTxt=std::to_string(level_);
-        size_t sub_level=0;
-        for (auto i : sub_block_list_) {
-            i->generateIR(builder, type, basic_block_prefix, levelTxt+"_"+std::to_string(sub_level));
-            sub_level++;
-        }
-
-    }
-    return true;
-}
-*/
 
 bool Block::generateIR(IRGenerator& builder, CycleStageEn type, const std::string& basic_block_prefix) {
     llvm::LLVMContext& context = builder.getContext();
@@ -307,8 +232,7 @@ bool Block::generateIR(IRGenerator& builder, CycleStageEn type, const std::strin
         builder.setLoadInsertPoint(bb_load);
         builder.setCalcInsertPoint(bb_calc);
         builder.setStoreInsertPoint(bb_store);
-
-        builder.setLoadInsertPoint();
+        // builder.SetTerminalOpInsertPoint(bb_terminal_op);
 
         llvm::Value* offset_alloc = builder.getCurrentOffsetValueAlloca();
         llvm::Value* offset = builder.createLoadOffset();
@@ -743,6 +667,10 @@ bool Table::generateIRInGroup(Group& group, uint32_t index) {
     llvm::BasicBlock* bb = llvm::BasicBlock::Create(context, "init_block", sub_function);
     builder.setInitInsertPoint(bb);
 
+
+    llvm::Value* glob_index_alloca = builder.createPositionalOffsetAlloca("glob_index_alloca", 0);
+    builder.createPositionalOffsetAlloca("common_offset_alloca_", 0);
+
     auto max_level = getMaxLevel() + 1;
     for (uint32_t j = 0; j < max_level; j++)
         for (auto i : column_list_) i->generateIR(builder, CycleStageEn::start, j);
@@ -765,10 +693,7 @@ bool Table::generateIRInGroup(Group& group, uint32_t index) {
     builder.setLoopEnterInsertPoint(bb_loop_enter);
     builder.dropBaseInsertPoint();
 
-    llvm::Value* glob_index_alloca = builder.createPositionalOffsetAlloca("glob_index_alloca", 0);
 
-    //TODO check, is it legacy code?
-    builder.createPositionalOffsetAlloca("common_offset_alloca_", 0);
 
     builder.setLoopEnterInsertPoint(bb_loop_enter);
     llvm::Value* glob_index = builder.CreateLoad(glob_index_alloca, "glob_index");
@@ -926,7 +851,7 @@ bool Table::run() {
 
 std::string Table::printllvmIr() {
     std::string ret;
-    llvm::raw_string_ostream(ret)<< *M_ << "\n\n";
+    llvm::raw_string_ostream(ret) << *M_ << "\n\n";
     return ret;
 }
 
@@ -989,8 +914,7 @@ void CallRecursiveFunction::setupIR(IRGenerator& builder) {
             BufferTypeEn bufferType = isReturned() ? BufferTypeEn::output : BufferTypeEn::internal;
             if (isReturned()) {
                 builder.addBufferAlloca(new OutputBuffer(this));
-            } else
-                builder.addBufferAlloca(new Buffer(this));
+            } else builder.addBufferAlloca(new Buffer(this));
 
             IR_buffer_base_ptr_ = builder.createBufferInit(type_, "internal_");
             is_initialized_ = true;
@@ -1043,8 +967,7 @@ llvm::Function* Body::getOrGenIRPureFunction(IRGenerator& builder) {
             do {
                 auto var = visitor_stack.pop();
                 if (var->isVisited()) var->genRecursiveVisitExit(&gen_context);
-                else
-                    var->visitEnter(&visitor_stack);
+                else var->visitEnter(&visitor_stack);
             } while (!visitor_stack.empty());
             gen_context.setUint(line);
         }
@@ -1055,8 +978,7 @@ llvm::Function* Body::getOrGenIRPureFunction(IRGenerator& builder) {
         do {
             auto var = visitor_stack.pop();
             if (var->isVisited()) var->genRecursiveVisitExit(&gen_context);
-            else
-                var->visitEnter(&visitor_stack);
+            else var->visitEnter(&visitor_stack);
         } while (!visitor_stack.empty());
         gen_context.setUint(value);
     }

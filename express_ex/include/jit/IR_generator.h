@@ -51,7 +51,6 @@ class IRGenerator : public llvm::IRBuilder<> {
     llvm::Value* createGpuConvolve(llvm::Value* a_operand, char* ptr, int64_t length, int64_t shift, TypeEn type,
                                    const std::string& name = "");
     llvm::Value* createPositionalAlloca(llvm::Type* a_operand, int64_t i, const std::string& name = "");
-    llvm::Value* createPositionalOffset(const std::string& name = "", int64_t start_value = 0);
     llvm::Value* createPositionalOffsetAlloca(const std::string& name = "", int64_t start_value = 0);
     llvm::Value* createPositionalInBoundsGep(llvm::Value* ptr, llvm::ArrayRef<llvm::Value*> idx_list,
                                              const std::string& name = "");

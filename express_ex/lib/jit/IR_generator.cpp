@@ -23,8 +23,7 @@ llvm::Value* IRGenerator::createFPow(llvm::Value* a_operand, llvm::Value* b_oper
 
     if (a_operand->getType() == getFloatTy())
         return CreateCall(table_->getFloatBIFunc(OpCodeEn::fpow), {a_operand, b_operand}, name);
-    else
-        return CreateCall(table_->getDoubleBIFunc(OpCodeEn::fpow), {a_operand, b_operand}, name);
+    else return CreateCall(table_->getDoubleBIFunc(OpCodeEn::fpow), {a_operand, b_operand}, name);
 }
 
 llvm::Value* IRGenerator::createConst(int64_t& binary_value, TypeEn target_ty, const std::string& name) {
@@ -165,8 +164,7 @@ llvm::Value* IRGenerator::createInv(llvm::Value* a_operand, OpCodeEn op_code, co
     llvm::Value* ret = nullptr;
 
     if (op_code == OpCodeEn::neg) return CreateNeg(a_operand, name);
-    else
-        return CreateFNeg(a_operand, name);
+    else return CreateFNeg(a_operand, name);
 }
 
 llvm::Value* IRGenerator::createTypeConv(llvm::Value* a_operand, OpCodeEn op_code, TypeEn target_ty,
@@ -238,14 +236,10 @@ llvm::Value* IRGenerator::createConvolve(llvm::Value* a_operand, llvm::Value* b_
     llvm::Type* type = a_operand->getType()->getPointerElementType();
 
     if (type == getDoubleTy()) convolveFunction = convolve_double_function_;
-    else if (type == getFloatTy())
-        convolveFunction = convolve_float_function_;
-    else if (type == getInt64Ty())
-        convolveFunction = convolve_i64_function_;
-    else if (type == getInt32Ty())
-        convolveFunction = convolve_i32_function_;
-    else
-        return ret;
+    else if (type == getFloatTy()) convolveFunction = convolve_float_function_;
+    else if (type == getInt64Ty()) convolveFunction = convolve_i64_function_;
+    else if (type == getInt32Ty()) convolveFunction = convolve_i32_function_;
+    else return ret;
     // if (ret == nullptr) print_error("CreateConvolve :" );
 
     return createCall(convolveFunction, {a_operand, b_operand}, name);
@@ -266,24 +260,15 @@ llvm::Value* IRGenerator::createPositionalAlloca(llvm::Type* ty, int64_t i, cons
     return ret;
 }
 
-llvm::Value* IRGenerator::createPositionalOffset(const std::string& name, int64_t start_value) {
-    llvm::Value* ret = createPositionalOffsetAlloca("", start_value);
-    auto last_block = GetInsertBlock();
-    setLoadInsertPoint();
-    current_offset_value_ = CreateLoad(ret, "offset");
-    SetInsertPoint(last_block);
-    return ret;
-}
 
 llvm::Value* IRGenerator::createPositionalOffsetAlloca(const std::string& name, int64_t start_value) {
     auto ty = getInt64Ty();
-    //TODO:
     auto last_block = GetInsertBlock();
     setInitInsertPoint();
-    llvm::Value* ret = CreateAlloca(ty, 0, "offset_alloca_");
-    current_offset_value_alloca_ = ret;
-    CreateStore(getInt64(start_value), ret);
-    return ret;
+    current_offset_value_alloca_ = CreateAlloca(ty, 0, name);
+    CreateStore(getInt64(start_value), current_offset_value_alloca_);
+    SetInsertPoint(last_block);
+    return current_offset_value_alloca_;
 }
 
 llvm::Value* IRGenerator::createPositionalInBoundsGep(llvm::Value* ptr, llvm::ArrayRef<llvm::Value*> idx_list,
@@ -312,7 +297,10 @@ llvm::Value* IRGenerator::createPositionalLoad(llvm::Value* a_operand, bool is_v
 }
 
 llvm::Value* IRGenerator::createLoadOffset(const std::string& name) {
+    auto last_block = GetInsertBlock();
+    setLoadInsertPoint();
     current_offset_value_ = CreateLoad(current_offset_value_alloca_, name);
+    SetInsertPoint(last_block);
     return current_offset_value_;
 }
 
@@ -374,12 +362,9 @@ void IRGenerator::setDeclareConvolve(llvm::Type* type, uintptr_t addr)  // atavi
     };
 
     if (type == getDoubleTy()) convolve_double_function_ = lambda(type, addr);
-    else if (type == getFloatTy())
-        convolve_float_function_ = lambda(type, addr);
-    else if (type == getInt64Ty())
-        convolve_i64_function_ = lambda(type, addr);
-    else if (type == getInt32Ty())
-        convolve_i32_function_ = lambda(type, addr);
+    else if (type == getFloatTy()) convolve_float_function_ = lambda(type, addr);
+    else if (type == getInt64Ty()) convolve_i64_function_ = lambda(type, addr);
+    else if (type == getInt32Ty()) convolve_i32_function_ = lambda(type, addr);
 }
 
 void IRGenerator::setOffsetToZero() {

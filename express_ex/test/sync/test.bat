@@ -22,7 +22,7 @@ for %%i in ("single_arg_convolve.kex") do (
     %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i   --llvmIRcode  %EX_ARG% >  output.ll
     %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i  -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit %EX_ARG%
     ..\ex_test.py   --db=%EXPRESS_FILE% -i=%%i
-    IF EXIST out_0.dat  DEL /f out.dat
+    IF EXIST out.dat  DEL /f out.dat
 )
 
 

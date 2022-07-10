@@ -41,54 +41,11 @@ string SubBlock::print() const {
     }
     return out;
 }
-/*
-bool SubBlock::generateIR(IRGenerator & builder, CycleStageEn type, std::string basic_block_prefix, std::string
-basic_block_postfix)
-{
-    llvm::LLVMContext & context = builder.getContext();
 
-    const std::string postfix = basic_block_prefix + basic_block_postfix;
-
-    llvm::BasicBlock* bb_intermediate = builder.CreateNewIntermediateBB(postfix);
-    builder.CreateNewLoadBB(postfix);
-    builder.CreateNewCalcBB(postfix);
-    builder.CreateNewStoreBB(postfix);
-    //BasicBlock* bb_terminal_op = BasicBlock::Create(context_, "terminal_op_" + postfix, builder.getCurrentFunction());
-
-
-    if (nullptr != builder.getStoreBlock())
-    {
-        builder.CreateStartBRs();
-        builder.CreateCondBr(builder.getCurrentCMPRes(), builder.getLoadBlock(), bb_intermediate);
-    }
-
-    builder.ClearInitializedValueList();
-    builder.SetCalcInsertPoint();
-
-
-    llvm::Value* alloc =builder.CreatePositionalOffset(postfix, - (int64_t)left_length_ );
-    //Value* alloc =builder.CreatePositionalOffset(basic_block_prefix + level_txt, 0);
-    builder.SetStoreInsertPoint();
-    llvm::Value* next_offset =builder.CreateAdd(builder.getCurrentOffsetValue(), builder.getInt64(1));
-    builder.CreateStore(next_offset, alloc);
-    builder.SetCurrentCMPRes(
-        builder.CreateICmpSLT(
-            next_offset,
-            builder.getInt64(buffer_length_ + right_length_))); // not true
-            //builder.getInt64(buffer_length_ + right_length_)));
-    builder.SetCalcInsertPoint();
-
-    for (auto i : uint_list_)
-        i->setupIR(builder);
-
-    return true;
-}
-*/
 bool SubBlock::generateIR(IRGenerator& builder, CycleStageEn type, const std::string& basic_block_prefix,
-                          const std::string& basic_block_postfix) {
+                          const std::string& level_txt) {
     llvm::LLVMContext& context = builder.getContext();
 
-    std::string level_txt = basic_block_postfix;
 
     llvm::BasicBlock* bb_intermediate = llvm::BasicBlock::Create(
         context, "intermediate_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
@@ -98,8 +55,7 @@ bool SubBlock::generateIR(IRGenerator& builder, CycleStageEn type, const std::st
         llvm::BasicBlock::Create(context, "calc_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
     llvm::BasicBlock* bb_store =
         llvm::BasicBlock::Create(context, "store_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
-    // BasicBlock* bb_terminal_op = BasicBlock::Create(context_, "terminal_op_" + basic_block_prefix + level_txt,
-    // builder.getCurrentFunction());
+
 
     llvm::BasicBlock* bb_last_store = builder.getStoreBlock();
 
@@ -116,8 +72,6 @@ bool SubBlock::generateIR(IRGenerator& builder, CycleStageEn type, const std::st
     builder.setLoadInsertPoint(bb_load);
     builder.setCalcInsertPoint(bb_calc);
     builder.setStoreInsertPoint(bb_store);
-    // builder.SetTerminalOpInsertPoint(bb_terminal_op);
-
 
     llvm::Value* offset_alloc = builder.getCurrentOffsetValueAlloca();
     llvm::Value* offset = builder.createLoadOffset();
@@ -210,8 +164,7 @@ bool Block::generateIR(IRGenerator& builder, CycleStageEn type, const std::strin
             llvm::BasicBlock::Create(context, "calc_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
         llvm::BasicBlock* bb_store =
             llvm::BasicBlock::Create(context, "store_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
-        // BasicBlock* bb_terminal_op = BasicBlock::Create(context_, "terminal_op_" + basic_block_prefix + level_txt,
-        // builder.getCurrentFunction());
+
 
         llvm::BasicBlock* bb_last_store = builder.getStoreBlock();
 
@@ -226,13 +179,11 @@ bool Block::generateIR(IRGenerator& builder, CycleStageEn type, const std::strin
         builder.clearInitializedValueList();
 
         builder.setIntermediateInsertPoint(bb_intermediate);
-        // builder.SetOffsetToZero();
         builder.setOffsetTo(right_length_);
 
         builder.setLoadInsertPoint(bb_load);
         builder.setCalcInsertPoint(bb_calc);
         builder.setStoreInsertPoint(bb_store);
-        // builder.SetTerminalOpInsertPoint(bb_terminal_op);
 
         llvm::Value* offset_alloc = builder.getCurrentOffsetValueAlloca();
         llvm::Value* offset = builder.createLoadOffset();

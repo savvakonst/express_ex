@@ -36,7 +36,7 @@ void Operation_ifs::genBlocksVisitExit(TableGenContext* context) {
 }
 
 void Operation_ifs::finishSetupIR(IRGenerator& builder) {
-    if (isBuffered() | isReturned()) {
+    if (isBuffered() || isReturned()) {
         if (!is_initialized_) {
             if (isReturned()) builder.addBufferAlloca(new OutputBuffer(this));
             else

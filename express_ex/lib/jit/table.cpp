@@ -119,11 +119,11 @@ void Block::setBufferLength(uint64_t buffer_length) {
 }
 
 void Block::setUintToSubtable(ExValue* var) {
-    auto leftBufferLen = var->getLeftBufferLen();
-    auto rightBufferLen = var->getRightBufferLen();
+    auto left_buffer_len = var->getLeftBufferLen();
+    auto right_buffer_len = var->getRightBufferLen();
 
     for (auto i : sub_block_list_)
-        if ((i->getLeftLength() == leftBufferLen) && (i->getRightLength() == rightBufferLen)) {
+        if ((i->getLeftLength() == left_buffer_len) && (i->getRightLength() == right_buffer_len)) {
             i->setUint(var);
             return;
         }
@@ -153,52 +153,55 @@ bool Block::generateIR(IRGenerator& builder, CycleStageEn type, const std::strin
 
     std::string level_txt = std::to_string(level_);
 
-    if ((type == CycleStageEn::midle) || (type == CycleStageEn::end)) {
-        if ((type == CycleStageEn::end) & (0 == (length_ % buffer_length_))) return false;
+    if (type == CycleStageEn::start) level_txt += "_0";
 
-        llvm::BasicBlock* bb_intermediate = llvm::BasicBlock::Create(
-            context, "intermediate_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
-        llvm::BasicBlock* bb_load =
-            llvm::BasicBlock::Create(context, "load_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
-        llvm::BasicBlock* bb_calc =
-            llvm::BasicBlock::Create(context, "calc_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
-        llvm::BasicBlock* bb_store =
-            llvm::BasicBlock::Create(context, "store_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
+    // if ((type == CycleStageEn::midle) || (type == CycleStageEn::end)) {
+    if ((type == CycleStageEn::end) && (0 == (length_ % buffer_length_))) return false;
+
+    llvm::BasicBlock* bb_intermediate = llvm::BasicBlock::Create(
+        context, "intermediate_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
+    llvm::BasicBlock* bb_load =
+        llvm::BasicBlock::Create(context, "load_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
+    llvm::BasicBlock* bb_calc =
+        llvm::BasicBlock::Create(context, "calc_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
+    llvm::BasicBlock* bb_store =
+        llvm::BasicBlock::Create(context, "store_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
 
 
-        llvm::BasicBlock* bb_last_store = builder.getStoreBlock();
+    llvm::BasicBlock* bb_last_store = builder.getStoreBlock();
 
-        if (nullptr != bb_last_store) {
-            builder.createMiddleBRs();
-            builder.CreateCondBr(builder.getCurrentCMPRes(), builder.getLoadBlock(), bb_intermediate);
-        } else {
-            builder.setLoopEnterInsertPoint();
-            builder.CreateBr(bb_intermediate);
-        }
+    if (nullptr != bb_last_store) {
+        if (type == CycleStageEn::start) builder.createStartBRs();
+        else builder.createMiddleBRs();
+        builder.CreateCondBr(builder.getCurrentCMPRes(), builder.getLoadBlock(), bb_intermediate);
+    } else if (type != CycleStageEn::start) {
+        builder.setLoopEnterInsertPoint();
+        builder.CreateBr(bb_intermediate);
+    }
 
-        builder.clearInitializedValueList();
+    builder.clearInitializedValueList();
 
-        builder.setIntermediateInsertPoint(bb_intermediate);
-        builder.setOffsetTo(right_length_);
+    builder.setIntermediateInsertPoint(bb_intermediate);
+    int64_t loop_start_offset = (type == CycleStageEn::start) ? -int64_t(left_length_) : int64_t(right_length_);
+    builder.setOffsetTo(loop_start_offset);
 
-        builder.setLoadInsertPoint(bb_load);
-        builder.setCalcInsertPoint(bb_calc);
-        builder.setStoreInsertPoint(bb_store);
+    builder.setLoadInsertPoint(bb_load);
+    builder.setCalcInsertPoint(bb_calc);
+    builder.setStoreInsertPoint(bb_store);
 
-        llvm::Value* offset_alloc = builder.getCurrentOffsetValueAlloca();
-        llvm::Value* offset = builder.createLoadOffset();
+    llvm::Value* offset_alloc = builder.getCurrentOffsetValueAlloca();
+    llvm::Value* offset = builder.createLoadOffset();
 
-        builder.setStoreInsertPoint();
+    builder.setStoreInsertPoint();
+    llvm::Value* next_offset = builder.CreateAdd(offset, builder.getInt64(1));
+    builder.CreateStore(next_offset, offset_alloc);
 
-        llvm::Value* next_offset = builder.CreateAdd(offset, builder.getInt64(1));
-        builder.CreateStore(next_offset, offset_alloc);
+    uint64_t len = (type == CycleStageEn::end) ? length_ % buffer_length_ : buffer_length_;
+    builder.setCurrentCmpRes(builder.CreateICmpSLT(next_offset, builder.getInt64(len + right_length_)));
+    builder.setCalcInsertPoint();
 
-        uint64_t len = (type == CycleStageEn::midle) ? buffer_length_ : length_ % buffer_length_;
-        builder.setCurrentCmpRes(builder.CreateICmpSLT(next_offset, builder.getInt64(len + right_length_)));
-        builder.setCalcInsertPoint();
-
-        for (auto i : uint_list_) i->setupIR(builder);
-
+    for (auto i : uint_list_) i->setupIR(builder);
+    /*
     } else if (type == CycleStageEn::start) {
         std::string levelTxt = std::to_string(level_);
         size_t sub_level = 0;
@@ -207,6 +210,7 @@ bool Block::generateIR(IRGenerator& builder, CycleStageEn type, const std::strin
             sub_level++;
         }
     }
+    */
     return true;
 }
 

@@ -77,7 +77,10 @@ DLL_EXPORT std::string toString(PrmTypesEn arg);
 
 
 
-inline ex_time_t timeFromDouble(double arg) { return ex_time_t(arg * (1ll << 10)) << 22; }
+inline ex_time_t timeFromDouble(double arg) {
+    return ex_time_t(std::ldexp(arg, 10)) << 22;
+    // return ex_time_t(arg * (1ll << 10)) << 22;
+}
 
 struct ExTimeInterval {
     [[maybe_unused]] ExTimeInterval(ex_time_t begin, double duration) : time(begin), duration(duration) {}
@@ -212,7 +215,7 @@ class DLL_EXPORT ParameterIfs {
    public:
     DEFINE_DCOUNTER();
 
-    ParameterIfs(){ INCREMENT_DCOUNTER(ParameterIfs)}
+    ParameterIfs() { INCREMENT_DCOUNTER(ParameterIfs) }
     virtual ~ParameterIfs() { DECREMENT_DCOUNTER(ParameterIfs); };
 
 

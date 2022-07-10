@@ -1,34 +1,34 @@
 
-IF EXIST out_0.dat  DEL /f out_0.dat 
+IF EXIST out.dat  DEL /f out.dat
 
 exho %0
+set Path=C:\Qt\5.12.8\msvc2017_64\bin;%Path%
 
 IF "%1"=="" (
-    set CONF=Debug
-    set ARCH=x64
+    set PATH_TO_EXE=.
+    set EX_ARG=--opt
 )
 
 IF NOT "%1"=="" (
-    set CONF=%1
-    set ARCH==%2
+    set PATH_TO_EXE=%1
+    set EX_ARG=%2
 )
 
 
 
 set EXPRESS_FILE="calc.express"
-
-
 ::@echo off
-
 for %%i in ("double_async_f4src.kex" "double_async_f8src.kex" "single_async_f8src.kex" ) do (
-    C:\Express_expr_compiler\express\express_ex\%ARCH%\%CONF%\express_ex   --db=%EXPRESS_FILE% -i=%%i --llvmIRcode --runJit
+
+    %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i --llvmIRcode  %EX_ARG% >  output.ll
+    %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit %EX_ARG%
     ..\ex_test.py   --db=%EXPRESS_FILE% -i=%%i
-    IF EXIST out_0.dat  DEL /f out_0.dat 
+    IF EXIST out0.dat  DEL /f out0.dat
 )
 
 
 
-::C:\Express_expr_compiler\express\express_ex\x86\Debug\express_ex   --db=calc.express -i=double_async_f4src.kex -untypedFSR --allFSR --tableSSR --outputPrm --llvmIRcode --runJit
+::%PATH_TO_EXE%/express_ex_app.exe   --db=calc.express -i=double_async_f4src.kex -untypedFSR --allFSR --tableSSR --outputPrm --llvmIRcode --runJit
 :: --nameList       - names list
 ::      --untypedFSR     - FSR(first stage representation) without type calculation
 ::      --activeNameList - Procedure Integration

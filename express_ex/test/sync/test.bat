@@ -1,5 +1,5 @@
 
-IF EXIST out_0.dat  DEL /f out_0.dat 
+IF EXIST out.dat  DEL /f out.dat
 
 exho %0
 set Path=C:\Qt\5.12.8\msvc2017_64\bin;%Path%
@@ -16,11 +16,11 @@ IF NOT "%1"=="" (
 
 
 set EXPRESS_FILE="sync_base.express"
- --db="sync_base.express" -i="single_arg_convolve.kex"  -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit
+::--db="sync_base.express" -i="single_arg_convolve.kex"  -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit
 ::for %%i in ("multi_arg.kex" "multi_arg_cos.kex" "single_arg_convolve.kex") do (
 for %%i in ("single_arg_convolve.kex") do (
-    %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i   --llvmIRcode  %EX_ARG% >  output.ll
-    %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i  -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit %EX_ARG%
+    %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i --llvmIRcode  %EX_ARG% >  output.ll
+    %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit %EX_ARG%
     ..\ex_test.py   --db=%EXPRESS_FILE% -i=%%i
     IF EXIST out.dat  DEL /f out.dat
 )
@@ -29,7 +29,7 @@ for %%i in ("single_arg_convolve.kex") do (
 
 ::..\ex_test.py   --db=%EXPRESS_FILE% -i=%%i
 ::IF EXIST out_0.dat  DEL /f out_0.dat 
-::C:\Express_expr_compiler\express\express_ex\x86\Debug\express_ex   --db=calc.express -i=double_async_f4src.kex -untypedFSR --allFSR --tableSSR --outputPrm --llvmIRcode --runJit
+::%PATH_TO_EXE%/express_ex_app.exe   --db=calc.express -i=double_async_f4src.kex -untypedFSR --allFSR --tableSSR --outputPrm --llvmIRcode --runJit
 :: --nameList       - names list
 ::      --untypedFSR     - FSR(first stage representation) without type calculation
 ::      --activeNameList - Procedure Integration

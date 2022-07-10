@@ -259,22 +259,26 @@ llvm::Value* IRGenerator::createGpuConvolve(llvm::Value* a_operand, char* ptr, i
 }
 
 llvm::Value* IRGenerator::createPositionalAlloca(llvm::Type* ty, int64_t i, const std::string& name) {
+    auto last_block = GetInsertBlock();
     setInitInsertPoint();
     llvm::Value* ret = CreateAlloca(ty, nullptr, name);
-    setCalcInsertPoint();
+    SetInsertPoint(last_block);
     return ret;
 }
 
 llvm::Value* IRGenerator::createPositionalOffset(const std::string& name, int64_t start_value) {
     llvm::Value* ret = createPositionalOffsetAlloca("", start_value);
+    auto last_block = GetInsertBlock();
     setLoadInsertPoint();
     current_offset_value_ = CreateLoad(ret, "offset");
-    setCalcInsertPoint();
+    SetInsertPoint(last_block);
     return ret;
 }
 
 llvm::Value* IRGenerator::createPositionalOffsetAlloca(const std::string& name, int64_t start_value) {
     auto ty = getInt64Ty();
+    //TODO:
+    auto last_block = GetInsertBlock();
     setInitInsertPoint();
     llvm::Value* ret = CreateAlloca(ty, 0, "offset_alloca_");
     current_offset_value_alloca_ = ret;
@@ -284,23 +288,26 @@ llvm::Value* IRGenerator::createPositionalOffsetAlloca(const std::string& name, 
 
 llvm::Value* IRGenerator::createPositionalInBoundsGep(llvm::Value* ptr, llvm::ArrayRef<llvm::Value*> idx_list,
                                                       const std::string& name) {
+    auto last_block = GetInsertBlock();
     setLoadInsertPoint();
     llvm::Value* ret = CreateInBoundsGEP(ptr, idx_list, name);
-    setCalcInsertPoint();
+    SetInsertPoint(last_block);
     return ret;
 }
 
 llvm::Value* IRGenerator::createPositionalLoad(llvm::Value* a_operand, const std::string& name) {
+    auto last_block = GetInsertBlock();
     setLoadInsertPoint();
     llvm::Value* ret = CreateLoad(a_operand, name);
-    setCalcInsertPoint();
+    SetInsertPoint(last_block);
     return ret;
 }
 
 llvm::Value* IRGenerator::createPositionalLoad(llvm::Value* a_operand, bool is_volatile, const std::string& name) {
+    auto last_block = GetInsertBlock();
     setLoadInsertPoint();
     llvm::Value* ret = CreateLoad(a_operand, is_volatile, name);
-    setCalcInsertPoint();
+    SetInsertPoint(last_block);
     return ret;
 }
 
@@ -310,15 +317,17 @@ llvm::Value* IRGenerator::createLoadOffset(const std::string& name) {
 }
 
 void IRGenerator::createPositionalStore(llvm::Value* a_operand, llvm::Value* ptr, bool is_volatile) {
+    auto last_block = GetInsertBlock();
     setStoreInsertPoint();
     CreateStore(a_operand, ptr, is_volatile);
-    setCalcInsertPoint();
+    SetInsertPoint(last_block);
 }
 
 llvm::Value* IRGenerator::createBufferInit(TypeEn target_ty, const std::string& name) {
     int number_of_buffer = (int)buffers_List_.size();
     std::string number_of_buffer_txt = std::to_string(number_of_buffer);
 
+    auto last_block = GetInsertBlock();
     setInitInsertPoint();
     llvm::Value* arg = current_function_->getArg(0);
 
@@ -332,7 +341,7 @@ llvm::Value* IRGenerator::createBufferInit(TypeEn target_ty, const std::string& 
 
     buffers_List_.push_back(buffer);
 
-    setCalcInsertPoint();
+    SetInsertPoint(last_block);
     return buffer;
 }
 

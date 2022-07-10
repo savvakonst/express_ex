@@ -45,9 +45,13 @@ void Operation_ifs::finishSetupIR(IRGenerator& builder) {
             IR_buffer_base_ptr_ = builder.createBufferInit(type_, "internal_");
             is_initialized_ = true;
         }
+        auto last_block = builder.GetInsertBlock();
         builder.setStoreInsertPoint();
+
         IR_buffer_ptr_ =
             builder.CreateInBoundsGEP(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(), "offset_op_incr_");
         builder.createPositionalStore(IR_value_, IR_buffer_ptr_);
+
+        builder.SetInsertPoint(last_block);
     }
 }

@@ -766,6 +766,8 @@ bool Table::generateIRInGroup(Group& group, uint32_t index) {
     builder.dropBaseInsertPoint();
 
     llvm::Value* glob_index_alloca = builder.createPositionalOffsetAlloca("glob_index_alloca", 0);
+
+    //TODO check, is it legacy code?
     builder.createPositionalOffsetAlloca("common_offset_alloca_", 0);
 
     builder.setLoopEnterInsertPoint(bb_loop_enter);
@@ -997,6 +999,7 @@ void CallRecursiveFunction::setupIR(IRGenerator& builder) {
         IR_buffer_ptr_ =
             builder.CreateInBoundsGEP(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(), "offset_cr_incr_");
         builder.createPositionalStore(IR_value_, IR_buffer_ptr_);
+        builder.setCalcInsertPoint();
     }
 }
 

@@ -68,12 +68,15 @@ class IRGenerator : public llvm::IRBuilder<> {
     llvm::BasicBlock* createNewIntermediateBb(const std::string& postfix) {
         return createNewBb(init_bock_, "intermediate_" + postfix);
     }
+
     llvm::BasicBlock* createNewLoadBb(const std::string& postfix) {
         return createNewBb(load_block_, "load_" + postfix);
     }
+
     llvm::BasicBlock* createNewCalcBb(const std::string& postfix) {
         return createNewBb(calc_block_, "calc_" + postfix);
     }
+
     llvm::BasicBlock* CreateNewStoreBB(const std::string& postfix) {
         return createNewBb(store_block_, "store_" + postfix);
     }
@@ -110,6 +113,7 @@ class IRGenerator : public llvm::IRBuilder<> {
      */
     void setStoreInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(store_block_, bb); }
     void setTerminalOpInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(terminal_op_block_, bb); }
+
 
     void setLoopEnterInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(loop_enter_block_, bb); }
     void setIntermediateInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(intermediate_block_, bb); }

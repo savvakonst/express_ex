@@ -70,11 +70,19 @@ class Operation_ifs : public Value {
         return "";
     }
 
+    /**
+     * used fo ir generation, in the end of function implementation finishSetupIR() must be called
+     * @param builder
+     */
     void setupIR(IRGenerator& builder) override { print_IR_error("setupIR unknown command ."); }
 
     void calculate() override = 0;
 
    protected:
+    /**
+     * must be called in the end of setupIR()
+     * @param builder
+     */
     void finishSetupIR(IRGenerator& builder);
 
     std::vector<Value*> operand_;

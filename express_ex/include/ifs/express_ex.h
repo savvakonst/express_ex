@@ -20,8 +20,8 @@ DLL_EXPORT void jit_init();
 
 /**
  * this is the main interface to deal with express.
- * Firstly you should use parseText it makes primary syntax analysis.
- * Than you are able to get map of arguments link names by using getParameterLinkNamesMap.
+ * Firstly you should use parseText, it makes primary syntax analysis.
+ * Than you are able to get map of link names by using getParameterLinkNamesMap.
  * For next step of full semantic analysis Express_ex instance require input ParameterIfs instances via
  * setParameters() to determine types of parameters (sync/async, data type, time type ,frequency is exists)
  * and consequently types of all variables and outputs. After steps mentioned above it is possible to

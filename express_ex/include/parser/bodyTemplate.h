@@ -13,7 +13,11 @@ class GarbageContainer;
 class ExValue;
 class Line;
 class Body;
-
+/**
+ * BodyTemplate's object represents/contains primary structure of ASG
+ * (Abstract semantic graph). 
+ *
+ */
 class BodyTemplate {
    public:
     BodyTemplate(const std::string& name, BodyTemplate* parent_body_template);

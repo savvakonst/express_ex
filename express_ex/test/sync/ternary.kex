@@ -1,0 +1,7 @@
+x = param("#1_A01__2")
+
+
+
+y = (x<0)? x : -x**2
+
+return double(y)

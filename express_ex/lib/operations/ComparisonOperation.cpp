@@ -74,10 +74,9 @@ void ComparisonOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) 
 }
 
 void ComparisonOperation::genBodyVisitExit(BodyGenContext* context) {
+    is_visited_ = false;
     GarbageContainer* garbage_container = context->getGarbageContainer();
     g_pos = pos;
-
-    is_visited_ = false;
 
     auto op2 = context->pop();
     auto op1 = context->pop();
@@ -117,8 +116,6 @@ void ComparisonOperation::printVisitExit(PrintBodyContext* context) {
     auto op2 = context->pop();
     auto op1 = context->pop();
     context->push(checkBuffer("(" + op1 + txtCompOp(op_code_) + op2 + ")"));
-
-    Operation_ifs::printVisitExit(context);
 }
 
 std::string ComparisonOperation::printUint() {

@@ -78,10 +78,20 @@ def convolve(arr_a, arr_b):
     return np.convolve(arr_a, arr_b, 'same')
 
 
+import re
+
+
 def execFile(name):
     f = open(name, "r", encoding='utf-8')
+    lines = []
+    for i in f.read().split("\n"):
+        s = i + "\n"
+        m = re.search(r'([^=]*)=([^\?]*)\?([^:]*):([^\n]*)\n', s)
+        if m:
+            s = m.group(1) + "= np.choose(" + m.group(2) + ", [" + m.group(4) + "," + m.group(3) + "])\n"
+        lines.append(s)
 
-    code = "def exFunc():\n\t" + "\n\t".join(f.read().split("\n"))
+    code = "def exFunc():\n\t" + "\t".join(lines)
     print(code)
     f.close()
 

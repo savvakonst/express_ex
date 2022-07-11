@@ -92,9 +92,11 @@ void ConvolveOperation::printVisitExit(PrintBodyContext* context) {
 }
 
 std::string ConvolveOperation::printUint() {
+    is_visited_ = false;
+
     auto name_op_a = operand_[0]->getAssignedVal(true)->getUniqueName();
     auto name_op_b = operand_[1]->getAssignedVal(true)->getUniqueName();
-    is_visited_ = false;
+
     std::string u_name = getUniqueName();
 
     return u_name + " = convolve( " + name_op_a + ", " + name_op_b + ", " + std::to_string(shift_parameter_) + ")";

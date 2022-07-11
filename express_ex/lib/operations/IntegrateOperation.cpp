@@ -48,10 +48,19 @@ std::string IntegrateOperation::printUint() {
 void IntegrateOperation::setupIR(IRGenerator& builder) {
     auto ir_op_a = operand_[0]->getAssignedVal(true)->getIRValue(builder, level_);
 
-    auto index = builder.addLocalBuffer(type_,1);
+    auto pointer = builder.createLocalBuffer(type_, 1);
 
+    auto last_block = builder.setInitInsertPoint();
+    auto temp_val = builder.CreateLoad(builder.getLLVMType(type_), pointer);
 
-    Operation_ifs::setupIR(builder);
+    builder.setCalcInsertPoint();
+    if (isFloating(type_)) IR_value_ = builder.CreateFAdd(ir_op_a, temp_val, "integral");
+    else IR_value_ = builder.CreateAdd(ir_op_a, temp_val, "integral");
+
+    builder.setStoreInsertPoint();
+    builder.CreateStore(IR_value_, pointer);
+
+    builder.SetInsertPoint(last_block);
     finishSetupIR(builder);
 }
 

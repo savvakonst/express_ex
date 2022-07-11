@@ -65,11 +65,10 @@ class IRGenerator : public llvm::IRBuilder<> {
     void* addBuffer(Buffer* s);
 
     /**
-     * allocates memory for buffer and returns it index
-     * @return index of buffer that reflects order of passing pointers
-     * in to the data processing function
+     * allocates memory for buffer
+     * @return  llvm pointer to allocated memory
      */
-    size_t addLocalBuffer(TypeEn target_ty, size_t len);
+    llvm::Value* createLocalBuffer(TypeEn target_ty, size_t len, const std::string& name = "");
 
 
 
@@ -90,38 +89,54 @@ class IRGenerator : public llvm::IRBuilder<> {
     }
 
 
-    void setInitInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(init_bock_, bb); }
+    llvm::BasicBlock* setInitInsertPoint(llvm::BasicBlock* bb = nullptr) { return setCInsertPoint(init_bock_, bb); }
 
     /**
      * Setup commands insertion point in the first part of loop body - load_block.
      * Loop body consists of the three parts: load_block, calc_block, store_block
      * @param bb when bb is not equal nullptr it stores bb value and setup setup command insertion point to bb, if
      * bb is omitted or equal nullptr it setup command insertion point to last stored bb
+     * @return last insert block
      */
-    void setLoadInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(load_block_, bb); }
+    llvm::BasicBlock* setLoadInsertPoint(llvm::BasicBlock* bb = nullptr) { return setCInsertPoint(load_block_, bb); }
 
     /**
      * Setup commands insertion point in the middle of loop body - calc_block.
      * Loop body consists of the three parts: load_block, calc_block, store_block.
      * @param bb when bb is not equal nullptr it stores bb value and setup setup command insertion point to bb, if
      * bb is omitted or equal nullptr it setup command insertion point to last stored bb
+     * @return last insert block
      */
-    void setCalcInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(calc_block_, bb); }
+    llvm::BasicBlock* setCalcInsertPoint(llvm::BasicBlock* bb = nullptr) { return setCInsertPoint(calc_block_, bb); }
 
     /**
      * Setup commands insertion point in the end of loop body - store_block.
      * Loop body consists of the three parts: load_block, calc_block, store_block
      * @param bb when bb is not equal nullptr it stores bb value and setup setup command insertion point to bb, if
      * bb is omitted or equal nullptr it setup command insertion point to last stored bb
+     * @return last insert block
      */
-    void setStoreInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(store_block_, bb); }
-    void setTerminalOpInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(terminal_op_block_, bb); }
+    llvm::BasicBlock* setStoreInsertPoint(llvm::BasicBlock* bb = nullptr) { return setCInsertPoint(store_block_, bb); }
 
 
-    void setLoopEnterInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(loop_enter_block_, bb); }
-    void setIntermediateInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(intermediate_block_, bb); }
-    void setCycleExitInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(cycle_exit_block_, bb); }
-    void setExitInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(exit_block_, bb); }
+    llvm::BasicBlock* setTerminalOpInsertPoint(llvm::BasicBlock* bb = nullptr) {
+        return setCInsertPoint(terminal_op_block_, bb);
+    }
+
+
+    llvm::BasicBlock* setLoopEnterInsertPoint(llvm::BasicBlock* bb = nullptr) {
+        return setCInsertPoint(loop_enter_block_, bb);
+    }
+
+    llvm::BasicBlock* setIntermediateInsertPoint(llvm::BasicBlock* bb = nullptr) {
+        return setCInsertPoint(intermediate_block_, bb);
+    }
+
+    llvm::BasicBlock* setCycleExitInsertPoint(llvm::BasicBlock* bb = nullptr) {
+        return setCInsertPoint(cycle_exit_block_, bb);
+    }
+
+    llvm::BasicBlock* setExitInsertPoint(llvm::BasicBlock* bb = nullptr) { return setCInsertPoint(exit_block_, bb); }
 
     void setLastInsertPoint() { SetInsertPoint(bb_List_.back()); }
 
@@ -178,13 +193,15 @@ class IRGenerator : public llvm::IRBuilder<> {
 
     llvm::BasicBlock* createNewBb(basicBlockPtr_t& prot, const std::string& name = "");
 
-    void setCInsertPoint(basicBlockPtr_t& prot, llvm::BasicBlock* bb = nullptr) {
+    llvm::BasicBlock* setCInsertPoint(basicBlockPtr_t& prot, llvm::BasicBlock* bb = nullptr) {
+        auto last_block = GetInsertBlock();
         if (bb == nullptr) bb = prot;
         else {
             prot = bb;
             bb_List_.push_back(bb);
         }
         SetInsertPoint(bb);
+        return last_block;
     }
 
     std::vector<std::list<Buffer*>*> buffer_list_;

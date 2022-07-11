@@ -31,6 +31,8 @@ class IntegrateOperation : public Operation_ifs {
     void calculate() override;
 
    private:
+
+    llvm::Value * local_buffer_ptr_ = nullptr;
 };
 
 #endif

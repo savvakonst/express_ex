@@ -107,28 +107,14 @@ void Block::setUint(ExValue* var) {
     left_length_ = maxInt(left_length_, var->getLeftBufferLen());
     right_length_ = maxInt(right_length_, var->getRightBufferLen());
     uint_list_.push(var);
-    setUintToSubtable(var);
+
 }
 
 void Block::setBufferLength(uint64_t buffer_length) {
     buffer_length_ = buffer_length;
-    for (auto i : sub_block_list_) i->setBufferLength(buffer_length_);
     for (auto i : uint_list_) {
         i->setBufferLength(buffer_length_);
     }
-}
-
-void Block::setUintToSubtable(ExValue* var) {
-    auto left_buffer_len = var->getLeftBufferLen();
-    auto right_buffer_len = var->getRightBufferLen();
-
-    for (auto i : sub_block_list_)
-        if ((i->getLeftLength() == left_buffer_len) && (i->getRightLength() == right_buffer_len)) {
-            i->setUint(var);
-            return;
-        }
-
-    sub_block_list_.push(new SubBlock(var));
 }
 
 void Block::recalcLeftRightBufferLengths() {
@@ -140,9 +126,17 @@ void Block::recalcLeftRightBufferLengths() {
 string Block::print() const {
     constexpr size_t max_line_length = 90;
     std::string out = std::string(2, ' ') + "level: " + std::to_string(level_) + "\n";
-    for (auto i : sub_block_list_) {
-        out += i->print();
+
+    out +=
+        std::string(4, ' ') + "L,R: " + std::to_string(left_length_) + "," + std::to_string(right_length_) + "\n";
+    for (auto i : uint_list_) {
+        std::string txt = i->printUint() + ";" + (i->isBuffered() ? " store" : "");
+        std::string txtShifts = std::to_string(i->getLeftBufferLen()) + " : " + std::to_string(i->getRightBufferLen());
+        std::string txtSkip = std::string(max_line_length - ((txt.length() > max_line_length) ? 0 : txt.length()), ' ');
+
+        out += std::string(6, ' ') + txt + txtSkip + txtShifts + "\n";
     }
+
     return out;
 }
 

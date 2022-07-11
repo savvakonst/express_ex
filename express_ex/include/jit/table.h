@@ -75,9 +75,7 @@ class Block {
     // Block (uint64_t l) {level =l; }
     explicit Block(ExValue* var);
 
-    ~Block() {
-        for (auto i : sub_block_list_) delete i;
-    }
+    ~Block() = default;
 
     void setUint(ExValue* var);
     void setBufferLength(uint64_t buffer_length);
@@ -90,10 +88,7 @@ class Block {
                     const std::string& basic_block_prefix = "");
 
    private:
-    void setUintToSubtable(ExValue* var);
-
     stack<ExValue*> uint_list_;
-    stack<SubBlock*> sub_block_list_;
 
     uint64_t left_length_;
     uint64_t right_length_;

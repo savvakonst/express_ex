@@ -5,10 +5,35 @@
 
 #include "Intervals.h"
 
+SyncParameter::SyncParameter(const SyncParameter& prm)
+    : ParameterIfs(prm), opened_(prm.opened_), frequency_(prm.frequency_) {
 
+    const ExDataInterval* last_interval = nullptr;
+    for (auto& i : interval_list_) {
+        if (last_interval) {
+            ExDataInterval bare_interval(type_);
+            bare_interval.setProperties(i.ti.time, last_interval->getEndTime(), frequency_, 0);
+            if (bare_interval.size) current_chunk_->addNextChunk(new BareChunk(bare_interval.size));
+        }
+
+        BareChunk* chunk = new Chunk(&i);
+
+        if (chunk_ == nullptr) {
+            chunk_ = chunk;
+            current_chunk_ = chunk;
+        } else {
+            current_chunk_ = current_chunk_->addNextChunk(chunk);
+        }
+
+        last_interval = &i;
+    }
+    if (current_chunk_) current_chunk_->addNextChunk(new FinishChunk());
+    current_chunk_ = chunk_;
+}
 
 SyncParameter::SyncParameter(std::string name, const std::vector<ExDataInterval>& interval_list, bool save_file_names) {
     name_ = std::move(name);
+
 
     interval_list_ = interval_list;
 
@@ -169,7 +194,7 @@ ParameterIfs* SyncParameter::intersection(ParameterIfs* prm, PrmTypesEn target_t
     };
 
 
-    while ((a_i != list_a.end()) || (c_i != list_c.end())) {
+    while ((a_i != list_a.end()) && (c_i != list_c.end())) {
         ExDataInterval di =
             (a_i->ti.time >= c_i->ti.time) ? subIntersection(a_i, c_i, offset) : subIntersection(c_i, a_i, offset);
         offset += di.size;
@@ -243,3 +268,4 @@ inline bool SyncParameter::calcExtendedInfo() {
     }
     return true;
 }
+

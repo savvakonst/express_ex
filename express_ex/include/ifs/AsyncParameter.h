@@ -11,6 +11,7 @@
 
 class DLL_EXPORT AsyncParameter : public ParameterIfs {
    public:
+    AsyncParameter(const AsyncParameter& prm);
     AsyncParameter(const std::string& name, const std::vector<ExDataInterval>& interval_list, bool save_file_names);
     AsyncParameter(const std::string& name, const ExTimeInterval& time_interval,
                    const std::vector<ExDataInterval>& interval_list, bool save_file_names = true);
@@ -62,7 +63,7 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
         IntermediateBuffer& parent_time_buffer = parent_parameter_->time_buffer_;
         while (points_to_read) {
             *((float*)intermediate_buffer_.current_ptr_) = *((float*)parent_time_buffer.current_ptr_);
-            // this side effect is impotant for IntermediateBuffer::replaceLastData() void
+            // this side effect is important for IntermediateBuffer::replaceLastData() void
             parent_time_buffer.current_ptr_ += sizeof(float);
 
             intermediate_buffer_.current_ptr_ += sizeof(float);

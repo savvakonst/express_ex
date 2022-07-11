@@ -62,7 +62,16 @@ class IRGenerator : public llvm::IRBuilder<> {
     void createStartBRs();
     void createMiddleBRs();
 
-    void* addBufferAlloca(Buffer* s);
+    void* addBuffer(Buffer* s);
+
+    /**
+     * allocates memory for buffer and returns it index
+     * @return index of buffer that reflects order of passing pointers
+     * in to the data processing function
+     */
+    size_t addLocalBuffer(TypeEn target_ty, size_t len);
+
+
 
     llvm::BasicBlock* createNewIntermediateBb(const std::string& postfix) {
         return createNewBb(init_bock_, "intermediate_" + postfix);
@@ -80,12 +89,7 @@ class IRGenerator : public llvm::IRBuilder<> {
         return createNewBb(store_block_, "store_" + postfix);
     }
 
-    /**
-     * Setup commands insertion point in the first part of loop body - load_block.
-     * Loop body consists of the three parts: load_block, calc_block, store_block
-     * @param bb when bb is not equal nullptr it stores bb value and setup setup command insertion point to bb, if
-     * bb is omitted or equal nullptr it setup command insertion point to last stored bb
-     */
+
     void setInitInsertPoint(llvm::BasicBlock* bb = nullptr) { setCInsertPoint(init_bock_, bb); }
 
     /**
@@ -184,6 +188,9 @@ class IRGenerator : public llvm::IRBuilder<> {
     }
 
     std::vector<std::list<Buffer*>*> buffer_list_;
+
+    std::vector<char*> local_buffer_list_;
+    // std::vector<std::list<Buffer*>*> buffer_list_;
 
     llvm::BasicBlock* init_bock_ = nullptr;
     llvm::BasicBlock* calc_block_ = nullptr;

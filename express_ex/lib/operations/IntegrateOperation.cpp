@@ -47,6 +47,10 @@ std::string IntegrateOperation::printUint() {
 
 void IntegrateOperation::setupIR(IRGenerator& builder) {
     auto ir_op_a = operand_[0]->getAssignedVal(true)->getIRValue(builder, level_);
+
+    auto index = builder.addLocalBuffer(type_,1);
+
+
     Operation_ifs::setupIR(builder);
     finishSetupIR(builder);
 }

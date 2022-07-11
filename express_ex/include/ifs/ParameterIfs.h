@@ -78,8 +78,8 @@ DLL_EXPORT std::string toString(PrmTypesEn arg);
 
 
 inline ex_time_t timeFromDouble(double arg) {
-    return ex_time_t(std::ldexp(arg, 10)) << 22;
-    // return ex_time_t(arg * (1ll << 10)) << 22;
+    // return ex_time_t(std::ldexp(arg, 10)) << 22;
+    return ex_time_t(arg * (1ll << 10)) << 22;
 }
 
 struct ExTimeInterval {
@@ -102,8 +102,8 @@ struct ExTimeInterval {
     union {
         ex_time_t time; /*!< full time. One step equal 1.0/(1<<32) sec sec */
         struct {
-            int32_t time_int;   /*!< integet part of time. One step equal 1 sec */
             uint32_t time_frac; /*!< fractional part of time. One step equal 1.0/(1<<32) sec */
+            int32_t time_int;   /*!< integet part of time. One step equal 1 sec */
         };
     };
 
@@ -184,8 +184,8 @@ struct ExDataInterval {
 
 inline std::stringstream& stream(std::stringstream& s, const ExTimeInterval& time_interval, const std::string& offset) {
     s << offset << "ti.time_int: " << time_interval.time_int << "\n";
-    s << offset << "ti.time_frac " << std::setfill('0') << std::setw(5) << std::right << "0x" << std::hex
-      << time_interval.time_frac << "\n"
+    s << offset << "ti.time_frac "
+      << "0x" << std::setfill('0') << std::setw(8) << std::right << std::hex << time_interval.time_frac << "\n"
       << std::dec;
     s << offset << "ti.duration: " << std::dec << time_interval.duration << "\n";
     return s;

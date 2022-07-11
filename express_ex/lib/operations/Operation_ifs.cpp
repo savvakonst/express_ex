@@ -38,8 +38,8 @@ void Operation_ifs::genBlocksVisitExit(TableGenContext* context) {
 void Operation_ifs::finishSetupIR(IRGenerator& builder) {
     if (isBuffered() || isReturned()) {
         if (!is_initialized_) {
-            if (isReturned()) builder.addBufferAlloca(new OutputBuffer(this));
-            else builder.addBufferAlloca(new Buffer(this));
+            if (isReturned()) builder.addBuffer(new OutputBuffer(this));
+            else builder.addBuffer(new Buffer(this));
 
             IR_buffer_base_ptr_ = builder.createBufferInit(type_, "internal_");
             is_initialized_ = true;

@@ -18,14 +18,21 @@ IF NOT "%1"=="" (
 
 set EXPRESS_FILE="calc.express"
 ::@echo off
-for %%i in ("double_async_f4src.kex" "double_async_f8src.kex" "single_async_f8src.kex" ) do (
-
+::%PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit %EX_ARG%
+::for %%i in ("double_async_f4src.kex" "double_async_f8src.kex" "single_async_f8src.kex" ) do (
+for %%i in ("double_async_f8src.kex" "single_async_f8src.kex" ) do (
     %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i --llvmIRcode  %EX_ARG% >  output.ll
     %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit %EX_ARG%
     ..\ex_test.py   --db=%EXPRESS_FILE% -i=%%i
-    IF EXIST out0.dat  DEL /f out0.dat
+    IF EXIST out.dat  DEL /f out.dat
 )
 
+for %%i in ("double_async_f4src.kex" ) do (
+    %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i --llvmIRcode  %EX_ARG% >  output.ll
+    %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit %EX_ARG%
+    ..\ex_test.py   --db=%EXPRESS_FILE% -i=%%i --otype=f4
+    IF EXIST out.dat  DEL /f out.dat
+)
 
 
 ::%PATH_TO_EXE%/express_ex_app.exe   --db=calc.express -i=double_async_f4src.kex -untypedFSR --allFSR --tableSSR --outputPrm --llvmIRcode --runJit

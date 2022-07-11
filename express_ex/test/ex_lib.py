@@ -70,12 +70,17 @@ def double(arr):
     return np.array(arr).astype("f8")
 
 
+def float(arr):
+    return np.array(arr).astype("f4")
+
+
 def convolve(arr_a, arr_b):
     return np.convolve(arr_a, arr_b, 'same')
 
 
 def execFile(name):
     f = open(name, "r", encoding='utf-8')
+
     code = "def exFunc():\n\t" + "\n\t".join(f.read().split("\n"))
     print(code)
     f.close()

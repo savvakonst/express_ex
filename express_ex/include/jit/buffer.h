@@ -12,6 +12,7 @@ enum class BufferTypeEn
     output
 };
 
+
 ///      sizes map
 ///
 ///                        |<-as_right_buff->|                             |<-as_left_buff-->|
@@ -128,7 +129,7 @@ class OutputBuffer : public Buffer {
    public:
     explicit OutputBuffer(ExValue* var) : Buffer(var) { parameter_ = var->getParameter(); }
 
-    ~OutputBuffer() override {}
+    ~OutputBuffer() override = default;
 
     void addParameter(ParameterIfs* parameter) { parameter_ = parameter; }
 

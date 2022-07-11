@@ -346,10 +346,25 @@ void IRGenerator::createMiddleBRs() {
     setLastInsertPoint();
 }
 
-void* IRGenerator::addBufferAlloca(Buffer* s) {
+void* IRGenerator::addBuffer(Buffer* s) {
     buffer_list_.back()->push_back(s);
     return nullptr;
 }
+
+llvm::Value*  IRGenerator::addLocalBuffer(TypeEn target_ty, size_t len) {
+    size_t size = sizeOfTy(target_ty) * len;
+    auto local_buffer = new char[size];
+    std::memset(local_buffer, 0, size);
+    local_buffer_list_.push_back(local_buffer);
+
+    auto last_block = GetInsertBlock();
+    setInitInsertPoint();
+
+    SetInsertPoint(last_block);
+    return local_buffer_list_.size() - 1;
+}
+
+
 
 void IRGenerator::setDeclareConvolve(llvm::Type* type, uintptr_t addr)  // atavism
 {

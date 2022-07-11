@@ -1,6 +1,8 @@
 
 #include "jit/table.h"
 
+#include <llvm/IR/Intrinsics.h>
+
 #include <sstream>
 
 #include "jit/IR_generator.h"
@@ -14,82 +16,6 @@
 #include "parser/line.h"
 
 
-
-SubBlock::SubBlock(ExValue* var) {
-    left_length_ = var->getLeftBufferLen();
-    right_length_ = var->getRightBufferLen();
-    length_ = var->getLength();
-    setUint(var);
-}
-
-void SubBlock::setUint(ExValue* var) {
-    left_length_ = maxInt(left_length_, var->getLeftBufferLen());
-    right_length_ = maxInt(right_length_, var->getRightBufferLen());
-    uint_list_.push(var);
-}
-
-string SubBlock::print() const {
-    const size_t max_line_length = 90;
-    std::string out =
-        std::string(4, ' ') + "L,R: " + std::to_string(left_length_) + "," + std::to_string(right_length_) + "\n";
-    for (auto i : uint_list_) {
-        std::string txt = i->printUint() + ";" + (i->isBuffered() ? " store" : "");
-        std::string txtShifts = std::to_string(i->getLeftBufferLen()) + " : " + std::to_string(i->getRightBufferLen());
-        std::string txtSkip = std::string(max_line_length - ((txt.length() > max_line_length) ? 0 : txt.length()), ' ');
-
-        out += std::string(6, ' ') + txt + txtSkip + txtShifts + "\n";
-    }
-    return out;
-}
-
-bool SubBlock::generateIR(IRGenerator& builder, CycleStageEn type, const std::string& basic_block_prefix,
-                          const std::string& level_txt) {
-    llvm::LLVMContext& context = builder.getContext();
-
-
-    llvm::BasicBlock* bb_intermediate = llvm::BasicBlock::Create(
-        context, "intermediate_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
-    llvm::BasicBlock* bb_load =
-        llvm::BasicBlock::Create(context, "load_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
-    llvm::BasicBlock* bb_calc =
-        llvm::BasicBlock::Create(context, "calc_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
-    llvm::BasicBlock* bb_store =
-        llvm::BasicBlock::Create(context, "store_" + basic_block_prefix + level_txt, builder.getCurrentFunction());
-
-
-    llvm::BasicBlock* bb_last_store = builder.getStoreBlock();
-
-    if (nullptr != bb_last_store) {
-        builder.createStartBRs();
-        builder.CreateCondBr(builder.getCurrentCMPRes(), builder.getLoadBlock(), bb_intermediate);
-    }
-
-    builder.clearInitializedValueList();
-
-    builder.setIntermediateInsertPoint(bb_intermediate);
-    builder.setOffsetTo(-(int64_t)left_length_);
-
-    builder.setLoadInsertPoint(bb_load);
-    builder.setCalcInsertPoint(bb_calc);
-    builder.setStoreInsertPoint(bb_store);
-
-    llvm::Value* offset_alloc = builder.getCurrentOffsetValueAlloca();
-    llvm::Value* offset = builder.createLoadOffset();
-
-    builder.setStoreInsertPoint();
-    llvm::Value* next_offset = builder.CreateAdd(offset, builder.getInt64(1));
-    builder.CreateStore(next_offset, offset_alloc);
-
-    uint64_t len = buffer_length_;
-    builder.setCurrentCmpRes(builder.CreateICmpSLT(next_offset, builder.getInt64(len + right_length_)));
-
-
-    builder.setCalcInsertPoint();
-
-    for (auto i : uint_list_) i->setupIR(builder);
-
-    return true;
-}
 
 // Table::Block section
 //
@@ -107,7 +33,6 @@ void Block::setUint(ExValue* var) {
     left_length_ = maxInt(left_length_, var->getLeftBufferLen());
     right_length_ = maxInt(right_length_, var->getRightBufferLen());
     uint_list_.push(var);
-
 }
 
 void Block::setBufferLength(uint64_t buffer_length) {
@@ -127,8 +52,7 @@ string Block::print() const {
     constexpr size_t max_line_length = 90;
     std::string out = std::string(2, ' ') + "level: " + std::to_string(level_) + "\n";
 
-    out +=
-        std::string(4, ' ') + "L,R: " + std::to_string(left_length_) + "," + std::to_string(right_length_) + "\n";
+    out += std::string(4, ' ') + "L,R: " + std::to_string(left_length_) + "," + std::to_string(right_length_) + "\n";
     for (auto i : uint_list_) {
         std::string txt = i->printUint() + ";" + (i->isBuffered() ? " store" : "");
         std::string txtShifts = std::to_string(i->getLeftBufferLen()) + " : " + std::to_string(i->getRightBufferLen());
@@ -149,7 +73,7 @@ bool Block::generateIR(IRGenerator& builder, CycleStageEn type, const std::strin
 
     if (type == CycleStageEn::start) level_txt += "_0";
 
-    // if ((type == CycleStageEn::midle) || (type == CycleStageEn::end)) {
+
     if ((type == CycleStageEn::end) && (0 == (length_ % buffer_length_))) return false;
 
     llvm::BasicBlock* bb_intermediate = llvm::BasicBlock::Create(
@@ -195,16 +119,7 @@ bool Block::generateIR(IRGenerator& builder, CycleStageEn type, const std::strin
     builder.setCalcInsertPoint();
 
     for (auto i : uint_list_) i->setupIR(builder);
-    /*
-    } else if (type == CycleStageEn::start) {
-        std::string levelTxt = std::to_string(level_);
-        size_t sub_level = 0;
-        for (auto i : sub_block_list_) {
-            i->generateIR(builder, type, basic_block_prefix, levelTxt + "_" + std::to_string(sub_level));
-            sub_level++;
-        }
-    }
-    */
+
     return true;
 }
 
@@ -293,16 +208,8 @@ int32_t initBuffers() {
         for (auto i : *group) i->init();
     return 0;
 }
-/*
-int32_t updateBuffer() {
-    if (isInvalidBuffers())
-        return 1;
-    for(auto group : *g_list_of_buffer_groups)
-        for(auto i : *group)
-            i->update();
-    return 0;
-}
-*/
+
+
 int32_t updateBuffer(int32_t group_number) {
     if (isInvalidBuffers()) return 1;
     for (auto i : *((*g_list_of_buffer_groups)[group_number])) i->update();
@@ -828,7 +735,7 @@ void Line::setupIR(IRGenerator& builder) {
 
         } else {
             if (!is_initialized_) {
-                builder.addBufferAlloca(new InputBuffer(this));
+                builder.addBuffer(new InputBuffer(this));
                 IR_buffer_base_ptr_ = builder.createBufferInit(type_, "external_");
                 is_initialized_ = true;
             }
@@ -862,8 +769,8 @@ void CallRecursiveFunction::setupIR(IRGenerator& builder) {
         if (!is_initialized_) {
             BufferTypeEn bufferType = isReturned() ? BufferTypeEn::output : BufferTypeEn::internal;
             if (isReturned()) {
-                builder.addBufferAlloca(new OutputBuffer(this));
-            } else builder.addBufferAlloca(new Buffer(this));
+                builder.addBuffer(new OutputBuffer(this));
+            } else builder.addBuffer(new Buffer(this));
 
             IR_buffer_base_ptr_ = builder.createBufferInit(type_, "internal_");
             is_initialized_ = true;

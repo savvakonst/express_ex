@@ -6,6 +6,19 @@
 #include "ifs/parameterIO.h"
 
 
+AsyncParameter::AsyncParameter(const AsyncParameter& prm)
+    : ParameterIfs(prm),
+      current_interval_index_(prm.current_interval_index_),
+      intermediate_buffer_(prm.intermediate_buffer_),
+      time_buffer_(prm.time_buffer_),
+      unused_points_in_current_interval_(prm.unused_points_in_current_interval_),
+      data_size_(prm.data_size_),
+      data_size_factor_(prm.data_size_factor_),
+      is_new_interval_(prm.is_new_interval_),
+      parent_parameter_(this),
+      id_(DatasetsStorage_ifs::kDefaultId),
+      ds_storage_(nullptr) {}
+
 AsyncParameter::AsyncParameter(const std::string& name, const std::vector<ExDataInterval>& interval_list,
                                bool save_file_names) {
     name_ = name;
@@ -71,7 +84,7 @@ bool AsyncParameter::close() {
 }
 
 uint64_t AsyncParameter::write(char* data_buffer_ptr, uint64_t points_to_write) {
-    if (isOpened()) return points_to_write;
+    if (!isOpened()) return points_to_write;
 
 
     intermediate_buffer_.resize(points_to_write * data_size_factor_);
@@ -241,7 +254,7 @@ ParameterIfs* AsyncParameter::retyping(PrmTypesEn target_ty, const std::string& 
     std::vector<ExDataInterval> data_interval;
     uint64_t offset = 0;
     for (const auto& a : interval_list_) {
-        auto interval = ExDataInterval(a.type);
+        auto interval = ExDataInterval(target_ty);
         interval.setProperties(a, offset);
         offset += interval.size;
 

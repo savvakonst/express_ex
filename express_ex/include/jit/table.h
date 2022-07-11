@@ -43,32 +43,6 @@ class FunctionPassManager;
 class IRGenerator;
 
 typedef std::map<OpCodeEn, llvm::Function*> BuiltInFuncMap;
-class SubBlock {
-   public:
-    explicit SubBlock(ExValue* var);
-
-    ~SubBlock() = default;
-
-    void setUint(ExValue* var);
-    void setBufferLength(uint64_t buffer_length) { buffer_length_ = buffer_length; }
-    uint64_t getLevel() const { return 0; }
-    uint64_t getLength() const { return length_; }
-    uint64_t getLeftLength() const { return left_length_; }
-    uint64_t getRightLength() const { return right_length_; }
-
-    std::string print() const;
-
-    bool generateIR(IRGenerator& builder, CycleStageEn type = CycleStageEn::midle,
-                    const std::string& basic_block_prefix = "", const std::string& basic_block_postfix = "");
-
-   private:
-    stack<ExValue*> uint_list_;
-
-    uint64_t left_length_;
-    uint64_t right_length_;
-    uint64_t length_;
-    uint64_t buffer_length_ = 1 << 20;
-};
 
 class Block {
    public:

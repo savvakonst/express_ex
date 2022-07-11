@@ -60,7 +60,7 @@ class CallI_ifs : public ExValue {
 
 class Call : public CallI_ifs {
    public:
-    Call(Body* body, const stack<ExValue*>& args = {});
+    explicit Call(Body* body, const stack<ExValue*>& args = {});
     ~Call() override = default;
 
     void markUnusedVisitEnter(stack<ExValue*>* visitor_stack) override;

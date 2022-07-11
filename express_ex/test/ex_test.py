@@ -17,9 +17,12 @@ args = parser.parse_args()
 
 loadDataBase(args.db)
 py_data = execFile(args.i)
+print("py_data len:", len(py_data))
 
-express_data = param("out", np.dtype([('time', "f4"), ('data', args.otype)])
-if isAsync() else np.dtype([('data', args.otype)]))
+dt = np.dtype([('time', "f4"), ('data', args.otype)]) if isAsync() else np.dtype([('data', args.otype)])
+express_data = param("out", dt)
+
+print("express_data len:", len(express_data))
 
 try:
     diff_data = py_data - express_data
@@ -71,7 +74,10 @@ try:
 
 except Exception as e:
     print(str(e))
-    plt.suptitle(str(e))
-    plt.plot(py_data)
+    plt.suptitle(str(e) + " express_data")
+    # plt.plot(py_data)
     plt.plot(express_data)
+    plt.show()
+    plt.suptitle(str(e) + " express_data")
+    plt.plot(py_data)
     plt.show()

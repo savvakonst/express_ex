@@ -1,4 +1,4 @@
 x = param("Широта_СНС_стр")
 y = param("Широта_СНС_млр")
-z = x + cos(y)#**2
+z = x + cos(y)**2
 return double(z)

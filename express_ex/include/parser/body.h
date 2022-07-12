@@ -23,14 +23,17 @@ class BodyTemplate;
 class Body;
 
 
-class DeclaratedBodysMap : private std::map<std::string, std::list<Body*> > {
+class DeclaredBodiesMap : private std::map<std::string, std::list<Body*> > {
    public:
-    // destructor is necessary
-    DeclaratedBodysMap(const std::list<std::string>& names_list) {
-        for (auto i : names_list) operator[](i) = std::list<Body*>();
+    // TODO add destructor
+    explicit DeclaredBodiesMap(const std::list<std::string>& names_list) {
+        for (const auto& i : names_list) operator[](i) = std::list<Body*>();
     }
+
     Body* getPureFunctionBody(const std::string& name, const Signature& signature) const;
+
     bool setPureFunctionBody(Body* body);
+
 };
 
 
@@ -91,7 +94,7 @@ class Body {
 
 
     Body* parent_body_ = nullptr;
-    DeclaratedBodysMap declarated_pure_functions_map_;
+    DeclaredBodiesMap declarated_pure_functions_map_;
 
     int arg_count_ = 0;
 

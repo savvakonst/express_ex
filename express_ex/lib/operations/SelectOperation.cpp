@@ -47,7 +47,7 @@ void SelectOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) {
 void SelectOperation::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;
     GarbageContainer* garbage_container = context->getGarbageContainer();
-    g_pos = pos;
+    g_pos = pos_;
 
     auto op3 = context->pop();
     auto op2 = context->pop();

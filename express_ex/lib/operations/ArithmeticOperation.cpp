@@ -74,7 +74,7 @@ void ArithmeticOperation::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;
     GarbageContainer* garbage_container = context->getGarbageContainer();
 
-    g_pos = pos;
+    g_pos = pos_;
 
     auto op2 = context->pop();
     auto op1 = context->pop();

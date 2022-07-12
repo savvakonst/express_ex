@@ -42,7 +42,7 @@ void TypeCastOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) { 
 void TypeCastOperation::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;
     GarbageContainer* garbage_container = context->getGarbageContainer();
-    g_pos = pos;
+    g_pos = pos_;
 
     auto ret = newTypeConvOp(garbage_container, type_, context->pop());
 

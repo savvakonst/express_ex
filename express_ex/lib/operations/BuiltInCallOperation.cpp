@@ -33,7 +33,7 @@ void BuiltInCallOperation::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;
 
     GarbageContainer* garbage_container = context->getGarbageContainer();
-    g_pos = pos;
+    g_pos = pos_;
 
     auto* op1 = context->pop();
     if (TypeEn::float_jty > op1->getType()) {

@@ -113,7 +113,7 @@ class CallRecursiveFunctionTemplate : public CallTemplate_ifs {
 
 class TailCallDirectiveTemplate : public CallTemplate_ifs {
    public:
-    TailCallDirectiveTemplate(const stack<ExValue*>& args) : CallTemplate_ifs() {
+    explicit TailCallDirectiveTemplate(const stack<ExValue*>& args) : CallTemplate_ifs() {
         args_ = args;
         type_ = TypeEn::unknown_jty;
     }

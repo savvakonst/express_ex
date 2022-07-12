@@ -106,6 +106,7 @@ void BodyTemplate::addBuiltInFuncOp(OpCodeEn u_type_op) {
 
 void BodyTemplate::addIntegrateOp() {
     ExValue* arg = pop();
+    is_operator_ = true;
     push(newIntegrateOperation(garbage_container_, arg));
 }
 
@@ -265,12 +266,12 @@ std::list<std::string> BodyTemplate::getNamesOfDefinedFunctions() const {
     return ret;
 }
 
-Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue*> args, bool is_pure_function) const {
+Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue*> args, bool is_function) const {
     // try replacing the "var_stack_" member with the "var_stack" local value
     // it might be worth moving this value to BodyGenContext
 
     auto body = new Body(name_, getNamesOfDefinedFunctions(), parent_body, is_operator_);
-    BodyGenContext context(body, is_pure_function);
+    BodyGenContext context(body, is_function);
 
     stack<ExValue*> visitor_stack;
 
@@ -280,29 +281,43 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue*> args, b
             if (name_ == "main") {
                 body->addParam((Line*)*(arg));
                 ++arg;
+
             } else {
-                if (is_pure_function) body->addVariableLine(value->getName(), *(arg));
-                else body->addLine(value->getName(), *(arg));  // in line
+                if (is_function) {
+                    body->addVariableLine(value->getName(), *(arg));
+                } else {
+                    body->addLine(value->getName(), *(arg));
+                }
 
                 ++arg;
             }
         } else {
             visitor_stack.push(value->getAssignedVal());
+
             do {
                 auto var = visitor_stack.pop();
-                if (var->isVisited()) var->genBodyVisitExit(&context);
-                else var->visitEnter(&visitor_stack);
+
+                if (var->isVisited()) {
+                    var->genBodyVisitExit(&context);
+                } else {
+                    var->visitEnter(&visitor_stack);
+                }
             } while (!visitor_stack.empty());
             body->addLine(value->getName(), context.pop());
         }
     }
     for (auto& value : return_stack_) {
         visitor_stack.push(value->getAssignedVal());
+
         do {
             auto var = visitor_stack.pop();
-            if (var->isVisited()) var->genBodyVisitExit(&context);
-            else var->visitEnter(&visitor_stack);
+            if (var->isVisited()) {
+                var->genBodyVisitExit(&context);
+            } else {
+                var->visitEnter(&visitor_stack);
+            }
         } while (!visitor_stack.empty());
+
         body->addReturn(return_stack_[0]->getName(), context.pop());
     }
 

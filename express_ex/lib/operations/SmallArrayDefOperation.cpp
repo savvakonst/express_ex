@@ -39,7 +39,7 @@ void SmallArrayDefOperation::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;
 
     GarbageContainer* garbage_container = context->getGarbageContainer();
-    g_pos = pos;
+    g_pos = pos_;
 
     size_t size = operand_.size();
     stack<ExValue*> op;

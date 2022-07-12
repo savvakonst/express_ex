@@ -203,7 +203,7 @@ void Body::genTable(TableGenContext* context) {
 }
 
 
-Body* DeclaratedBodysMap::getPureFunctionBody(const std::string& name, const Signature& signature) const {
+Body* DeclaredBodiesMap::getPureFunctionBody(const std::string& name, const Signature& signature) const {
     auto a = find(name);
     if (a == end()) return nullptr;
 
@@ -213,7 +213,7 @@ Body* DeclaratedBodysMap::getPureFunctionBody(const std::string& name, const Sig
     return nullptr;
 }
 
-bool DeclaratedBodysMap::setPureFunctionBody(Body* body) {
+bool DeclaredBodiesMap::setPureFunctionBody(Body* body) {
     auto a = find(body->getName());
     if (a == end()) return false;
     a->second.push_back(body);

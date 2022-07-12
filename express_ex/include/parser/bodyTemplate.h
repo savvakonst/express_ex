@@ -13,7 +13,13 @@ class GarbageContainer;
 class ExValue;
 class Line;
 class Body;
-
+/**
+ * BodyTemplate's object represents/contains template (type less) ASG 
+ * (Abstract semantic graph) unit. This class has different
+ * methods for building, printing, template ASG and method for 
+ * produsing main(type full) AST. 
+ *
+ */
 class BodyTemplate {
    public:
     BodyTemplate(const std::string& name, BodyTemplate* parent_body_template);
@@ -80,8 +86,18 @@ class BodyTemplate {
     const std::string name_;
 
     int arg_count_ = 0;
-
+   
+   
+    /**
+     * if any operator occurs in corresponding ASG unit or any
+     * child BodyTemplate objects marked as operator
+     * this field is set to true, It is necessary to determine
+     * that function which is rebresenting by current ASG unit is pure
+     * and it is possible to use talil call or anything else...
+     */
     bool is_operator_ = false;
+   
+   
     bool is_tail_callable_ = false;
 
     stack<ExValue*> var_stack_;

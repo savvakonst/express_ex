@@ -22,11 +22,9 @@ class CallTemplate_ifs : public ExValue {
             context->addVoid(
                 body_template_->print(context->tab_ + "  ", context->DST_ena_, context->hide_unused_lines_));
 
-            for (auto& i : args_) auto x = context->pop();
-
-            context->push(body_template_->getName() + ".ret." + toString(type_));
-            is_visited_ = false;
+            context->push(body_template_->getName() + "( " + printArgs(context) + ").ret." + toString(type_));
         }
+        is_visited_ = false;
     }
 
     std::string printUint() override {
@@ -39,7 +37,15 @@ class CallTemplate_ifs : public ExValue {
         is_visited_ = false;
     }
 
+
+
    protected:
+    std::string printArgs(PrintBodyContext* context) {
+        std::string ret;
+        for (size_t i = args_.size(); i > 0; i--) ret += context->pop() + ((i != 1) ? ", " : "");
+        return ret;
+    }
+
     BodyTemplate* body_template_ = nullptr;
     stack<ExValue*> args_;
 };
@@ -128,10 +134,19 @@ class TailCallDirectiveTemplate : public CallTemplate_ifs {
         is_visited_ = false;
     }
 
+    void printVisitExit(PrintBodyContext* context) override {
+        std::string ret = "tailCallTemplate( " + printArgs(context) + ")";
+        context->push(ret);
+        is_visited_ = false;
+    }
+
     void calculateConstRecursive(RecursiveGenContext* context) override {
         size_t size = context->args_reference_.size();
         for (size_t i = 0; i < size; i++) context->args_reference_[i]->binary_value_ = args_[i]->binary_value_;
+        is_visited_ = false;
     }
+
+
 
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kTailCall; }
 };

@@ -510,10 +510,12 @@ bool Table::generateIRInGroup(Group& group, uint32_t index) {
     llvm::LLVMContext& context = M_->getContext();
     IRGenerator& builder = *builder_;
 
-    llvm::Function* sub_function =
-        llvm::Function::Create(llvm::FunctionType::get(llvm::Type::getInt32Ty(context),
-                                                       {llvm::Type::getInt64PtrTy(context)->getPointerTo()}, false),
-                               llvm::Function::ExternalLinkage, "sub_main", M_);
+    llvm::Function* sub_function = llvm::Function::Create(
+        llvm::FunctionType::get(
+            llvm::Type::getInt32Ty(context),
+            {llvm::Type::getInt64PtrTy(context)->getPointerTo(), llvm::Type::getInt64PtrTy(context)->getPointerTo()},
+            false),
+        llvm::Function::ExternalLinkage, "sub_main", M_);
 
     llvm::Constant* group_index = builder.getInt32(index);
 
@@ -598,7 +600,7 @@ bool Table::generateIRInGroup(Group& group, uint32_t index) {
     builder.SetInsertPoint(&(main_function_->back()));
     auto buffer_group_ptr =
         builder.CreateInBoundsGEP(main_function_->getArg(0), builder.getInt32(index), "offset_incr");
-    builder.createCall(sub_function, builder.CreateLoad(buffer_group_ptr));
+    builder.createCall(sub_function, {builder.CreateLoad(buffer_group_ptr), builder.CreateLoad(buffer_group_ptr)});
 
     return true;
 }
@@ -746,27 +748,7 @@ void Line::setupIR(IRGenerator& builder) {
     }
 }
 
-void Call::setupIR(IRGenerator& builder) {
-    if (builder.is_pure_function_) {
-        llvm::Function* function = body_->getOrGenIRPureFunction(builder);
-        std::vector<llvm::Value*> arg_list;
-        for (auto i : args_) {
-            arg_list.push_back(i->getAssignedVal(true)->getIRValue(builder, level_));
-        }
-        IR_value_ = builder.CreateCall(function, arg_list, "call_" + body_->getName());
-    }
-}
 
-
-
-void TailCallDirective::setupIR(IRGenerator& builder) {
-    size_t size = builder.arg_ptr_list_.size();
-    for (size_t i = 0; i < size; i++) {
-        auto ex_value = args_[i]->getAssignedVal(true);
-        llvm::Value* arg = ex_value->getIRValue(builder, level_);
-        builder.CreateStore(arg, builder.arg_ptr_list_[size - 1 - i]);
-    }
-}
 
 llvm::Function* Body::getOrGenIRPureFunction(IRGenerator& builder) {
     if (function_) return function_;

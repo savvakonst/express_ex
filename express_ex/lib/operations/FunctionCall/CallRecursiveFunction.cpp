@@ -4,6 +4,7 @@
 
 #include "CallRecursiveFunction.h"
 
+#include "jit/IR_generator.h"
 
 CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue*>& args) : CallI_ifs() {
     body_ = body;
@@ -102,5 +103,16 @@ void CallRecursiveFunction::genBlocksVisitExit(TableGenContext* context) {
         // parameter_ =new SyncParameter("", parameter_->getMainTimeInterval(), parameter_->getDataIntervalList(),
         // false);
         context->setParameter(parameter_);
+    }
+}
+
+
+
+void TailCallDirective::setupIR(IRGenerator& builder) {
+    size_t size = builder.arg_ptr_list_.size();
+    for (size_t i = 0; i < size; i++) {
+        auto ex_value = args_[i]->getAssignedVal(true);
+        llvm::Value* arg = ex_value->getIRValue(builder, level_);
+        builder.CreateStore(arg, builder.arg_ptr_list_[size - 1 - i]);
     }
 }

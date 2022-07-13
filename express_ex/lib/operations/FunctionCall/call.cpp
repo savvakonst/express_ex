@@ -45,8 +45,13 @@ void Call::genBlocksVisitExit(TableGenContext* context) {
     is_visited_ = false;
 }
 
-
-/// //////////////////////////////////////////////////////////////////////////////////////////////////
-///
-///
-/// //////////////////////////////////////////////////////////////////////////////////////////////////
+void Call::setupIR(IRGenerator& builder) {
+    if (builder.is_pure_function_) {
+        llvm::Function* function = body_->getOrGenIRPureFunction(builder);
+        std::vector<llvm::Value*> arg_list;
+        for (auto i : args_) {
+            arg_list.push_back(i->getAssignedVal(true)->getIRValue(builder, level_));
+        }
+        IR_value_ = builder.CreateCall(function, arg_list, "call_" + body_->getName());
+    }
+}

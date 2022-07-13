@@ -59,6 +59,7 @@ try:
 
     callback = Index()
 
+    plt.suptitle(args.i)
     diff_data_button_ax = plt.axes([0.18, 0.05, 0.2, 0.075])
     py_data_button_ax = plt.axes([0.4, 0.05, 0.2, 0.075])
     express_data_button_ax = plt.axes([0.62, 0.05, 0.2, 0.075])
@@ -74,10 +75,10 @@ try:
 
 except Exception as e:
     print(str(e))
-    plt.suptitle(str(e) + " express_data")
+    plt.suptitle(str(e) + " express_data in " + args.i)
     # plt.plot(py_data)
     plt.plot(express_data)
     plt.show()
-    plt.suptitle(str(e) + " express_data")
+    plt.suptitle(str(e) + " py_data in" + args.i)
     plt.plot(py_data)
     plt.show()

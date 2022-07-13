@@ -78,6 +78,10 @@ def convolve(arr_a, arr_b):
     return np.convolve(arr_a, arr_b, 'same')
 
 
+def integrate(arr):
+    return np.trapz(arr)
+
+
 import re
 
 

@@ -1,0 +1,5 @@
+x = param("#1_A01__1")
+
+z = integrate(x)
+
+return double(z)

@@ -5,6 +5,7 @@
 
 #include <sstream>
 
+#include "../operations/FunctionCall/call.h"
 #include "jit/IR_generator.h"
 #include "jit/buffer.h"
 #include "jit/llvmHdrs.h"
@@ -12,7 +13,6 @@
 #include "llvm/Support/DynamicLibrary.h"
 #include "parser/basic.h"
 #include "parser/body.h"
-#include "parser/call.h"
 #include "parser/line.h"
 
 
@@ -285,7 +285,7 @@ void Table::declareBuiltInFunctions(BuiltInFuncMap& UBIFMap, llvm::Type* Ty) {
 }
 
 string Table::print() const {
-    std::string out = "";
+    std::string out;
 
     out += "constant defenition:\n";
     for (auto i : const_list_) {
@@ -328,7 +328,7 @@ void Table::calculateBufferLength(const std::string& basic_block_prefix) {
     for (auto& j : group_list_) {
         if (j.max_length < max_buffer_length_) max_buffer_length_ = j.max_length / 4;
 
-        int64_t sub_max_buffer_length = min_buffer_length_ * j.max_length / j.min_length;
+        uint64_t sub_max_buffer_length = min_buffer_length_ * j.max_length / j.min_length;
 
         if (sub_max_buffer_length > max_buffer_length_) {
             llvm::outs() << "max_buffer_length_ = sub_max_buffer_length;\n";
@@ -757,31 +757,7 @@ void Call::setupIR(IRGenerator& builder) {
     }
 }
 
-void CallRecursiveFunction::setupIR(IRGenerator& builder) {
-    llvm::Function* function = body_->getOrGenIRPureFunction(builder);
-    std::vector<llvm::Value*> arg_list;
-    for (auto i : args_) {
-        arg_list.push_back(i->getAssignedVal(true)->getIRValue(builder, level_));
-    }
-    IR_value_ = builder.CreateCall(function, arg_list, "call_" + body_->getName());
 
-    if (isBuffered() | isReturned()) {  // replace to new function
-        if (!is_initialized_) {
-            BufferTypeEn bufferType = isReturned() ? BufferTypeEn::output : BufferTypeEn::internal;
-            if (isReturned()) {
-                builder.addBuffer(new OutputBuffer(this));
-            } else builder.addBuffer(new Buffer(this));
-
-            IR_buffer_base_ptr_ = builder.createBufferInit(type_, "internal_");
-            is_initialized_ = true;
-        }
-        builder.setStoreInsertPoint();
-        IR_buffer_ptr_ =
-            builder.CreateInBoundsGEP(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(), "offset_cr_incr_");
-        builder.createPositionalStore(IR_value_, IR_buffer_ptr_);
-        builder.setCalcInsertPoint();
-    }
-}
 
 void TailCallDirective::setupIR(IRGenerator& builder) {
     size_t size = builder.arg_ptr_list_.size();

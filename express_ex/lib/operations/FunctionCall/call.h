@@ -1,13 +1,14 @@
 #ifndef CALL_H_
 #define CALL_H_
-#include "basic.h"
-#include "body.h"
-#include "line.h"
-#include "variable.h"
+#include "parser/ExValue.h"
+#include "parser/basic.h"
+#include "parser/body.h"
+#include "parser/line.h"
 
 namespace llvm {
 class Function;
 }
+
 class IRGenerator;
 
 class CallI_ifs : public ExValue {
@@ -63,6 +64,8 @@ class CallI_ifs : public ExValue {
     stack<ExValue*> args_;
 };
 
+
+
 class Call : public CallI_ifs {
    public:
     explicit Call(Body* body, const stack<ExValue*>& args = {});
@@ -75,37 +78,6 @@ class Call : public CallI_ifs {
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kCall; }
 };
 
-class CallRecursiveFunction : public CallI_ifs {
-   public:
-    explicit CallRecursiveFunction(Body* body, const stack<ExValue*>& args = {});
-    ~CallRecursiveFunction() override = default;
 
-    void markUnusedVisitEnter(stack<ExValue*>* visitor_stack) override;
-    void genBlocksVisitExit(TableGenContext* context) override;
-    void setupIR(IRGenerator& builder) override;
-
-    ExValue* getAssignedVal(bool deep = false) override { return this; }
-    NodeTypeEn getNodeType() const override { return NodeTypeEn::kCall; }
-};
-
-class TailCallDirective : public CallI_ifs {
-   public:
-    explicit TailCallDirective(const stack<ExValue*>& args) : CallI_ifs() {
-        type_ = TypeEn::unknown_jty;
-        args_ = (args);
-    }
-    ~TailCallDirective() override = default;
-
-    void setupIR(IRGenerator& builder) override;
-
-    void printVisitExit(PrintBodyContext* context) override {
-        std::string ret = "tailCall( " + printArgs(context) + ")";
-        context->push(ret);
-        is_visited_ = false;
-    }
-
-    ExValue* getAssignedVal(bool deep = false) override { return this; }
-    NodeTypeEn getNodeType() const override { return NodeTypeEn::kTailCall; }
-};
 
 #endif

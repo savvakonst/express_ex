@@ -2,12 +2,12 @@
 
 #include <string>
 
+#include "../operations/FunctionCall/call.h"
+#include "parser/ExValue.h"
 #include "parser/body.h"
-#include "parser/call.h"
 #include "parser/callTemplate.h"
 #include "parser/line.h"
 #include "parser/operations.h"
-#include "parser/variable.h"
 
 BodyTemplate::BodyTemplate(const std::string& name, BodyTemplate* parent_body_template)
     : name_(name), parent_body_template_(parent_body_template) {

@@ -3,8 +3,8 @@
 
 #include <vector>
 
+#include "ExValue.h"
 #include "common/types_jty.h"
-#include "variable.h"
 
 
 // Value* newInvOperation(GarbageContainer* garbage_container, Value* arg);

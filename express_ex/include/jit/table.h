@@ -219,9 +219,9 @@ class Table {
     std::map<OpCodeEn, int> BIF2LLVMmap_;
     std::set<ParameterIfs*> parameter_set_;  // external
 
-    int64_t min_buffer_length_;
-    int64_t max_buffer_length_;
-    int64_t iterations_ = 0;
+    uint64_t min_buffer_length_;
+    uint64_t max_buffer_length_;
+    uint64_t iterations_ = 0;
 
     std::string error_info_;
 };

@@ -25,6 +25,7 @@ set(OPENCL_LIBDIR__ ${CUDAPATH__}/lib/${APlarform})
 
 
 set(LIBRARY_SOURCES
+        lib/common/common.cpp
 
         lib/ifs/AsyncParameter.cpp
         lib/ifs/ParameterIO.cpp
@@ -35,19 +36,18 @@ set(LIBRARY_SOURCES
 
         lib/KexParser/KexParser.cpp
         lib/KexParser/treeShapeListener.cpp
+        lib/KexParser/errors.cpp
 
+
+        lib/operations/FunctionCall/CallRecursiveFunction.cpp
         lib/parser/basic.cpp
         lib/parser/body.cpp
         lib/parser/bodyTemplate.cpp
-        lib/parser/call.cpp
-        lib/common/common.cpp
-        #app/main.cpp
-        lib/KexParser/errors.cpp
+        lib/operations/FunctionCall/call.cpp
         lib/parser/line.cpp
         lib/parser/newOp.cpp
+        lib/parser/ExValue.cpp
         #lib/parser/operations.cpp
-
-        lib/parser/variable.cpp
 
 
         lib/operations/ArithmeticOperation.cpp
@@ -66,7 +66,7 @@ set(LIBRARY_SOURCES
         lib/jit/IR_generator.cpp
         lib/jit/getWin32Intrinsinc.cpp
         lib/jit/table.cpp
-        )
+        lib/operations/FunctionCall/CallTemplate.cpp)
 
 
 set(LIBRARY_HEADERS
@@ -80,13 +80,15 @@ set(LIBRARY_HEADERS
         include/ifs/ExStream.h
 
         lib/KexParser/treeShapeListener.h
+        lib/operations/FunctionCall/CallRecursiveFunction.h
+
 
         include/parser/KexParser.h
-        include/parser/variable.h
+        include/parser/ExValue.h
         include/parser/basic.h
         include/parser/body.h
         include/parser/bodyTemplate.h
-        include/parser/call.h
+        lib/operations/FunctionCall/call.h
         include/parser/callTemplate.h
         include/common/common.h
         include/parser/defWarningIgnore.h

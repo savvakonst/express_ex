@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "common/types_jty.h"
-#include "parser/variable.h"
+#include "parser/ExValue.h"
 
 // extern bool g_gpu_acceleration_enable;
 

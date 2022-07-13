@@ -4,9 +4,9 @@
 #include <iostream>
 #include <vector>
 
+#include "ExValue.h"
 #include "ifs/AsyncParameter.h"
 #include "ifs/SyncParameter.h"
-#include "variable.h"
 
 class Line : public ExValue {
    public:

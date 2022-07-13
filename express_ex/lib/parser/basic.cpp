@@ -1,7 +1,7 @@
 #include "parser/basic.h"
 
+#include "parser/ExValue.h"
 #include "parser/line.h"
-#include "parser/variable.h"
 
 void PrintBodyContext::createArg(Line* value) {
     if (!hide_unused_lines_ || !value->isUnused()) {
@@ -18,7 +18,7 @@ void PrintBodyContext::createLine(Line* value) {
     auto DST_postfix = DST_ena_ ? "." + value->getTxtDSType() : "";
 
     if (!hide_unused_lines_ || !value->isUnused()) {
-        const std::string txt_line   = "  " + tab_ + value->getName() + DST_postfix + "=" + pop();
+        const std::string txt_line = "  " + tab_ + value->getName() + DST_postfix + "=" + pop();
         const std::string txt_shifts = std::to_string(value->getLeftBufferLen()) + " : " +
                                        std::to_string(value->getRightBufferLen()) + " : " +
                                        std::to_string(value->getLength());
@@ -32,7 +32,7 @@ void PrintBodyContext::createLine(Line* value) {
 void PrintBodyContext::createReturn(Line* value) {
     auto DST_postfix = DST_ena_ ? "." + value->getTxtDSType() : "";
 
-    auto txt_line   = "  " + tab_ + value->getName() + DST_postfix + "  " + pop();
+    auto txt_line = "  " + tab_ + value->getName() + DST_postfix + "  " + pop();
     auto txt_shifts = std::to_string(value->getLeftBufferLen()) + " : " + std::to_string(value->getRightBufferLen());
     auto txt_skip =
         std::string(max_line_length_ - ((txt_line.length() > max_line_length_) ? 0 : txt_line.length()), ' ');

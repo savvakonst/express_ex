@@ -1,54 +1,8 @@
-#include "parser/call.h"
+//
+// Created by SVK on 13.07.2022.
+//
 
-
-/// //////////////////////////////////////////////////////////////////////////////////////////////////
-///
-///
-/// //////////////////////////////////////////////////////////////////////////////////////////////////
-
-Call::Call(Body* body, const stack<ExValue*>& args) : CallI_ifs() {
-    body_ = body;
-    args_ = args;
-
-    if (body_->getRet().empty()) return;
-    auto ret = body_->getRet().front();
-
-    level_ = ret->getLevel();
-    type_ = ret->getType();
-    data_structure_type_ = ret->getDSType();
-    length_ = ret->getLength();
-
-    if (isConst(ret)) {
-        binary_value_ = ret->getBinaryValue();
-        text_value_ = ret->getTextValue();
-    }
-}
-
-void Call::markUnusedVisitEnter(stack<ExValue*>* visitor_stack) {
-    commonMarkUnusedVisitEnter(visitor_stack);
-
-    if (body_->getRet().empty()) print_error("markUnusedVisitEnter: body_->getRet().empty() == true ");
-
-    auto ret = body_->getRet().front();
-
-    visitor_stack->push(ret);
-    ret->setBufferLength(this);
-
-    is_unused_ = false;
-}
-
-void Call::genBlocksVisitExit(TableGenContext* context) {
-    body_->genTable(context);
-    unique_name_ = (isLargeArr(this) ? "fb" : "fs") + std::to_string(context->getUniqueIndex());
-    context->setUint(this);
-    is_visited_ = false;
-}
-
-
-/// //////////////////////////////////////////////////////////////////////////////////////////////////
-///
-///
-/// //////////////////////////////////////////////////////////////////////////////////////////////////
+#include "CallRecursiveFunction.h"
 
 
 CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue*>& args) : CallI_ifs() {
@@ -100,6 +54,32 @@ void CallRecursiveFunction::markUnusedVisitEnter(stack<ExValue*>* visitor_stack)
         if (arg->isArray()) arg->setBufferLength(this);
     }
     is_unused_ = false;
+}
+
+void CallRecursiveFunction::setupIR(IRGenerator& builder) {
+    llvm::Function* function = body_->getOrGenIRPureFunction(builder);
+    std::vector<llvm::Value*> arg_list;
+    for (auto i : args_) {
+        arg_list.push_back(i->getAssignedVal(true)->getIRValue(builder, level_));
+    }
+    IR_value_ = builder.CreateCall(function, arg_list, "call_" + body_->getName());
+
+    if (isBuffered() | isReturned()) {  // replace to new function
+        if (!is_initialized_) {
+            BufferTypeEn bufferType = isReturned() ? BufferTypeEn::output : BufferTypeEn::internal;
+            if (isReturned()) {
+                builder.addBuffer(new OutputBuffer(this));
+            } else builder.addBuffer(new Buffer(this));
+
+            IR_buffer_base_ptr_ = builder.createBufferInit(type_, "internal_");
+            is_initialized_ = true;
+        }
+        builder.setStoreInsertPoint();
+        IR_buffer_ptr_ =
+            builder.CreateInBoundsGEP(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(), "offset_cr_incr_");
+        builder.createPositionalStore(IR_value_, IR_buffer_ptr_);
+        builder.setCalcInsertPoint();
+    }
 }
 
 void CallRecursiveFunction::genBlocksVisitExit(TableGenContext* context) {

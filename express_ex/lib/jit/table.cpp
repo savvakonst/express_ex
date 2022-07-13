@@ -786,8 +786,9 @@ void CallRecursiveFunction::setupIR(IRGenerator& builder) {
 void TailCallDirective::setupIR(IRGenerator& builder) {
     size_t size = builder.arg_ptr_list_.size();
     for (size_t i = 0; i < size; i++) {
-        llvm::Value* arg = args_[i]->getAssignedVal(true)->getIRValue(builder, level_);
-        builder.CreateStore(arg, builder.arg_ptr_list_[i]);
+        auto ex_value = args_[i]->getAssignedVal(true);
+        llvm::Value* arg = ex_value->getIRValue(builder, level_);
+        builder.CreateStore(arg, builder.arg_ptr_list_[size - 1 - i]);
     }
 }
 

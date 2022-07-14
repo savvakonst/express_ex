@@ -30,31 +30,23 @@ class BodyTemplate {
     bool isRetStackFull() const { return (name_ != "main") ? !return_stack_.empty() : false; }
     bool isRetStackEmpty() const { return return_stack_.empty(); }
 
-    // var_stack_ push/pop
+
     void push(ExValue*);
     ExValue* pop();
     stack<ExValue*> pop(size_t length);
 
-    //
+
     void addLine(const std::string& name, ExValue* var);
-    void addArg(const std::string&
-                    name);  // is necessary to add returned status_ value with line ,pos end error code and string;
+
+    // TODO is necessary to add returned status_ value with line ,pos end error code and string;
+    void addArg(const std::string& name);
     void addParam(Line* line);
     void addParam(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len);
-    void addParam(const std::string& name, const std::string& linkName,
+    void addParam(const std::string& name, const std::string& link_name,
                   DataStructureTypeEn dsty = DataStructureTypeEn::kConstant);
-    void addReturn(
-        const std::string& name,
-        ExValue* var);  // is necessary to add returned status_ value with line ,pos end error code and string;
-    // create operation and push to varStack
-    void addTypeConvOp(TypeEn target_type);
-    void addBuiltInFuncOp(OpCodeEn u_type_op);
-    void addIntegrateOp();
-    void addInvOp();
-    void addArithmeticOp(OpCodeEn u_type_op);
-    void addComparisonOp(OpCodeEn u_type_op);
-    void addConvolveOp(OpCodeEn u_type_op, uint32_t shift = 0);
-    void addSelectOp();
+
+    // TODO is necessary to add returned status_ value with line ,pos end error code and string;
+    void addReturn(const std::string& name, ExValue* var);
 
     // create call
     void addCall(BodyTemplate* body);

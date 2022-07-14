@@ -46,8 +46,8 @@ void BodyTemplate::addParam(const std::string& name, TypeEn ty, DataStructureTyp
     lines_.push_back(line);
 }
 
-void BodyTemplate::addParam(const std::string& name, const std::string& linkName, DataStructureTypeEn dsty) {
-    auto line = new Line(name, linkName, dsty);
+void BodyTemplate::addParam(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty) {
+    auto line = new Line(name, link_name, dsty);
     garbage_container_->add(line);
     arg_count_++;
     lines_.push_back(line);
@@ -88,73 +88,6 @@ std::map<std::string, std::string> BodyTemplate::getParameterLinkNames(bool hide
     return ret;
 }
 
-// create operation and push to varStack
-
-// TODO: replace with ExValue* newTypeConvOp(BodyTemplate* body_template, TypeEn target_type);
-void BodyTemplate::addTypeConvOp(TypeEn target_type) {
-    ExValue* arg1 = pop();
-    push(newTypeConvOp(garbage_container_, target_type, arg1));
-}
-
-// TODO: replace with ExValue* newBuiltInFuncOperation(BodyTemplate* body_template, OpCodeEn op_type);
-void BodyTemplate::addBuiltInFuncOp(OpCodeEn u_type_op) {
-    ExValue* arg = pop();
-    auto target_type = TypeEn::unknown_jty;
-    push(newBuiltInFuncOperation(garbage_container_, target_type, arg, u_type_op));
-}
-
-// TODO: replace with ExValue* newIntegrateOperation(BodyTemplate* body_template);
-void BodyTemplate::addIntegrateOp() {
-    ExValue* arg = pop();
-    is_operator_ = true;
-    push(newIntegrateOperation(garbage_container_, arg));
-}
-// TODO: replace with ExValue* newInversionOperation(BodyTemplate* body_template);
-void BodyTemplate::addInvOp() {
-    ExValue* arg = pop();
-    ExValue* zero = garbage_container_->add(new ExValue("0", TypeEn::int32_jty));
-    push(newArithmeticOperation(garbage_container_, TypeEn::DEFAULT_JTY, zero, arg, OpCodeEn::sub));
-}
-
-// TODO: replace with ExValue* newArithmeticOperation(BodyTemplate* body_template, OpCodeEn u_type_op);
-void BodyTemplate::addArithmeticOp(OpCodeEn u_type_op) {
-    ExValue* arg_b = pop();
-    ExValue* arg_a = pop();
-    push(newArithmeticOperation(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op));
-}
-
-// TODO: replace with ExValue* newComparisonOperation(BodyTemplate* body_template, OpCodeEn op_type);
-void BodyTemplate::addComparisonOp(OpCodeEn u_type_op) {
-    ExValue* arg_b = pop();
-    ExValue* arg_a = pop();
-    push(newComparisonOperation(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op));
-}
-
-// TODO: replace with ExValue* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_op, uint32_t shift);
-void BodyTemplate::addConvolveOp(OpCodeEn u_type_op, uint32_t shift) {  // TODO: add type maching
-    ExValue* arg_b = pop();
-    ExValue* arg_a = pop();
-    is_operator_ = true;
-    push(newConvolveOperation(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, shift, u_type_op));
-}
-
-
-// TODO: replace with ExValue* newSelectOp(BodyTemplate* body_template);
-void BodyTemplate::addSelectOp() {
-    ExValue* arg_c = pop();
-    ExValue* arg_b = pop();
-    ExValue* arg_a = pop();
-
-    bool valid_recursion = false;
-
-    if (is_tail_callable_) {
-        const NodeTypeEn p = arg_c->getAssignedVal(true)->getNodeType();
-        valid_recursion = (p == NodeTypeEn::kTailCall);
-        valid_recursion = valid_recursion || (arg_b->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall);
-    }
-
-    push(newSelectOp(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, arg_c, valid_recursion));
-}
 
 void BodyTemplate::addCall(BodyTemplate* body) {
     stack<ExValue*> a;

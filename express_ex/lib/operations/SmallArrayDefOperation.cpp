@@ -45,7 +45,6 @@ ExValue* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count) {
     body_template->is_operator_ = true;
     for (size_t i = 0; i < arg_count; i++) op.push(body_template->pop());
     std::reverse(op.begin(), op.end());
-    stack<ExValue*> v = body_template->pop(arg_count);
     return newSmallArrayDefOp(body_template->getGarbageContainer(), op, OpCodeEn::smallArrayDef, true);
 }
 

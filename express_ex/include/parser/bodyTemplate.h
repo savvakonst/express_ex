@@ -56,10 +56,6 @@ class BodyTemplate {
     void addConvolveOp(OpCodeEn u_type_op, uint32_t shift = 0);
     void addSelectOp();
 
-    void addRangeOp(size_t arg_count);
-    void addShiftOp();
-    void addDecimationOp();
-    void addSmallArrayDefinitionOp(size_t length);
     // create call
     void addCall(BodyTemplate* body);
     void addTailCall();
@@ -100,7 +96,7 @@ class BodyTemplate {
     const std::string name_;
 
     int arg_count_ = 0;
-    
+
     stack<ExValue*> var_stack_;
     stack<Line*> lines_;
     stack<Line*> return_stack_;

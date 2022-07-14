@@ -156,37 +156,6 @@ void BodyTemplate::addSelectOp() {
     push(newSelectOp(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, arg_c, valid_recursion));
 }
 
-// TODO: replace with ExValue* newRangeOp(BodyTemplate* body_template, size_t arg_count);
-void BodyTemplate::addRangeOp(size_t arg_count) {
-    if ((arg_count < 1) || (arg_count > 3)) print_error("invalid signature of range(..) function");
-
-    stack<ExValue*> v = pop(arg_count);
-    push(newSmallArrayDefOp(garbage_container_, v, OpCodeEn::smallArrayRange));
-}
-
-void BodyTemplate::addShiftOp() {
-    ExValue* arg2 = pop();
-    ExValue* arg1 = pop();
-    print_error("addShiftOp");
-    // push(newSliceOp(garbage_container_, arg1, arg2, OpCodeEn::shift));
-}
-
-void BodyTemplate::addDecimationOp() {
-    ExValue* arg2 = pop();
-    ExValue* arg1 = pop();
-    print_error("addShiftOp");
-    // push(newSliceOp(garbage_container_, arg1, arg2, OpCodeEn::decimation));
-}
-
-// TODO: replace with ExValue* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count);
-void BodyTemplate::addSmallArrayDefinitionOp(size_t length) {
-    stack<ExValue*> op;
-    is_operator_ = true;
-    for (size_t i = 0; i < length; i++) op.push(pop());
-    std::reverse(op.begin(), op.end());
-    push(newSmallArrayDefOp(garbage_container_, op, OpCodeEn::smallArrayDef, true));
-}
-
 void BodyTemplate::addCall(BodyTemplate* body) {
     stack<ExValue*> a;
     a.resize(body->getArgCount());

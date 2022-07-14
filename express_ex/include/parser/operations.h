@@ -3,9 +3,11 @@
 
 #include <vector>
 
-#include "ExValue.h"
+//#include "ExValue.h"
 #include "common/types_jty.h"
-
+class GarbageContainer;
+class BodyTemplate;
+class ExValue;
 
 // Value* newInvOperation(GarbageContainer* garbage_container, Value* arg);
 ExValue* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg,
@@ -30,21 +32,21 @@ ExValue* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, Ex
 // Value* newSliceOp(GarbageContainer* garbage_container, Value* arg_a, Value* arg_b, OpCodeEn op_type);
 // Value* newSliceOp(GarbageContainer* garbage_container, Value* arg_a, int64_t int_val, OpCodeEn type_op);
 
-ExValue* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExValue*>& args,
-                            OpCodeEn op_type = OpCodeEn::smallArrayDef, bool is_template = false);
+// ExValue* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExValue*>& args,
+//                             OpCodeEn op_type = OpCodeEn::smallArrayDef, bool is_template = false);
 
 
 
-// TODO: replace with ExValue* newTypeConvOp(BodyTemplate* body_template, TypeEn target_type);
-// TODO: replace with ExValue* newBuiltInFuncOperation(BodyTemplate* body_template, OpCodeEn op_type);
-// TODO: replace with ExValue* newIntegrateOperation(BodyTemplate* body_template);
-// TODO: replace with ExValue* newInversionOperation(BodyTemplate* body_template);
-// TODO: replace with ExValue* newArithmeticOperation(BodyTemplate* body_template, OpCodeEn u_type_op);
-// TODO: replace with ExValue* newComparisonOperation(BodyTemplate* body_template, OpCodeEn op_type);
-// TODO: replace with ExValue* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_op, uint32_t shift);
-// TODO: replace with ExValue* newSelectOp(BodyTemplate* body_template);
-// TODO: replace with ExValue* newRangeOp(BodyTemplate* body_template, size_t arg_count);
-// TODO: replace with ExValue* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count);
+ExValue* newTypeConvOp(BodyTemplate* body_template, TypeEn target_type);
+ExValue* newBuiltInFuncOperation(BodyTemplate* body_template, OpCodeEn op_type);
+ExValue* newIntegrateOperation(BodyTemplate* body_template);
+ExValue* newInversionOperation(BodyTemplate* body_template);
+ExValue* newArithmeticOperation(BodyTemplate* body_template, OpCodeEn u_type_op);
+ExValue* newComparisonOperation(BodyTemplate* body_template, OpCodeEn op_type);
+ExValue* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_op, uint32_t shift);
+ExValue* newSelectOp(BodyTemplate* body_template);
+ExValue* newRangeOp(BodyTemplate* body_template, size_t arg_count);
+ExValue* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count);
 
 
 #endif

@@ -1,7 +1,7 @@
 #include "treeShapeListener.h"
 
 #include "ifs/ExStreamIfs.h"
-
+#include "parser/operations.h"
 
 PosInText g_pos;
 
@@ -108,7 +108,7 @@ void TreeShapeListener::exitCallTConvBInFunc(EGrammarParser::CallTConvBInFuncCon
         CONV_TY(EGrammarParser::C_INT64, TypeEn::int64_jty);
     default:;
     }
-    activ_body_->addTypeConvOp(targetType);
+    activ_body_->push(newTypeConvOp(activ_body_, targetType));
 #undef CONV_TY
 }
 
@@ -128,82 +128,82 @@ void TreeShapeListener::exitCallUnaryBInFunc(EGrammarParser::CallUnaryBInFuncCon
     default:;
     }
 #undef CONV_TY
-    activ_body_->addBuiltInFuncOp(op);
+    activ_body_->push(newBuiltInFuncOperation(activ_body_, op));
 }
 
 
 void TreeShapeListener::exitCallIntegrate(EGrammarParser::CallIntegrateContext* ctx) {
     setPos(ctx);
-    activ_body_->addIntegrateOp();
+    activ_body_->push(newIntegrateOperation(activ_body_));
 }
 
 void TreeShapeListener::exitInv(EGrammarParser::InvContext* ctx) {
     setPos(ctx);
-    activ_body_->addInvOp();
+    activ_body_->push(newInversionOperation(activ_body_));
 }
 
 // arithmetic operations
 void TreeShapeListener::exitMulDiv(EGrammarParser::MulDivContext* ctx) {
     setPos(ctx);
     OpCodeEn op = (EGrammarParser::MUL == ctx->op->getType()) ? OpCodeEn::mul : OpCodeEn::sdiv;
-    activ_body_->addArithmeticOp(op);
+    activ_body_->push(newArithmeticOperation(activ_body_, op));
 }
 
 void TreeShapeListener::exitAddSub(EGrammarParser::AddSubContext* ctx) {
     setPos(ctx);
     OpCodeEn op = (EGrammarParser::ADD == ctx->op->getType()) ? OpCodeEn::add : OpCodeEn::sub;
-    activ_body_->addArithmeticOp(op);
+    activ_body_->push(newArithmeticOperation(activ_body_, op));
 }
 
 void TreeShapeListener::exitPow(EGrammarParser::PowContext* ctx) {
     setPos(ctx);
-    activ_body_->addArithmeticOp(OpCodeEn::pow);
+    activ_body_->push(newArithmeticOperation(activ_body_, OpCodeEn::pow));
 }
 
 void TreeShapeListener::exitMoreLess(EGrammarParser::MoreLessContext* ctx) {
     setPos(ctx);
     OpCodeEn op = (EGrammarParser::MORE_ == ctx->op->getType()) ? OpCodeEn::sgt : OpCodeEn::slt;
-    activ_body_->addComparisonOp(op);
+    activ_body_->push(newComparisonOperation(activ_body_, op));
 }
 
 void TreeShapeListener::exitMoreeqLesseq(EGrammarParser::MoreeqLesseqContext* ctx) {
     setPos(ctx);
     OpCodeEn op = (EGrammarParser::MOREEQ == ctx->op->getType()) ? OpCodeEn::sge : OpCodeEn::sle;
-    activ_body_->addComparisonOp(op);
+    activ_body_->push(newComparisonOperation(activ_body_, op));
 }
 
 void TreeShapeListener::exitEquality(EGrammarParser::EqualityContext* ctx) {
     setPos(ctx);
     OpCodeEn op = (EGrammarParser::EQ == ctx->op->getType()) ? OpCodeEn::eq : OpCodeEn::ne;
-    activ_body_->addComparisonOp(op);
+    activ_body_->push(newComparisonOperation(activ_body_, op));
 }
 
 // conditional
 void TreeShapeListener::exitCondExpr(EGrammarParser::CondExprContext* ctx) {
     setPos(ctx);
-    activ_body_->addSelectOp();
+    activ_body_->push(newSelectOp(activ_body_));
 }
 
 void TreeShapeListener::exitCallConvolve(EGrammarParser::CallConvolveContext* ctx) {
     setPos(ctx);
-    activ_body_->addConvolveOp(OpCodeEn::convolve);
+    activ_body_->push(newConvolveOperation(activ_body_, OpCodeEn::convolve, 0));
 }
 
 void TreeShapeListener::exitRange(EGrammarParser::RangeContext* ctx) {
     setPos(ctx);
-    activ_body_->addRangeOp(ctx->expr().size());
+    activ_body_->push(newRangeOp(activ_body_, ctx->expr().size()));
 }
 
 void TreeShapeListener::exitShift(EGrammarParser::ShiftContext* ctx) {
     setPos(ctx);
     print_error("addShiftOp");
-    activ_body_->addShiftOp();
+    // activ_body_->addShiftOp();
 }
 
 void TreeShapeListener::exitDecimation(EGrammarParser::DecimationContext* ctx) {
     setPos(ctx);
     print_error("addDecimationOp");
-    activ_body_->addDecimationOp();
+    // activ_body_->addDecimationOp();
 }
 
 // call function
@@ -248,7 +248,7 @@ void TreeShapeListener::exitFunc(EGrammarParser::FuncContext* ctx) {
 
 void TreeShapeListener::exitSmallArrayDefinition(EGrammarParser::SmallArrayDefinitionContext* ctx) {
     setPos(ctx);
-    activ_body_->addSmallArrayDefinitionOp(ctx->expr().size());
+    activ_body_->push(newSmallArrayDefOp(activ_body_, ctx->expr().size()));
 }
 
 BodyTemplate* TreeShapeListener::getMainBody() {

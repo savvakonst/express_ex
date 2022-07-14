@@ -6,15 +6,15 @@ source_filename = "test"
 
 declare i32 @buffer_update_function(i32)
 
-define i32 @main(i64*** %0) {
+define i32 @main(i64*** %0, i64** %1) {
 init_block:
   %offset_incr = getelementptr inbounds i64**, i64*** %0, i32 0
-  %1 = load i64**, i64*** %offset_incr, align 8
-  %2 = call i32 @sub_main(i64** %1)
+  %2 = load i64**, i64*** %offset_incr, align 8
+  %3 = call i32 @sub_main(i64** %2, i64** %1)
   ret i32 1
 }
 
-define i32 @sub_main(i64** %0) {
+define i32 @sub_main(i64** %0, i64** %1) {
 init_block:
   %glob_index_alloca = alloca i64, align 8
   store i64 0, i64* %glob_index_alloca, align 4
@@ -49,12 +49,12 @@ calc_block_0x183d80_level_0_0:                    ; preds = %load_block_0x183d80
   br label %store_block_0x183d80_level_0_0
 
 store_block_0x183d80_level_0_0:                   ; preds = %calc_block_0x183d80_level_0_0
-  %1 = add i64 %common_offset_, 1
-  store i64 %1, i64* %common_offset_alloca_, align 4
-  %2 = icmp slt i64 %1, 524289
+  %2 = add i64 %common_offset_, 1
+  store i64 %2, i64* %common_offset_alloca_, align 4
+  %3 = icmp slt i64 %2, 524289
   %offset_op_incr_ = getelementptr inbounds double, double* %internal_buffer_1, i64 %common_offset_
   store double %vb6, double* %offset_op_incr_, align 8
-  br i1 %2, label %load_block_0x183d80_level_0_0, label %intermediate_block_0x183d80_level_1_0
+  br i1 %3, label %load_block_0x183d80_level_0_0, label %intermediate_block_0x183d80_level_1_0
 
 intermediate_block_0x183d80_level_1_0:            ; preds = %store_block_0x183d80_level_0_0
   store i64 0, i64* %common_offset_alloca_, align 4
@@ -67,19 +67,19 @@ load_block_0x183d80_level_1_0:                    ; preds = %store_block_0x183d8
   br label %calc_block_0x183d80_level_1_0
 
 calc_block_0x183d80_level_1_0:                    ; preds = %load_block_0x183d80_level_1_0
-  %vb13 = call double @convolveFunction(double* %offset_val_incr_, double* inttoptr (i64 2303715950752 to double*), i64 3, i64 -1)
+  %vb13 = call double @convolveFunction(double* %offset_val_incr_, double* inttoptr (i64 2688173567392 to double*), i64 3, i64 -1)
   br label %store_block_0x183d80_level_1_0
 
 store_block_0x183d80_level_1_0:                   ; preds = %calc_block_0x183d80_level_1_0
-  %3 = add i64 %common_offset_1, 1
-  store i64 %3, i64* %common_offset_alloca_, align 4
-  %4 = icmp slt i64 %3, 524288
+  %4 = add i64 %common_offset_1, 1
+  store i64 %4, i64* %common_offset_alloca_, align 4
+  %5 = icmp slt i64 %4, 524288
   %offset_op_incr_2 = getelementptr inbounds double, double* %internal_buffer_2, i64 %common_offset_1
   store double %vb13, double* %offset_op_incr_2, align 8
-  br i1 %4, label %load_block_0x183d80_level_1_0, label %update_buffer_block
+  br i1 %5, label %load_block_0x183d80_level_1_0, label %update_buffer_block
 
 update_buffer_block:                              ; preds = %store_block_0x183d80_level_1_0
-  %5 = call i32 @buffer_update_function(i32 0)
+  %6 = call i32 @buffer_update_function(i32 0)
   br label %loop_enter_block
 
 loop_enter_block:                                 ; preds = %cycle_exit_block, %update_buffer_block
@@ -104,12 +104,12 @@ calc_block_0x183d80_level_0:                      ; preds = %load_block_0x183d80
   br label %store_block_0x183d80_level_0
 
 store_block_0x183d80_level_0:                     ; preds = %calc_block_0x183d80_level_0
-  %6 = add i64 %common_offset_3, 1
-  store i64 %6, i64* %common_offset_alloca_, align 4
-  %7 = icmp slt i64 %6, 524289
+  %7 = add i64 %common_offset_3, 1
+  store i64 %7, i64* %common_offset_alloca_, align 4
+  %8 = icmp slt i64 %7, 524289
   %offset_op_incr_10 = getelementptr inbounds double, double* %internal_buffer_1, i64 %common_offset_3
   store double %vb69, double* %offset_op_incr_10, align 8
-  br i1 %7, label %load_block_0x183d80_level_0, label %intermediate_block_0x183d80_level_1
+  br i1 %8, label %load_block_0x183d80_level_0, label %intermediate_block_0x183d80_level_1
 
 intermediate_block_0x183d80_level_1:              ; preds = %store_block_0x183d80_level_0
   store i64 0, i64* %common_offset_alloca_, align 4
@@ -122,23 +122,23 @@ load_block_0x183d80_level_1:                      ; preds = %store_block_0x183d8
   br label %calc_block_0x183d80_level_1
 
 calc_block_0x183d80_level_1:                      ; preds = %load_block_0x183d80_level_1
-  %vb1314 = call double @convolveFunction(double* %offset_val_incr_12, double* inttoptr (i64 2303715950752 to double*), i64 3, i64 -1)
+  %vb1314 = call double @convolveFunction(double* %offset_val_incr_12, double* inttoptr (i64 2688173567392 to double*), i64 3, i64 -1)
   br label %store_block_0x183d80_level_1
 
 store_block_0x183d80_level_1:                     ; preds = %calc_block_0x183d80_level_1
-  %8 = add i64 %common_offset_11, 1
-  store i64 %8, i64* %common_offset_alloca_, align 4
-  %9 = icmp slt i64 %8, 524288
+  %9 = add i64 %common_offset_11, 1
+  store i64 %9, i64* %common_offset_alloca_, align 4
+  %10 = icmp slt i64 %9, 524288
   %offset_op_incr_15 = getelementptr inbounds double, double* %internal_buffer_2, i64 %common_offset_11
   store double %vb1314, double* %offset_op_incr_15, align 8
-  br i1 %9, label %load_block_0x183d80_level_1, label %cycle_exit_block
+  br i1 %10, label %load_block_0x183d80_level_1, label %cycle_exit_block
 
 cycle_exit_block:                                 ; preds = %store_block_0x183d80_level_1
-  %10 = add i64 %glob_index, 1
-  store i64 %10, i64* %glob_index_alloca, align 4
-  %11 = icmp slt i64 %10, 2
-  %12 = call i32 @buffer_update_function(i32 0)
-  br i1 %11, label %loop_enter_block, label %terminal_loop_enter
+  %11 = add i64 %glob_index, 1
+  store i64 %11, i64* %glob_index_alloca, align 4
+  %12 = icmp slt i64 %11, 2
+  %13 = call i32 @buffer_update_function(i32 0)
+  br i1 %12, label %loop_enter_block, label %terminal_loop_enter
 
 terminal_loop_enter:                              ; preds = %cycle_exit_block
   br label %intermediate_block_0x183d80_level_016
@@ -161,12 +161,12 @@ calc_block_0x183d80_level_018:                    ; preds = %load_block_0x183d80
   br label %store_block_0x183d80_level_019
 
 store_block_0x183d80_level_019:                   ; preds = %calc_block_0x183d80_level_018
-  %13 = add i64 %common_offset_20, 1
-  store i64 %13, i64* %common_offset_alloca_, align 4
-  %14 = icmp slt i64 %13, 15745
+  %14 = add i64 %common_offset_20, 1
+  store i64 %14, i64* %common_offset_alloca_, align 4
+  %15 = icmp slt i64 %14, 15745
   %offset_op_incr_27 = getelementptr inbounds double, double* %internal_buffer_1, i64 %common_offset_20
   store double %vb626, double* %offset_op_incr_27, align 8
-  br i1 %14, label %load_block_0x183d80_level_017, label %intermediate_block_0x183d80_level_128
+  br i1 %15, label %load_block_0x183d80_level_017, label %intermediate_block_0x183d80_level_128
 
 intermediate_block_0x183d80_level_128:            ; preds = %store_block_0x183d80_level_019
   store i64 0, i64* %common_offset_alloca_, align 4
@@ -179,19 +179,19 @@ load_block_0x183d80_level_129:                    ; preds = %store_block_0x183d8
   br label %calc_block_0x183d80_level_130
 
 calc_block_0x183d80_level_130:                    ; preds = %load_block_0x183d80_level_129
-  %vb1335 = call double @convolveFunction(double* %offset_val_incr_33, double* inttoptr (i64 2303715950752 to double*), i64 3, i64 -1)
+  %vb1335 = call double @convolveFunction(double* %offset_val_incr_33, double* inttoptr (i64 2688173567392 to double*), i64 3, i64 -1)
   br label %store_block_0x183d80_level_131
 
 store_block_0x183d80_level_131:                   ; preds = %calc_block_0x183d80_level_130
-  %15 = add i64 %common_offset_32, 1
-  store i64 %15, i64* %common_offset_alloca_, align 4
-  %16 = icmp slt i64 %15, 15744
+  %16 = add i64 %common_offset_32, 1
+  store i64 %16, i64* %common_offset_alloca_, align 4
+  %17 = icmp slt i64 %16, 15744
   %offset_op_incr_36 = getelementptr inbounds double, double* %internal_buffer_2, i64 %common_offset_32
   store double %vb1335, double* %offset_op_incr_36, align 8
-  br i1 %16, label %load_block_0x183d80_level_129, label %exit_block
+  br i1 %17, label %load_block_0x183d80_level_129, label %exit_block
 
 exit_block:                                       ; preds = %store_block_0x183d80_level_131
-  %17 = call i32 @buffer_update_function(i32 0)
+  %18 = call i32 @buffer_update_function(i32 0)
   ret i32 1
 }
 

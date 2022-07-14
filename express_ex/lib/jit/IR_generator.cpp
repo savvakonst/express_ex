@@ -353,17 +353,17 @@ llvm::Value* IRGenerator::createLocalBuffer(TypeEn target_ty, size_t len, const 
     size_t size = sizeOfTy(target_ty) * len;
     auto local_buffer = new char[size];
     std::memset(local_buffer, 0, size);
+    auto index = local_buffer_list_.size();
     local_buffer_list_.push_back(local_buffer);
 
 
     auto last_block = setInitInsertPoint();
 
     llvm::Value* arg = current_function_->getArg(1);
-    auto number_of_buffer_txt = std::to_string(local_buffer_list_.size());
+    auto number_of_buffer_txt = std::to_string(index);
 
-    llvm::Value* untyped_buffer_ptr =
-        CreateInBoundsGEP(getInt64Ty()->getPointerTo(), arg, getInt32(local_buffer_list_.size()),
-                          name + "untyped_local_buffer_ptr_" + std::to_string(local_buffer_list_.size()));
+    llvm::Value* untyped_buffer_ptr = CreateInBoundsGEP(getInt64Ty()->getPointerTo(), arg, getInt32(index),
+                                                        name + "untyped_local_buffer_ptr_" + std::to_string(index));
     llvm::Value* untyped_buffer =
         CreateLoad(untyped_buffer_ptr, false, name + "untyped_local_buffer_" + number_of_buffer_txt);
 

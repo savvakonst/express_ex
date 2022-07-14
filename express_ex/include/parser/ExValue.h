@@ -21,7 +21,9 @@ class ExValue : public SmallArr {
     ExValue(ExValue* arg1, ExValue* arg2);
     explicit ExValue(ExValue* arg1);
 
-    ~ExValue() override {}
+
+
+    ~ExValue() override = default;
 
     virtual void setBuffered();
 

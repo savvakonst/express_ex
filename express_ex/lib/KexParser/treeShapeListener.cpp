@@ -196,11 +196,13 @@ void TreeShapeListener::exitRange(EGrammarParser::RangeContext* ctx) {
 
 void TreeShapeListener::exitShift(EGrammarParser::ShiftContext* ctx) {
     setPos(ctx);
+    print_error("addShiftOp");
     activ_body_->addShiftOp();
 }
 
 void TreeShapeListener::exitDecimation(EGrammarParser::DecimationContext* ctx) {
     setPos(ctx);
+    print_error("addDecimationOp");
     activ_body_->addDecimationOp();
 }
 
@@ -215,8 +217,12 @@ void TreeShapeListener::exitCallFunc(EGrammarParser::CallFuncContext* ctx) {
         if (called_body->getArgCount() != int(expr.size()))
             print_error("there are invalid signature call in function: " + function_name + " ");
 
-        if (activ_body_->getName() == function_name) activ_body_->addTailCall();
-        else activ_body_->addCall(called_body);
+        if (activ_body_->getName() == function_name) {
+            activ_body_->addTailCall();
+        } else {
+            activ_body_->addCall(called_body);
+        }
+
     } else print_error("there are no function with same name");
 }
 

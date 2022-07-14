@@ -1,5 +1,8 @@
 x = param("#1_A01__1")
 
-z = integrate(x)
+x = convolve(float([-3,2,1]), x)
+x = integrate(x)
+x = integrate(x)
 
-return double(z)
+
+return double(x)

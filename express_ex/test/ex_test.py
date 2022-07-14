@@ -17,6 +17,7 @@ args = parser.parse_args()
 
 loadDataBase(args.db)
 py_data = execFile(args.i)
+print("py_data", py_data)
 print("py_data len:", len(py_data))
 
 dt = np.dtype([('time', "f4"), ('data', args.otype)]) if isAsync() else np.dtype([('data', args.otype)])

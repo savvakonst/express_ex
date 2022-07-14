@@ -79,7 +79,7 @@ def convolve(arr_a, arr_b):
 
 
 def integrate(arr):
-    return np.trapz(arr)
+    return np.add.accumulate(arr)
 
 
 import re

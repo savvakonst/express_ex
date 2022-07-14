@@ -2,6 +2,7 @@
 
 #include "jit/IR_generator.h"
 #include "operations/TypeCastOperation.h"
+#include "parser/bodyTemplate.h"
 
 ExValue* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
                      ExValue* arg_c, bool rec_call) {
@@ -15,6 +16,22 @@ ExValue* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, Ex
     }
 
     return garbage_container->add(new SelectOperation(OpCodeEn::select, i1, arg_b, arg_c, target_type, rec_call));
+}
+
+ExValue* newSelectOp(BodyTemplate* body_template) {
+    ExValue* arg_c = body_template->pop();
+    ExValue* arg_b = body_template->pop();
+    ExValue* arg_a = body_template->pop();
+
+    bool valid_recursion = false;
+
+    if (body_template->is_tail_callable_) {
+        const NodeTypeEn p = arg_c->getAssignedVal(true)->getNodeType();
+        valid_recursion = (p == NodeTypeEn::kTailCall);
+        valid_recursion = valid_recursion || (arg_b->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall);
+    }
+
+    return newSelectOp(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, arg_c, valid_recursion);
 }
 
 SelectOperation::SelectOperation(OpCodeEn op, ExValue* var_a, ExValue* var_b, ExValue* var_c, TypeEn target_type,

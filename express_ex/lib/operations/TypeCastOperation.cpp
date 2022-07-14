@@ -1,10 +1,13 @@
 #include "operations/TypeCastOperation.h"
 
 #include "jit/IR_generator.h"
+#include "parser/bodyTemplate.h"
 
 static const std::string ar_t_conv_[10] = {"trunc", "zext",   "sext",   "fptrunc", "fpext",
                                            "fptoi", "fptosi", "uitofp", "sitofp",  "common_cast"};
 static std::string txtTypeCastOp(OpCodeEn op_code) { return ar_t_conv_[((int)op_code - (int)TypeOpCodeEn::type_conv)]; }
+
+
 
 ExValue* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg) {
     const TypeEn arg_type = arg->getType();
@@ -35,6 +38,22 @@ ExValue* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, 
     }
 
     return garbage_container->add(ret_val);
+}
+
+ExValue* newTypeConvOp(BodyTemplate* body_template, TypeEn target_type) {
+    auto arg = body_template->pop();
+    return newTypeConvOp(body_template->getGarbageContainer(), target_type, arg);
+}
+
+
+
+TypeCastOperation::TypeCastOperation(OpCodeEn op, ExValue* var, TypeEn target_type) : Operation_ifs() {
+    commonSetup(op, var);
+    type_ = target_type;
+
+    level_ = var->getLevel();
+
+    operand_.push_back(var);
 }
 
 void TypeCastOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) { visitor_stack->push(operand_[0]); }

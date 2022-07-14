@@ -2,6 +2,8 @@
 
 #include "jit/IR_generator.h"
 #include "operations/TypeCastOperation.h"
+#include "parser/bodyTemplate.h"
+
 
 ExValue* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExValue*>& args, OpCodeEn op_type,
                             bool is_template) {
@@ -9,13 +11,13 @@ ExValue* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExValue*>
 
     ExValue* var = args[0];
 
-    bool allIsConst = true;
+    bool all_is_const = true;
     for (auto i : args) {
         var = maxTypeVar(i, var);
-        allIsConst &= isConst(var);
+        all_is_const &= isConst(var);
     }
 
-    if (!allIsConst) print_error("array concatenation is not supported yet");
+    if (!all_is_const) print_error("array concatenation is not supported yet");
 
     TypeEn target_type = var->getType();
 
@@ -25,11 +27,28 @@ ExValue* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExValue*>
     if (is_template)
         return garbage_container->add(new SmallArrayDefOperation(OpCodeEn::smallArrayDef, args, target_type));
 
-    stack<ExValue*> typedArgs;
-    for (auto i : args) typedArgs.push(newTypeConvOp(garbage_container, target_type, i));
+    stack<ExValue*> typed_args;
+    for (auto i : args) typed_args.push(newTypeConvOp(garbage_container, target_type, i));
 
-    return garbage_container->add(new SmallArrayDefOperation(OpCodeEn::smallArrayDef, typedArgs, target_type));
+    return garbage_container->add(new SmallArrayDefOperation(OpCodeEn::smallArrayDef, typed_args, target_type));
 }
+
+ExValue* newRangeOp(BodyTemplate* body_template, size_t arg_count) {
+    if ((arg_count < 1) || (arg_count > 3)) print_error("invalid signature of range(..) function");
+    body_template->is_operator_ = true;
+    stack<ExValue*> v = body_template->pop(arg_count);
+    return newSmallArrayDefOp(body_template->getGarbageContainer(), v, OpCodeEn::smallArrayRange);
+}
+
+ExValue* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count) {
+    stack<ExValue*> op;
+    body_template->is_operator_ = true;
+    for (size_t i = 0; i < arg_count; i++) op.push(body_template->pop());
+    std::reverse(op.begin(), op.end());
+    stack<ExValue*> v = body_template->pop(arg_count);
+    return newSmallArrayDefOp(body_template->getGarbageContainer(), op, OpCodeEn::smallArrayDef, true);
+}
+
 
 void SmallArrayDefOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) {
     for (auto i = operand_.rbegin(); i != operand_.rend(); i++) visitor_stack->push(*i);

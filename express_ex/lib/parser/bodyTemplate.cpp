@@ -1,6 +1,7 @@
 #include "parser/bodyTemplate.h"
 
 #include <string>
+#include <utility>
 
 #include "../operations/FunctionCall/call.h"
 #include "parser/ExValue.h"
@@ -9,20 +10,15 @@
 #include "parser/line.h"
 #include "parser/operations.h"
 
-BodyTemplate::BodyTemplate(const std::string& name, BodyTemplate* parent_body_template)
-    : name_(name), parent_body_template_(parent_body_template) {
+
+
+BodyTemplate::BodyTemplate(std::string name, BodyTemplate* parent_body_template)
+    : name_(std::move(name)), parent_body_template_(parent_body_template) {
     garbage_container_ = new GarbageContainer();
     lines_.reserve(30);
 }
 
-BodyTemplate::~BodyTemplate() {
-    delete garbage_container_;
-    /*
-    for (auto& line : lines_) {
-        delete line;
-    }
-    */
-}
+BodyTemplate::~BodyTemplate() { delete garbage_container_; }
 
 void BodyTemplate::addLine(const std::string& name, ExValue* var) {
     auto line = new Line(name, var);
@@ -71,7 +67,7 @@ void BodyTemplate::addReturn(const std::string& name, ExValue* var) {  //?remove
     return_stack_.push_back(line);
 }
 
-// varStack push/pop
+
 void BodyTemplate::push(ExValue* line) {
     garbage_container_->add(line);
     var_stack_.push_back(line);
@@ -93,48 +89,57 @@ std::map<std::string, std::string> BodyTemplate::getParameterLinkNames(bool hide
 }
 
 // create operation and push to varStack
+
+// TODO: replace with ExValue* newTypeConvOp(BodyTemplate* body_template, TypeEn target_type);
 void BodyTemplate::addTypeConvOp(TypeEn target_type) {
     ExValue* arg1 = pop();
     push(newTypeConvOp(garbage_container_, target_type, arg1));
 }
 
+// TODO: replace with ExValue* newBuiltInFuncOperation(BodyTemplate* body_template, OpCodeEn op_type);
 void BodyTemplate::addBuiltInFuncOp(OpCodeEn u_type_op) {
     ExValue* arg = pop();
-    auto target_type = TypeEn::DEFAULT_JTY;
+    auto target_type = TypeEn::unknown_jty;
     push(newBuiltInFuncOperation(garbage_container_, target_type, arg, u_type_op));
 }
 
+// TODO: replace with ExValue* newIntegrateOperation(BodyTemplate* body_template);
 void BodyTemplate::addIntegrateOp() {
     ExValue* arg = pop();
     is_operator_ = true;
     push(newIntegrateOperation(garbage_container_, arg));
 }
-
+// TODO: replace with ExValue* newInversionOperation(BodyTemplate* body_template);
 void BodyTemplate::addInvOp() {
     ExValue* arg = pop();
     ExValue* zero = garbage_container_->add(new ExValue("0", TypeEn::int32_jty));
     push(newArithmeticOperation(garbage_container_, TypeEn::DEFAULT_JTY, zero, arg, OpCodeEn::sub));
 }
 
+// TODO: replace with ExValue* newArithmeticOperation(BodyTemplate* body_template, OpCodeEn u_type_op);
 void BodyTemplate::addArithmeticOp(OpCodeEn u_type_op) {
     ExValue* arg_b = pop();
     ExValue* arg_a = pop();
     push(newArithmeticOperation(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op));
 }
 
+// TODO: replace with ExValue* newComparisonOperation(BodyTemplate* body_template, OpCodeEn op_type);
 void BodyTemplate::addComparisonOp(OpCodeEn u_type_op) {
     ExValue* arg_b = pop();
     ExValue* arg_a = pop();
     push(newComparisonOperation(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op));
 }
 
-void BodyTemplate::addConvolveOp(OpCodeEn u_type_op, uint32_t shift) {  // necessary to add type maching
+// TODO: replace with ExValue* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_op, uint32_t shift);
+void BodyTemplate::addConvolveOp(OpCodeEn u_type_op, uint32_t shift) {  // TODO: add type maching
     ExValue* arg_b = pop();
     ExValue* arg_a = pop();
     is_operator_ = true;
     push(newConvolveOperation(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, shift, u_type_op));
 }
 
+
+// TODO: replace with ExValue* newSelectOp(BodyTemplate* body_template);
 void BodyTemplate::addSelectOp() {
     ExValue* arg_c = pop();
     ExValue* arg_b = pop();
@@ -151,6 +156,7 @@ void BodyTemplate::addSelectOp() {
     push(newSelectOp(garbage_container_, TypeEn::DEFAULT_JTY, arg_a, arg_b, arg_c, valid_recursion));
 }
 
+// TODO: replace with ExValue* newRangeOp(BodyTemplate* body_template, size_t arg_count);
 void BodyTemplate::addRangeOp(size_t arg_count) {
     if ((arg_count < 1) || (arg_count > 3)) print_error("invalid signature of range(..) function");
 
@@ -172,6 +178,7 @@ void BodyTemplate::addDecimationOp() {
     // push(newSliceOp(garbage_container_, arg1, arg2, OpCodeEn::decimation));
 }
 
+// TODO: replace with ExValue* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count);
 void BodyTemplate::addSmallArrayDefinitionOp(size_t length) {
     stack<ExValue*> op;
     is_operator_ = true;
@@ -267,16 +274,13 @@ std::list<std::string> BodyTemplate::getNamesOfDefinedFunctions() const {
 }
 
 Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue*> args, bool is_function) const {
-    // try replacing the "var_stack_" member with the "var_stack" local value
-    // it might be worth moving this value to BodyGenContext
-
     auto body = new Body(name_, getNamesOfDefinedFunctions(), parent_body, is_operator_);
     BodyGenContext context(body, is_function);
 
     stack<ExValue*> visitor_stack;
 
     auto arg = args.begin();
-    for (auto& value : lines_) {
+    for (const auto& value : lines_) {
         if (value->isArg()) {
             if (name_ == "main") {
                 body->addParam((Line*)*(arg));
@@ -306,7 +310,9 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue*> args, b
             body->addLine(value->getName(), context.pop());
         }
     }
-    for (auto& value : return_stack_) {
+
+
+    for (const auto& value : return_stack_) {
         visitor_stack.push(value->getAssignedVal());
 
         do {

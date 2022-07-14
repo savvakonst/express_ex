@@ -13,16 +13,18 @@ class GarbageContainer;
 class ExValue;
 class Line;
 class Body;
+
+
 /**
- * BodyTemplate's object represents/contains template (type less) ASG 
+ * BodyTemplate's object represents/contains template (type less) ASG
  * (Abstract semantic graph) unit. This class has different
- * methods for building, printing, template ASG and method for 
- * produsing main(type full) AST. 
+ * methods for building, printing, template ASG and method for
+ * producing main(type full) AST.
  *
  */
 class BodyTemplate {
    public:
-    BodyTemplate(const std::string& name, BodyTemplate* parent_body_template);
+    BodyTemplate(std::string name, BodyTemplate* parent_body_template);
     ~BodyTemplate();
 
     bool isRetStackFull() const { return (name_ != "main") ? !return_stack_.empty() : false; }
@@ -82,12 +84,7 @@ class BodyTemplate {
 
     std::list<BodyTemplate*> child_body_template_list_;
 
-   private:
-    const std::string name_;
 
-    int arg_count_ = 0;
-   
-   
     /**
      * if any operator occurs in corresponding ASG unit or any
      * child BodyTemplate objects marked as operator
@@ -96,10 +93,14 @@ class BodyTemplate {
      * and it is possible to use talil call or anything else...
      */
     bool is_operator_ = false;
-   
-   
+
     bool is_tail_callable_ = false;
 
+   private:
+    const std::string name_;
+
+    int arg_count_ = 0;
+    
     stack<ExValue*> var_stack_;
     stack<Line*> lines_;
     stack<Line*> return_stack_;

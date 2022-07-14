@@ -9,11 +9,7 @@ ExValue* newIntegrateOperation(GarbageContainer* garbage_container, ExValue* val
 
 class IntegrateOperation : public Operation_ifs {
    public:
-    explicit IntegrateOperation(ExValue* var) : Operation_ifs() {
-        commonSetup(OpCodeEn::integrate, var);
-        type_ = var->getType();
-        operand_.push_back(var);
-    }
+    explicit IntegrateOperation(ExValue* var);
 
     ~IntegrateOperation() override = default;
 
@@ -31,8 +27,7 @@ class IntegrateOperation : public Operation_ifs {
     void calculate() override;
 
    private:
-
-    llvm::Value * local_buffer_ptr_ = nullptr;
+    llvm::Value* local_buffer_ptr_ = nullptr;
 };
 
 #endif

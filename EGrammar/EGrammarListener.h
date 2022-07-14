@@ -56,6 +56,9 @@ public:
   virtual void enterParens(EGrammarParser::ParensContext *ctx) = 0;
   virtual void exitParens(EGrammarParser::ParensContext *ctx) = 0;
 
+  virtual void enterNeighborhoodPoint(EGrammarParser::NeighborhoodPointContext *ctx) = 0;
+  virtual void exitNeighborhoodPoint(EGrammarParser::NeighborhoodPointContext *ctx) = 0;
+
   virtual void enterConst(EGrammarParser::ConstContext *ctx) = 0;
   virtual void exitConst(EGrammarParser::ConstContext *ctx) = 0;
 

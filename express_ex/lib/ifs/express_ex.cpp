@@ -155,7 +155,7 @@ bool Express_ex::genJit(bool optimization_enable) {
 
         if (info_stream_ && llvm_ir_code_)
             (*info_stream_ << ExColors::GREEN << "\n\n----------------------LLVM module:--------------------\n"
-                           << ExColors::RESET << table_->printllvmIr())
+                           << ExColors::RESET << table_->printLlvmIr())
                 .finalize();
 
         status = true;

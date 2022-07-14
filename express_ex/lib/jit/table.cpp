@@ -382,7 +382,7 @@ bool Table::llvmInit() {
     return true;
 }
 
-llvm::Function* CreateConvolveFunction(llvm::Module* M, TypeEn type) {
+llvm::Function* createConvolveFunction(llvm::Module* M, TypeEn type) {
     llvm::LLVMContext& context = M->getContext();
 
     IRGenerator builder(context, nullptr);
@@ -459,14 +459,14 @@ llvm::Function* CreateConvolveFunction(llvm::Module* M, TypeEn type) {
 
 llvm::Function* Table::getConvolveFunc(TypeEn type) {
     llvm::Function* function = convolve_map_[type];
-    if (function == nullptr) function = CreateConvolveFunction(M_, type);
+    if (function == nullptr) function = createConvolveFunction(M_, type);
     convolve_map_[type] = function;
     return function;
 }
 
 llvm::Function* Table::getGPUConvolveFunc(TypeEn type) {
     llvm::Function* function = convolve_map_[type];
-    if (function == nullptr) function = CreateConvolveFunction(M_, type);
+    if (function == nullptr) function = createConvolveFunction(M_, type);
     convolve_map_[type] = function;
     return function;
 }
@@ -483,7 +483,9 @@ bool Table::generateIR(const std::string& basic_block_prefix) {
 
     main_function_ = llvm::Function::Create(
         llvm::FunctionType::get(llvm::Type::getInt32Ty(context),
-                                {llvm::Type::getInt64PtrTy(context)->getPointerTo()->getPointerTo()}, false),
+                                {llvm::Type::getInt64PtrTy(context)->getPointerTo()->getPointerTo(),
+                                 llvm::Type::getInt64PtrTy(context)->getPointerTo()},
+                                false),
         llvm::Function::ExternalLinkage, "main", M_);
     llvm::BasicBlock* bb = llvm::BasicBlock::Create(context, "init_block", main_function_);
 
@@ -598,9 +600,10 @@ bool Table::generateIRInGroup(Group& group, uint32_t index) {
     builder.nextBufferGroup();
 
     builder.SetInsertPoint(&(main_function_->back()));
+
     auto buffer_group_ptr =
         builder.CreateInBoundsGEP(main_function_->getArg(0), builder.getInt32(index), "offset_incr");
-    builder.createCall(sub_function, {builder.CreateLoad(buffer_group_ptr), builder.CreateLoad(buffer_group_ptr)});
+    builder.createCall(sub_function, {builder.CreateLoad(buffer_group_ptr), main_function_->getArg(1)});
 
     return true;
 }
@@ -613,18 +616,20 @@ bool Table::runOptimization() {
 }
 
 class ExMemoryManager : public llvm::SectionMemoryManager {
-    ExMemoryManager(const ExMemoryManager&) = delete;
-    void operator=(const ExMemoryManager&) = delete;
-
    public:
     ExMemoryManager() : SectionMemoryManager() {}
 
-    virtual ~ExMemoryManager() {}
-    llvm::JITSymbol findSymbol(const std::string& Name) override {
+    ExMemoryManager(const ExMemoryManager&) = delete;
+
+    void operator=(const ExMemoryManager&) = delete;
+
+    ~ExMemoryManager() override = default;
+
+    llvm::JITSymbol findSymbol(const std::string& name) override {
 #ifdef _WIN32
-        if (Name.length() > 2 && Name[0] == '_') return SectionMemoryManager::findSymbol(Name.substr(1));
+        if (name.length() > 2 && name[0] == '_') return SectionMemoryManager::findSymbol(name.substr(1));
 #endif
-        return SectionMemoryManager::findSymbol(Name);
+        return SectionMemoryManager::findSymbol(name);
     }
 
    private:
@@ -641,15 +646,17 @@ bool Table::run() {
                                     .setErrorStr(&err_str)
                                     .create();
 
-    llvm::Function* buffer_update_function = M_->getFunction("buffer_update_function");
-    EE->addGlobalMapping(buffer_update_function, updateBuffer);
-
-    llvm::Function* sub_main = M_->getFunction("sub_main");
 
     if (!EE) {
         llvm::outs() << ": Failed to construct ExecutionEngine: " << err_str << "\n";
         return false;
     }
+
+    llvm::Function* buffer_update_function = M_->getFunction("buffer_update_function");
+    EE->addGlobalMapping(buffer_update_function, (void*)updateBuffer);
+
+    llvm::Function* sub_main = M_->getFunction("sub_main");
+
 
     if (verifyFunction(*main_function_, &llvm::outs())) {
         llvm::outs() << ": Error constructing main function!\n\n";
@@ -679,7 +686,7 @@ bool Table::run() {
         return false;
     }
 
-    Jit_Call_t Call = (Jit_Call_t)EE->getPointerToFunction(main_function_);
+    auto Call = Jit_Call_t(EE->getPointerToFunction(main_function_));
 
     initBuffers();
 
@@ -695,7 +702,7 @@ bool Table::run() {
     auto order = [](Buffer* a, Buffer* b) { return (a->getBufferType() > b->getBufferType()); };
     for (auto list : *g_list_of_buffer_groups) list->sort(order);
 
-    Call(buffer_groups_array);
+    Call(buffer_groups_array, builder_->getLocalBufferPtr());
 
     buffer_groups_array_temp = buffer_groups_array;
     for (auto& buffer_group : *g_list_of_buffer_groups) {
@@ -707,7 +714,7 @@ bool Table::run() {
     return true;
 }
 
-std::string Table::printllvmIr() {
+std::string Table::printLlvmIr() {
     std::string ret;
     llvm::raw_string_ostream(ret) << *M_ << "\n\n";
     return ret;

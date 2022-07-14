@@ -2,6 +2,8 @@
 
 #include "jit/IR_generator.h"
 #include "operations/TypeCastOperation.h"
+#include "parser/bodyTemplate.h"
+
 
 static const std::string kArSym[14] = {"+", "+.", "-", "-.", "*", "*.", "/", "/", "/.", "%", "%", "%.", "**", "**."};
 static std::string txtArOp(OpCodeEn op_code) { return kArSym[((int)op_code - (int)TypeOpCodeEn::arithetic)]; }
@@ -48,6 +50,18 @@ ExValue* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn targ
     }
 
     return garbage_container->add(new ArithmeticOperation(local_op_type, arg_a, arg_b));
+}
+
+ExValue* newArithmeticOperation(BodyTemplate* body_template, OpCodeEn u_type_op) {
+    auto* arg_b = body_template->pop();
+    auto* arg_a = body_template->pop();
+    return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op);
+}
+
+ExValue* newInversionOperation(BodyTemplate* body_template) {
+    ExValue* arg = body_template->pop();
+    ExValue* zero = body_template->getGarbageContainer()->add(new ExValue("0", TypeEn::int32_jty));
+    return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, zero, arg, OpCodeEn::sub);
 }
 
 ArithmeticOperation::ArithmeticOperation(OpCodeEn op, ExValue* var_a, ExValue* var_b) : Operation_ifs() {

@@ -2,6 +2,7 @@
 
 #include "jit/IR_generator.h"
 #include "operations/TypeCastOperation.h"
+#include "parser/bodyTemplate.h"
 
 const std::string ar_built_in_[6] = {"log", "log2", "log10", "cos", "sin", "exp"};
 
@@ -26,6 +27,13 @@ ExValue* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn tar
 
     return garbage_container->add(new BuiltInCallOperation(op_type, var, target_type));
 }
+
+ExValue* newBuiltInFuncOperation(BodyTemplate* body_template, OpCodeEn op_type) {
+    auto* arg = body_template->pop();
+    auto target_type = TypeEn::unknown_jty;
+    return newBuiltInFuncOperation(body_template->getGarbageContainer(), target_type, arg, op_type);
+}
+
 
 void BuiltInCallOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) { visitor_stack->push(operand_[0]); }
 

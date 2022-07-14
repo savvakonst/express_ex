@@ -37,20 +37,21 @@ expr:   ID '(' (expr (','expr)*) ')'                                    # callFu
     |   SPEC_SYM='range'     '('(expr (','expr)*)')'                    # range
     |   SPEC_SYM='decimation''('expr ','expr')'                         # decimation
     |   SPEC_SYM='shift'     '('expr ','expr')'                         # shift
+    |   ID'[' expr ']'                                                  # neighborhoodPoint
     |   unaryBInFunc '(' expr ')'                                       # callUnaryBInFunc
     |   tConvBInFunc '(' expr ')'                                       # callTConvBInFunc
     |   expr ('**'|'^')   expr                                          # pow
+    |   '-' expr                                                        # inv
     |   expr op=('*'|'/') expr                                          # mulDiv
     |   expr op=('+'|'-') expr                                          # addSub
     |   expr op=('<<'|'>>') expr                                        # bitwiseShift
     |   expr op=('>'|'<') expr                                          # moreLess
     |   expr op=('>='|'<=') expr                                        # moreeqLesseq
-    |   expr  op=('=='|'!=') expr                                       # equality
+    |   expr op=('=='|'!=') expr                                        # equality
     |   expr  '&' expr                                                  # bitwiseAnd
     |   expr  '|' expr                                                  # bitwiseOr
     |   expr  'bxor' expr                                               # bitwiseXor
     |   expr '?' left_expr ':' right_expr                               # condExpr
-    |   '-' expr                                                        # inv
     |   (DOUBLE|FLOAT|INT64|INT)                                        # const
     |   ID                                                              # id
     |   '(' expr ')'                                                    # parens

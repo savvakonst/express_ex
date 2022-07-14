@@ -70,6 +70,7 @@ class IRGenerator : public llvm::IRBuilder<> {
      */
     llvm::Value* createLocalBuffer(TypeEn target_ty, size_t len, const std::string& name = "");
 
+    auto getLocalBufferPtr() const { return local_buffer_list_.data(); }
 
 
     llvm::BasicBlock* createNewIntermediateBb(const std::string& postfix) {

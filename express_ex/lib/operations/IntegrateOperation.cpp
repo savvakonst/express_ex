@@ -3,10 +3,28 @@
 #include "jit/IR_generator.h"
 #include "operations/ArithmeticOperation.h"
 #include "operations/TypeCastOperation.h"
+#include "parser/bodyTemplate.h"
+
 
 ExValue* newIntegrateOperation(GarbageContainer* garbage_container, ExValue* value) {
-    return new IntegrateOperation(value);
+    return garbage_container->add(new IntegrateOperation(value));
 }
+
+ExValue* newIntegrateOperation(BodyTemplate* body_template) {
+    auto* arg = body_template->pop();
+    body_template->is_operator_ = true;
+    return newIntegrateOperation(body_template->getGarbageContainer(), arg);
+}
+
+
+
+IntegrateOperation::IntegrateOperation(ExValue* var) : Operation_ifs() {
+    commonSetup(OpCodeEn::integrate, var);
+    type_ = var->getType();
+    level_ = var->getLevel();
+    operand_.push_back(var);
+}
+
 
 void IntegrateOperation::visitEnterSetupBuffer(stack<ExValue*>* visitor_stack) {
     Operation_ifs::visitEnterSetupBuffer(visitor_stack);
@@ -48,17 +66,19 @@ std::string IntegrateOperation::printUint() {
 void IntegrateOperation::setupIR(IRGenerator& builder) {
     auto ir_op_a = operand_[0]->getAssignedVal(true)->getIRValue(builder, level_);
 
-    auto pointer = builder.createLocalBuffer(type_, 1);
+    if (local_buffer_ptr_ == nullptr) local_buffer_ptr_ = builder.createLocalBuffer(type_, 1);
 
     auto last_block = builder.setInitInsertPoint();
-    auto temp_val = builder.CreateLoad(builder.getLLVMType(type_), pointer);
 
+
+    builder.setLoadInsertPoint();
+    auto temp_val = builder.CreateLoad(builder.getLLVMType(type_), local_buffer_ptr_);
     builder.setCalcInsertPoint();
     if (isFloating(type_)) IR_value_ = builder.CreateFAdd(ir_op_a, temp_val, "integral");
     else IR_value_ = builder.CreateAdd(ir_op_a, temp_val, "integral");
 
     builder.setStoreInsertPoint();
-    builder.CreateStore(IR_value_, pointer);
+    builder.CreateStore(IR_value_, local_buffer_ptr_);
 
     builder.SetInsertPoint(last_block);
     finishSetupIR(builder);

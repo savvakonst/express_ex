@@ -9,14 +9,7 @@ ExValue* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, 
 
 class TypeCastOperation : public Operation_ifs {
    public:
-    TypeCastOperation(OpCodeEn op, ExValue* var, TypeEn target_type) : Operation_ifs() {
-        commonSetup(op, var);
-        type_ = target_type;
-
-        level_ = var->getLevel();
-
-        operand_.push_back(var);
-    }
+    TypeCastOperation(OpCodeEn op, ExValue* var, TypeEn target_type);
 
     ~TypeCastOperation() override = default;
 

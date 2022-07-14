@@ -49,8 +49,8 @@ void egrammarParserInitialize() {
     std::vector<std::string>{
       "", "','", "'='", "'param'", "'('", "')'", "'out'", "'func'", "'function'", 
       "':'", "';'", "'end'", "'return '", "'integrate'", "'convolve'", "'recconvolve'", 
-      "'range'", "'decimation'", "'shift'", "'**'", "'^'", "'>='", "'\\u003F'", 
-      "'['", "']'", "", "", "", "", "", "'float'", "'int'", "'double'", 
+      "'range'", "'decimation'", "'shift'", "'['", "']'", "'**'", "'^'", 
+      "'>='", "'\\u003F'", "", "", "", "", "", "'float'", "'int'", "'double'", 
       "'int64'", "", "'*'", "'/'", "'+'", "'-'", "'=='", "'!='", "'<'", 
       "'>'", "'<<'", "'>>'", "'<='", "'=>'", "'&'", "'|'", "'bxor'", "", 
       "", "", "", "", "'d'", "'f'"
@@ -66,7 +66,7 @@ void egrammarParserInitialize() {
     }
   );
   static const int32_t serializedATNSegment[] = {
-  	4,1,60,268,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+  	4,1,60,273,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
   	7,7,7,2,8,7,8,2,9,7,9,1,0,5,0,22,8,0,10,0,12,0,25,9,0,1,0,3,0,28,8,0,
   	1,0,5,0,31,8,0,10,0,12,0,34,9,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,5,1,43,8,
   	1,10,1,12,1,46,9,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1,54,8,1,10,1,12,1,57,9,
@@ -80,81 +80,83 @@ void egrammarParserInitialize() {
   	1,9,1,9,1,9,1,9,1,9,3,9,166,8,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,5,9,175,8,
   	9,10,9,12,9,178,9,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,
   	9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,
-  	1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,5,9,218,8,9,10,9,12,9,221,9,9,1,9,1,9,
-  	3,9,225,8,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,
-  	9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,
-  	1,9,1,9,1,9,1,9,5,9,263,8,9,10,9,12,9,266,9,9,1,9,0,1,18,10,0,2,4,6,8,
-  	10,12,14,16,18,0,12,1,0,7,8,1,0,10,11,1,0,25,29,1,0,30,33,1,0,51,54,1,
-  	0,19,20,1,0,35,36,1,0,37,38,1,0,43,44,1,0,41,42,2,0,21,21,45,45,1,0,39,
-  	40,303,0,23,1,0,0,0,2,70,1,0,0,0,4,72,1,0,0,0,6,111,1,0,0,0,8,113,1,0,
-  	0,0,10,121,1,0,0,0,12,123,1,0,0,0,14,125,1,0,0,0,16,127,1,0,0,0,18,224,
-  	1,0,0,0,20,22,5,59,0,0,21,20,1,0,0,0,22,25,1,0,0,0,23,21,1,0,0,0,23,24,
-  	1,0,0,0,24,32,1,0,0,0,25,23,1,0,0,0,26,28,3,2,1,0,27,26,1,0,0,0,27,28,
-  	1,0,0,0,28,29,1,0,0,0,29,31,5,59,0,0,30,27,1,0,0,0,31,34,1,0,0,0,32,30,
-  	1,0,0,0,32,33,1,0,0,0,33,35,1,0,0,0,34,32,1,0,0,0,35,36,5,0,0,1,36,1,
-  	1,0,0,0,37,71,3,4,2,0,38,71,3,6,3,0,39,44,5,50,0,0,40,41,5,1,0,0,41,43,
-  	5,50,0,0,42,40,1,0,0,0,43,46,1,0,0,0,44,42,1,0,0,0,44,45,1,0,0,0,45,47,
-  	1,0,0,0,46,44,1,0,0,0,47,48,5,2,0,0,48,49,5,3,0,0,49,58,5,4,0,0,50,55,
-  	5,57,0,0,51,52,5,1,0,0,52,54,5,57,0,0,53,51,1,0,0,0,54,57,1,0,0,0,55,
-  	53,1,0,0,0,55,56,1,0,0,0,56,59,1,0,0,0,57,55,1,0,0,0,58,50,1,0,0,0,58,
-  	59,1,0,0,0,59,60,1,0,0,0,60,71,5,5,0,0,61,62,5,6,0,0,62,67,5,50,0,0,63,
-  	64,5,1,0,0,64,66,5,50,0,0,65,63,1,0,0,0,66,69,1,0,0,0,67,65,1,0,0,0,67,
-  	68,1,0,0,0,68,71,1,0,0,0,69,67,1,0,0,0,70,37,1,0,0,0,70,38,1,0,0,0,70,
-  	39,1,0,0,0,70,61,1,0,0,0,71,3,1,0,0,0,72,73,7,0,0,0,73,74,5,50,0,0,74,
-  	75,5,4,0,0,75,76,3,8,4,0,76,78,5,5,0,0,77,79,5,9,0,0,78,77,1,0,0,0,78,
-  	79,1,0,0,0,79,83,1,0,0,0,80,82,5,59,0,0,81,80,1,0,0,0,82,85,1,0,0,0,83,
-  	81,1,0,0,0,83,84,1,0,0,0,84,93,1,0,0,0,85,83,1,0,0,0,86,90,3,2,1,0,87,
-  	89,5,59,0,0,88,87,1,0,0,0,89,92,1,0,0,0,90,88,1,0,0,0,90,91,1,0,0,0,91,
-  	94,1,0,0,0,92,90,1,0,0,0,93,86,1,0,0,0,94,95,1,0,0,0,95,93,1,0,0,0,95,
-  	96,1,0,0,0,96,97,1,0,0,0,97,98,7,1,0,0,98,5,1,0,0,0,99,100,5,50,0,0,100,
-  	101,5,2,0,0,101,112,3,18,9,0,102,103,5,12,0,0,103,108,3,18,9,0,104,105,
-  	5,1,0,0,105,107,3,18,9,0,106,104,1,0,0,0,107,110,1,0,0,0,108,106,1,0,
-  	0,0,108,109,1,0,0,0,109,112,1,0,0,0,110,108,1,0,0,0,111,99,1,0,0,0,111,
-  	102,1,0,0,0,112,7,1,0,0,0,113,118,5,50,0,0,114,115,5,1,0,0,115,117,5,
-  	50,0,0,116,114,1,0,0,0,117,120,1,0,0,0,118,116,1,0,0,0,118,119,1,0,0,
-  	0,119,9,1,0,0,0,120,118,1,0,0,0,121,122,7,2,0,0,122,11,1,0,0,0,123,124,
-  	7,3,0,0,124,13,1,0,0,0,125,126,3,18,9,0,126,15,1,0,0,0,127,128,3,18,9,
-  	0,128,17,1,0,0,0,129,130,6,9,-1,0,130,131,5,50,0,0,131,132,5,4,0,0,132,
-  	137,3,18,9,0,133,134,5,1,0,0,134,136,3,18,9,0,135,133,1,0,0,0,136,139,
-  	1,0,0,0,137,135,1,0,0,0,137,138,1,0,0,0,138,140,1,0,0,0,139,137,1,0,0,
-  	0,140,141,5,5,0,0,141,225,1,0,0,0,142,143,5,13,0,0,143,144,5,4,0,0,144,
-  	145,3,18,9,0,145,146,5,5,0,0,146,225,1,0,0,0,147,148,5,14,0,0,148,149,
-  	5,4,0,0,149,150,3,18,9,0,150,151,5,1,0,0,151,154,3,18,9,0,152,153,5,1,
-  	0,0,153,155,5,57,0,0,154,152,1,0,0,0,154,155,1,0,0,0,155,156,1,0,0,0,
-  	156,157,5,5,0,0,157,225,1,0,0,0,158,159,5,15,0,0,159,160,5,4,0,0,160,
-  	161,3,18,9,0,161,162,5,1,0,0,162,165,3,18,9,0,163,164,5,1,0,0,164,166,
-  	5,57,0,0,165,163,1,0,0,0,165,166,1,0,0,0,166,167,1,0,0,0,167,168,5,5,
-  	0,0,168,225,1,0,0,0,169,170,5,16,0,0,170,171,5,4,0,0,171,176,3,18,9,0,
-  	172,173,5,1,0,0,173,175,3,18,9,0,174,172,1,0,0,0,175,178,1,0,0,0,176,
-  	174,1,0,0,0,176,177,1,0,0,0,177,179,1,0,0,0,178,176,1,0,0,0,179,180,5,
-  	5,0,0,180,225,1,0,0,0,181,182,5,17,0,0,182,183,5,4,0,0,183,184,3,18,9,
-  	0,184,185,5,1,0,0,185,186,3,18,9,0,186,187,5,5,0,0,187,225,1,0,0,0,188,
-  	189,5,18,0,0,189,190,5,4,0,0,190,191,3,18,9,0,191,192,5,1,0,0,192,193,
-  	3,18,9,0,193,194,5,5,0,0,194,225,1,0,0,0,195,196,3,10,5,0,196,197,5,4,
-  	0,0,197,198,3,18,9,0,198,199,5,5,0,0,199,225,1,0,0,0,200,201,3,12,6,0,
-  	201,202,5,4,0,0,202,203,3,18,9,0,203,204,5,5,0,0,204,225,1,0,0,0,205,
-  	206,5,38,0,0,206,225,3,18,9,5,207,225,7,4,0,0,208,225,5,50,0,0,209,210,
-  	5,4,0,0,210,211,3,18,9,0,211,212,5,5,0,0,212,225,1,0,0,0,213,214,5,23,
-  	0,0,214,219,3,18,9,0,215,216,5,1,0,0,216,218,3,18,9,0,217,215,1,0,0,0,
-  	218,221,1,0,0,0,219,217,1,0,0,0,219,220,1,0,0,0,220,222,1,0,0,0,221,219,
-  	1,0,0,0,222,223,5,24,0,0,223,225,1,0,0,0,224,129,1,0,0,0,224,142,1,0,
-  	0,0,224,147,1,0,0,0,224,158,1,0,0,0,224,169,1,0,0,0,224,181,1,0,0,0,224,
-  	188,1,0,0,0,224,195,1,0,0,0,224,200,1,0,0,0,224,205,1,0,0,0,224,207,1,
-  	0,0,0,224,208,1,0,0,0,224,209,1,0,0,0,224,213,1,0,0,0,225,264,1,0,0,0,
-  	226,227,10,16,0,0,227,228,7,5,0,0,228,263,3,18,9,17,229,230,10,15,0,0,
-  	230,231,7,6,0,0,231,263,3,18,9,16,232,233,10,14,0,0,233,234,7,7,0,0,234,
-  	263,3,18,9,15,235,236,10,13,0,0,236,237,7,8,0,0,237,263,3,18,9,14,238,
-  	239,10,12,0,0,239,240,7,9,0,0,240,263,3,18,9,13,241,242,10,11,0,0,242,
-  	243,7,10,0,0,243,263,3,18,9,12,244,245,10,10,0,0,245,246,7,11,0,0,246,
-  	263,3,18,9,11,247,248,10,9,0,0,248,249,5,47,0,0,249,263,3,18,9,10,250,
-  	251,10,8,0,0,251,252,5,48,0,0,252,263,3,18,9,9,253,254,10,7,0,0,254,255,
-  	5,49,0,0,255,263,3,18,9,8,256,257,10,6,0,0,257,258,5,22,0,0,258,259,3,
-  	14,7,0,259,260,5,9,0,0,260,261,3,16,8,0,261,263,1,0,0,0,262,226,1,0,0,
-  	0,262,229,1,0,0,0,262,232,1,0,0,0,262,235,1,0,0,0,262,238,1,0,0,0,262,
-  	241,1,0,0,0,262,244,1,0,0,0,262,247,1,0,0,0,262,250,1,0,0,0,262,253,1,
-  	0,0,0,262,256,1,0,0,0,263,266,1,0,0,0,264,262,1,0,0,0,264,265,1,0,0,0,
-  	265,19,1,0,0,0,266,264,1,0,0,0,23,23,27,32,44,55,58,67,70,78,83,90,95,
-  	108,111,118,137,154,165,176,219,224,262,264
+  	1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,5,9,223,8,9,10,9,
+  	12,9,226,9,9,1,9,1,9,3,9,230,8,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,
+  	1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,
+  	9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,5,9,268,8,9,10,9,12,9,271,9,9,1,
+  	9,0,1,18,10,0,2,4,6,8,10,12,14,16,18,0,12,1,0,7,8,1,0,10,11,1,0,25,29,
+  	1,0,30,33,1,0,51,54,1,0,21,22,1,0,35,36,1,0,37,38,1,0,43,44,1,0,41,42,
+  	2,0,23,23,45,45,1,0,39,40,309,0,23,1,0,0,0,2,70,1,0,0,0,4,72,1,0,0,0,
+  	6,111,1,0,0,0,8,113,1,0,0,0,10,121,1,0,0,0,12,123,1,0,0,0,14,125,1,0,
+  	0,0,16,127,1,0,0,0,18,229,1,0,0,0,20,22,5,59,0,0,21,20,1,0,0,0,22,25,
+  	1,0,0,0,23,21,1,0,0,0,23,24,1,0,0,0,24,32,1,0,0,0,25,23,1,0,0,0,26,28,
+  	3,2,1,0,27,26,1,0,0,0,27,28,1,0,0,0,28,29,1,0,0,0,29,31,5,59,0,0,30,27,
+  	1,0,0,0,31,34,1,0,0,0,32,30,1,0,0,0,32,33,1,0,0,0,33,35,1,0,0,0,34,32,
+  	1,0,0,0,35,36,5,0,0,1,36,1,1,0,0,0,37,71,3,4,2,0,38,71,3,6,3,0,39,44,
+  	5,50,0,0,40,41,5,1,0,0,41,43,5,50,0,0,42,40,1,0,0,0,43,46,1,0,0,0,44,
+  	42,1,0,0,0,44,45,1,0,0,0,45,47,1,0,0,0,46,44,1,0,0,0,47,48,5,2,0,0,48,
+  	49,5,3,0,0,49,58,5,4,0,0,50,55,5,57,0,0,51,52,5,1,0,0,52,54,5,57,0,0,
+  	53,51,1,0,0,0,54,57,1,0,0,0,55,53,1,0,0,0,55,56,1,0,0,0,56,59,1,0,0,0,
+  	57,55,1,0,0,0,58,50,1,0,0,0,58,59,1,0,0,0,59,60,1,0,0,0,60,71,5,5,0,0,
+  	61,62,5,6,0,0,62,67,5,50,0,0,63,64,5,1,0,0,64,66,5,50,0,0,65,63,1,0,0,
+  	0,66,69,1,0,0,0,67,65,1,0,0,0,67,68,1,0,0,0,68,71,1,0,0,0,69,67,1,0,0,
+  	0,70,37,1,0,0,0,70,38,1,0,0,0,70,39,1,0,0,0,70,61,1,0,0,0,71,3,1,0,0,
+  	0,72,73,7,0,0,0,73,74,5,50,0,0,74,75,5,4,0,0,75,76,3,8,4,0,76,78,5,5,
+  	0,0,77,79,5,9,0,0,78,77,1,0,0,0,78,79,1,0,0,0,79,83,1,0,0,0,80,82,5,59,
+  	0,0,81,80,1,0,0,0,82,85,1,0,0,0,83,81,1,0,0,0,83,84,1,0,0,0,84,93,1,0,
+  	0,0,85,83,1,0,0,0,86,90,3,2,1,0,87,89,5,59,0,0,88,87,1,0,0,0,89,92,1,
+  	0,0,0,90,88,1,0,0,0,90,91,1,0,0,0,91,94,1,0,0,0,92,90,1,0,0,0,93,86,1,
+  	0,0,0,94,95,1,0,0,0,95,93,1,0,0,0,95,96,1,0,0,0,96,97,1,0,0,0,97,98,7,
+  	1,0,0,98,5,1,0,0,0,99,100,5,50,0,0,100,101,5,2,0,0,101,112,3,18,9,0,102,
+  	103,5,12,0,0,103,108,3,18,9,0,104,105,5,1,0,0,105,107,3,18,9,0,106,104,
+  	1,0,0,0,107,110,1,0,0,0,108,106,1,0,0,0,108,109,1,0,0,0,109,112,1,0,0,
+  	0,110,108,1,0,0,0,111,99,1,0,0,0,111,102,1,0,0,0,112,7,1,0,0,0,113,118,
+  	5,50,0,0,114,115,5,1,0,0,115,117,5,50,0,0,116,114,1,0,0,0,117,120,1,0,
+  	0,0,118,116,1,0,0,0,118,119,1,0,0,0,119,9,1,0,0,0,120,118,1,0,0,0,121,
+  	122,7,2,0,0,122,11,1,0,0,0,123,124,7,3,0,0,124,13,1,0,0,0,125,126,3,18,
+  	9,0,126,15,1,0,0,0,127,128,3,18,9,0,128,17,1,0,0,0,129,130,6,9,-1,0,130,
+  	131,5,50,0,0,131,132,5,4,0,0,132,137,3,18,9,0,133,134,5,1,0,0,134,136,
+  	3,18,9,0,135,133,1,0,0,0,136,139,1,0,0,0,137,135,1,0,0,0,137,138,1,0,
+  	0,0,138,140,1,0,0,0,139,137,1,0,0,0,140,141,5,5,0,0,141,230,1,0,0,0,142,
+  	143,5,13,0,0,143,144,5,4,0,0,144,145,3,18,9,0,145,146,5,5,0,0,146,230,
+  	1,0,0,0,147,148,5,14,0,0,148,149,5,4,0,0,149,150,3,18,9,0,150,151,5,1,
+  	0,0,151,154,3,18,9,0,152,153,5,1,0,0,153,155,5,57,0,0,154,152,1,0,0,0,
+  	154,155,1,0,0,0,155,156,1,0,0,0,156,157,5,5,0,0,157,230,1,0,0,0,158,159,
+  	5,15,0,0,159,160,5,4,0,0,160,161,3,18,9,0,161,162,5,1,0,0,162,165,3,18,
+  	9,0,163,164,5,1,0,0,164,166,5,57,0,0,165,163,1,0,0,0,165,166,1,0,0,0,
+  	166,167,1,0,0,0,167,168,5,5,0,0,168,230,1,0,0,0,169,170,5,16,0,0,170,
+  	171,5,4,0,0,171,176,3,18,9,0,172,173,5,1,0,0,173,175,3,18,9,0,174,172,
+  	1,0,0,0,175,178,1,0,0,0,176,174,1,0,0,0,176,177,1,0,0,0,177,179,1,0,0,
+  	0,178,176,1,0,0,0,179,180,5,5,0,0,180,230,1,0,0,0,181,182,5,17,0,0,182,
+  	183,5,4,0,0,183,184,3,18,9,0,184,185,5,1,0,0,185,186,3,18,9,0,186,187,
+  	5,5,0,0,187,230,1,0,0,0,188,189,5,18,0,0,189,190,5,4,0,0,190,191,3,18,
+  	9,0,191,192,5,1,0,0,192,193,3,18,9,0,193,194,5,5,0,0,194,230,1,0,0,0,
+  	195,196,5,50,0,0,196,197,5,19,0,0,197,198,3,18,9,0,198,199,5,20,0,0,199,
+  	230,1,0,0,0,200,201,3,10,5,0,201,202,5,4,0,0,202,203,3,18,9,0,203,204,
+  	5,5,0,0,204,230,1,0,0,0,205,206,3,12,6,0,206,207,5,4,0,0,207,208,3,18,
+  	9,0,208,209,5,5,0,0,209,230,1,0,0,0,210,211,5,38,0,0,211,230,3,18,9,15,
+  	212,230,7,4,0,0,213,230,5,50,0,0,214,215,5,4,0,0,215,216,3,18,9,0,216,
+  	217,5,5,0,0,217,230,1,0,0,0,218,219,5,19,0,0,219,224,3,18,9,0,220,221,
+  	5,1,0,0,221,223,3,18,9,0,222,220,1,0,0,0,223,226,1,0,0,0,224,222,1,0,
+  	0,0,224,225,1,0,0,0,225,227,1,0,0,0,226,224,1,0,0,0,227,228,5,20,0,0,
+  	228,230,1,0,0,0,229,129,1,0,0,0,229,142,1,0,0,0,229,147,1,0,0,0,229,158,
+  	1,0,0,0,229,169,1,0,0,0,229,181,1,0,0,0,229,188,1,0,0,0,229,195,1,0,0,
+  	0,229,200,1,0,0,0,229,205,1,0,0,0,229,210,1,0,0,0,229,212,1,0,0,0,229,
+  	213,1,0,0,0,229,214,1,0,0,0,229,218,1,0,0,0,230,269,1,0,0,0,231,232,10,
+  	16,0,0,232,233,7,5,0,0,233,268,3,18,9,17,234,235,10,14,0,0,235,236,7,
+  	6,0,0,236,268,3,18,9,15,237,238,10,13,0,0,238,239,7,7,0,0,239,268,3,18,
+  	9,14,240,241,10,12,0,0,241,242,7,8,0,0,242,268,3,18,9,13,243,244,10,11,
+  	0,0,244,245,7,9,0,0,245,268,3,18,9,12,246,247,10,10,0,0,247,248,7,10,
+  	0,0,248,268,3,18,9,11,249,250,10,9,0,0,250,251,7,11,0,0,251,268,3,18,
+  	9,10,252,253,10,8,0,0,253,254,5,47,0,0,254,268,3,18,9,9,255,256,10,7,
+  	0,0,256,257,5,48,0,0,257,268,3,18,9,8,258,259,10,6,0,0,259,260,5,49,0,
+  	0,260,268,3,18,9,7,261,262,10,5,0,0,262,263,5,24,0,0,263,264,3,14,7,0,
+  	264,265,5,9,0,0,265,266,3,16,8,0,266,268,1,0,0,0,267,231,1,0,0,0,267,
+  	234,1,0,0,0,267,237,1,0,0,0,267,240,1,0,0,0,267,243,1,0,0,0,267,246,1,
+  	0,0,0,267,249,1,0,0,0,267,252,1,0,0,0,267,255,1,0,0,0,267,258,1,0,0,0,
+  	267,261,1,0,0,0,268,271,1,0,0,0,269,267,1,0,0,0,269,270,1,0,0,0,270,19,
+  	1,0,0,0,271,269,1,0,0,0,23,23,27,32,44,55,58,67,70,78,83,90,95,108,111,
+  	118,137,154,165,176,224,229,267,269
   };
   staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
 
@@ -1173,6 +1175,28 @@ void EGrammarParser::ParensContext::exitRule(tree::ParseTreeListener *listener) 
   if (parserListener != nullptr)
     parserListener->exitParens(this);
 }
+//----------------- NeighborhoodPointContext ------------------------------------------------------------------
+
+tree::TerminalNode* EGrammarParser::NeighborhoodPointContext::ID() {
+  return getToken(EGrammarParser::ID, 0);
+}
+
+EGrammarParser::ExprContext* EGrammarParser::NeighborhoodPointContext::expr() {
+  return getRuleContext<EGrammarParser::ExprContext>(0);
+}
+
+EGrammarParser::NeighborhoodPointContext::NeighborhoodPointContext(ExprContext *ctx) { copyFrom(ctx); }
+
+void EGrammarParser::NeighborhoodPointContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<EGrammarListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterNeighborhoodPoint(this);
+}
+void EGrammarParser::NeighborhoodPointContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<EGrammarListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitNeighborhoodPoint(this);
+}
 //----------------- ConstContext ------------------------------------------------------------------
 
 tree::TerminalNode* EGrammarParser::ConstContext::DOUBLE() {
@@ -1799,7 +1823,7 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(224);
+    setState(229);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 20, _ctx)) {
     case 1: {
@@ -1971,26 +1995,26 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
     }
 
     case 8: {
-      _localctx = _tracker.createInstance<CallUnaryBInFuncContext>(_localctx);
+      _localctx = _tracker.createInstance<NeighborhoodPointContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
       setState(195);
-      unaryBInFunc();
+      match(EGrammarParser::ID);
       setState(196);
-      match(EGrammarParser::T__3);
+      match(EGrammarParser::T__18);
       setState(197);
       expr(0);
       setState(198);
-      match(EGrammarParser::T__4);
+      match(EGrammarParser::T__19);
       break;
     }
 
     case 9: {
-      _localctx = _tracker.createInstance<CallTConvBInFuncContext>(_localctx);
+      _localctx = _tracker.createInstance<CallUnaryBInFuncContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
       setState(200);
-      tConvBInFunc();
+      unaryBInFunc();
       setState(201);
       match(EGrammarParser::T__3);
       setState(202);
@@ -2001,21 +2025,36 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
     }
 
     case 10: {
-      _localctx = _tracker.createInstance<InvContext>(_localctx);
+      _localctx = _tracker.createInstance<CallTConvBInFuncContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
       setState(205);
-      match(EGrammarParser::SUB);
+      tConvBInFunc();
       setState(206);
-      expr(5);
+      match(EGrammarParser::T__3);
+      setState(207);
+      expr(0);
+      setState(208);
+      match(EGrammarParser::T__4);
       break;
     }
 
     case 11: {
+      _localctx = _tracker.createInstance<InvContext>(_localctx);
+      _ctx = _localctx;
+      previousContext = _localctx;
+      setState(210);
+      match(EGrammarParser::SUB);
+      setState(211);
+      expr(15);
+      break;
+    }
+
+    case 12: {
       _localctx = _tracker.createInstance<ConstContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(207);
+      setState(212);
       _la = _input->LA(1);
       if (!((((_la & ~ 0x3fULL) == 0) &&
         ((1ULL << _la) & ((1ULL << EGrammarParser::INT64)
@@ -2031,51 +2070,51 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
       break;
     }
 
-    case 12: {
+    case 13: {
       _localctx = _tracker.createInstance<IdContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(208);
+      setState(213);
       match(EGrammarParser::ID);
       break;
     }
 
-    case 13: {
+    case 14: {
       _localctx = _tracker.createInstance<ParensContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(209);
+      setState(214);
       match(EGrammarParser::T__3);
-      setState(210);
+      setState(215);
       expr(0);
-      setState(211);
+      setState(216);
       match(EGrammarParser::T__4);
       break;
     }
 
-    case 14: {
+    case 15: {
       _localctx = _tracker.createInstance<SmallArrayDefinitionContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(213);
-      match(EGrammarParser::T__22);
+      setState(218);
+      match(EGrammarParser::T__18);
 
-      setState(214);
-      expr(0);
       setState(219);
+      expr(0);
+      setState(224);
       _errHandler->sync(this);
       _la = _input->LA(1);
       while (_la == EGrammarParser::T__0) {
-        setState(215);
+        setState(220);
         match(EGrammarParser::T__0);
-        setState(216);
-        expr(0);
         setState(221);
+        expr(0);
+        setState(226);
         _errHandler->sync(this);
         _la = _input->LA(1);
       }
-      setState(222);
-      match(EGrammarParser::T__23);
+      setState(227);
+      match(EGrammarParser::T__19);
       break;
     }
 
@@ -2083,7 +2122,7 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
       break;
     }
     _ctx->stop = _input->LT(-1);
-    setState(264);
+    setState(269);
     _errHandler->sync(this);
     alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 22, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
@@ -2091,28 +2130,28 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        setState(262);
+        setState(267);
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx)) {
         case 1: {
           auto newContext = _tracker.createInstance<PowContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(226);
+          setState(231);
 
           if (!(precpred(_ctx, 16))) throw FailedPredicateException(this, "precpred(_ctx, 16)");
-          setState(227);
+          setState(232);
           _la = _input->LA(1);
-          if (!(_la == EGrammarParser::T__18
+          if (!(_la == EGrammarParser::T__20
 
-          || _la == EGrammarParser::T__19)) {
+          || _la == EGrammarParser::T__21)) {
           _errHandler->recoverInline(this);
           }
           else {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(228);
+          setState(233);
           expr(17);
           break;
         }
@@ -2121,10 +2160,10 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<MulDivContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(229);
+          setState(234);
 
-          if (!(precpred(_ctx, 15))) throw FailedPredicateException(this, "precpred(_ctx, 15)");
-          setState(230);
+          if (!(precpred(_ctx, 14))) throw FailedPredicateException(this, "precpred(_ctx, 14)");
+          setState(235);
           antlrcpp::downCast<MulDivContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == EGrammarParser::MUL
@@ -2136,8 +2175,8 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(231);
-          expr(16);
+          setState(236);
+          expr(15);
           break;
         }
 
@@ -2145,10 +2184,10 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<AddSubContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(232);
+          setState(237);
 
-          if (!(precpred(_ctx, 14))) throw FailedPredicateException(this, "precpred(_ctx, 14)");
-          setState(233);
+          if (!(precpred(_ctx, 13))) throw FailedPredicateException(this, "precpred(_ctx, 13)");
+          setState(238);
           antlrcpp::downCast<AddSubContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == EGrammarParser::ADD
@@ -2160,8 +2199,8 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(234);
-          expr(15);
+          setState(239);
+          expr(14);
           break;
         }
 
@@ -2169,10 +2208,10 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<BitwiseShiftContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(235);
+          setState(240);
 
-          if (!(precpred(_ctx, 13))) throw FailedPredicateException(this, "precpred(_ctx, 13)");
-          setState(236);
+          if (!(precpred(_ctx, 12))) throw FailedPredicateException(this, "precpred(_ctx, 12)");
+          setState(241);
           antlrcpp::downCast<BitwiseShiftContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == EGrammarParser::LSH
@@ -2184,8 +2223,8 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(237);
-          expr(14);
+          setState(242);
+          expr(13);
           break;
         }
 
@@ -2193,10 +2232,10 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<MoreLessContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(238);
+          setState(243);
 
-          if (!(precpred(_ctx, 12))) throw FailedPredicateException(this, "precpred(_ctx, 12)");
-          setState(239);
+          if (!(precpred(_ctx, 11))) throw FailedPredicateException(this, "precpred(_ctx, 11)");
+          setState(244);
           antlrcpp::downCast<MoreLessContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == EGrammarParser::LESS_
@@ -2208,8 +2247,8 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(240);
-          expr(13);
+          setState(245);
+          expr(12);
           break;
         }
 
@@ -2217,13 +2256,13 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<MoreeqLesseqContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(241);
+          setState(246);
 
-          if (!(precpred(_ctx, 11))) throw FailedPredicateException(this, "precpred(_ctx, 11)");
-          setState(242);
+          if (!(precpred(_ctx, 10))) throw FailedPredicateException(this, "precpred(_ctx, 10)");
+          setState(247);
           antlrcpp::downCast<MoreeqLesseqContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
-          if (!(_la == EGrammarParser::T__20
+          if (!(_la == EGrammarParser::T__22
 
           || _la == EGrammarParser::LESSEQ)) {
             antlrcpp::downCast<MoreeqLesseqContext *>(_localctx)->op = _errHandler->recoverInline(this);
@@ -2232,8 +2271,8 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(243);
-          expr(12);
+          setState(248);
+          expr(11);
           break;
         }
 
@@ -2241,10 +2280,10 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<EqualityContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(244);
+          setState(249);
 
-          if (!(precpred(_ctx, 10))) throw FailedPredicateException(this, "precpred(_ctx, 10)");
-          setState(245);
+          if (!(precpred(_ctx, 9))) throw FailedPredicateException(this, "precpred(_ctx, 9)");
+          setState(250);
           antlrcpp::downCast<EqualityContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == EGrammarParser::EQ
@@ -2256,8 +2295,8 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(246);
-          expr(11);
+          setState(251);
+          expr(10);
           break;
         }
 
@@ -2265,13 +2304,13 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<BitwiseAndContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(247);
+          setState(252);
 
-          if (!(precpred(_ctx, 9))) throw FailedPredicateException(this, "precpred(_ctx, 9)");
-          setState(248);
+          if (!(precpred(_ctx, 8))) throw FailedPredicateException(this, "precpred(_ctx, 8)");
+          setState(253);
           match(EGrammarParser::BITWISE_AND);
-          setState(249);
-          expr(10);
+          setState(254);
+          expr(9);
           break;
         }
 
@@ -2279,13 +2318,13 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<BitwiseOrContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(250);
+          setState(255);
 
-          if (!(precpred(_ctx, 8))) throw FailedPredicateException(this, "precpred(_ctx, 8)");
-          setState(251);
+          if (!(precpred(_ctx, 7))) throw FailedPredicateException(this, "precpred(_ctx, 7)");
+          setState(256);
           match(EGrammarParser::BITWISE_OR);
-          setState(252);
-          expr(9);
+          setState(257);
+          expr(8);
           break;
         }
 
@@ -2293,13 +2332,13 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<BitwiseXorContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(253);
+          setState(258);
 
-          if (!(precpred(_ctx, 7))) throw FailedPredicateException(this, "precpred(_ctx, 7)");
-          setState(254);
+          if (!(precpred(_ctx, 6))) throw FailedPredicateException(this, "precpred(_ctx, 6)");
+          setState(259);
           match(EGrammarParser::BITWISE_XOR);
-          setState(255);
-          expr(8);
+          setState(260);
+          expr(7);
           break;
         }
 
@@ -2307,16 +2346,16 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<CondExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(256);
+          setState(261);
 
-          if (!(precpred(_ctx, 6))) throw FailedPredicateException(this, "precpred(_ctx, 6)");
-          setState(257);
-          match(EGrammarParser::T__21);
-          setState(258);
+          if (!(precpred(_ctx, 5))) throw FailedPredicateException(this, "precpred(_ctx, 5)");
+          setState(262);
+          match(EGrammarParser::T__23);
+          setState(263);
           left_expr();
-          setState(259);
+          setState(264);
           match(EGrammarParser::T__8);
-          setState(260);
+          setState(265);
           right_expr();
           break;
         }
@@ -2325,7 +2364,7 @@ EGrammarParser::ExprContext* EGrammarParser::expr(int precedence) {
           break;
         } 
       }
-      setState(266);
+      setState(271);
       _errHandler->sync(this);
       alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 22, _ctx);
     }
@@ -2351,16 +2390,16 @@ bool EGrammarParser::sempred(RuleContext *context, size_t ruleIndex, size_t pred
 bool EGrammarParser::exprSempred(ExprContext *_localctx, size_t predicateIndex) {
   switch (predicateIndex) {
     case 0: return precpred(_ctx, 16);
-    case 1: return precpred(_ctx, 15);
-    case 2: return precpred(_ctx, 14);
-    case 3: return precpred(_ctx, 13);
-    case 4: return precpred(_ctx, 12);
-    case 5: return precpred(_ctx, 11);
-    case 6: return precpred(_ctx, 10);
-    case 7: return precpred(_ctx, 9);
-    case 8: return precpred(_ctx, 8);
-    case 9: return precpred(_ctx, 7);
-    case 10: return precpred(_ctx, 6);
+    case 1: return precpred(_ctx, 14);
+    case 2: return precpred(_ctx, 13);
+    case 3: return precpred(_ctx, 12);
+    case 4: return precpred(_ctx, 11);
+    case 5: return precpred(_ctx, 10);
+    case 6: return precpred(_ctx, 9);
+    case 7: return precpred(_ctx, 8);
+    case 8: return precpred(_ctx, 7);
+    case 9: return precpred(_ctx, 6);
+    case 10: return precpred(_ctx, 5);
 
   default:
     break;

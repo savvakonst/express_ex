@@ -2,6 +2,8 @@
 
 #include "jit/IR_generator.h"
 #include "operations/TypeCastOperation.h"
+#include "parser/bodyTemplate.h"
+
 
 static const std::string kArComp[17] = {
     "==", "!=", " ugt ", " uge ", " ult ", " ule ",  ">",  ">=", " less ",
@@ -52,6 +54,12 @@ ExValue* newComparisonOperation(GarbageContainer* garbage_container, TypeEn targ
     }
 
     return garbage_container->add(new ComparisonOperation(local_op_type, arg_a, arg_b));
+}
+
+ExValue* newComparisonOperation(BodyTemplate* body_template, OpCodeEn op_type) {
+    ExValue* arg_b = body_template->pop();
+    ExValue* arg_a = body_template->pop();
+    return newComparisonOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, op_type);
 }
 
 ComparisonOperation::ComparisonOperation(OpCodeEn op, ExValue* var_a, ExValue* var_b) : Operation_ifs() {

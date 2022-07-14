@@ -3,6 +3,7 @@
 #include "jit/IR_generator.h"
 #include "operations/ArithmeticOperation.h"
 #include "operations/TypeCastOperation.h"
+#include "parser/bodyTemplate.h"
 
 ExValue* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
                               int64_t shift, OpCodeEn op_type) {
@@ -26,6 +27,15 @@ ExValue* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target
 
     print_error("convolve(xxx,xxx) - unknown case");
     return nullptr;
+}
+
+ExValue* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_op,
+                              uint32_t shift) {  // TODO: add type matching
+    ExValue* arg_b = body_template->pop();
+    ExValue* arg_a = body_template->pop();
+    body_template->is_operator_ = true;
+    return newConvolveOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, shift,
+                                u_type_op);
 }
 
 ConvolveOperation::ConvolveOperation(ExValue* large_arr, ExValue* small_arr, int64_t shift) : Operation_ifs() {

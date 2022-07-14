@@ -171,7 +171,7 @@ class Table {
     bool runOptimization();
     bool run();
 
-    std::string printllvmIr();
+    std::string printLlvmIr();
 
     friend class TableGenContext;
 

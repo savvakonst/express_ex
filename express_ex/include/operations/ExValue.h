@@ -15,6 +15,10 @@ class IRGenerator;
 class ExValue : public SmallArr {
    public:
     ExValue() : SmallArr(){};
+
+    // ExValue()  = delete;
+    ExValue(TypeEn type, TypeEn time_type) : SmallArr(), type_(type), time_type_(time_type){};
+
     ExValue(std::string text, TypeEn type);
     ExValue(untyped_t value, TypeEn type);
     ExValue(ExValue* arg_1, ExValue* arg_2, ExValue* arg_3);
@@ -49,6 +53,9 @@ class ExValue : public SmallArr {
     int64_t getBufferLen() const { return buffer_length_; }
     uint64_t getLeftBufferLen() const { return left_buffer_length_; }
     uint64_t getRightBufferLen() const { return right_buffer_length_; }
+
+    bool isSync() const { return time_type_ == TypeEn::unknown_jty; }
+    TypeEn getTimeType() const { return time_type_; }
     TypeEn getType() const { return type_; }
     TypeEn getTempType() const { return isUnknownTy(type_) ? temp_type_ : type_; }
     DataStructureTypeEn getDSType() const { return data_structure_type_; }
@@ -135,7 +142,15 @@ class ExValue : public SmallArr {
 
     DataStructureTypeEn data_structure_type_ = DataStructureTypeEn::kConstant;
 
+
+
+    TypeEn time_type_ = TypeEn::DEFAULT_JTY;
     TypeEn type_ = TypeEn::DEFAULT_JTY;
+
+    /**
+     * it is used to const value calculation
+     * inside functions with recursive tail call
+     */
     TypeEn temp_type_ = TypeEn::DEFAULT_JTY;
 
     std::string text_value_;

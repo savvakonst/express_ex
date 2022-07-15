@@ -59,7 +59,7 @@ void BuiltInCallOperation::calculateConstRecursive(RecursiveGenContext* context)
     untyped_t temp_var = 0;
     temp_type_ = op->getTempType();  // was TypeEn temp_type_
     if (TypeEn::float_jty > temp_type_) {
-        temp_var = calcTypeConvConst(TypeEn::float_jty, op->getTempType(), op->getBinaryValue());
+        calcTypeConvConst(TypeEn::float_jty, op->getTempType(), op->getBinaryValue());
         temp_type_ = TypeEn::float_jty;
     }
     binary_value_ = calcBuiltInFuncConst(op_code_, temp_type_, op->getBinaryValue());

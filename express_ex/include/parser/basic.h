@@ -70,7 +70,6 @@ class PrintBodyContext {
     const bool hide_unused_lines_;
 
    private:
-
     const size_t max_line_length_ = 90;
 
     stack<std::string> void_definition_list_;
@@ -171,12 +170,6 @@ class SmallArr {
     SmallArr() { pos_ = g_pos; }
 
     virtual ~SmallArr() { delete buffer_ptr_; }
-
-
-    // replace it to separated class
-    void genRange(){};
-
-    void loadFromFile(const std::string& filename){};
 
     virtual void calculate() {}
 

@@ -1,6 +1,7 @@
 #include "treeShapeListener.h"
 
 #include "ifs/ExStreamIfs.h"
+#include "operations/ExConstValue.h"
 #include "operations/operations.h"
 
 PosInText g_pos;
@@ -113,7 +114,7 @@ void TreeShapeListener::exitConst(EGrammarParser::ConstContext* ctx) {
         CONV_TY(EGrammarParser::INT64, TypeEn::int64_jty);
     default:;
     }
-    current_body_->push(new ExValue(ctx->getText(), target_type));
+    current_body_->push(new ExConstValue(ctx->getText(), target_type));
 #undef CONV_TY
 }
 

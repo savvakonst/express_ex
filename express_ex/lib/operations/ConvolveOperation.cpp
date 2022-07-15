@@ -5,8 +5,8 @@
 #include "jit/IR_generator.h"
 #include "parser/bodyTemplate.h"
 
-ExValue* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
-                              int64_t shift, OpCodeEn op_type) {
+ExValue_ifs* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg_a,
+                                  ExValue_ifs* arg_b, int64_t shift, OpCodeEn op_type) {
     if (op_type != OpCodeEn::convolve) print_error("convolve_f operation is not supported yet");
 
     if ((isConst(arg_a) || isConst(arg_b)) && !(isUnknownTy(arg_a) || isUnknownTy(arg_b))) {
@@ -29,16 +29,16 @@ ExValue* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target
     return nullptr;
 }
 
-ExValue* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_op,
-                              uint32_t shift) {  // TODO: add type matching
-    ExValue* arg_b = body_template->pop();
-    ExValue* arg_a = body_template->pop();
+ExValue_ifs* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_op,
+                                  uint32_t shift) {  // TODO: add type matching
+    ExValue_ifs* arg_b = body_template->pop();
+    ExValue_ifs* arg_a = body_template->pop();
     body_template->is_operator_ = true;
     return newConvolveOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, shift,
                                 u_type_op);
 }
 
-ConvolveOperation::ConvolveOperation(ExValue* large_arr, ExValue* small_arr, int64_t shift) : Operation_ifs() {
+ConvolveOperation::ConvolveOperation(ExValue_ifs* large_arr, ExValue_ifs* small_arr, int64_t shift) : Operation_ifs() {
     commonSetup(OpCodeEn::convolve, maxDSVar(large_arr, small_arr));
 
     shift_parameter_ = shift;
@@ -54,7 +54,7 @@ ConvolveOperation::ConvolveOperation(ExValue* large_arr, ExValue* small_arr, int
     operand_.push_back(small_arr);
 }
 
-void ConvolveOperation::visitEnterSetupBuffer(stack<ExValue*>* visitor_stack) {
+void ConvolveOperation::visitEnterSetupBuffer(stack<ExValue_ifs*>* visitor_stack) {
     auto small_array = operand_[1];
     auto shift = shift_parameter_;
 
@@ -69,7 +69,7 @@ void ConvolveOperation::visitEnterSetupBuffer(stack<ExValue*>* visitor_stack) {
     operand_[0]->setBufferLength(left, right);
 }
 
-void ConvolveOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) {
+void ConvolveOperation::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) {
     visitor_stack->push(operand_[1]);
     visitor_stack->push(operand_[0]);
 }

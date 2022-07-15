@@ -6,16 +6,15 @@
 
 #include "ifs/AsyncParameter.h"
 #include "ifs/SyncParameter.h"
-#include "operations/ExValue.h"
+#include "operations/ExValue_ifs.h"
 
-class Line : public ExValue {
+class Line : public ExValue_ifs {
    public:
-    Line(const std::string& name, ExValue* var) : ExValue() {
+    Line(const std::string& name, ExValue_ifs* var) : ExValue_ifs() {
         names_.push_back(name);
         name_ = name;
         if (isConst(var)) {
             binary_value_ = var->getBinaryValue();
-            text_value_ = var->getTextValue();
         }
         assigned_val_ = var;
         level_ = var->getLevel();
@@ -24,7 +23,7 @@ class Line : public ExValue {
         length_ = var->getLength();
     }
 
-    Line(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len) : ExValue() {
+    Line(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len) : ExValue_ifs() {
         names_.push_back(name);
         name_ = name;
         data_structure_type_ = dsty;
@@ -33,7 +32,7 @@ class Line : public ExValue {
         is_arg_ = true;
     }
 
-    Line(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty) : ExValue() {
+    Line(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty) : ExValue_ifs() {
         names_.push_back(name);
         name_ = name;
         link_name_ = link_name;
@@ -41,7 +40,7 @@ class Line : public ExValue {
         is_arg_ = true;
     }
 
-    Line(const std::string& name, ParameterIfs* parameter) : ExValue() {
+    Line(const std::string& name, ParameterIfs* parameter) : ExValue_ifs() {
         names_.push_back(name);
         name_ = name;
         link_name_ = parameter->getName();
@@ -55,7 +54,7 @@ class Line : public ExValue {
         } else parameter_ = new SyncParameter(*(SyncParameter*)parameter);
     }
 
-    explicit Line(const std::string& name) : ExValue() {
+    explicit Line(const std::string& name) : ExValue_ifs() {
         names_.push_back(name);
         name_ = name;
         type_ = TypeEn::unknown_jty;
@@ -64,8 +63,8 @@ class Line : public ExValue {
 
     ~Line() override = default;
 
-    void assignValue(ExValue* var);
-    ExValue* getAssignedVal(bool deep = false) override;
+    void assignValue(ExValue_ifs* var);
+    ExValue_ifs* getAssignedVal(bool deep = false) override;
 
     bool isArg() const;
     bool checkName(const std::string&) const;
@@ -77,15 +76,15 @@ class Line : public ExValue {
     untyped_t* getBinaryValuePtr() { return &binary_value_; }
 
     // safe functions .external stack is used
-    void visitEnter(stack<ExValue*>* visitor_stack) override;
-    void markUnusedVisitEnter(stack<ExValue*>* visitor_stack) override;
+    void visitEnter(stack<ExValue_ifs*>* visitor_stack) override;
+    void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
 
     void genBodyVisitExit(BodyGenContext* context) override;
     void printVisitExit(PrintBodyContext* context) override;
     void genBlocksVisitExit(TableGenContext* context) override;
     void setupIR(IRGenerator& builder) override;
 
-    virtual void setTempTypeAndBinaryValue(ExValue* var) {
+    virtual void setTempTypeAndBinaryValue(ExValue_ifs* var) {
         temp_type_ = var->getType();
         binary_value_ = var->getBinaryValue();
     }
@@ -110,7 +109,7 @@ class Line : public ExValue {
    private:
     bool is_arg_ = false;
 
-    ExValue* assigned_val_ = nullptr;
+    ExValue_ifs* assigned_val_ = nullptr;
 
     std::vector<std::string> names_;
 

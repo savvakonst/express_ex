@@ -14,7 +14,7 @@
 #include "parser/defWarningIgnore.h"
 
 using std::string;
-class ExValue;
+class ExValue_ifs;
 
 enum class CycleStageEn
 {
@@ -47,11 +47,11 @@ typedef std::map<OpCodeEn, llvm::Function*> BuiltInFuncMap;
 class Block {
    public:
     // Block (uint64_t l) {level =l; }
-    explicit Block(ExValue* var);
+    explicit Block(ExValue_ifs* var);
 
     ~Block() = default;
 
-    void setUint(ExValue* var);
+    void setUint(ExValue_ifs* var);
     void setBufferLength(uint64_t buffer_length);
     uint64_t getLevel() const { return level_; };
     uint64_t getLength() const { return length_; };
@@ -62,7 +62,7 @@ class Block {
                     const std::string& basic_block_prefix = "");
 
    private:
-    stack<ExValue*> uint_list_;
+    stack<ExValue_ifs*> uint_list_;
 
     uint64_t left_length_;
     uint64_t right_length_;
@@ -74,13 +74,13 @@ class Block {
 class TableColumn {
    public:
     explicit TableColumn(uint64_t len) { length_ = len; }
-    explicit TableColumn(ExValue* var);
+    explicit TableColumn(ExValue_ifs* var);
 
     ~TableColumn() {
         for (auto i : block_list_) delete i;
     }
 
-    void setUint(ExValue* var);
+    void setUint(ExValue_ifs* var);
     void setBufferLength(uint64_t buffer_length) const {
         for (auto i : block_list_) i->setBufferLength(buffer_length);
     }
@@ -130,7 +130,7 @@ class Table {
         return false;
     }
 
-    void setUint(ExValue* var);
+    void setUint(ExValue_ifs* var);
 
     void recalcLeftRightBufferLengths() {
         for (auto i : column_list_) i->recalcLeftRightBufferLengths();
@@ -208,8 +208,8 @@ class Table {
     llvm::Type* fTy_ = nullptr;  // external
     llvm::Type* dTy_ = nullptr;  // external
 
-    stack<ExValue*> const_list_;        // external
-    stack<ExValue*> small_array_list_;  // external
+    stack<ExValue_ifs*> const_list_;        // external
+    stack<ExValue_ifs*> small_array_list_;  // external
 
     // uint64_t* max_column_depth_ = nullptr;
     stack<TableColumn*> column_list_;  // internal
@@ -232,7 +232,7 @@ class TableGenContext {
     ~TableGenContext() = default;
 
     uint64_t getUniqueIndex() { return unique_name_counter_++; }
-    void setUint(ExValue* var) const { table_->setUint(var); };
+    void setUint(ExValue_ifs* var) const { table_->setUint(var); };
     void setParameter(ParameterIfs* var) const { table_->parameter_set_.insert(var); };
     void setMaxBufferLength(int64_t length) const {
         int64_t temp = (int64_t)1 << (int8_t)(floor(log2(length)) - 1);

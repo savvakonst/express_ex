@@ -17,7 +17,7 @@ class IRGenerator;
 class BodyGenContext;
 class TableGenContext;
 class GarbageContainer;
-class ExValue;
+class ExValue_ifs;
 class Line;
 class BodyTemplate;
 class Body;
@@ -33,7 +33,6 @@ class DeclaredBodiesMap : private std::map<std::string, std::list<Body*> > {
     Body* getPureFunctionBody(const std::string& name, const Signature& signature) const;
 
     bool setPureFunctionBody(Body* body);
-
 };
 
 
@@ -47,15 +46,15 @@ class Body {
     bool isRetStackFull() { return (name_ != "main") ? 0 < return_stack_.size() : false; }
     bool isRetStackEmpty() { return 0 == return_stack_.size(); }
 
-    void addLine(const std::string& name, ExValue* var);
-    void addVariableLine(const std::string& name, ExValue* var);
+    void addLine(const std::string& name, ExValue_ifs* var);
+    void addVariableLine(const std::string& name, ExValue_ifs* var);
     void addParam(Line* line);
-    void addReturn(const std::string& name, ExValue* var);
+    void addReturn(const std::string& name, ExValue_ifs* var);
 
     // var_stack_ push/pop
-    void push(ExValue*);
-    ExValue* pop();
-    stack<ExValue*> pop(size_t length);
+    void push(ExValue_ifs*);
+    ExValue_ifs* pop();
+    stack<ExValue_ifs*> pop(size_t length);
 
     void setPureFunctionBody(Body* body);
 
@@ -88,7 +87,7 @@ class Body {
 
     const std::string name_;
 
-    stack<ExValue*> var_stack_;
+    stack<ExValue_ifs*> var_stack_;
     stack<Line*> lines_;
     stack<Line*> return_stack_;
 

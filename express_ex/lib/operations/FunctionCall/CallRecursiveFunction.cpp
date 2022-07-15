@@ -6,7 +6,7 @@
 
 #include "jit/IR_generator.h"
 
-CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue*>& args) : CallI_ifs() {
+CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue_ifs*>& args) : CallI_ifs() {
     body_ = body;
     args_ = args;
 
@@ -22,7 +22,7 @@ CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue*>& 
         p_list.push_back(i->getAssignedVal(true)->getParameter());
     }
 
-    ExValue* temp = nullptr;
+    ExValue_ifs* temp = nullptr;
     for (auto i : args_) {
         level_ = maxInt(level_, i->getLevel());
         if (i->isArray()) temp = i;
@@ -42,12 +42,11 @@ CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue*>& 
 
     if (isConst(ret)) {
         binary_value_ = ret->getBinaryValue();
-        text_value_ = ret->getTextValue();
     }
 }
 
 
-void CallRecursiveFunction::markUnusedVisitEnter(stack<ExValue*>* visitor_stack) {
+void CallRecursiveFunction::markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
     commonMarkUnusedVisitEnter(visitor_stack);
     for (int64_t i = ((int64_t)args_.size() - 1); i >= 0; i--) {
         auto arg = args_[i];
@@ -106,7 +105,14 @@ void CallRecursiveFunction::genBlocksVisitExit(TableGenContext* context) {
     }
 }
 
+/*
+ *
+ *
+ */
 
+void TailCallDirective::genBlocksVisitExit(TableGenContext* context) {
+    print_error("genBlocksVisitExit is not supported for TailCallDirective");
+}
 
 void TailCallDirective::setupIR(IRGenerator& builder) {
     size_t size = builder.arg_ptr_list_.size();
@@ -116,3 +122,4 @@ void TailCallDirective::setupIR(IRGenerator& builder) {
         builder.CreateStore(arg, builder.arg_ptr_list_[size - 1 - i]);
     }
 }
+

@@ -1,6 +1,6 @@
 #ifndef CALL_H_
 #define CALL_H_
-#include "operations/ExValue.h"
+#include "operations/ExValue_ifs.h"
 #include "parser/basic.h"
 #include "parser/body.h"
 #include "parser/line.h"
@@ -11,12 +11,12 @@ class Function;
 
 class IRGenerator;
 
-class CallI_ifs : public ExValue {
+class CallI_ifs : public ExValue_ifs {
    public:
-    CallI_ifs() : ExValue() {}
+    CallI_ifs() : ExValue_ifs() {}
     ~CallI_ifs() override = default;
 
-    void visitEnter(stack<ExValue*>* visitor_stack) override {
+    void visitEnter(stack<ExValue_ifs*>* visitor_stack) override {
         visitor_stack->push(this);
         for (int64_t i = ((int64_t)args_.size() - 1); i >= 0; i--) {
             visitor_stack->push(args_[(size_t)i]);
@@ -34,7 +34,9 @@ class CallI_ifs : public ExValue {
         is_visited_ = false;
     }
 
-    ExValue* getAssignedVal(bool deep = false) override {
+    std::string printUint() override { return "call" + body_->getName(); }
+
+    ExValue_ifs* getAssignedVal(bool deep = false) override {
         if (body_ == nullptr) return nullptr;
 
         if (is_buffered_ & deep) {
@@ -61,17 +63,17 @@ class CallI_ifs : public ExValue {
     }
 
     Body* body_ = nullptr;
-    stack<ExValue*> args_;
+    stack<ExValue_ifs*> args_;
 };
 
 
 
 class Call : public CallI_ifs {
    public:
-    explicit Call(Body* body, const stack<ExValue*>& args = {});
+    explicit Call(Body* body, const stack<ExValue_ifs*>& args = {});
     ~Call() override = default;
 
-    void markUnusedVisitEnter(stack<ExValue*>* visitor_stack) override;
+    void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
     void genBlocksVisitExit(TableGenContext* context) override;
     void setupIR(IRGenerator& builder) override;
 

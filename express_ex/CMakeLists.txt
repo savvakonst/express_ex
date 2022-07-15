@@ -44,7 +44,7 @@ set(LIBRARY_SOURCES
         lib/parser/bodyTemplate.cpp
 
         lib/parser/line.cpp
-        lib/parser/ExValue.cpp
+        lib/operations/ExValue_ifs.cpp
         #lib/parser/operations.cpp
 
         lib/operations/FunctionCall/CallRecursiveFunction.cpp
@@ -61,6 +61,8 @@ set(LIBRARY_SOURCES
         lib/operations/StoreToBufferOperation.cpp
         lib/operations/TypeCastOperation.cpp
         lib/operations/NeighborPointOperation.h
+        lib/operations/ExConstArray.cpp
+
 
         #lib/jit/CL_generator.cpp
         lib/jit/IR_generator.cpp
@@ -68,6 +70,7 @@ set(LIBRARY_SOURCES
         lib/jit/table.cpp
         lib/operations/FunctionCall/CallTemplate.cpp
         lib/operations/NeighborPointOperation.cpp
+        lib/operations/ExConstValue.cpp
         )
 
 
@@ -78,28 +81,31 @@ set(LIBRARY_HEADERS
         include/ifs/express_ex.h
         include/ifs/parameterIO.h
         include/ifs/parameterIfs.h
-        lib/ifs/printer.h
         include/ifs/ExStream.h
 
-        lib/KexParser/treeShapeListener.h
-
-
-        include/parser/KexParser.h
-        include/operations/ExValue.h
-        include/parser/basic.h
-        include/parser/body.h
-        include/parser/bodyTemplate.h
-
-        include/parser/callTemplate.h
-        include/common/common.h
-        include/parser/defWarningIgnore.h
-        include/parser/line.h
-        include/operations/operations.h
-        include/parser/parsingException.h
-
+        lib/ifs/printer.h
 
         include/common/types_jty.h
         include/common/undefWarningIgnore.h
+        include/common/common.h
+
+
+        include/parser/basic.h
+        include/parser/body.h
+        include/parser/bodyTemplate.h
+        include/parser/callTemplate.h
+        include/parser/defWarningIgnore.h
+        include/parser/line.h
+        include/parser/parsingException.h
+        include/parser/KexParser.h
+
+        lib/KexParser/treeShapeListener.h
+
+        include/operations/ExValue_ifs.h
+        include/operations/operations.h
+        include/operations/ExConstValue.h
+        include/operations/ExConstArray.h
+        include/operations/Operation_ifs.h
 
         lib/operations/FunctionCall/CallRecursiveFunction.h
         lib/operations/ArithmeticOperation.h
@@ -107,7 +113,6 @@ set(LIBRARY_HEADERS
         lib/operations/ComparisonOperation.h
         lib/operations/ConvolveOperation.h
         lib/operations/IntegrateOperation.h
-        include/operations/Operation_ifs.h
         lib/operations/SelectOperation.h
         lib/operations/SmallArrayDefOperation.h
         lib/operations/StoreToBufferOperation.h
@@ -124,7 +129,6 @@ set(LIBRARY_HEADERS
         include/jit/orcjit.h
         include/jit/table.h
         include/ifs/ExStreamIfs.h
-        #include/operations/ExValue_ifs.h
         )
 
 set(LLVM_COMPONENTS
@@ -145,11 +149,22 @@ if (MSVC_VERSION)
             UNICODE
             _UNICODE
             )
+
     SET(EXPRESS_EX_COMPILE_OPTIONS__
             /wd4804
             /wd4018
             /wd5208
+
             )
+
+    if (DISABLE_LLVM_WARNINGS)
+        SET(EXPRESS_EX_COMPILE_OPTIONS__ ${EXPRESS_EX_COMPILE_OPTIONS__}
+                /wd4624
+                /wd4996
+                /wd4624
+                /wd4348
+                )
+    endif ()
 endif ()
 
 #set(CMAKE_CXX_STACK_SIZE "10000000")

@@ -4,7 +4,7 @@
 #include <utility>
 
 #include "../operations/FunctionCall/call.h"
-#include "operations/ExValue.h"
+#include "operations/ExValue_ifs.h"
 #include "operations/operations.h"
 #include "parser/body.h"
 #include "parser/callTemplate.h"
@@ -20,7 +20,7 @@ BodyTemplate::BodyTemplate(std::string name, BodyTemplate* parent_body_template)
 
 BodyTemplate::~BodyTemplate() { delete garbage_container_; }
 
-void BodyTemplate::addLine(const std::string& name, ExValue* var) {
+void BodyTemplate::addLine(const std::string& name, ExValue_ifs* var) {
     auto line = new Line(name, var);
     garbage_container_->add(line);
     lines_.push_back(line);
@@ -53,7 +53,7 @@ void BodyTemplate::addParam(const std::string& name, const std::string& link_nam
     lines_.push_back(line);
 }
 
-void BodyTemplate::addReturn(const std::string& name, ExValue* var) {  //?remove Value param
+void BodyTemplate::addReturn(const std::string& name, ExValue_ifs* var) {  //?remove Value param
     auto line = new Line(name, var);
 
     if (is_tail_callable_) {
@@ -68,17 +68,17 @@ void BodyTemplate::addReturn(const std::string& name, ExValue* var) {  //?remove
 }
 
 
-void BodyTemplate::push(ExValue* line) {
+void BodyTemplate::push(ExValue_ifs* line) {
     garbage_container_->add(line);
     var_stack_.push_back(line);
 }
 
-ExValue* BodyTemplate::pop() {
+ExValue_ifs* BodyTemplate::pop() {
     if (var_stack_.empty()) print_error("stack is empty");
     return var_stack_.pop();
 }
 
-stack<ExValue*> BodyTemplate::pop(size_t length) { return var_stack_.pop(length); }
+stack<ExValue_ifs*> BodyTemplate::pop(size_t length) { return var_stack_.pop(length); }
 
 std::map<std::string, std::string> BodyTemplate::getParameterLinkNames(bool hide_unused) const {
     std::map<std::string, std::string> ret;
@@ -90,7 +90,7 @@ std::map<std::string, std::string> BodyTemplate::getParameterLinkNames(bool hide
 
 
 void BodyTemplate::addCall(BodyTemplate* body) {
-    stack<ExValue*> a;
+    stack<ExValue_ifs*> a;
     a.resize(body->getArgCount());
     for (int i = body->getArgCount() - 1; i >= 0; i--) {
         a[i] = pop();
@@ -103,7 +103,7 @@ void BodyTemplate::addCall(BodyTemplate* body) {
 }
 
 void BodyTemplate::addTailCall() {
-    stack<ExValue*> a;
+    stack<ExValue_ifs*> a;
     a.resize(this->getArgCount());
     for (int i = this->getArgCount() - 1; i >= 0; i--) {
         a[i] = pop();
@@ -135,7 +135,7 @@ BodyTemplate* BodyTemplate::getFunctionBody(const std::string& name) const {
 
 std::string BodyTemplate::print(const std::string& tab, bool DST_ena, bool hide_unused_lines) const {
     PrintBodyContext context(tab, DST_ena, hide_unused_lines);
-    stack<ExValue*> visitor_stack;
+    stack<ExValue_ifs*> visitor_stack;
 
     context.setName(getName());
 
@@ -175,11 +175,11 @@ std::list<std::string> BodyTemplate::getNamesOfDefinedFunctions() const {
     return ret;
 }
 
-Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue*> args, bool is_function) const {
+Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> args, bool is_function) const {
     auto body = new Body(name_, getNamesOfDefinedFunctions(), parent_body, is_operator_);
     BodyGenContext context(body, is_function);
 
-    stack<ExValue*> visitor_stack;
+    stack<ExValue_ifs*> visitor_stack;
 
     auto arg = args.begin();
     for (const auto& value : lines_) {
@@ -232,8 +232,8 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue*> args, b
     return body;
 }
 
-untyped_t BodyTemplate::genConstRecursiveByTemplate(stack<ExValue*>& args) const {
-    stack<ExValue*> visitor_stack;
+untyped_t BodyTemplate::genConstRecursiveByTemplate(stack<ExValue_ifs*>& args) const {
+    stack<ExValue_ifs*> visitor_stack;
     RecursiveGenContext context(is_tail_callable_);
 
     auto arg = args.begin();

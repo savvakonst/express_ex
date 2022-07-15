@@ -3,7 +3,7 @@
 
 #include "common/common.h"
 #include "ifs/parameterIO.h"
-#include "operations/ExValue.h"
+#include "operations/ExValue_ifs.h"
 
 enum class BufferTypeEn
 {
@@ -26,7 +26,7 @@ enum class BufferTypeEn
 
 class Buffer {
    public:
-    explicit Buffer(ExValue* var) {
+    explicit Buffer(ExValue_ifs* var) {
         length_ = var->getBufferLen();
         left_offset_ = var->getLeftBufferLen();
         right_offset_ = var->getRightBufferLen();
@@ -95,7 +95,7 @@ class Buffer {
 
 class InputBuffer : public Buffer {
    public:
-    explicit InputBuffer(ExValue* var) : Buffer(var) { parameter_ = var->getParameter(); }
+    explicit InputBuffer(ExValue_ifs* var) : Buffer(var) { parameter_ = var->getParameter(); }
     ~InputBuffer() override = default;
 
     int64_t init() override {
@@ -127,7 +127,7 @@ class InputBuffer : public Buffer {
 
 class OutputBuffer : public Buffer {
    public:
-    explicit OutputBuffer(ExValue* var) : Buffer(var) { parameter_ = var->getParameter(); }
+    explicit OutputBuffer(ExValue_ifs* var) : Buffer(var) { parameter_ = var->getParameter(); }
 
     ~OutputBuffer() override = default;
 

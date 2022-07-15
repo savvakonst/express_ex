@@ -6,11 +6,11 @@
 #include "parser/bodyTemplate.h"
 
 
-ExValue* newIntegrateOperation(GarbageContainer* garbage_container, ExValue* value) {
+ExValue_ifs* newIntegrateOperation(GarbageContainer* garbage_container, ExValue_ifs* value) {
     return garbage_container->add(new IntegrateOperation(value));
 }
 
-ExValue* newIntegrateOperation(BodyTemplate* body_template) {
+ExValue_ifs* newIntegrateOperation(BodyTemplate* body_template) {
     auto* arg = body_template->pop();
     body_template->is_operator_ = true;
     return newIntegrateOperation(body_template->getGarbageContainer(), arg);
@@ -18,7 +18,7 @@ ExValue* newIntegrateOperation(BodyTemplate* body_template) {
 
 
 
-IntegrateOperation::IntegrateOperation(ExValue* var) : Operation_ifs() {
+IntegrateOperation::IntegrateOperation(ExValue_ifs* var) : Operation_ifs() {
     commonSetup(OpCodeEn::integrate, var);
     type_ = var->getType();
     level_ = var->getLevel();
@@ -26,11 +26,11 @@ IntegrateOperation::IntegrateOperation(ExValue* var) : Operation_ifs() {
 }
 
 
-void IntegrateOperation::visitEnterSetupBuffer(stack<ExValue*>* visitor_stack) {
+void IntegrateOperation::visitEnterSetupBuffer(stack<ExValue_ifs*>* visitor_stack) {
     Operation_ifs::visitEnterSetupBuffer(visitor_stack);
 }
 
-void IntegrateOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) { visitor_stack->push(operand_[0]); }
+void IntegrateOperation::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) { visitor_stack->push(operand_[0]); }
 
 void IntegrateOperation::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;
@@ -84,6 +84,4 @@ void IntegrateOperation::setupIR(IRGenerator& builder) {
     finishSetupIR(builder);
 }
 
-void IntegrateOperation::calculate() {
-
-}
+void IntegrateOperation::calculate() {}

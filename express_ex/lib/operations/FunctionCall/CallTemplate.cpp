@@ -5,8 +5,10 @@
 #include "parser/callTemplate.h"
 
 #include "CallRecursiveFunction.h"
+#include "operations/ExConstValue.h"
 
-CallRecursiveFunctionTemplate::CallRecursiveFunctionTemplate(BodyTemplate *body, const stack<ExValue *> &args)
+
+CallRecursiveFunctionTemplate::CallRecursiveFunctionTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args)
     : CallTemplate_ifs() {
     body_template_ = body;
     args_ = args;
@@ -21,15 +23,15 @@ CallRecursiveFunctionTemplate::CallRecursiveFunctionTemplate(BodyTemplate *body,
 
     if (isConst(ret)) {
         binary_value_ = ret->getBinaryValue();
-        text_value_ = ret->getTextValue();
     }
 }
+
 void CallRecursiveFunctionTemplate::genBodyVisitExit(BodyGenContext *context) {
-    stack<ExValue *> a;
+    stack<ExValue_ifs *> a;
     bool large_array = false, small_array = false;
 
     for (auto i : args_) {
-        ExValue *var = context->pop();
+        ExValue_ifs *var = context->pop();
         large_array |= isLargeArr(var);
         small_array |= isSmallArr(var);
         a.push(var);
@@ -54,7 +56,7 @@ void CallRecursiveFunctionTemplate::genBodyVisitExit(BodyGenContext *context) {
         binary_value_ = body_template_->genConstRecursiveByTemplate(a);
 
         context->push(context->getGarbageContainer()->add(
-            new ExValue(binary_value_, body_template_->getRet().front()->getTempType())));
+            new ExConstValue(binary_value_, body_template_->getRet().front()->getTempType())));
     }
 
     is_visited_ = false;
@@ -68,7 +70,7 @@ void CallRecursiveFunctionTemplate::calculateConstRecursive(RecursiveGenContext 
 
 
 void TailCallDirectiveTemplate::genBodyVisitExit(BodyGenContext *context) {
-    stack<ExValue *> a;
+    stack<ExValue_ifs *> a;
     for (auto &i : args_) a.push(context->pop());
 
     context->push(context->getGarbageContainer()->add(new TailCallDirective(a)));
@@ -89,7 +91,7 @@ void TailCallDirectiveTemplate::calculateConstRecursive(RecursiveGenContext *con
 
 
 
-CallTemplate::CallTemplate(BodyTemplate *body, const stack<ExValue *> &args) : CallTemplate_ifs() {
+CallTemplate::CallTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args) : CallTemplate_ifs() {
     body_template_ = body;
     args_ = args;
 
@@ -103,13 +105,12 @@ CallTemplate::CallTemplate(BodyTemplate *body, const stack<ExValue *> &args) : C
 
     if (isConst(ret)) {
         binary_value_ = ret->getBinaryValue();
-        text_value_ = ret->getTextValue();
     }
 }
 
 
 void CallTemplate::genBodyVisitExit(BodyGenContext *context) {
-    stack<ExValue *> a;
+    stack<ExValue_ifs *> a;
     for (auto &i : args_) a.push(context->pop());
 
     Body *body = body_template_->genBodyByTemplate(context->current_body_, a, context->is_pure_function_);

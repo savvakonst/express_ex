@@ -7,7 +7,7 @@
 ///
 /// //////////////////////////////////////////////////////////////////////////////////////////////////
 
-Call::Call(Body* body, const stack<ExValue*>& args) : CallI_ifs() {
+Call::Call(Body* body, const stack<ExValue_ifs*>& args) : CallI_ifs() {
     body_ = body;
     args_ = args;
 
@@ -21,11 +21,10 @@ Call::Call(Body* body, const stack<ExValue*>& args) : CallI_ifs() {
 
     if (isConst(ret)) {
         binary_value_ = ret->getBinaryValue();
-        text_value_ = ret->getTextValue();
     }
 }
 
-void Call::markUnusedVisitEnter(stack<ExValue*>* visitor_stack) {
+void Call::markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
     commonMarkUnusedVisitEnter(visitor_stack);
 
     if (body_->getRet().empty()) print_error("markUnusedVisitEnter: body_->getRet().empty() == true ");

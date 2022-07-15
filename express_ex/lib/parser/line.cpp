@@ -11,7 +11,7 @@ const T& max(const T& a, const T& b) {
 
 bool Line::isArg() const { return is_arg_; }
 
-void Line::assignValue(ExValue* var) {
+void Line::assignValue(ExValue_ifs* var) {
     assigned_val_ = var;
     type_ = var->getType();
 }
@@ -21,7 +21,7 @@ bool Line::checkName(const std::string& name) const {
     return false;
 }
 
-ExValue* Line::getAssignedVal(bool deep) {
+ExValue_ifs* Line::getAssignedVal(bool deep) {
     if (is_arg_) return this;
 
     if (deep) return assigned_val_->getAssignedVal(true);
@@ -31,7 +31,7 @@ ExValue* Line::getAssignedVal(bool deep) {
 
 // safe functions .external stack is used
 
-void Line::markUnusedVisitEnter(stack<ExValue*>* visitor_stack) {
+void Line::markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
     commonMarkUnusedVisitEnter(visitor_stack);
     if (!is_arg_) {
         visitor_stack->push(assigned_val_);
@@ -46,7 +46,7 @@ void Line::genBlocksVisitExit(TableGenContext* context) {
     is_visited_ = false;
 }
 
-void Line::visitEnter(stack<ExValue*>* visitor_stack) {
+void Line::visitEnter(stack<ExValue_ifs*>* visitor_stack) {
     visitor_stack->push(this);
     is_visited_ = true;
 }

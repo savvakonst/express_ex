@@ -6,17 +6,21 @@
 #include "line.h"
 
 
-class CallTemplate_ifs : public ExValue {
+class CallTemplate_ifs : public ExValue_ifs {
    public:
-    CallTemplate_ifs() : ExValue() {}
+    CallTemplate_ifs() : ExValue_ifs() {}
     ~CallTemplate_ifs() override = default;
 
-    void visitEnter(stack<ExValue*>* visitor_stack) override {
+    void visitEnter(stack<ExValue_ifs*>* visitor_stack) override {
         visitor_stack->push(this);
         for (int64_t i = ((int64_t)args_.size() - 1); i >= 0; i--) {
             visitor_stack->push(args_[(size_t)i]);
         }
         is_visited_ = true;
+    }
+
+    void genBlocksVisitExit(TableGenContext* context) override {
+        print_error("genBlocksVisitExit can't be used with templates");
     }
 
     void printVisitExit(PrintBodyContext* context) override {
@@ -49,12 +53,12 @@ class CallTemplate_ifs : public ExValue {
     }
 
     BodyTemplate* body_template_ = nullptr;
-    stack<ExValue*> args_;
+    stack<ExValue_ifs*> args_;
 };
 
 class CallRecursiveFunctionTemplate : public CallTemplate_ifs {
    public:
-    explicit CallRecursiveFunctionTemplate(BodyTemplate* body, const stack<ExValue*>& args = {});
+    explicit CallRecursiveFunctionTemplate(BodyTemplate* body, const stack<ExValue_ifs*>& args = {});
 
     ~CallRecursiveFunctionTemplate() override = default;
 
@@ -65,9 +69,11 @@ class CallRecursiveFunctionTemplate : public CallTemplate_ifs {
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kCall; }
 };
 
+
+
 class TailCallDirectiveTemplate : public CallTemplate_ifs {
    public:
-    explicit TailCallDirectiveTemplate(const stack<ExValue*>& args) : CallTemplate_ifs() {
+    explicit TailCallDirectiveTemplate(const stack<ExValue_ifs*>& args) : CallTemplate_ifs() {
         args_ = args;
         type_ = TypeEn::unknown_jty;
     }
@@ -85,9 +91,11 @@ class TailCallDirectiveTemplate : public CallTemplate_ifs {
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kTailCall; }
 };
 
+
+
 class CallTemplate : public CallTemplate_ifs {
    public:
-    explicit CallTemplate(BodyTemplate* body, const stack<ExValue*>& args = {});
+    explicit CallTemplate(BodyTemplate* body, const stack<ExValue_ifs*>& args = {});
 
     ~CallTemplate() override = default;
 

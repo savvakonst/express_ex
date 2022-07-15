@@ -12,7 +12,7 @@
 #include "parser/defWarningIgnore.h"
 
 class Table;
-class ExValue;
+class ExValue_ifs;
 
 inline llvm::raw_ostream& operator<<(llvm::raw_ostream& OS, Buffer& arg) {
     arg.stream(OS);

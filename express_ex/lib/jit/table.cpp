@@ -21,7 +21,7 @@
 //
 //
 //
-Block::Block(ExValue* var) {
+Block::Block(ExValue_ifs* var) {
     left_length_ = var->getLeftBufferLen();
     right_length_ = var->getRightBufferLen();
     level_ = var->getLevel();
@@ -29,7 +29,7 @@ Block::Block(ExValue* var) {
     setUint(var);
 }
 
-void Block::setUint(ExValue* var) {
+void Block::setUint(ExValue_ifs* var) {
     left_length_ = maxInt(left_length_, var->getLeftBufferLen());
     right_length_ = maxInt(right_length_, var->getRightBufferLen());
     uint_list_.push(var);
@@ -126,12 +126,12 @@ bool Block::generateIR(IRGenerator& builder, CycleStageEn type, const std::strin
 // TableColumn:: column section
 //
 //
-TableColumn::TableColumn(ExValue* var) {
+TableColumn::TableColumn(ExValue_ifs* var) {
     length_ = var->getLength();
     setUint(var);
 }
 
-void TableColumn::setUint(ExValue* var) {
+void TableColumn::setUint(ExValue_ifs* var) {
     auto varlevel = var->getLevel();
     for (Block* i : block_list_)
         if (i->getLevel() == varlevel) {
@@ -228,7 +228,7 @@ Table::~Table() {
 }
 
 // add Value to table_
-void Table::setUint(ExValue* var) {
+void Table::setUint(ExValue_ifs* var) {
     auto var_length = var->getLength();
     if (isConst(var)) {
         const_list_.push(var);
@@ -778,7 +778,7 @@ llvm::Function* Body::getOrGenIRPureFunction(IRGenerator& builder) {
     local_builder.setExitInsertPoint(llvm::BasicBlock::Create(context, "exit_block", function_));
     local_builder.setCalcInsertPoint();
 
-    stack<ExValue*> visitor_stack;
+    stack<ExValue_ifs*> visitor_stack;
     RecursiveGenContext gen_context(is_tail_callable_, false);
 
     for (auto& line : lines_) {

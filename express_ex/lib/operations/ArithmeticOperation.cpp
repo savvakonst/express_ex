@@ -2,20 +2,21 @@
 
 #include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
+#include "operations/ExConstValue.h"
 #include "parser/bodyTemplate.h"
 
 
 static const std::string kArSym[14] = {"+", "+.", "-", "-.", "*", "*.", "/", "/", "/.", "%", "%", "%.", "**", "**."};
 static std::string txtArOp(OpCodeEn op_code) { return kArSym[((int)op_code - (int)TypeOpCodeEn::arithetic)]; }
 
-ExValue* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
-                                OpCodeEn op_type) {
+ExValue_ifs* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg_a,
+                                    ExValue_ifs* arg_b, OpCodeEn op_type) {
     if (!isCompatible(arg_a, arg_b)) print_error("incompatible values");
 
     if (isConst(arg_a) && isConst(arg_b) && !isUnknownTy(target_type)) {
         if (isBool(target_type)) print_error("invalid type: Int1_jty ");
 
-        return garbage_container->add(new ExValue(
+        return garbage_container->add(new ExConstValue(
             calcArithmeticConst(op_type, target_type, arg_a->getBinaryValue(), arg_b->getBinaryValue()), target_type));
     }
 
@@ -52,19 +53,19 @@ ExValue* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn targ
     return garbage_container->add(new ArithmeticOperation(local_op_type, arg_a, arg_b));
 }
 
-ExValue* newArithmeticOperation(BodyTemplate* body_template, OpCodeEn u_type_op) {
+ExValue_ifs* newArithmeticOperation(BodyTemplate* body_template, OpCodeEn u_type_op) {
     auto* arg_b = body_template->pop();
     auto* arg_a = body_template->pop();
     return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op);
 }
 
-ExValue* newInversionOperation(BodyTemplate* body_template) {
-    ExValue* arg = body_template->pop();
-    ExValue* zero = body_template->getGarbageContainer()->add(new ExValue("0", TypeEn::int32_jty));
+ExValue_ifs* newInversionOperation(BodyTemplate* body_template) {
+    ExValue_ifs* arg = body_template->pop();
+    ExValue_ifs* zero = body_template->getGarbageContainer()->add(new ExConstValue("0", TypeEn::int32_jty));
     return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, zero, arg, OpCodeEn::sub);
 }
 
-ArithmeticOperation::ArithmeticOperation(OpCodeEn op, ExValue* var_a, ExValue* var_b) : Operation_ifs() {
+ArithmeticOperation::ArithmeticOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b) : Operation_ifs() {
     commonSetup(op, maxDSVar(var_a, var_b));
 
     type_ = maxTypeVar(var_a, var_b)->getType();
@@ -79,7 +80,7 @@ ArithmeticOperation::ArithmeticOperation(OpCodeEn op, ExValue* var_a, ExValue* v
         if (i->getLevel() < level_) i->getAssignedVal(true)->setBuffered();
 }
 
-void ArithmeticOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) {
+void ArithmeticOperation::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) {
     visitor_stack->push(operand_[1]);
     visitor_stack->push(operand_[0]);
 }

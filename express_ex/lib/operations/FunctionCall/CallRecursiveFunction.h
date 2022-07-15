@@ -9,24 +9,28 @@
 
 class CallRecursiveFunction : public CallI_ifs {
    public:
-    explicit CallRecursiveFunction(Body* body, const stack<ExValue*>& args = {});
+    explicit CallRecursiveFunction(Body* body, const stack<ExValue_ifs*>& args = {});
     ~CallRecursiveFunction() override = default;
 
-    void markUnusedVisitEnter(stack<ExValue*>* visitor_stack) override;
+    void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
     void genBlocksVisitExit(TableGenContext* context) override;
     void setupIR(IRGenerator& builder) override;
 
-    ExValue* getAssignedVal(bool deep = false) override { return this; }
+    ExValue_ifs* getAssignedVal(bool deep = false) override { return this; }
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kCall; }
 };
 
+
+
 class TailCallDirective : public CallI_ifs {
    public:
-    explicit TailCallDirective(const stack<ExValue*>& args) : CallI_ifs() {
+    explicit TailCallDirective(const stack<ExValue_ifs*>& args) : CallI_ifs() {
         type_ = TypeEn::unknown_jty;
         args_ = (args);
     }
     ~TailCallDirective() override = default;
+
+    void genBlocksVisitExit(TableGenContext* context) override;
 
     void setupIR(IRGenerator& builder) override;
 
@@ -36,7 +40,7 @@ class TailCallDirective : public CallI_ifs {
         is_visited_ = false;
     }
 
-    ExValue* getAssignedVal(bool deep = false) override { return this; }
+    ExValue_ifs* getAssignedVal(bool deep = false) override { return this; }
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kTailCall; }
 };
 

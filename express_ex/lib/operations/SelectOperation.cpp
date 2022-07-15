@@ -2,26 +2,28 @@
 
 #include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
+#include "operations/ExConstValue.h"
 #include "parser/bodyTemplate.h"
 
-ExValue* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
-                     ExValue* arg_c, bool rec_call) {
+ExValue_ifs* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg_a,
+                         ExValue_ifs* arg_b, ExValue_ifs* arg_c, bool rec_call) {
     if (!isCompatible(arg_b, arg_c) || !isCompatible(arg_a, arg_b)) print_error("incompatible values");
 
     auto i1 = newTypeConvOp(garbage_container, TypeEn::int1_jty, arg_a);
 
     if (isConst(i1) && !isUnknownTy(i1) && !isUnknownTy(target_type)) {
-        if (i1->getConvTypeVal<bool>()) return arg_b;
+        auto const_val = (ExConstValue*)i1;
+        if (const_val->getConvTypeVal<bool>()) return arg_b;
         return arg_c;
     }
 
     return garbage_container->add(new SelectOperation(OpCodeEn::select, i1, arg_b, arg_c, target_type, rec_call));
 }
 
-ExValue* newSelectOp(BodyTemplate* body_template) {
-    ExValue* arg_c = body_template->pop();
-    ExValue* arg_b = body_template->pop();
-    ExValue* arg_a = body_template->pop();
+ExValue_ifs* newSelectOp(BodyTemplate* body_template) {
+    ExValue_ifs* arg_c = body_template->pop();
+    ExValue_ifs* arg_b = body_template->pop();
+    ExValue_ifs* arg_a = body_template->pop();
 
     bool valid_recursion = false;
 
@@ -34,8 +36,8 @@ ExValue* newSelectOp(BodyTemplate* body_template) {
     return newSelectOp(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, arg_c, valid_recursion);
 }
 
-SelectOperation::SelectOperation(OpCodeEn op, ExValue* var_a, ExValue* var_b, ExValue* var_c, TypeEn target_type,
-                                 bool rec_call)
+SelectOperation::SelectOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b, ExValue_ifs* var_c,
+                                 TypeEn target_type, bool rec_call)
     : Operation_ifs() {
     commonSetup(op, maxDSVar(var_a, var_b));
     type_ = target_type;
@@ -55,7 +57,7 @@ SelectOperation::SelectOperation(OpCodeEn op, ExValue* var_a, ExValue* var_b, Ex
         if (i->getLevel() < level_) i->getAssignedVal(true)->setBuffered();
 }
 
-void SelectOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) {
+void SelectOperation::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) {
     visitor_stack->push(operand_[2]);
     visitor_stack->push(operand_[1]);
     visitor_stack->push(operand_[0]);

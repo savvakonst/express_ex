@@ -213,7 +213,7 @@ class BareChunk;
 
 class DLL_EXPORT ParameterIfs {
    public:
-    DEFINE_DCOUNTER();
+    DEFINE_DCOUNTER(ParameterIfs);
 
     ParameterIfs() { INCREMENT_DCOUNTER(ParameterIfs) }
     virtual ~ParameterIfs() { DECREMENT_DCOUNTER(ParameterIfs); };

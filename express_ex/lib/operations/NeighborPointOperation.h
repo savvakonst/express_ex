@@ -10,18 +10,18 @@
 
 #include "operations/Operation_ifs.h"
 
-ExValue* newNeighborPointOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a,
-                                   ExValue* arg_b, int64_t shift, OpCodeEn op_type);
+ExValue_ifs* newNeighborPointOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg_a,
+                                       ExValue_ifs* arg_b, int64_t shift, OpCodeEn op_type);
 
 
 class NeighborPointOperation : public Operation_ifs {
    public:
-    NeighborPointOperation(ExValue* large_arr, ExValue* small_arr, int64_t shift);
+    NeighborPointOperation(ExValue_ifs* large_arr, ExValue_ifs* small_arr, int64_t shift);
 
     ~NeighborPointOperation() override = default;
 
-    void visitEnterSetupBuffer(stack<ExValue*>* visitor_stack) override;
-    void visitEnterStackUpdate(stack<ExValue*>* visitor_stack) override;
+    void visitEnterSetupBuffer(stack<ExValue_ifs*>* visitor_stack) override;
+    void visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) override;
 
     void genBodyVisitExit(BodyGenContext* context) override;
     void calculateConstRecursive(RecursiveGenContext* context) override;

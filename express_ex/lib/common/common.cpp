@@ -1,7 +1,7 @@
 
 #include "common/common.h"
 
-#include "operations/ExValue.h"
+#include "operations/ExValue_ifs.h"
 
 char *calcSmallArrayAlloc(TypeEn target_type, int N, char *ptr) {
     char *ret = nullptr;
@@ -185,7 +185,7 @@ untyped_t calcTypeConvConst(TypeEn ret_type, TypeEn arg_type, untyped_t arg_int)
     return return_int;
 }
 
-char *calcSmallArrayDef(TypeEn targetType, const std::vector<ExValue *> &operand) {
+char *calcSmallArrayDef(TypeEn targetType, const std::vector<ExValue_ifs *> &operand) {
     char *ret = calcSmallArrayAlloc(targetType, (int)operand.size());
 
 #define OP(T)                                                      \

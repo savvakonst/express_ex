@@ -9,7 +9,7 @@
 #include "body.h"
 #include "common/types_jty.h"
 
-class ExValue;
+class ExValue_ifs;
 class Line;
 class Body;
 
@@ -22,13 +22,13 @@ class GarbageContainer {
             delete i;
     }
     */
-    ExValue* add(ExValue* var) {
+    ExValue_ifs* add(ExValue_ifs* var) {
         if (var != nullptr) value_set_.insert(var);
         return var;
     }
 
    protected:
-    std::set<ExValue*> value_set_;
+    std::set<ExValue_ifs*> value_set_;
 };
 
 class CallRecursiveFunctionTemplate;
@@ -92,9 +92,9 @@ class BodyGenContext {
 
     ~BodyGenContext() = default;
 
-    inline void push(ExValue* var) { var_stack_.push(var); }
+    inline void push(ExValue_ifs* var) { var_stack_.push(var); }
 
-    inline ExValue* pop() { return var_stack_.pop(); }
+    inline ExValue_ifs* pop() { return var_stack_.pop(); }
 
     inline std::vector<Line*>& getNamespace() const { return *namespace_ptr_; }
 
@@ -118,7 +118,7 @@ class BodyGenContext {
    private:
     GarbageContainer* garbage_container_ = nullptr;
 
-    stack<ExValue*> var_stack_;
+    stack<ExValue_ifs*> var_stack_;
 
     Body* current_body_ = nullptr;
 
@@ -136,11 +136,11 @@ class RecursiveGenContext {
 
     ~RecursiveGenContext() = default;
 
-    void setUint(ExValue* var) { instructions_list_.push(var); }
+    void setUint(ExValue_ifs* var) { instructions_list_.push(var); }
 
     uint32_t getReference() { return reference_cnt_++; }
 
-    void addArg(ExValue* arg) {
+    void addArg(ExValue_ifs* arg) {
         if (!hide_const_values_) instructions_list_.push(arg);
         args_reference_.push(arg);
     }
@@ -148,7 +148,7 @@ class RecursiveGenContext {
     bool exitFromLoop() const { return exit_from_loop_; }
 
 
-    stack<ExValue*> instructions_list_;
+    stack<ExValue_ifs*> instructions_list_;
     const bool hide_const_values_;
 
     bool exit_from_loop_;
@@ -156,7 +156,7 @@ class RecursiveGenContext {
    private:
     uint32_t reference_cnt_ = 0;
 
-    stack<ExValue*> args_reference_;
+    stack<ExValue_ifs*> args_reference_;
 
     friend class TailCallDirectiveTemplate;
 

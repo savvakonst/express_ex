@@ -10,7 +10,7 @@
 
 class BodyGenContext;
 class GarbageContainer;
-class ExValue;
+class ExValue_ifs;
 class Line;
 class Body;
 
@@ -34,12 +34,12 @@ class BodyTemplate {
 
 
 
-    void push(ExValue*);
-    ExValue* pop();
-    stack<ExValue*> pop(size_t length);
+    void push(ExValue_ifs*);
+    ExValue_ifs* pop();
+    stack<ExValue_ifs*> pop(size_t length);
 
 
-    void addLine(const std::string& name, ExValue* var);
+    void addLine(const std::string& name, ExValue_ifs* var);
 
     // TODO is necessary to add returned status_ value with line ,pos end error code and string;
     void addArg(const std::string& name);
@@ -49,7 +49,7 @@ class BodyTemplate {
                   DataStructureTypeEn dsty = DataStructureTypeEn::kConstant);
 
     // TODO is necessary to add returned status_ value with line ,pos end error code and string;
-    void addReturn(const std::string& name, ExValue* var);
+    void addReturn(const std::string& name, ExValue_ifs* var);
 
     // create call
     void addCall(BodyTemplate* body);
@@ -70,8 +70,8 @@ class BodyTemplate {
 
     std::string print(const std::string& tab = "", bool DSTEna = false, bool hide_unused_lines = false) const;
     std::list<std::string> getNamesOfDefinedFunctions() const;
-    Body* genBodyByTemplate(Body* parent_body, stack<ExValue*> args, bool is_function) const;
-    untyped_t genConstRecursiveByTemplate(stack<ExValue*>& args) const;
+    Body* genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> args, bool is_function) const;
+    untyped_t genConstRecursiveByTemplate(stack<ExValue_ifs*>& args) const;
 
     std::list<BodyTemplate*> child_body_template_list_;
 
@@ -91,7 +91,7 @@ class BodyTemplate {
 
     int arg_count_ = 0;
 
-    stack<ExValue*> var_stack_;
+    stack<ExValue_ifs*> var_stack_;
     stack<Line*> lines_;
     stack<Line*> return_stack_;
 

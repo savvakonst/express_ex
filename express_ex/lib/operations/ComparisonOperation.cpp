@@ -2,8 +2,8 @@
 
 #include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
+#include "operations/ExConstValue.h"
 #include "parser/bodyTemplate.h"
-
 
 static const std::string kArComp[17] = {
     "==", "!=", " ugt ", " uge ", " ult ", " ule ",  ">",  ">=", " less ",
@@ -11,16 +11,16 @@ static const std::string kArComp[17] = {
 };
 static std::string txtCompOp(OpCodeEn op_code) { return kArComp[((int)op_code - (int)TypeOpCodeEn::comparsion)]; }
 
-ExValue* newComparisonOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
-                                OpCodeEn op_type) {
+ExValue_ifs* newComparisonOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg_a,
+                                    ExValue_ifs* arg_b, OpCodeEn op_type) {
     if (!isCompatible(arg_a, arg_b)) print_error("incompatible values");
 
     if (isConst(arg_a) && isConst(arg_b) && !isUnknownTy(target_type)) {
         if (isBool(target_type)) print_error("invalid type: Int1_jty ");
 
-        return garbage_container->add(
-            new ExValue(calcComparisonConst(op_type, target_type, arg_a->getBinaryValue(), arg_b->getBinaryValue()),
-                        TypeEn::int1_jty));
+        return garbage_container->add(new ExConstValue(
+            calcComparisonConst(op_type, target_type, arg_a->getBinaryValue(), arg_b->getBinaryValue()),
+            TypeEn::int1_jty));
     }
 
     OpCodeEn local_op_type = OpCodeEn::none_op;
@@ -56,13 +56,13 @@ ExValue* newComparisonOperation(GarbageContainer* garbage_container, TypeEn targ
     return garbage_container->add(new ComparisonOperation(local_op_type, arg_a, arg_b));
 }
 
-ExValue* newComparisonOperation(BodyTemplate* body_template, OpCodeEn op_type) {
-    ExValue* arg_b = body_template->pop();
-    ExValue* arg_a = body_template->pop();
+ExValue_ifs* newComparisonOperation(BodyTemplate* body_template, OpCodeEn op_type) {
+    ExValue_ifs* arg_b = body_template->pop();
+    ExValue_ifs* arg_a = body_template->pop();
     return newComparisonOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, op_type);
 }
 
-ComparisonOperation::ComparisonOperation(OpCodeEn op, ExValue* var_a, ExValue* var_b) : Operation_ifs() {
+ComparisonOperation::ComparisonOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b) : Operation_ifs() {
     commonSetup(op, maxDSVar(var_a, var_b));
 
     type_ = isUnknownTy(var_a) || isUnknownTy(var_b) ? TypeEn::unknown_jty : TypeEn::int1_jty;
@@ -76,7 +76,7 @@ ComparisonOperation::ComparisonOperation(OpCodeEn op, ExValue* var_a, ExValue* v
         if (i->getLevel() < level_) i->getAssignedVal(true)->setBuffered();
 }
 
-void ComparisonOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) {
+void ComparisonOperation::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) {
     visitor_stack->push(operand_[1]);
     visitor_stack->push(operand_[0]);
 }

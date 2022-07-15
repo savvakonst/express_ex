@@ -3,9 +3,11 @@
 
 #include "jit/IR_generator.h"
 
-void Operation_ifs::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) { print_error("visitEnter unknown command"); }
+void Operation_ifs::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) {
+    print_error("visitEnter unknown command");
+}
 
-void Operation_ifs::markUnusedVisitEnter(stack<ExValue*>* visitor_stack) {
+void Operation_ifs::markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
     commonMarkUnusedVisitEnter(visitor_stack);
     visitEnterSetupBuffer(visitor_stack);
     visitEnterStackUpdate(visitor_stack);

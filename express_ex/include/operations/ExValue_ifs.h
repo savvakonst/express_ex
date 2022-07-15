@@ -12,38 +12,36 @@
 using std::string;
 class IRGenerator;
 
-class ExValue : public SmallArr {
+class ExValue_ifs : public SmallArr {
    public:
-    ExValue() : SmallArr(){};
+    ExValue_ifs() : SmallArr(){};
 
     // ExValue()  = delete;
-    ExValue(TypeEn type, TypeEn time_type) : SmallArr(), type_(type), time_type_(time_type){};
+    ExValue_ifs(TypeEn type, TypeEn time_type, DataStructureTypeEn data_structure_type_)
+        : SmallArr(), type_(type), time_type_(time_type), data_structure_type_(data_structure_type_){};
 
-    ExValue(std::string text, TypeEn type);
-    ExValue(untyped_t value, TypeEn type);
-    ExValue(ExValue* arg_1, ExValue* arg_2, ExValue* arg_3);
-    ExValue(ExValue* arg_1, ExValue* arg_2);
-    explicit ExValue(ExValue* arg_1);
+    // ExValue_ifs(std::string text, TypeEn type);
+    // ExValue_ifs(untyped_t value, TypeEn type);
+    // ExValue_ifs(ExValue_ifs* arg_1, ExValue_ifs* arg_2, ExValue_ifs* arg_3);
+    // ExValue_ifs(ExValue_ifs* arg_1, ExValue_ifs* arg_2);
+    // explicit ExValue_ifs(ExValue_ifs* arg_1);
 
 
 
-    ~ExValue() override = default;
+    ~ExValue_ifs() override = default;
 
     virtual void setBuffered();
 
     void setReturned() { is_returned_ = true; }
     void setBufferLength(uint64_t central_length);
     void setBufferLength(uint64_t left, uint64_t right);
-    void setBufferLength(ExValue* var);
+    void setBufferLength(ExValue_ifs* var);
     void setLevel(int64_t var);
 
-    template <typename T>
-    T getConvTypeVal() const {
-        return *((T*)(&binary_value_));
-    }
+
     untyped_t getBinaryValue() const { return *((untyped_t*)(&binary_value_)); }
+
     double getDoubleValue() const;
-    std::string getTextValue() const { return text_value_; }
     std::string getTxtDSType() const;
     std::string getUniqueName() const { return unique_name_; }
     int64_t getUsageCounter() const { return int64_t(usage_counter_); }
@@ -74,7 +72,7 @@ class ExValue : public SmallArr {
      * object
      * @return pointer to assigned value
      */
-    virtual ExValue* getAssignedVal(bool deep = false) { return this; }
+    virtual ExValue_ifs* getAssignedVal(bool deep = false) { return this; }
 
     bool isUnused() const { return is_unused_; }
     bool isArray() const { return data_structure_type_ != DataStructureTypeEn::kConstant; }
@@ -84,43 +82,60 @@ class ExValue : public SmallArr {
 
     virtual bool isTerminalLargeArray() { return false; }
     // safe functions .external stack is used
-    void commonMarkUnusedVisitEnter(stack<ExValue*>* visitor_stack) { usage_counter_++; }
+    void commonMarkUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) { usage_counter_++; }
 
-    virtual void visitEnter(stack<ExValue*>* visitor_stack) {
+    virtual void visitEnter(stack<ExValue_ifs*>* visitor_stack) {
         visitor_stack->push(this);
         is_visited_ = true;
     }
 
-    virtual void markUnusedVisitEnter(stack<ExValue*>* visitor_stack) {
+    virtual void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
         commonMarkUnusedVisitEnter(visitor_stack);
         is_unused_ = false;
     }
 
+
+    virtual void genBodyVisitExit(BodyGenContext* context) = 0;
+    /*
     virtual void genBodyVisitExit(BodyGenContext* context) {
-        context->push(context->getGarbageContainer()->add(new ExValue(text_value_, type_)));
+        context->push(context->getGarbageContainer()->add(new ExValue_ifs(text_value_, type_)));
         is_visited_ = false;
     }
+    */
 
-    virtual void genBlocksVisitExit(TableGenContext* context) {
-        unique_name_ = "c" + std::to_string(context->getUniqueIndex());
-        context->setUint(this);
-        is_visited_ = false;
-    }
 
-    virtual void printVisitExit(PrintBodyContext* context) {
+    virtual void genBlocksVisitExit(TableGenContext* context) = 0;
+    /*
+virtual void genBlocksVisitExit(TableGenContext* context) {
+    unique_name_ = "c" + std::to_string(context->getUniqueIndex());
+    context->setUint(this);
+    is_visited_ = false;
+}
+*/
+
+    virtual void printVisitExit(PrintBodyContext* context) = 0;
+    /*virtual void printVisitExit(PrintBodyContext* context) {
         context->push(text_value_);
         is_visited_ = false;
     }
+    */
 
+    virtual void genRecursiveVisitExit(RecursiveGenContext* context) = 0;
+    /*
     virtual void genRecursiveVisitExit(RecursiveGenContext* context) {
         // context->setUint(this);  //not used. this should be removed.
         if (!context->hide_const_values_) context->setUint(this);
         is_visited_ = false;
     }
+    */
 
     virtual void calculateConstRecursive(RecursiveGenContext* context) {}
 
-    virtual std::string printUint() { return unique_name_ + "=" + text_value_; }
+
+    virtual std::string printUint() = 0;
+    // virtual std::string printUint() { return unique_name_ + "=" + text_value_; }
+
+
     virtual void setupIR(IRGenerator& builder);
 
     void calculate() override;
@@ -153,7 +168,7 @@ class ExValue : public SmallArr {
      */
     TypeEn temp_type_ = TypeEn::DEFAULT_JTY;
 
-    std::string text_value_;
+
     std::string unique_name_;
 
     int64_t length_ = 1;
@@ -179,50 +194,50 @@ class ExValue : public SmallArr {
     friend class TailCallDirectiveTemplate;
 };
 
-inline bool operator==(const ExValue* var_a, DataStructureTypeEn var_b) { return var_a->getDSType() == var_b; }
-inline bool operator==(DataStructureTypeEn var_a, const ExValue* var_b) { return var_a == var_b->getDSType(); }
-inline bool operator<(TypeEn var_a, const ExValue* var_b) { return var_a < var_b->getType(); }
-inline bool operator<(const ExValue* var_a, TypeEn var_b) { return var_a->getType() < var_b; }
+inline bool operator==(const ExValue_ifs* var_a, DataStructureTypeEn var_b) { return var_a->getDSType() == var_b; }
+inline bool operator==(DataStructureTypeEn var_a, const ExValue_ifs* var_b) { return var_a == var_b->getDSType(); }
+inline bool operator<(TypeEn var_a, const ExValue_ifs* var_b) { return var_a < var_b->getType(); }
+inline bool operator<(const ExValue_ifs* var_a, TypeEn var_b) { return var_a->getType() < var_b; }
 
-inline bool isConst(const ExValue* var_a) { return var_a == DataStructureTypeEn::kConstant; }
-inline bool isVariable(const ExValue* var_a) { return var_a == DataStructureTypeEn::kVariable; }
-inline bool isSmallArr(const ExValue* var_a) { return var_a == DataStructureTypeEn::kSmallArr; }
-inline bool isLargeArr(const ExValue* var_a) { return var_a == DataStructureTypeEn::kLargeArr; }
-inline bool isSimilar(const ExValue* var_a, const ExValue* var_b) {
+inline bool isConst(const ExValue_ifs* var_a) { return var_a == DataStructureTypeEn::kConstant; }
+inline bool isVariable(const ExValue_ifs* var_a) { return var_a == DataStructureTypeEn::kVariable; }
+inline bool isSmallArr(const ExValue_ifs* var_a) { return var_a == DataStructureTypeEn::kSmallArr; }
+inline bool isLargeArr(const ExValue_ifs* var_a) { return var_a == DataStructureTypeEn::kLargeArr; }
+inline bool isSimilar(const ExValue_ifs* var_a, const ExValue_ifs* var_b) {
     return (var_a->getDSType() == var_b->getDSType() && (var_a->getLength() == var_b->getLength()));
 }
-inline bool isCompatible(const ExValue* var_a, const ExValue* var_b) {
+inline bool isCompatible(const ExValue_ifs* var_a, const ExValue_ifs* var_b) {
     return isConst(var_a) || isConst(var_b) || isVariable(var_a) || isVariable(var_b) || isSimilar(var_a, var_b);
 }
 
-inline bool isUnknownTy(const ExValue* var) { return isUnknownTy(var->getType()); }
-inline bool isFloating(const ExValue* var) { return isFloating(var->getType()); }
-inline bool isInteger(const ExValue* var) { return isInteger(var->getType()); }
-inline bool isUInteger(const ExValue* var) { return isUInteger(var->getType()); }
-inline bool isBool(const ExValue* var) { return isBool(var->getType()); }
+inline bool isUnknownTy(const ExValue_ifs* var) { return isUnknownTy(var->getType()); }
+inline bool isFloating(const ExValue_ifs* var) { return isFloating(var->getType()); }
+inline bool isInteger(const ExValue_ifs* var) { return isInteger(var->getType()); }
+inline bool isUInteger(const ExValue_ifs* var) { return isUInteger(var->getType()); }
+inline bool isBool(const ExValue_ifs* var) { return isBool(var->getType()); }
 
-inline ExValue* maxTypeVar(ExValue* var_a, ExValue* var_b) {
+inline ExValue_ifs* maxTypeVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
     return var_a->getType() < var_b->getType() ? var_b : var_a;
 }
-inline ExValue* maxTempTypeVar(ExValue* var_a, ExValue* var_b) {
+inline ExValue_ifs* maxTempTypeVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
     return var_a->getTempType() < var_b->getTempType() ? var_b : var_a;
 }
-inline ExValue* minTypeVar(ExValue* var_a, ExValue* var_b) {
+inline ExValue_ifs* minTypeVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
     return var_a->getType() < var_b->getType() ? var_a : var_b;
 }
-inline ExValue* maxTypeVar(std::vector<ExValue*> args) {
-    ExValue* var = args[0];
+inline ExValue_ifs* maxTypeVar(std::vector<ExValue_ifs*> args) {
+    ExValue_ifs* var = args[0];
     for (auto i : args) var = maxTypeVar(i, var);
     return var;
 }  // unsafe function .zero size array check missing
 
-inline ExValue* maxDSVar(ExValue* var_a, ExValue* var_b) {
+inline ExValue_ifs* maxDSVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
     return var_a->getDSType() < var_b->getDSType() ? var_b : var_a;
 }
-inline ExValue* maxLevelVar(ExValue* var_a, ExValue* var_b) {
+inline ExValue_ifs* maxLevelVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
     return var_a->getLevel() < var_b->getLevel() ? var_b : var_a;
 }
-inline ExValue* minLevelVar(ExValue* var_a, ExValue* var_b) {
+inline ExValue_ifs* minLevelVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
     return var_a->getLevel() < var_b->getLevel() ? var_a : var_b;
 }
 

@@ -3,17 +3,17 @@
 
 #include <vector>
 
-#include "ExValue.h"
+#include "ExValue_ifs.h"
 #include "common/types_jty.h"
 
 // extern bool g_gpu_acceleration_enable;
 
-class Operation_ifs : public ExValue {
+class Operation_ifs : public ExValue_ifs {
    public:
     // constructor of arithmetic, logic or comparision operation
-    Operation_ifs() : ExValue() {}
+    Operation_ifs() : ExValue_ifs() {}
 
-    void commonSetup(OpCodeEn op, const ExValue* var) {
+    void commonSetup(OpCodeEn op, const ExValue_ifs* var) {
         op_code_ = op;
         data_structure_type_ = var->getDSType();
         length_ = var->getLength();
@@ -29,7 +29,7 @@ class Operation_ifs : public ExValue {
     }
 
 
-    virtual void visitEnterSetupBuffer(stack<ExValue*>* visitor_stack) {
+    virtual void visitEnterSetupBuffer(stack<ExValue_ifs*>* visitor_stack) {
         for (auto i : operand_) {
             i->setBufferLength(this);
         }
@@ -39,20 +39,20 @@ class Operation_ifs : public ExValue {
      * it pushes operation operands/arguments to visitor_stack,
      * it is called by visitEnter()
      */
-    virtual void visitEnterStackUpdate(stack<ExValue*>* visitor_stack);
+    virtual void visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack);
 
     /**
      * it sets is_visited_ to true push themself to visitor_stack and than
      * call visitEnterStackUpdate() which pushes operation operands to visitor_stack
      * is_visited_ variable must be set to false at the begin of function
      */
-    void visitEnter(stack<ExValue*>* visitor_stack) override {
+    void visitEnter(stack<ExValue_ifs*>* visitor_stack) override {
         is_visited_ = true;
         visitor_stack->push(this);
         visitEnterStackUpdate(visitor_stack);
     }
 
-    void markUnusedVisitEnter(stack<ExValue*>* visitor_stack) override;
+    void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
 
 
     /**
@@ -77,7 +77,7 @@ class Operation_ifs : public ExValue {
         is_visited_ = false;
     }
 
-    ExValue* getAssignedVal(bool deep = false) override { return this; }
+    ExValue_ifs* getAssignedVal(bool deep = false) override { return this; }
 
     std::string printUint() override {
         print_error("printUint unknown command .");
@@ -99,8 +99,8 @@ class Operation_ifs : public ExValue {
      */
     void finishSetupIR(IRGenerator& builder);
 
-    std::vector<ExValue*> operand_;
-    std::vector<ExValue*> simplified_operand_;
+    std::vector<ExValue_ifs*> operand_;
+    std::vector<ExValue_ifs*> simplified_operand_;
 
     OpCodeEn op_code_ = OpCodeEn::none_op;
 

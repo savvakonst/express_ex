@@ -1,20 +1,20 @@
 #include "TypeCastOperation.h"
 
 #include "jit/IR_generator.h"
+#include "operations/ExConstValue.h"
 #include "parser/bodyTemplate.h"
-
 static const std::string ar_t_conv_[10] = {"trunc", "zext",   "sext",   "fptrunc", "fpext",
                                            "fptoi", "fptosi", "uitofp", "sitofp",  "common_cast"};
 static std::string txtTypeCastOp(OpCodeEn op_code) { return ar_t_conv_[((int)op_code - (int)TypeOpCodeEn::type_conv)]; }
 
 
 
-ExValue* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg) {
+ExValue_ifs* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg) {
     const TypeEn arg_type = arg->getType();
-    ExValue* ret_val = nullptr;
+    ExValue_ifs* ret_val = nullptr;
 
     if (!isUnknownTy(arg_type) && isConst(arg)) {
-        ret_val = new ExValue(calcTypeConvConst(target_type, arg_type, arg->getBinaryValue()), target_type);
+        ret_val = new ExConstValue(calcTypeConvConst(target_type, arg_type, arg->getBinaryValue()), target_type);
         return garbage_container->add(ret_val);
     }
 
@@ -40,14 +40,14 @@ ExValue* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, 
     return garbage_container->add(ret_val);
 }
 
-ExValue* newTypeConvOp(BodyTemplate* body_template, TypeEn target_type) {
+ExValue_ifs* newTypeConvOp(BodyTemplate* body_template, TypeEn target_type) {
     auto arg = body_template->pop();
     return newTypeConvOp(body_template->getGarbageContainer(), target_type, arg);
 }
 
 
 
-TypeCastOperation::TypeCastOperation(OpCodeEn op, ExValue* var, TypeEn target_type) : Operation_ifs() {
+TypeCastOperation::TypeCastOperation(OpCodeEn op, ExValue_ifs* var, TypeEn target_type) : Operation_ifs() {
     commonSetup(op, var);
     type_ = target_type;
 
@@ -56,7 +56,7 @@ TypeCastOperation::TypeCastOperation(OpCodeEn op, ExValue* var, TypeEn target_ty
     operand_.push_back(var);
 }
 
-void TypeCastOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) { visitor_stack->push(operand_[0]); }
+void TypeCastOperation::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) { visitor_stack->push(operand_[0]); }
 
 void TypeCastOperation::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;

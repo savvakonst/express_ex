@@ -5,11 +5,11 @@
 #include "parser/bodyTemplate.h"
 
 
-ExValue* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExValue*>& args, OpCodeEn op_type,
-                            bool is_template) {
+ExValue_ifs* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExValue_ifs*>& args, OpCodeEn op_type,
+                                bool is_template) {
     if (args.empty()) print_error("SmallArray is empty");
 
-    ExValue* var = args[0];
+    ExValue_ifs* var = args[0];
 
     bool all_is_const = true;
     for (auto i : args) {
@@ -27,21 +27,21 @@ ExValue* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExValue*>
     if (is_template)
         return garbage_container->add(new SmallArrayDefOperation(OpCodeEn::smallArrayDef, args, target_type));
 
-    stack<ExValue*> typed_args;
+    stack<ExValue_ifs*> typed_args;
     for (auto i : args) typed_args.push(newTypeConvOp(garbage_container, target_type, i));
 
     return garbage_container->add(new SmallArrayDefOperation(OpCodeEn::smallArrayDef, typed_args, target_type));
 }
 
-ExValue* newRangeOp(BodyTemplate* body_template, size_t arg_count) {
+ExValue_ifs* newRangeOp(BodyTemplate* body_template, size_t arg_count) {
     if ((arg_count < 1) || (arg_count > 3)) print_error("invalid signature of range(..) function");
     body_template->is_operator_ = true;
-    stack<ExValue*> v = body_template->pop(arg_count);
+    stack<ExValue_ifs*> v = body_template->pop(arg_count);
     return newSmallArrayDefOp(body_template->getGarbageContainer(), v, OpCodeEn::smallArrayRange);
 }
 
-ExValue* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count) {
-    stack<ExValue*> op;
+ExValue_ifs* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count) {
+    stack<ExValue_ifs*> op;
     body_template->is_operator_ = true;
     for (size_t i = 0; i < arg_count; i++) op.push(body_template->pop());
     std::reverse(op.begin(), op.end());
@@ -49,7 +49,7 @@ ExValue* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count) {
 }
 
 
-void SmallArrayDefOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) {
+void SmallArrayDefOperation::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) {
     for (auto i = operand_.rbegin(); i != operand_.rend(); i++) visitor_stack->push(*i);
 }
 
@@ -60,11 +60,11 @@ void SmallArrayDefOperation::genBodyVisitExit(BodyGenContext* context) {
     g_pos = pos_;
 
     size_t size = operand_.size();
-    stack<ExValue*> op;
+    stack<ExValue_ifs*> op;
     for (size_t i = 0; i < size; i++) op.push(context->pop());
     std::reverse(op.begin(), op.end());
 
-    ExValue* ret = newSmallArrayDefOp(garbage_container, op, op_code_);
+    ExValue_ifs* ret = newSmallArrayDefOp(garbage_container, op, op_code_);
 
     context->push(ret);
 }
@@ -73,6 +73,7 @@ void SmallArrayDefOperation::calculateConstRecursive(RecursiveGenContext* contex
     print_IR_error("calculateConstRecursive SmallArrayDefOperation invalid command .");
     Operation_ifs::calculateConstRecursive(context);
 }
+
 
 void SmallArrayDefOperation::printVisitExit(PrintBodyContext* context) {
     is_visited_ = false;
@@ -152,7 +153,7 @@ void SmallArrayDefOperation::smallArrayGen() {
 #undef OP
 };
 
-void SmallArrayDefOperation::smallArray(ExValue* arg1, ExValue* arg2, ExValue* arg3) {
+void SmallArrayDefOperation::smallArray(ExValue_ifs* arg1, ExValue_ifs* arg2, ExValue_ifs* arg3) {
     if ((isConst(arg1) && isConst(arg2) && isConst(arg3) && isInteger(arg3))) {
         start_ = arg1->getDoubleValue();
         stop_ = arg2->getDoubleValue();
@@ -166,7 +167,7 @@ void SmallArrayDefOperation::smallArray(ExValue* arg1, ExValue* arg2, ExValue* a
     }
 };
 
-void SmallArrayDefOperation::smallArray(ExValue* arg1, ExValue* arg2) {
+void SmallArrayDefOperation::smallArray(ExValue_ifs* arg1, ExValue_ifs* arg2) {
     if (isConst(arg1) && isConst(arg2) && isInteger(arg1) && isInteger(arg2)) {
         start_ = arg1->getDoubleValue();
         stop_ = arg2->getDoubleValue();
@@ -178,7 +179,7 @@ void SmallArrayDefOperation::smallArray(ExValue* arg1, ExValue* arg2) {
     }
 };
 
-void SmallArrayDefOperation::smallArray(ExValue* arg1) {
+void SmallArrayDefOperation::smallArray(ExValue_ifs* arg1) {
     if (isConst(arg1) && isInteger(arg1)) {
         start_ = 0;
         stop_ = (double)arg1->getBinaryValue();

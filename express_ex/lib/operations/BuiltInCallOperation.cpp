@@ -2,6 +2,7 @@
 
 #include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
+#include "operations/ExConstValue.h"
 #include "parser/bodyTemplate.h"
 
 const std::string ar_built_in_[6] = {"log", "log2", "log10", "cos", "sin", "exp"};
@@ -10,9 +11,9 @@ static std::string txtBuiltInOp(OpCodeEn op_code) {
     return ar_built_in_[((int)op_code - (int)TypeOpCodeEn::builtInFunc)];
 }
 
-ExValue* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg,
-                                 OpCodeEn op_type) {
-    ExValue* var = arg;
+ExValue_ifs* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg,
+                                     OpCodeEn op_type) {
+    ExValue_ifs* var = arg;
     if (TypeEn::float_jty > target_type) {
         var = newTypeConvOp(garbage_container, TypeEn::double_jty, arg);
         target_type = var->getType();
@@ -22,20 +23,22 @@ ExValue* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn tar
         if (!isFloating(target_type)) print_error("type is not float");
 
         return garbage_container->add(
-            new ExValue(calcBuiltInFuncConst(op_type, target_type, var->getBinaryValue()), target_type));
+            new ExConstValue(calcBuiltInFuncConst(op_type, target_type, var->getBinaryValue()), target_type));
     }
 
     return garbage_container->add(new BuiltInCallOperation(op_type, var, target_type));
 }
 
-ExValue* newBuiltInFuncOperation(BodyTemplate* body_template, OpCodeEn op_type) {
+ExValue_ifs* newBuiltInFuncOperation(BodyTemplate* body_template, OpCodeEn op_type) {
     auto* arg = body_template->pop();
     auto target_type = TypeEn::unknown_jty;
     return newBuiltInFuncOperation(body_template->getGarbageContainer(), target_type, arg, op_type);
 }
 
 
-void BuiltInCallOperation::visitEnterStackUpdate(stack<ExValue*>* visitor_stack) { visitor_stack->push(operand_[0]); }
+void BuiltInCallOperation::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) {
+    visitor_stack->push(operand_[0]);
+}
 
 void BuiltInCallOperation::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;
@@ -49,7 +52,7 @@ void BuiltInCallOperation::genBodyVisitExit(BodyGenContext* context) {
     }
     TypeEn target_type = op1->getType();
 
-    ExValue* ret = newBuiltInFuncOperation(garbage_container, target_type, op1, op_code_);
+    ExValue_ifs* ret = newBuiltInFuncOperation(garbage_container, target_type, op1, op_code_);
 
     context->push(ret);
 }

@@ -123,3 +123,8 @@ void TailCallDirective::setupIR(IRGenerator& builder) {
     }
 }
 
+void TailCallDirective::printVisitExit(PrintBodyContext* context) {
+    std::string ret = "tailCall( " + printArgs(context) + ")";
+    context->push(ret);
+    is_visited_ = false;
+}

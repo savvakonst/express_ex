@@ -34,11 +34,7 @@ class TailCallDirective : public CallI_ifs {
 
     void setupIR(IRGenerator& builder) override;
 
-    void printVisitExit(PrintBodyContext* context) override {
-        std::string ret = "tailCall( " + printArgs(context) + ")";
-        context->push(ret);
-        is_visited_ = false;
-    }
+    void printVisitExit(PrintBodyContext* context) override;
 
     ExValue_ifs* getAssignedVal(bool deep = false) override { return this; }
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kTailCall; }

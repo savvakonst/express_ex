@@ -6,7 +6,7 @@
 
 #include "CallRecursiveFunction.h"
 #include "operations/ExConstValue.h"
-
+#include "operations/operations.h"
 
 CallRecursiveFunctionTemplate::CallRecursiveFunctionTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args)
     : CallTemplate_ifs() {
@@ -71,7 +71,18 @@ void CallRecursiveFunctionTemplate::calculateConstRecursive(RecursiveGenContext 
 
 void TailCallDirectiveTemplate::genBodyVisitExit(BodyGenContext *context) {
     stack<ExValue_ifs *> a;
-    for (auto &i : args_) a.push(context->pop());
+
+    std::list<TypeEn> signature;
+    for (auto &i : context->getNamespace())
+        if (i->isArg())
+            signature.push_front(i->getType());
+
+
+    for (auto &type : signature) {
+        auto val = newTypeConvOp(context->getGarbageContainer(), type, context->pop());
+        context->getGarbageContainer()->add(val);
+        a.push(val);
+    };
 
     context->push(context->getGarbageContainer()->add(new TailCallDirective(a)));
     is_visited_ = false;
@@ -113,9 +124,9 @@ void CallTemplate::genBodyVisitExit(BodyGenContext *context) {
     stack<ExValue_ifs *> a;
     for (auto &i : args_) a.push(context->pop());
 
-    Body *body = body_template_->genBodyByTemplate(context->current_body_, a, context->is_pure_function_);
+    Body *body = body_template_->genBodyByTemplate(context->current_body_, a, context->is_function_);
 
-    if (context->is_pure_function_) {
+    if (context->is_function_) {
         context->setPureFunctionBody(body);
         context->push(context->getGarbageContainer()->add(new CallRecursiveFunction(body, a)));
     } else {

@@ -87,7 +87,6 @@ class TailCallDirectiveTemplate : public CallTemplate_ifs {
     void calculateConstRecursive(RecursiveGenContext* context) override;
 
 
-
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kTailCall; }
 };
 

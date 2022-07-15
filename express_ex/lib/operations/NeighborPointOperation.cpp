@@ -9,8 +9,13 @@
 #include "jit/IR_generator.h"
 #include "parser/bodyTemplate.h"
 
-ExValue_ifs *newNeighborPointOperation(GarbageContainer *garbage_container, TypeEn target_type, ExValue_ifs *arg_a,
-                                       ExValue_ifs *arg_b, int64_t shift, OpCodeEn op_type) {
+ExValue_ifs *newNeighborPointOperation(GarbageContainer *garbage_container, ExValue_ifs *arg, ExValue_ifs *shift) {
+    if (!(isConst(shift) && isInteger(shift))) {
+        print_error("neighbor point index is not integer");
+        return nullptr;
+    }
+    // NeighborPointOperation()
+
     return nullptr;
 }
 

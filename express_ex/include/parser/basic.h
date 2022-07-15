@@ -84,11 +84,11 @@ class PrintBodyContext {
 // body generation context from Template
 class BodyGenContext {
    public:
-    BodyGenContext(Body* current_body, bool is_pure_function)
-        : is_pure_function_(is_pure_function),
+    BodyGenContext(Body* current_body, bool is_function)
+        : is_function_(is_function),
           garbage_container_(current_body->getGarbageContainer()),
           current_body_(current_body),
-          namespace_ptr_(&current_body->lines_) {}
+          namespace_ptr_(current_body->lines_) {}
 
     ~BodyGenContext() = default;
 
@@ -96,7 +96,7 @@ class BodyGenContext {
 
     inline ExValue_ifs* pop() { return var_stack_.pop(); }
 
-    inline std::vector<Line*>& getNamespace() const { return *namespace_ptr_; }
+    inline const std::vector<Line*>& getNamespace() const { return namespace_ptr_; }
 
     inline GarbageContainer* getGarbageContainer() const { return garbage_container_; }
 
@@ -113,7 +113,7 @@ class BodyGenContext {
 
     inline const Body* getCurrentBody() const { return current_body_; }
 
-    const bool is_pure_function_;
+    const bool is_function_;
 
    private:
     GarbageContainer* garbage_container_ = nullptr;
@@ -122,7 +122,7 @@ class BodyGenContext {
 
     Body* current_body_ = nullptr;
 
-    std::vector<Line*>* namespace_ptr_ = nullptr;
+    const std::vector<Line*>& namespace_ptr_;
 
     friend CallRecursiveFunctionTemplate;
     friend CallTemplate;

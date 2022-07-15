@@ -61,7 +61,6 @@ set(LIBRARY_SOURCES
         lib/operations/StoreToBufferOperation.cpp
         lib/operations/TypeCastOperation.cpp
         lib/operations/NeighborPointOperation.h
-        lib/operations/ExConstArray.cpp
 
 
         #lib/jit/CL_generator.cpp
@@ -104,7 +103,6 @@ set(LIBRARY_HEADERS
         include/operations/ExValue_ifs.h
         include/operations/operations.h
         include/operations/ExConstValue.h
-        include/operations/ExConstArray.h
         include/operations/Operation_ifs.h
 
         lib/operations/FunctionCall/CallRecursiveFunction.h

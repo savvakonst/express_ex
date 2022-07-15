@@ -85,7 +85,7 @@ set(LIBRARY_HEADERS
 
 
         include/parser/KexParser.h
-        include/parser/ExValue.h
+        include/operations/ExValue.h
         include/parser/basic.h
         include/parser/body.h
         include/parser/bodyTemplate.h
@@ -124,7 +124,7 @@ set(LIBRARY_HEADERS
         include/jit/orcjit.h
         include/jit/table.h
         include/ifs/ExStreamIfs.h
-        )
+        include/operations/ExValue_ifs.h)
 
 set(LLVM_COMPONENTS
         Core

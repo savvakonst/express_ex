@@ -172,6 +172,8 @@ class SmallArr {
 
     virtual ~SmallArr() { delete buffer_ptr_; }
 
+
+    // replace it to separated class
     void genRange(){};
 
     void loadFromFile(const std::string& filename){};

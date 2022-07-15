@@ -3,8 +3,8 @@
 
 #include <vector>
 
+#include "ExValue.h"
 #include "common/types_jty.h"
-#include "parser/ExValue.h"
 
 // extern bool g_gpu_acceleration_enable;
 
@@ -27,7 +27,7 @@ class Operation_ifs : public ExValue {
     NodeTypeEn getNodeType() const override {
         return contain_rec_call_ ? NodeTypeEn::kTailCallSelect : NodeTypeEn::kOperation;
     }
-    
+
 
     virtual void visitEnterSetupBuffer(stack<ExValue*>* visitor_stack) {
         for (auto i : operand_) {

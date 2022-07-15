@@ -4,10 +4,10 @@
 #include <iostream>
 #include <string>
 
-#include "basic.h"
 #include "common/common.h"
 #include "ifs/parameterIO.h"
 #include "jit/table.h"
+#include "parser/basic.h"
 
 using std::string;
 class IRGenerator;
@@ -17,9 +17,9 @@ class ExValue : public SmallArr {
     ExValue() : SmallArr(){};
     ExValue(std::string text, TypeEn type);
     ExValue(untyped_t value, TypeEn type);
-    ExValue(ExValue* arg1, ExValue* arg2, ExValue* arg3);
-    ExValue(ExValue* arg1, ExValue* arg2);
-    explicit ExValue(ExValue* arg1);
+    ExValue(ExValue* arg_1, ExValue* arg_2, ExValue* arg_3);
+    ExValue(ExValue* arg_1, ExValue* arg_2);
+    explicit ExValue(ExValue* arg_1);
 
 
 
@@ -135,7 +135,7 @@ class ExValue : public SmallArr {
 
     DataStructureTypeEn data_structure_type_ = DataStructureTypeEn::kConstant;
 
-    const TypeEn type_ = TypeEn::DEFAULT_JTY;
+    TypeEn type_ = TypeEn::DEFAULT_JTY;
     TypeEn temp_type_ = TypeEn::DEFAULT_JTY;
 
     std::string text_value_;

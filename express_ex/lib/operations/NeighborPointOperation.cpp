@@ -13,7 +13,9 @@ ExValue *newNeighborPointOperation(GarbageContainer *garbage_container, TypeEn t
                                    ExValue *arg_b, int64_t shift, OpCodeEn op_type) {
     return nullptr;
 }
+
 NeighborPointOperation::NeighborPointOperation(ExValue *large_arr, ExValue *small_arr, int64_t shift) {}
+
 void NeighborPointOperation::visitEnterSetupBuffer(stack<ExValue *> *visitor_stack) {
     Operation_ifs::visitEnterSetupBuffer(visitor_stack);
 }
@@ -24,16 +26,12 @@ void NeighborPointOperation::visitEnterStackUpdate(stack<ExValue *> *visitor_sta
 
 void NeighborPointOperation::genBodyVisitExit(BodyGenContext *context) { Operation_ifs::genBodyVisitExit(context); }
 
-void NeighborPointOperation::calculateConstRecursive(RecursiveGenContext *context) {
-    Operation_ifs::calculateConstRecursive(context);
-}
+void NeighborPointOperation::calculateConstRecursive(RecursiveGenContext *context) {}
 
 void NeighborPointOperation::printVisitExit(PrintBodyContext *context) { Operation_ifs::printVisitExit(context); }
 
 std::string NeighborPointOperation::printUint() { return Operation_ifs::printUint(); }
 
-void NeighborPointOperation::setupIR(IRGenerator &builder) {
-    finishSetupIR();
-}
+void NeighborPointOperation::setupIR(IRGenerator &builder) { finishSetupIR(builder); }
 
-void NeighborPointOperation::calculate() { Operation_ifs::calculate(); }
+void NeighborPointOperation::calculate() {}

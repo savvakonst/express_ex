@@ -4,13 +4,13 @@
 #include <iostream>
 #include <vector>
 
-#include "ExValue.h"
 #include "ifs/AsyncParameter.h"
 #include "ifs/SyncParameter.h"
+#include "operations/ExValue.h"
 
 class Line : public ExValue {
    public:
-    Line(const std::string& name, ExValue* var) : ExValue(), type_(var->getType()) {
+    Line(const std::string& name, ExValue* var) : ExValue() {
         names_.push_back(name);
         name_ = name;
         if (isConst(var)) {

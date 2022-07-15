@@ -72,13 +72,12 @@ class BodyTemplate {
 
     std::list<BodyTemplate*> child_body_template_list_;
 
-
     /**
      * if any operator occurs in corresponding ASG unit or any
      * child BodyTemplate objects marked as operator
      * this field is set to true, It is necessary to determine
-     * that function which is rebresenting by current ASG unit is pure
-     * and it is possible to use talil call or anything else...
+     * that function which is representing by current ASG unit is pure
+     * and it is possible to use tail call or anything else...
      */
     bool is_operator_ = false;
 

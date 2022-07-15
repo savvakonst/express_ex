@@ -24,7 +24,7 @@ KEXParser::KEXParser(const std::string& str, bool is_file_name,
 
 KEXParser::~KEXParser() { delete listener_; }
 
-BodyTemplate* KEXParser::getActivBody() { return listener_->activ_body_; }
+BodyTemplate* KEXParser::getActivBody() { return listener_->current_body_; }
 
 void KEXParser::init(std::string str, bool is_file_name) {
     std::string content;

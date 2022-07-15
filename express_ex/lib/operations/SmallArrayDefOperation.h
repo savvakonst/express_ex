@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Operation_ifs.h"
+#include "operations/Operation_ifs.h"
 
 ExValue* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExValue*>& args, OpCodeEn op_type,
                             bool is_template = false);

@@ -1,7 +1,7 @@
-#include "operations/ComparisonOperation.h"
+#include "ComparisonOperation.h"
 
+#include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
-#include "operations/TypeCastOperation.h"
 #include "parser/bodyTemplate.h"
 
 

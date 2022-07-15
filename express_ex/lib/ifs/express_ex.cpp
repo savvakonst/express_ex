@@ -31,7 +31,7 @@ bool Express_ex::parseText(const std::string &str, bool is_file_name,
     try {
         kex_parser_ = new KEXParser(str, is_file_name, lib_str_map);
 
-        body_template_ = kex_parser_->getActivBody();
+        body_template_ = kex_parser_->getCurrentBody();
         // body_template_->getParameterLinkNames(); TODO try to remove
 
         if (info_stream_) {

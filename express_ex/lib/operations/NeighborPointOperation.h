@@ -1,18 +1,24 @@
-#ifndef CONVOLVE_OPERATION_H
-#define CONVOLVE_OPERATION_H
+//
+// Created by SVK on 15.07.2022.
+//
+
+#ifndef EXPRESS_EX_ENV_NEIGHBOR_POINT_OPERATION_H
+#define EXPRESS_EX_ENV_NEIGHBOR_POINT_OPERATION_H
+
 
 #include <vector>
 
-#include "Operation_ifs.h"
+#include "operations/Operation_ifs.h"
 
-ExValue* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
-                              int64_t shift, OpCodeEn op_type);
+ExValue* newNeighborPointOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a,
+                                   ExValue* arg_b, int64_t shift, OpCodeEn op_type);
 
-class ConvolveOperation : public Operation_ifs {
+
+class NeighborPointOperation : public Operation_ifs {
    public:
-    ConvolveOperation(ExValue* large_arr, ExValue* small_arr, int64_t shift);
+    NeighborPointOperation(ExValue* large_arr, ExValue* small_arr, int64_t shift);
 
-    ~ConvolveOperation() override = default;
+    ~NeighborPointOperation() override = default;
 
     void visitEnterSetupBuffer(stack<ExValue*>* visitor_stack) override;
     void visitEnterStackUpdate(stack<ExValue*>* visitor_stack) override;
@@ -32,4 +38,5 @@ class ConvolveOperation : public Operation_ifs {
     int64_t shift_parameter_ = 0;
 };
 
-#endif
+
+#endif  // EXPRESS_EX_ENV_NEIGHBOR_POINT_OPERATION_H

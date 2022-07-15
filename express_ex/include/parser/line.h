@@ -10,7 +10,7 @@
 
 class Line : public ExValue {
    public:
-    Line(const std::string& name, ExValue* var) : ExValue() {
+    Line(const std::string& name, ExValue* var) : ExValue(), type_(var->getType()) {
         names_.push_back(name);
         name_ = name;
         if (isConst(var)) {

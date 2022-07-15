@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Operation_ifs.h"
+#include "operations/Operation_ifs.h"
 
 ExValue* newIntegrateOperation(GarbageContainer* garbage_container, ExValue* value);
 

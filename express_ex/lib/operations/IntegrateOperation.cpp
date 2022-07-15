@@ -1,8 +1,8 @@
-#include "operations/IntegrateOperation.h"
+#include "IntegrateOperation.h"
 
+#include "ArithmeticOperation.h"
+#include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
-#include "operations/ArithmeticOperation.h"
-#include "operations/TypeCastOperation.h"
 #include "parser/bodyTemplate.h"
 
 
@@ -84,4 +84,6 @@ void IntegrateOperation::setupIR(IRGenerator& builder) {
     finishSetupIR(builder);
 }
 
-void IntegrateOperation::calculate() {}
+void IntegrateOperation::calculate() {
+
+}

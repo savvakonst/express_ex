@@ -24,10 +24,10 @@ class KEXParser {
 
     TreeShapeListener* getListener() { return listener_; }
 
-    BodyTemplate* getActivBody();
+    BodyTemplate* getCurrentBody();
 
    private:
-    void init(std::string str, bool is_file_name = true);
+    void init(const std::string& str, bool is_file_name = true);
 
     TreeShapeListener* listener_ = nullptr;
 };

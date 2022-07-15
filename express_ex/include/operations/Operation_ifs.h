@@ -27,8 +27,7 @@ class Operation_ifs : public ExValue {
     NodeTypeEn getNodeType() const override {
         return contain_rec_call_ ? NodeTypeEn::kTailCallSelect : NodeTypeEn::kOperation;
     }
-
-    // safe functions .external stack is used
+    
 
     virtual void visitEnterSetupBuffer(stack<ExValue*>* visitor_stack) {
         for (auto i : operand_) {
@@ -36,8 +35,17 @@ class Operation_ifs : public ExValue {
         }
     }
 
+    /**
+     * it pushes operation operands/arguments to visitor_stack,
+     * it is called by visitEnter()
+     */
     virtual void visitEnterStackUpdate(stack<ExValue*>* visitor_stack);
 
+    /**
+     * it sets is_visited_ to true push themself to visitor_stack and than
+     * call visitEnterStackUpdate() which pushes operation operands to visitor_stack
+     * is_visited_ variable must be set to false at the begin of function
+     */
     void visitEnter(stack<ExValue*>* visitor_stack) override {
         is_visited_ = true;
         visitor_stack->push(this);
@@ -46,6 +54,12 @@ class Operation_ifs : public ExValue {
 
     void markUnusedVisitEnter(stack<ExValue*>* visitor_stack) override;
 
+
+    /**
+     * is used for body generation (type inference, const expression execution, etc.).
+     * is_visited_ variable must be set to false at the begin of function
+     * @param context
+     */
     void genBodyVisitExit(BodyGenContext* context) override {
         print_error("visitExit unknown command. In line : " + std::to_string(context->getNamespace().size()));
     }

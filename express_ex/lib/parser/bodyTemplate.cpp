@@ -4,11 +4,11 @@
 #include <utility>
 
 #include "../operations/FunctionCall/call.h"
+#include "operations/operations.h"
 #include "parser/ExValue.h"
 #include "parser/body.h"
 #include "parser/callTemplate.h"
 #include "parser/line.h"
-#include "parser/operations.h"
 
 
 
@@ -184,7 +184,7 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue*> args, b
     auto arg = args.begin();
     for (const auto& value : lines_) {
         if (value->isArg()) {
-            if (name_ == "main") {
+            if (isTopBody()) {
                 body->addParam((Line*)*(arg));
                 ++arg;
 

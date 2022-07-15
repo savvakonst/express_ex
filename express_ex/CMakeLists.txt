@@ -39,16 +39,16 @@ set(LIBRARY_SOURCES
         lib/KexParser/errors.cpp
 
 
-        lib/operations/FunctionCall/CallRecursiveFunction.cpp
         lib/parser/basic.cpp
         lib/parser/body.cpp
         lib/parser/bodyTemplate.cpp
-        lib/operations/FunctionCall/call.cpp
+
         lib/parser/line.cpp
-        lib/parser/newOp.cpp
         lib/parser/ExValue.cpp
         #lib/parser/operations.cpp
 
+        lib/operations/FunctionCall/CallRecursiveFunction.cpp
+        lib/operations/FunctionCall/call.cpp
 
         lib/operations/ArithmeticOperation.cpp
         lib/operations/BuiltInCallOperation.cpp
@@ -60,13 +60,15 @@ set(LIBRARY_SOURCES
         lib/operations/SmallArrayDefOperation.cpp
         lib/operations/StoreToBufferOperation.cpp
         lib/operations/TypeCastOperation.cpp
-
+        lib/operations/NeighborPointOperation.h
 
         #lib/jit/CL_generator.cpp
         lib/jit/IR_generator.cpp
         lib/jit/getWin32Intrinsinc.cpp
         lib/jit/table.cpp
-        lib/operations/FunctionCall/CallTemplate.cpp)
+        lib/operations/FunctionCall/CallTemplate.cpp
+        lib/operations/NeighborPointOperation.cpp
+        )
 
 
 set(LIBRARY_HEADERS
@@ -80,7 +82,6 @@ set(LIBRARY_HEADERS
         include/ifs/ExStream.h
 
         lib/KexParser/treeShapeListener.h
-        lib/operations/FunctionCall/CallRecursiveFunction.h
 
 
         include/parser/KexParser.h
@@ -88,29 +89,32 @@ set(LIBRARY_HEADERS
         include/parser/basic.h
         include/parser/body.h
         include/parser/bodyTemplate.h
-        lib/operations/FunctionCall/call.h
+
         include/parser/callTemplate.h
         include/common/common.h
         include/parser/defWarningIgnore.h
         include/parser/line.h
-        include/parser/operations.h
+        include/operations/operations.h
         include/parser/parsingException.h
 
 
         include/common/types_jty.h
         include/common/undefWarningIgnore.h
 
-
-        include/operations/ArithmeticOperation.h
-        include/operations/BuiltInCallOperation.h
-        include/operations/ComparisonOperation.h
-        include/operations/ConvolveOperation.h
-        include/operations/IntegrateOperation.h
+        lib/operations/FunctionCall/CallRecursiveFunction.h
+        lib/operations/ArithmeticOperation.h
+        lib/operations/BuiltInCallOperation.h
+        lib/operations/ComparisonOperation.h
+        lib/operations/ConvolveOperation.h
+        lib/operations/IntegrateOperation.h
         include/operations/Operation_ifs.h
-        include/operations/SelectOperation.h
-        include/operations/SmallArrayDefOperation.h
-        include/operations/StoreToBufferOperation.h
-        include/operations/TypeCastOperation.h
+        lib/operations/SelectOperation.h
+        lib/operations/SmallArrayDefOperation.h
+        lib/operations/StoreToBufferOperation.h
+        lib/operations/TypeCastOperation.h
+        lib/operations/FunctionCall/call.h
+        lib/operations/NeighborPointOperation.h
+
 
         #include/jit/CL_generator.h
         include/jit/IR_generator.h

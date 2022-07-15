@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Operation_ifs.h"
+#include "operations/Operation_ifs.h"
 
 ExValue* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg,
                                  OpCodeEn op_type);

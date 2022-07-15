@@ -27,8 +27,11 @@ class BodyTemplate {
     BodyTemplate(std::string name, BodyTemplate* parent_body_template);
     ~BodyTemplate();
 
-    bool isRetStackFull() const { return (name_ != "main") ? !return_stack_.empty() : false; }
+
+    bool isTopBody() const { return name_ == "main"; }
+    bool isRetStackFull() const { return !return_stack_.empty() && !isTopBody(); }
     bool isRetStackEmpty() const { return return_stack_.empty(); }
+
 
 
     void push(ExValue*);

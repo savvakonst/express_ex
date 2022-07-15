@@ -1,7 +1,7 @@
 #include "treeShapeListener.h"
 
 #include "ifs/ExStreamIfs.h"
-#include "parser/operations.h"
+#include "operations/operations.h"
 
 PosInText g_pos;
 
@@ -89,8 +89,14 @@ void TreeShapeListener::exitAssignRetParam(EGrammarParser::AssignRetParamContext
 }
 
 void TreeShapeListener::exitNeighborhoodPoint(EGrammarParser::NeighborhoodPointContext* ctx) {
+    setPos(ctx);
+    if (current_body_->isTopBody())
+        print_error("it is impossible to take neighbor point in top scope, only inside functions");
+
+
+    // ctx->ID()
+
     //  TODO: implement
-    EGrammarBaseListener::exitNeighborhoodPoint(ctx);
 }
 
 void TreeShapeListener::exitConst(EGrammarParser::ConstContext* ctx) {
@@ -247,17 +253,6 @@ void TreeShapeListener::exitInv(EGrammarParser::InvContext* ctx) {
 void TreeShapeListener::exitCallIntegrate(EGrammarParser::CallIntegrateContext* ctx) {
     setPos(ctx);
     current_body_->push(newIntegrateOperation(current_body_));
-}
-
-
-
-BodyTemplate* TreeShapeListener::getMainBody() {
-    BodyTemplate *next_parent = current_body_, *parent;
-    do {
-        parent = next_parent;
-        next_parent = next_parent->getParent();
-    } while (next_parent);
-    return parent;
 }
 
 

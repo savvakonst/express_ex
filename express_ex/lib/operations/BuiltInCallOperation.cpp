@@ -1,7 +1,7 @@
-#include "operations/BuiltInCallOperation.h"
+#include "BuiltInCallOperation.h"
 
+#include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
-#include "operations/TypeCastOperation.h"
 #include "parser/bodyTemplate.h"
 
 const std::string ar_built_in_[6] = {"log", "log2", "log10", "cos", "sin", "exp"};

@@ -135,7 +135,7 @@ class ExValue : public SmallArr {
 
     DataStructureTypeEn data_structure_type_ = DataStructureTypeEn::kConstant;
 
-    TypeEn type_ = TypeEn::DEFAULT_JTY;
+    const TypeEn type_ = TypeEn::DEFAULT_JTY;
     TypeEn temp_type_ = TypeEn::DEFAULT_JTY;
 
     std::string text_value_;

@@ -1,7 +1,7 @@
-#include "operations/SelectOperation.h"
+#include "SelectOperation.h"
 
+#include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
-#include "operations/TypeCastOperation.h"
 #include "parser/bodyTemplate.h"
 
 ExValue* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,

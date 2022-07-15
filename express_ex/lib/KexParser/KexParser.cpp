@@ -15,37 +15,36 @@ KEXParser::KEXParser(BodyTemplate* body, const std::string& str, bool is_file_na
 KEXParser::KEXParser(const std::string& str, bool is_file_name,
                      const std::list<std::pair<std::string, bool /*is_file_name*/>>& lib_str_map) {
     listener_ = new TreeShapeListener();
-    // auto body = listener_->activ_body_;
 
-    for (auto i : lib_str_map) init(i.first, i.second);
+    for (const auto& i : lib_str_map) init(i.first, i.second);
 
     init(str, is_file_name);
 }
 
 KEXParser::~KEXParser() { delete listener_; }
 
-BodyTemplate* KEXParser::getActivBody() { return listener_->current_body_; }
+BodyTemplate* KEXParser::getCurrentBody() { return listener_->current_body_; }
 
-void KEXParser::init(std::string str, bool is_file_name) {
+void KEXParser::init(const std::string& str, bool is_file_name) {
     std::string content;
     if (is_file_name) {
         std::ifstream ifs(str);
         content = std::string((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
     } else content = str;
 
-    ANTLRInputStream* input = new ANTLRInputStream(content + "\n");
-    EGrammarLexer* lexer = new EGrammarLexer(input);
-    CommonTokenStream* tokens = new CommonTokenStream(lexer);
-    EGrammarParser* parser = new EGrammarParser(tokens);
+    auto* input = new ANTLRInputStream(content + "\n");
+    auto* lexer = new EGrammarLexer(input);
+    auto* tokens = new CommonTokenStream(lexer);
+    auto* parser = new EGrammarParser(tokens);
 
     parser->removeErrorListeners();
-    EErrorListener* error_listner_ = new EErrorListener;
-    parser->addErrorListener(error_listner_);
+    auto* error_listener = new EErrorListener;
+    parser->addErrorListener(error_listener);
 
     tree::ParseTree* tree = parser->start();
     tree::ParseTreeWalker::DEFAULT.walk(listener_, tree);
 
-    delete error_listner_;
+    delete error_listener;
     delete parser;
     delete tokens;
     delete lexer;

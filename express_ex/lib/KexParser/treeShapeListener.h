@@ -150,8 +150,7 @@ class TreeShapeListener : public EGrammarBaseListener {
 
     /////////////////////////
 
-
-    BodyTemplate* getMainBody();
+    
     BodyTemplate* current_body_ = nullptr;
 
    private:

@@ -1,8 +1,8 @@
-#include "operations/ConvolveOperation.h"
+#include "ConvolveOperation.h"
 
+#include "ArithmeticOperation.h"
+#include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
-#include "operations/ArithmeticOperation.h"
-#include "operations/TypeCastOperation.h"
 #include "parser/bodyTemplate.h"
 
 ExValue* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,

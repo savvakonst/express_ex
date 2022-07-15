@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Operation_ifs.h"
+#include "operations/Operation_ifs.h"
 
 ExValue* newComparisonOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
                                 OpCodeEn op_type);

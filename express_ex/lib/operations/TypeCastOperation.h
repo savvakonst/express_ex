@@ -1,17 +1,17 @@
-#ifndef ARITHMETIC_OPERATION_H
-#define ARITHMETIC_OPERATION_H
+#ifndef TYPE_CAST_OPERATION_H
+#define TYPE_CAST_OPERATION_H
 
 #include <vector>
 
-#include "Operation_ifs.h"
+#include "operations/Operation_ifs.h"
 
-ExValue* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg_a, ExValue* arg_b,
-                                OpCodeEn op_type);
+ExValue* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue* arg);
 
-class ArithmeticOperation : public Operation_ifs {
+class TypeCastOperation : public Operation_ifs {
    public:
-    // constructor of arithmetic, logic or comparision operation
-    ArithmeticOperation(OpCodeEn op, ExValue* var_a, ExValue* var_b);
+    TypeCastOperation(OpCodeEn op, ExValue* var, TypeEn target_type);
+
+    ~TypeCastOperation() override = default;
 
     // void visitEnterSetupBuffer(stack<Value*>* visitor_stack) override;
     void visitEnterStackUpdate(stack<ExValue*>* visitor_stack) override;
@@ -19,7 +19,7 @@ class ArithmeticOperation : public Operation_ifs {
     void genBodyVisitExit(BodyGenContext* context) override;
     void calculateConstRecursive(RecursiveGenContext* context) override;
     void printVisitExit(PrintBodyContext* context) override;
-    // void genBlocksVisitExit(TableGenContext* context) override;
+    void genBlocksVisitExit(TableGenContext* context) override;
 
     std::string printUint() override;
     void setupIR(IRGenerator& builder) override;

@@ -10,7 +10,7 @@
 
 #include "operations/Operation_ifs.h"
 
-ExValue_ifs* newNeighborPointOperation(GarbageContainer* garbage_container, ExValue_ifs* arg_a, int64_t shift);
+ExValue_ifs* newNeighborPointOperation(GarbageContainer* garbage_container, ExValue_ifs* arg, ExValue_ifs* shift);
 
 
 class NeighborPointOperation : public Operation_ifs {

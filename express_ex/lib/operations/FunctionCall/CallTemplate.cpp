@@ -2,7 +2,7 @@
 // Created by SVK on 13.07.2022.
 //
 
-#include "parser/callTemplate.h"
+#include "operations/callTemplate.h"
 
 #include "CallRecursiveFunction.h"
 #include "operations/ExConstValue.h"
@@ -74,8 +74,7 @@ void TailCallDirectiveTemplate::genBodyVisitExit(BodyGenContext *context) {
 
     std::list<TypeEn> signature;
     for (auto &i : context->getNamespace())
-        if (i->isArg())
-            signature.push_front(i->getType());
+        if (i->isArg()) signature.push_front(i->getType());
 
 
     for (auto &type : signature) {

@@ -92,7 +92,7 @@ set(LIBRARY_HEADERS
         include/parser/basic.h
         include/parser/body.h
         include/parser/bodyTemplate.h
-        include/parser/callTemplate.h
+        include/operations/callTemplate.h
         include/parser/defWarningIgnore.h
         include/parser/line.h
         include/parser/parsingException.h

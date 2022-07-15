@@ -8,10 +8,21 @@ x = param("#1_A01__1")
 #z = loop_example(x)
 #
 
+#function loop_const(i):
+#    return (i>10)? i :i+1
+#end
+
 function loop_example(ref, a, i):
-    return (i<10)? a :loop_example((ref),double(a+ref),i+1)
+    return (i>10)? a :loop_example((ref),double(a+ref),i+1)
 end
-z = loop_example(x,x,1)
+
+function loop_const(ref, a, i):
+    return (i>10)? a : loop_const((ref),a+ref,i+1)
+end
+
+
+h = loop_const( 6, 4, 1)
+z = loop_example( x, x, h)
 
 
 #function loop_example(arg_1, arg_2):

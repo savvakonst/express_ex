@@ -43,6 +43,8 @@ ExConstValue::ExConstValue(const std::string &text, TypeEn type)
     }
 }
 
+
+
 static std::string getTxtConstValue(untyped_t binary_value, TypeEn type) {
     std::string text_value;
 #define OP(T) text_value = std::to_string(*((T *)(&binary_value)))
@@ -57,6 +59,14 @@ ExConstValue::ExConstValue(untyped_t binary_value, TypeEn type)
     binary_value_ = binary_value;
 };
 
+
+double ExConstValue::getDoubleValue() const {
+    double ret = 0.0;
+#define OP(T) ret = (double)(*((T *)(&binary_value_)))
+    SWITCH_TYPE_OP(type_, print_error("getDoubleValue error");)
+#undef OP
+    return ret;
+}
 
 void ExConstValue::setupIR(IRGenerator &builder) { IR_value_ = builder.createConst(binary_value_, type_, ""); }
 

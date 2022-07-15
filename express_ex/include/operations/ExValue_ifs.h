@@ -16,16 +16,9 @@ class ExValue_ifs : public SmallArr {
    public:
     ExValue_ifs() : SmallArr(){};
 
-    // ExValue()  = delete;
+
     ExValue_ifs(TypeEn type, TypeEn time_type, DataStructureTypeEn data_structure_type_)
         : SmallArr(), type_(type), time_type_(time_type), data_structure_type_(data_structure_type_){};
-
-    // ExValue_ifs(std::string text, TypeEn type);
-    // ExValue_ifs(untyped_t value, TypeEn type);
-    // ExValue_ifs(ExValue_ifs* arg_1, ExValue_ifs* arg_2, ExValue_ifs* arg_3);
-    // ExValue_ifs(ExValue_ifs* arg_1, ExValue_ifs* arg_2);
-    // explicit ExValue_ifs(ExValue_ifs* arg_1);
-
 
 
     ~ExValue_ifs() override = default;
@@ -38,13 +31,11 @@ class ExValue_ifs : public SmallArr {
     void setBufferLength(ExValue_ifs* var);
     void setLevel(int64_t var);
 
-
     untyped_t getBinaryValue() const { return *((untyped_t*)(&binary_value_)); }
 
-    double getDoubleValue() const;
     std::string getTxtDSType() const;
     std::string getUniqueName() const { return unique_name_; }
-    int64_t getUsageCounter() const { return int64_t(usage_counter_); }
+
     int64_t getLength() const { return length_; }
     int64_t getLevel() const { return level_; }
     int64_t getDecimation() const { return decimation_; }
@@ -55,8 +46,10 @@ class ExValue_ifs : public SmallArr {
     bool isSync() const { return time_type_ == TypeEn::unknown_jty; }
     TypeEn getTimeType() const { return time_type_; }
     TypeEn getType() const { return type_; }
-    TypeEn getTempType() const { return isUnknownTy(type_) ? temp_type_ : type_; }
     DataStructureTypeEn getDSType() const { return data_structure_type_; }
+
+    TypeEn getTempType() const { return isUnknownTy(type_) ? temp_type_ : type_; }
+
     ParameterIfs* getParameter() const { return parameter_; }
 
     llvm::Value* getIRValue(IRGenerator& builder, int64_t parent_level);
@@ -80,67 +73,30 @@ class ExValue_ifs : public SmallArr {
     bool isBuffered() const { return is_buffered_; }
     bool isReturned() const { return is_returned_; }
 
-    virtual bool isTerminalLargeArray() { return false; }
-    // safe functions .external stack is used
     void commonMarkUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) { usage_counter_++; }
 
-    virtual void visitEnter(stack<ExValue_ifs*>* visitor_stack) {
-        visitor_stack->push(this);
-        is_visited_ = true;
-    }
+    virtual void visitEnter(stack<ExValue_ifs*>* visitor_stack) = 0;
 
     virtual void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
         commonMarkUnusedVisitEnter(visitor_stack);
         is_unused_ = false;
     }
 
-
     virtual void genBodyVisitExit(BodyGenContext* context) = 0;
-    /*
-    virtual void genBodyVisitExit(BodyGenContext* context) {
-        context->push(context->getGarbageContainer()->add(new ExValue_ifs(text_value_, type_)));
-        is_visited_ = false;
-    }
-    */
-
 
     virtual void genBlocksVisitExit(TableGenContext* context) = 0;
-    /*
-virtual void genBlocksVisitExit(TableGenContext* context) {
-    unique_name_ = "c" + std::to_string(context->getUniqueIndex());
-    context->setUint(this);
-    is_visited_ = false;
-}
-*/
 
     virtual void printVisitExit(PrintBodyContext* context) = 0;
-    /*virtual void printVisitExit(PrintBodyContext* context) {
-        context->push(text_value_);
-        is_visited_ = false;
-    }
-    */
 
     virtual void genRecursiveVisitExit(RecursiveGenContext* context) = 0;
-    /*
-    virtual void genRecursiveVisitExit(RecursiveGenContext* context) {
-        // context->setUint(this);  //not used. this should be removed.
-        if (!context->hide_const_values_) context->setUint(this);
-        is_visited_ = false;
-    }
-    */
 
     virtual void calculateConstRecursive(RecursiveGenContext* context) {}
 
-
     virtual std::string printUint() = 0;
-    // virtual std::string printUint() { return unique_name_ + "=" + text_value_; }
 
-
-    virtual void setupIR(IRGenerator& builder);
+    virtual void setupIR(IRGenerator& builder) = 0;
 
     void calculate() override;
-
-    std::string printSmallArray();
 
    protected:
     std::string checkBuffer(std::string arg) const {
@@ -156,7 +112,6 @@ virtual void genBlocksVisitExit(TableGenContext* context) {
     bool is_initialized_ = false;
 
     DataStructureTypeEn data_structure_type_ = DataStructureTypeEn::kConstant;
-
 
 
     TypeEn time_type_ = TypeEn::DEFAULT_JTY;

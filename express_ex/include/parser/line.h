@@ -68,7 +68,6 @@ class Line : public ExValue_ifs {
 
     bool isArg() const;
     bool checkName(const std::string&) const;
-    bool isTerminalLargeArray() override { return isArg(); }
 
     std::string getName(bool only_name = false) const { return only_name ? name_ : checkBuffer(name_); }
     std::string getLinkName() const { return link_name_; }

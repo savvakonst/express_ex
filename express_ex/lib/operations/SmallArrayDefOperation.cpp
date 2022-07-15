@@ -2,8 +2,8 @@
 
 #include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
+#include "operations/ExConstValue.h"
 #include "parser/bodyTemplate.h"
-
 
 ExValue_ifs* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExValue_ifs*>& args, OpCodeEn op_type,
                                 bool is_template) {
@@ -153,10 +153,12 @@ void SmallArrayDefOperation::smallArrayGen() {
 #undef OP
 };
 
+
+
 void SmallArrayDefOperation::smallArray(ExValue_ifs* arg1, ExValue_ifs* arg2, ExValue_ifs* arg3) {
     if ((isConst(arg1) && isConst(arg2) && isConst(arg3) && isInteger(arg3))) {
-        start_ = arg1->getDoubleValue();
-        stop_ = arg2->getDoubleValue();
+        start_ = ((ExConstValue*)arg1)->getDoubleValue();
+        stop_ = ((ExConstValue*)arg2)->getDoubleValue();
 
         type_ = TypeEn::double_jty;
         length_ = arg3->getBinaryValue();
@@ -169,8 +171,8 @@ void SmallArrayDefOperation::smallArray(ExValue_ifs* arg1, ExValue_ifs* arg2, Ex
 
 void SmallArrayDefOperation::smallArray(ExValue_ifs* arg1, ExValue_ifs* arg2) {
     if (isConst(arg1) && isConst(arg2) && isInteger(arg1) && isInteger(arg2)) {
-        start_ = arg1->getDoubleValue();
-        stop_ = arg2->getDoubleValue();
+        start_ = ((ExConstValue*)arg1)->getDoubleValue();
+        stop_ = ((ExConstValue*)arg2)->getDoubleValue();
 
         type_ = TypeEn::int64_jty;
         length_ = (uint64_t)(stop_ - start_);

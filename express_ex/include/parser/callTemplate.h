@@ -43,7 +43,7 @@ class CallTemplate_ifs : public ExValue_ifs {
         is_visited_ = false;
     }
 
-
+    void setupIR(IRGenerator& builder) override { print_error("setupIR can't be used with templates"); }
 
    protected:
     std::string printArgs(PrintBodyContext* context) {

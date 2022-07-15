@@ -18,6 +18,7 @@ class ExConstValue : public ExValue_ifs {
         return *((T*)(&binary_value_));
     }
 
+    double getDoubleValue() const;
 
     void visitEnter(stack<ExValue_ifs*>* visitor_stack) override;
 

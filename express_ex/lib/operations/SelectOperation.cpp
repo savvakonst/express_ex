@@ -17,6 +17,13 @@ ExValue_ifs* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type
         return arg_c;
     }
 
+    if (rec_call && !isUnknownTy(target_type)) {  // it is a dirty hack
+        if (arg_b->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall) target_type = arg_c->getType();
+        else {
+            target_type = arg_b->getType();
+        }
+    }
+
     return garbage_container->add(new SelectOperation(OpCodeEn::select, i1, arg_b, arg_c, target_type, rec_call));
 }
 
@@ -38,18 +45,14 @@ ExValue_ifs* newSelectOp(BodyTemplate* body_template) {
 
 SelectOperation::SelectOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b, ExValue_ifs* var_c,
                                  TypeEn target_type, bool rec_call)
-    : Operation_ifs() {
-    commonSetup(op, maxDSVar(var_a, var_b));
-    type_ = target_type;
+    : Operation_ifs(target_type, TypeEn::unknown_jty, op, maxDSVar(var_a, var_b)) {
+    // commonSetup(op, maxDSVar(var_a, var_b));
+    //  type_ = target_type;
+
     level_ = maxLevelVar(maxLevelVar(var_a, var_b), var_c)->getLevel();
     contain_rec_call_ = rec_call;
 
     operand_.push_back(var_a);
-
-    if (rec_call && !isUnknownTy(type_))  // it is a dirty hack
-        if (var_b->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall) type_ = var_c->getType();
-        else type_ = var_b->getType();
-
     operand_.push_back(var_b);
     operand_.push_back(var_c);
 

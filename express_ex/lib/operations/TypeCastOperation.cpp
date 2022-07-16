@@ -47,9 +47,11 @@ ExValue_ifs* newTypeConvOp(BodyTemplate* body_template, TypeEn target_type) {
 
 
 
-TypeCastOperation::TypeCastOperation(OpCodeEn op, ExValue_ifs* var, TypeEn target_type) : Operation_ifs() {
-    commonSetup(op, var);
-    type_ = target_type;
+TypeCastOperation::TypeCastOperation(OpCodeEn op, ExValue_ifs* var, TypeEn target_type)
+    : Operation_ifs(type_, TypeEn::unknown_jty, op, var) {
+    // TODO remove comment
+    // commonSetup(op, var);
+    // type_ = target_type;
 
     level_ = var->getLevel();
 

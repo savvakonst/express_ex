@@ -20,14 +20,16 @@ class Operation_ifs : public ExValue_ifs {
     Operation_ifs(TypeEn ty, TypeEn time_ty, OpCodeEn op, const ExValue_ifs* var)
         : ExValue_ifs(ty, time_ty, var->getDSType(), var->getLength()), op_code_(op) {}
 
+
     /**
      * initialize op_code_, data_structure_type_ and length_ fields
-     */
+
     void commonSetup(OpCodeEn op, const ExValue_ifs* var) {
         op_code_ = op;
         data_structure_type_ = var->getDSType();
         length_ = var->getLength();
     }
+    */
 
     virtual int64_t getSliceParameter() const {
         print_error("getSliceParameter");

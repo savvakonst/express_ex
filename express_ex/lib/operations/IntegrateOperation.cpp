@@ -18,9 +18,11 @@ ExValue_ifs* newIntegrateOperation(BodyTemplate* body_template) {
 
 
 
-IntegrateOperation::IntegrateOperation(ExValue_ifs* var) : Operation_ifs() {
-    commonSetup(OpCodeEn::integrate, var);
-    type_ = var->getType();
+IntegrateOperation::IntegrateOperation(ExValue_ifs* var)
+    : Operation_ifs(type_, TypeEn::unknown_jty, OpCodeEn::integrate, var) {
+    // TODO: to remove
+    // commonSetup(OpCodeEn::integrate, var);
+    // type_ = var->getType();
     level_ = var->getLevel();
     operand_.push_back(var);
 }

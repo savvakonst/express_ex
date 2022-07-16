@@ -115,11 +115,9 @@ class ExValue_ifs : public SmallArr {
     bool is_returned_ = false;
     bool is_initialized_ = false;
 
-    DataStructureTypeEn data_structure_type_ = DataStructureTypeEn::kConstant;
-
-
-    TypeEn time_type_ = TypeEn::unknown_jty;
-    TypeEn type_ = TypeEn::unknown_jty;
+    const DataStructureTypeEn data_structure_type_ = DataStructureTypeEn::kConstant;
+    const TypeEn time_type_ = TypeEn::unknown_jty;
+    const TypeEn type_ = TypeEn::unknown_jty;
 
     /**
      * it is used to const value calculation
@@ -130,13 +128,11 @@ class ExValue_ifs : public SmallArr {
 
     std::string unique_name_;
 
-
-
     /**
      * for synchronous kLargeArr it represents frequency of data,
      * otherwise it represents length of data
      */
-    length_t length_ = 1;
+    const length_t length_ = 1;
     int64_t decimation_ = 0;
     int64_t level_ = 0;
 
@@ -148,7 +144,6 @@ class ExValue_ifs : public SmallArr {
     untyped_t binary_value_ = 0;
     uint64_t usage_counter_ = 0;
 
-    uint64_t buffer_num_ = 0;  // unused
 
     llvm::Value* IR_value_ = nullptr;
     llvm::Value* IR_loaded_buffer_value_ = nullptr;

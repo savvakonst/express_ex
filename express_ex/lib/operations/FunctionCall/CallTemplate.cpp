@@ -64,7 +64,7 @@ void CallRecursiveFunctionTemplate::genBodyVisitExit(BodyGenContext *context) {
 }
 void CallRecursiveFunctionTemplate::calculateConstRecursive(RecursiveGenContext *context) {
     binary_value_ = body_template_->genConstRecursiveByTemplate(args_);  // it might be worth changing the order
-    type_ = body_template_->getRet().front()->getTempType();
+    temp_type_ = body_template_->getRet().front()->getTempType();
     is_visited_ = false;
 }
 
@@ -140,6 +140,6 @@ void CallTemplate::genBodyVisitExit(BodyGenContext *context) {
 
 void CallTemplate::calculateConstRecursive(RecursiveGenContext *context) {
     binary_value_ = body_template_->genConstRecursiveByTemplate(args_);  // it might be worth changing the order
-    type_ = body_template_->getRet().front()->getTempType();
+    temp_type_ = body_template_->getRet().front()->getTempType();
     is_visited_ = false;
 }

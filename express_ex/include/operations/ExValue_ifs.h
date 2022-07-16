@@ -33,8 +33,7 @@ class ExValue_ifs : public SmallArr {
     void setBufferLength(ExValue_ifs* var);
 
     untyped_t getBinaryValue() const { return *((untyped_t*)(&binary_value_)); }
-
-    std::string getTxtDSType() const;
+    
     std::string getUniqueName() const { return unique_name_; }
 
     length_t getLength() const { return length_; }
@@ -45,10 +44,6 @@ class ExValue_ifs : public SmallArr {
     uint64_t getRightBufferLen() const { return right_buffer_length_; }
 
     bool isSync() const { return time_type_ == TypeEn::unknown_jty; }
-    TypeEn getTimeType() const { return time_type_; }
-    // TypeEn getType() const { return type_; }
-    DataStructureTypeEn getDSType() const { return ds_ty_; }
-
     TypeEn getTempType() const { return isUnknownTy(type_) ? temp_type_ : type_; }
 
     ParameterIfs* getParameter() const { return parameter_; }
@@ -163,7 +158,7 @@ class ExValue_ifs : public SmallArr {
     friend class TailCallDirectiveTemplate;
 };
 
-inline bool operator==(const ExValue_ifs* var_a, DataStructureTypeEn var_b) { return var_a->getDSType() == var_b; }
+inline bool operator==(const ExValue_ifs* var_a, DataStructureTypeEn var_b) { return var_a->ds_ty_ == var_b; }
 inline bool operator==(DataStructureTypeEn var_a, const ExValue_ifs* var_b) { return var_a == var_b->ds_ty_; }
 inline bool operator<(TypeEn var_a, const ExValue_ifs* var_b) { return var_a < var_b->type_; }
 inline bool operator<(const ExValue_ifs* var_a, TypeEn var_b) { return var_a->type_ < var_b; }
@@ -173,7 +168,7 @@ inline bool isVariable(const ExValue_ifs* var_a) { return var_a == DataStructure
 inline bool isSmallArr(const ExValue_ifs* var_a) { return var_a == DataStructureTypeEn::kSmallArr; }
 inline bool isLargeArr(const ExValue_ifs* var_a) { return var_a == DataStructureTypeEn::kLargeArr; }
 inline bool isSimilar(const ExValue_ifs* var_a, const ExValue_ifs* var_b) {
-    return (var_a->getDSType() == var_b->getDSType() && (var_a->getLength() == var_b->getLength()));
+    return (var_a->ds_ty_ == var_b->ds_ty_ && (var_a->getLength() == var_b->getLength()));
 }
 inline bool isCompatible(const ExValue_ifs* var_a, const ExValue_ifs* var_b) {
     return isConst(var_a) || isConst(var_b) || isVariable(var_a) || isVariable(var_b) || isSimilar(var_a, var_b);
@@ -201,7 +196,7 @@ inline ExValue_ifs* maxTypeVar(std::vector<ExValue_ifs*> args) {
 }  // unsafe function .zero size array check missing
 
 inline ExValue_ifs* maxDSVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
-    return var_a->getDSType() < var_b->getDSType() ? var_b : var_a;
+    return var_a->ds_ty_ < var_b->ds_ty_ ? var_b : var_a;
 }
 inline ExValue_ifs* maxLevelVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
     return var_a->getLevel() < var_b->getLevel() ? var_b : var_a;

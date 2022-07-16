@@ -41,7 +41,7 @@ ExValue_ifs* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_o
 
 ConvolveOperation::ConvolveOperation(ExValue_ifs* large_arr, ExValue_ifs* small_arr, int64_t shift)
     : Operation_ifs(
-          large_arr->type_, TypeEn::unknown_jty, large_arr->getDSType(),
+          large_arr->type_, TypeEn::unknown_jty, large_arr->ds_ty_,
           isLargeArr(large_arr) ? large_arr->getLength() : maxInt(large_arr->getLength(), small_arr->getLength()),
           OpCodeEn::convolve) {
     // TODO remove comment
@@ -53,7 +53,7 @@ ConvolveOperation::ConvolveOperation(ExValue_ifs* large_arr, ExValue_ifs* small_
     //  small_arr->getLength());
 
 
-    if (large_arr->getDSType() < small_arr->getDSType())
+    if (large_arr->ds_ty_ < small_arr->ds_ty_)
         print_error(
             "ConvolveOperation::ConvolveOperation:  you nust ensure that the ds_ty_ of large_arr is more "
             "or equal small_arr ds_ty_. \n"

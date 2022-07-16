@@ -14,7 +14,7 @@ class IRGenerator;
 class CallI_ifs : public ExValue_ifs {
    public:
     CallI_ifs(TypeEn ty, TypeEn time_ty, const ExValue_ifs* var)
-        : ExValue_ifs(ty, time_ty, var->getDSType(), var->getLength()) {}
+        : ExValue_ifs(ty, time_ty, var->ds_ty_, var->getLength()) {}
 
     CallI_ifs(TypeEn ty, TypeEn time_ty, DataStructureTypeEn ds_ty, length_t length)
         : ExValue_ifs(ty, time_ty, ds_ty, length) {}

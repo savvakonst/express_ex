@@ -12,7 +12,7 @@ class CallTemplate_ifs : public ExValue_ifs {
         : ExValue_ifs(ty, time_ty, ds_ty, length) {}
 
     CallTemplate_ifs(TypeEn ty, TypeEn time_ty, const ExValue_ifs* var)
-        : ExValue_ifs(ty, time_ty, var->getDSType(), var->getLength()) {}
+        : ExValue_ifs(ty, time_ty, var->ds_ty_, var->getLength()) {}
 
     ~CallTemplate_ifs() override = default;
 

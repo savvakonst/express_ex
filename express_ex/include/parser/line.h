@@ -13,7 +13,7 @@ class Line : public ExValue_ifs {
     Line(const std::string& name, ExValue_ifs* var)
         : ExValue_ifs(var->type_,                  //
                       TypeEn::unknown_jty,         //
-                      var->getDSType(),            //
+                      var->ds_ty_,                 //
                       length_t(var->getLength()))  //
     {
         // TODO remove comment

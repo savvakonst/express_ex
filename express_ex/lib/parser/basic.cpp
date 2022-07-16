@@ -15,7 +15,7 @@ void PrintBodyContext::createArg(Line* value) {
 }
 
 void PrintBodyContext::createLine(Line* value) {
-    auto DST_postfix = DST_ena_ ? "." + value->getTxtDSType() : "";
+    auto DST_postfix = DST_ena_ ? "." + toString(value->ds_ty_) : "";
 
     if (!hide_unused_lines_ || !value->isUnused()) {
         const std::string txt_line = "  " + tab_ + value->getName() + DST_postfix + "=" + pop();
@@ -30,7 +30,7 @@ void PrintBodyContext::createLine(Line* value) {
 }
 
 void PrintBodyContext::createReturn(Line* value) {
-    auto DST_postfix = DST_ena_ ? "." + value->getTxtDSType() : "";
+    auto DST_postfix = DST_ena_ ? "." + toString(value->ds_ty_) : "";
 
     auto txt_line = "  " + tab_ + value->getName() + DST_postfix + "  " + pop();
     auto txt_shifts = std::to_string(value->getLeftBufferLen()) + " : " + std::to_string(value->getRightBufferLen());

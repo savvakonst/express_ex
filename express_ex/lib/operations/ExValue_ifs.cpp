@@ -26,7 +26,7 @@ void ExValue_ifs::setBufferLength(ExValue_ifs* var) {
     }
 }
 
-std::string ExValue_ifs::getTxtDSType() const { return toString(ds_ty_); }
+
 
 bool ExValue_ifs::isVisited() const { return is_visited_; }
 

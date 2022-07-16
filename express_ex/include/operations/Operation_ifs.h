@@ -18,7 +18,7 @@ class Operation_ifs : public ExValue_ifs {
      * initialize op_code_, ds_ty_ and length_ fields
      */
     Operation_ifs(TypeEn ty, TypeEn time_ty, OpCodeEn op, const ExValue_ifs* var)
-        : ExValue_ifs(ty, time_ty, var->getDSType(), var->getLength()), op_code_(op) {}
+        : ExValue_ifs(ty, time_ty, var->ds_ty_, var->getLength()), op_code_(op) {}
 
 
     /**

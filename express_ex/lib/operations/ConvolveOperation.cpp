@@ -41,23 +41,22 @@ ExValue_ifs* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_o
 
 ConvolveOperation::ConvolveOperation(ExValue_ifs* large_arr, ExValue_ifs* small_arr, int64_t shift)
     : Operation_ifs(
-          large_arr->getType(), TypeEn::unknown_jty, large_arr->getDSType(),
+          large_arr->type_, TypeEn::unknown_jty, large_arr->getDSType(),
           isLargeArr(large_arr) ? large_arr->getLength() : maxInt(large_arr->getLength(), small_arr->getLength()),
           OpCodeEn::convolve) {
-
-    //TODO remove comment
-    // commonSetup(OpCodeEn::convolve, maxDSVar(large_arr, small_arr));
-    // type_ = large_arr->getType();
-    //  if (data_structure_type_ == DataStructureTypeEn::kLargeArr) length_ = large_arr->getLength();
-    //  else length_ = maxInt(large_arr->getLength(), small_arr->getLength());
-    // length_ = isLargeArr(large_arr) ? large_arr->getLength() : maxInt(large_arr->getLength(),
-    // small_arr->getLength());
+    // TODO remove comment
+    //  commonSetup(OpCodeEn::convolve, maxDSVar(large_arr, small_arr));
+    //  type_ = large_arr->getType();
+    //   if (ds_ty_ == DataStructureTypeEn::kLargeArr) length_ = large_arr->getLength();
+    //   else length_ = maxInt(large_arr->getLength(), small_arr->getLength());
+    //  length_ = isLargeArr(large_arr) ? large_arr->getLength() : maxInt(large_arr->getLength(),
+    //  small_arr->getLength());
 
 
     if (large_arr->getDSType() < small_arr->getDSType())
         print_error(
-            "ConvolveOperation::ConvolveOperation:  you nust ensure that the data_structure_type_ of large_arr is more "
-            "or equal small_arr data_structure_type_. \n"
+            "ConvolveOperation::ConvolveOperation:  you nust ensure that the ds_ty_ of large_arr is more "
+            "or equal small_arr ds_ty_. \n"
             "Please let the developers know about this issue.");
 
     level_ = large_arr->getLevel() + 1;
@@ -96,7 +95,7 @@ void ConvolveOperation::genBodyVisitExit(BodyGenContext* context) {
 
     auto op2 = context->pop();
     auto op1 = context->pop();
-    const TypeEn target_type = maxTypeVar(op1, op2)->getType();
+    const TypeEn target_type = maxTypeVar(op1, op2)->type_;
     auto ret = newConvolveOperation(garbage_container, target_type, newTypeConvOp(garbage_container, target_type, op1),
                                     newTypeConvOp(garbage_container, target_type, op2), shift_parameter_, op_code_);
 

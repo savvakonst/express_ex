@@ -16,7 +16,7 @@ ExValue_ifs* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn
     ExValue_ifs* var = arg;
     if (TypeEn::float_jty > target_type) {
         var = newTypeConvOp(garbage_container, TypeEn::double_jty, arg);
-        target_type = var->getType();
+        target_type = var->type_;
     }
 
     if (isConst(var) && !isUnknownTy(target_type)) {
@@ -47,10 +47,10 @@ void BuiltInCallOperation::genBodyVisitExit(BodyGenContext* context) {
     g_pos = pos_;
 
     auto* op1 = context->pop();
-    if (TypeEn::float_jty > op1->getType()) {
+    if (TypeEn::float_jty > op1->type_) {
         op1 = newTypeConvOp(garbage_container, TypeEn::float_jty, op1);
     }
-    TypeEn target_type = op1->getType();
+    TypeEn target_type = op1->type_;
 
     ExValue_ifs* ret = newBuiltInFuncOperation(garbage_container, target_type, op1, op_code_);
 

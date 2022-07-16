@@ -8,7 +8,7 @@
 /// //////////////////////////////////////////////////////////////////////////////////////////////////
 
 Call::Call(Body* body, const stack<ExValue_ifs*>& args)
-    : CallI_ifs(body->getRet().front()->getType(), TypeEn::unknown_jty, body->getRet().front()) {
+    : CallI_ifs(body->getRet().front()->type_, TypeEn::unknown_jty, body->getRet().front()) {
     body_ = body;
     args_ = args;
 
@@ -17,7 +17,7 @@ Call::Call(Body* body, const stack<ExValue_ifs*>& args)
 
     level_ = ret->getLevel();
     // type_ = ret->getType();
-    // data_structure_type_ = ret->getDSType();
+    // ds_ty_ = ret->getDSType();
     // length_ = ret->getLength();
 
     if (isConst(ret)) {

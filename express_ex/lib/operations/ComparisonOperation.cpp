@@ -102,7 +102,7 @@ void ComparisonOperation::genBodyVisitExit(BodyGenContext* context) {
                     ((op1 != nullptr) ? "a" : "unknown") + ".  " +
                     "right operand:" + ((op2 != nullptr) ? "a" : "unknown"));
     }
-    TypeEn target_type = maxTypeVar(op1, op2)->getType();
+    TypeEn target_type = maxTypeVar(op1, op2)->type_;
 
     auto ret =
         newComparisonOperation(garbage_container, target_type, newTypeConvOp(garbage_container, target_type, op1),
@@ -155,7 +155,7 @@ void ComparisonOperation::calculate() {
     auto op_a = operand_[0]->getAssignedVal(true);
     auto op_b = operand_[1]->getAssignedVal(true);
 
-    auto local_type = op_a->getType();
+    auto local_type = op_a->type_;
 
     if (op_a->isArray() && op_b->isArray())
         buffer_ptr_ = calcComparisonSmallArray(op_code_, local_type, buffer_ptr_, op_a->getBufferPtr(),

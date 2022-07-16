@@ -10,7 +10,7 @@ static std::string txtTypeCastOp(OpCodeEn op_code) { return ar_t_conv_[((int)op_
 
 
 ExValue_ifs* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg) {
-    const TypeEn arg_type = arg->getType();
+    const TypeEn arg_type = arg->type_;
     ExValue_ifs* ret_val = nullptr;
 
     if (!isUnknownTy(arg_type) && isConst(arg)) {
@@ -120,5 +120,5 @@ void TypeCastOperation::calculate() {
     int length = (int)length_;
     auto op_a = operand_[0]->getAssignedVal(true);
 
-    buffer_ptr_ = calcTypeConvSmallArray(type_, op_a->getType(), buffer_ptr_, op_a->getBufferPtr(), length);
+    buffer_ptr_ = calcTypeConvSmallArray(type_, op_a->type_, buffer_ptr_, op_a->getBufferPtr(), length);
 }

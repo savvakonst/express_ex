@@ -41,7 +41,7 @@ void IntegrateOperation::genBodyVisitExit(BodyGenContext* context) {
     g_pos = pos_;
 
     auto* operand = context->pop();
-    if (isBool(operand->getType())) print_error("IntegrateOperation::genBodyVisitExit: operand type is bool ");
+    if (isBool(operand->type_)) print_error("IntegrateOperation::genBodyVisitExit: operand type is bool ");
 
     context->push(newIntegrateOperation(garbage_container, operand));
 }

@@ -41,7 +41,7 @@ void Body::addLine(const std::string& name, ExValue_ifs* var) {
 }
 
 void Body::addVariableLine(const std::string& name, ExValue_ifs* var) {
-    Line* line = new Line(name, var->getType(), DataStructureTypeEn::kVariable, 1);
+    Line* line = new Line(name, var->type_, DataStructureTypeEn::kVariable, 1);
     garbage_contaiiner_->add(line);
     lines_.push_back(line);
 }
@@ -103,7 +103,7 @@ std::list<ParameterIfs*> Body::getOutputParameterList() const {
 Signature Body::getSignature() const {
     Signature ret;
     for (auto& arg : lines_)
-        if (arg->isArg()) ret.push_back(arg->getType());
+        if (arg->isArg()) ret.push_back(arg->type_);
     return ret;
 }
 

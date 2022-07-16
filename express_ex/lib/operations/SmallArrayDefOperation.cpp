@@ -19,7 +19,7 @@ ExValue_ifs* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExVal
 
     if (!all_is_const) print_error("array concatenation is not supported yet");
 
-    TypeEn target_type = var->getType();
+    TypeEn target_type = var->type_;
 
     if (isUnknownTy(target_type) || op_type == OpCodeEn::smallArrayRange)
         return garbage_container->add(SmallArrayDefOperation::create(op_type, args, target_type));

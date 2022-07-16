@@ -18,7 +18,7 @@ ExValue_ifs *newNeighborPointOperation(GarbageContainer *garbage_container, ExVa
 }
 
 NeighborPointOperation::NeighborPointOperation(ExValue_ifs *array, ExValue_ifs *shift)
-    : Operation_ifs(array->getType(), TypeEn::unknown_jty, OpCodeEn::none_op, array) {
+    : Operation_ifs(array->type_, TypeEn::unknown_jty, OpCodeEn::none_op, array) {
     // commonSetup(OpCodeEn::none_op, array);
     // type_ = array->getType();
     level_ = array->getLevel() + 1;

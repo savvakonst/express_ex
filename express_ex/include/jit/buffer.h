@@ -5,8 +5,7 @@
 #include "ifs/parameterIO.h"
 #include "operations/ExValue_ifs.h"
 
-enum class BufferTypeEn
-{
+enum class BufferTypeEn {
     input,
     internal,
     output
@@ -31,7 +30,7 @@ class Buffer {
         left_offset_ = var->getLeftBufferLen();
         right_offset_ = var->getRightBufferLen();
         type_ = TypeEn::unknown_jty;
-        type_ = var->getType();
+        type_ = var->type_;
         sizeof_data_type_ = sizeOfTy(type_);
         setBufferAlloca();
     }

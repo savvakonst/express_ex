@@ -18,9 +18,9 @@ ExValue_ifs* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type
     }
 
     if (rec_call && !isUnknownTy(target_type)) {  // it is a dirty hack
-        if (arg_b->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall) target_type = arg_c->getType();
+        if (arg_b->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall) target_type = arg_c->type_;
         else {
-            target_type = arg_b->getType();
+            target_type = arg_b->type_;
         }
     }
 
@@ -77,10 +77,10 @@ void SelectOperation::genBodyVisitExit(BodyGenContext* context) {
 
     TypeEn target_type;
     if (contain_rec_call_) {
-        target_type = (operand_[1]->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall) ? op3->getType()
-                                                                                                  : op2->getType();
+        target_type =
+            (operand_[1]->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall) ? op3->type_ : op2->type_;
     } else {
-        target_type = maxTypeVar(op2, op3)->getType();
+        target_type = maxTypeVar(op2, op3)->type_;
         op2 = newTypeConvOp(garbage_container, target_type, op2);
         op3 = newTypeConvOp(garbage_container, target_type, op3);
     }

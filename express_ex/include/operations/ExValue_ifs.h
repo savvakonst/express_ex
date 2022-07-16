@@ -20,7 +20,7 @@ class ExValue_ifs : public SmallArr {
 
 
     ExValue_ifs(TypeEn type, TypeEn time_type, DataStructureTypeEn data_structure_type, length_t length)
-        : SmallArr(), type_(type), time_type_(time_type), data_structure_type_(data_structure_type), length_(length){};
+        : SmallArr(), type_(type), time_type_(time_type), ds_ty_(data_structure_type), length_(length){};
 
 
     ~ExValue_ifs() override = default;
@@ -31,7 +31,6 @@ class ExValue_ifs : public SmallArr {
     void setBufferLength(uint64_t central_length);
     void setBufferLength(uint64_t left, uint64_t right);
     void setBufferLength(ExValue_ifs* var);
-    void setLevel(int64_t var);
 
     untyped_t getBinaryValue() const { return *((untyped_t*)(&binary_value_)); }
 
@@ -40,15 +39,15 @@ class ExValue_ifs : public SmallArr {
 
     length_t getLength() const { return length_; }
     int64_t getLevel() const { return level_; }
-    int64_t getDecimation() const { return decimation_; }
+
     int64_t getBufferLen() const { return buffer_length_; }
     uint64_t getLeftBufferLen() const { return left_buffer_length_; }
     uint64_t getRightBufferLen() const { return right_buffer_length_; }
 
     bool isSync() const { return time_type_ == TypeEn::unknown_jty; }
     TypeEn getTimeType() const { return time_type_; }
-    TypeEn getType() const { return type_; }
-    DataStructureTypeEn getDSType() const { return data_structure_type_; }
+    // TypeEn getType() const { return type_; }
+    DataStructureTypeEn getDSType() const { return ds_ty_; }
 
     TypeEn getTempType() const { return isUnknownTy(type_) ? temp_type_ : type_; }
 
@@ -70,7 +69,7 @@ class ExValue_ifs : public SmallArr {
     virtual ExValue_ifs* getAssignedVal(bool deep = false) { return this; }
 
     bool isUnused() const { return is_unused_; }
-    bool isArray() const { return data_structure_type_ != DataStructureTypeEn::kConstant; }
+    bool isArray() const { return ds_ty_ != DataStructureTypeEn::kConstant; }
     bool isVisited() const;
     bool isBuffered() const { return is_buffered_; }
     bool isReturned() const { return is_returned_; }
@@ -101,6 +100,21 @@ class ExValue_ifs : public SmallArr {
     void calculate() override;
 
 
+    /**
+     * data structure type
+     */
+    const DataStructureTypeEn ds_ty_ = DataStructureTypeEn::kConstant;
+
+
+    const TypeEn time_type_ = TypeEn::unknown_jty;
+    const TypeEn type_ = TypeEn::unknown_jty;
+
+    /**
+     * it is used to const value calculation
+     * inside functions with recursive tail call
+     */
+    TypeEn temp_type_ = TypeEn::unknown_jty;
+
 
    protected:
     std::string checkBuffer(std::string arg) const {
@@ -115,15 +129,6 @@ class ExValue_ifs : public SmallArr {
     bool is_returned_ = false;
     bool is_initialized_ = false;
 
-    const DataStructureTypeEn data_structure_type_ = DataStructureTypeEn::kConstant;
-    const TypeEn time_type_ = TypeEn::unknown_jty;
-    const TypeEn type_ = TypeEn::unknown_jty;
-
-    /**
-     * it is used to const value calculation
-     * inside functions with recursive tail call
-     */
-    TypeEn temp_type_ = TypeEn::unknown_jty;
 
 
     std::string unique_name_;
@@ -133,7 +138,11 @@ class ExValue_ifs : public SmallArr {
      * otherwise it represents length of data
      */
     const length_t length_ = 1;
-    int64_t decimation_ = 0;
+
+    /**
+     * it is immutable variable, it must be initialized in constructor
+     * and then never changes.
+     */
     int64_t level_ = 0;
 
     uint64_t left_buffer_length_ = 0;
@@ -155,9 +164,9 @@ class ExValue_ifs : public SmallArr {
 };
 
 inline bool operator==(const ExValue_ifs* var_a, DataStructureTypeEn var_b) { return var_a->getDSType() == var_b; }
-inline bool operator==(DataStructureTypeEn var_a, const ExValue_ifs* var_b) { return var_a == var_b->getDSType(); }
-inline bool operator<(TypeEn var_a, const ExValue_ifs* var_b) { return var_a < var_b->getType(); }
-inline bool operator<(const ExValue_ifs* var_a, TypeEn var_b) { return var_a->getType() < var_b; }
+inline bool operator==(DataStructureTypeEn var_a, const ExValue_ifs* var_b) { return var_a == var_b->ds_ty_; }
+inline bool operator<(TypeEn var_a, const ExValue_ifs* var_b) { return var_a < var_b->type_; }
+inline bool operator<(const ExValue_ifs* var_a, TypeEn var_b) { return var_a->type_ < var_b; }
 
 inline bool isConst(const ExValue_ifs* var_a) { return var_a == DataStructureTypeEn::kConstant; }
 inline bool isVariable(const ExValue_ifs* var_a) { return var_a == DataStructureTypeEn::kVariable; }
@@ -170,20 +179,20 @@ inline bool isCompatible(const ExValue_ifs* var_a, const ExValue_ifs* var_b) {
     return isConst(var_a) || isConst(var_b) || isVariable(var_a) || isVariable(var_b) || isSimilar(var_a, var_b);
 }
 
-inline bool isUnknownTy(const ExValue_ifs* var) { return isUnknownTy(var->getType()); }
-inline bool isFloating(const ExValue_ifs* var) { return isFloating(var->getType()); }
-inline bool isInteger(const ExValue_ifs* var) { return isInteger(var->getType()); }
-inline bool isUInteger(const ExValue_ifs* var) { return isUInteger(var->getType()); }
-inline bool isBool(const ExValue_ifs* var) { return isBool(var->getType()); }
+inline bool isUnknownTy(const ExValue_ifs* var) { return isUnknownTy(var->type_); }
+inline bool isFloating(const ExValue_ifs* var) { return isFloating(var->type_); }
+inline bool isInteger(const ExValue_ifs* var) { return isInteger(var->type_); }
+inline bool isUInteger(const ExValue_ifs* var) { return isUInteger(var->type_); }
+inline bool isBool(const ExValue_ifs* var) { return isBool(var->type_); }
 
 inline ExValue_ifs* maxTypeVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
-    return var_a->getType() < var_b->getType() ? var_b : var_a;
+    return var_a->type_ < var_b->type_ ? var_b : var_a;
 }
 inline ExValue_ifs* maxTempTypeVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
     return var_a->getTempType() < var_b->getTempType() ? var_b : var_a;
 }
 inline ExValue_ifs* minTypeVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
-    return var_a->getType() < var_b->getType() ? var_a : var_b;
+    return var_a->type_ < var_b->type_ ? var_a : var_b;
 }
 inline ExValue_ifs* maxTypeVar(std::vector<ExValue_ifs*> args) {
     ExValue_ifs* var = args[0];

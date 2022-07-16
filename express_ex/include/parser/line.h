@@ -11,14 +11,14 @@
 class Line : public ExValue_ifs {
    public:
     Line(const std::string& name, ExValue_ifs* var)
-        : ExValue_ifs(var->getType(),              //
+        : ExValue_ifs(var->type_,                  //
                       TypeEn::unknown_jty,         //
                       var->getDSType(),            //
                       length_t(var->getLength()))  //
     {
         // TODO remove comment
         // type_ = var->getType();
-        // data_structure_type_ = var->getDSType();
+        // ds_ty_ = var->getDSType();
         // length_ = var->getLength();
 
 
@@ -40,7 +40,7 @@ class Line : public ExValue_ifs {
         names_.push_back(name);
         name_ = name;
         // TODO remove comment
-        //  data_structure_type_ = dsty;
+        //  ds_ty_ = dsty;
         //  type_ = ty;
         //  length_ = int64_t(len);
         is_arg_ = true;
@@ -56,7 +56,7 @@ class Line : public ExValue_ifs {
         name_ = name;
         link_name_ = link_name;
         // TODO remove comment
-        //  data_structure_type_ = dsty;
+        //  ds_ty_ = dsty;
         is_arg_ = true;
     }
 
@@ -67,7 +67,7 @@ class Line : public ExValue_ifs {
                       parameter->getVirtualSize()) {
         // TODO remove comment
         //  type_ = PRMType2JITType(parameter->getPrmType());
-        //  data_structure_type_ = DataStructureTypeEn::kLargeArr;
+        //  ds_ty_ = DataStructureTypeEn::kLargeArr;
         //  length_ = int64_t(parameter->getVirtualSize());
 
 
@@ -112,7 +112,7 @@ class Line : public ExValue_ifs {
     void setupIR(IRGenerator& builder) override;
 
     virtual void setTempTypeAndBinaryValue(ExValue_ifs* var) {
-        temp_type_ = var->getType();
+        temp_type_ = var->type_;
         binary_value_ = var->getBinaryValue();
     }
 

@@ -9,7 +9,7 @@
 #include "operations/operations.h"
 
 CallRecursiveFunctionTemplate::CallRecursiveFunctionTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args)
-    : CallTemplate_ifs(body->getRet().front()->getType(), TypeEn::unknown_jty, body->getRet().front()) {
+    : CallTemplate_ifs(body->getRet().front()->type_, TypeEn::unknown_jty, body->getRet().front()) {
     body_template_ = body;
     args_ = args;
 
@@ -19,7 +19,7 @@ CallRecursiveFunctionTemplate::CallRecursiveFunctionTemplate(BodyTemplate *body,
     level_ = ret->getLevel();
     // TODO remove it
     // type_ = ret->getType();
-    // data_structure_type_ = ret->getDSType();
+    // ds_ty_ = ret->getDSType();
     // length_ = ret->getLength();
 
     if (isConst(ret)) {
@@ -42,7 +42,7 @@ void CallRecursiveFunctionTemplate::genBodyVisitExit(BodyGenContext *context) {
         print_error("invalid signature for recursive call method");
     } else if (large_array || small_array) {
         Signature signature;
-        for (auto &i : a) signature.push_back(i->getType());
+        for (auto &i : a) signature.push_back(i->type_);
 
         Body *body = context->getPureFunctionBody(body_template_->getName(), signature);
 
@@ -75,7 +75,7 @@ void TailCallDirectiveTemplate::genBodyVisitExit(BodyGenContext *context) {
 
     std::list<TypeEn> signature;
     for (auto &i : context->getNamespace())
-        if (i->isArg()) signature.push_front(i->getType());
+        if (i->isArg()) signature.push_front(i->type_);
 
 
     for (auto &type : signature) {
@@ -103,7 +103,7 @@ void TailCallDirectiveTemplate::calculateConstRecursive(RecursiveGenContext *con
 
 
 CallTemplate::CallTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args)
-    : CallTemplate_ifs(body->getRet().front()->getType(), TypeEn::unknown_jty, body->getRet().front()) {
+    : CallTemplate_ifs(body->getRet().front()->type_, TypeEn::unknown_jty, body->getRet().front()) {
     body_template_ = body;
     args_ = args;
 
@@ -112,7 +112,7 @@ CallTemplate::CallTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args)
 
     level_ = ret->getLevel();
     // type_ = ret->getType();
-    // data_structure_type_ = ret->getDSType();
+    // ds_ty_ = ret->getDSType();
     // length_ = ret->getLength();
 
     if (isConst(ret)) {

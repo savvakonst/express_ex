@@ -26,9 +26,7 @@ void ExValue_ifs::setBufferLength(ExValue_ifs* var) {
     }
 }
 
-void ExValue_ifs::setLevel(int64_t var) { level_ = maxInt(level_, var); }
-
-std::string ExValue_ifs::getTxtDSType() const { return toString(data_structure_type_); }
+std::string ExValue_ifs::getTxtDSType() const { return toString(ds_ty_); }
 
 bool ExValue_ifs::isVisited() const { return is_visited_; }
 

@@ -768,7 +768,7 @@ llvm::Function* Body::getOrGenIRPureFunction(IRGenerator& builder) {
     for (auto i : signature) params.push_back(local_builder.getLLVMType(i));
 
     function_ = llvm::Function::Create(
-        llvm::FunctionType::get(local_builder.getLLVMType(return_stack_.front()->getType()), params, false),
+        llvm::FunctionType::get(local_builder.getLLVMType(return_stack_.front()->type_), params, false),
         llvm::Function::ExternalLinkage, getName(), builder.getCurrentModule());
 
     local_builder.setCurrentFunction(function_);

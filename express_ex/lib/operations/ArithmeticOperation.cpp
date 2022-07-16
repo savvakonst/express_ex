@@ -68,7 +68,7 @@ ExValue_ifs* newInversionOperation(BodyTemplate* body_template) {
 
 
 ArithmeticOperation::ArithmeticOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b)
-    : Operation_ifs(maxTypeVar(var_a, var_b)->getType(), TypeEn::unknown_jty, op, maxDSVar(var_a, var_b)) {
+    : Operation_ifs(maxTypeVar(var_a, var_b)->type_, TypeEn::unknown_jty, op, maxDSVar(var_a, var_b)) {
     // commonSetup(op, maxDSVar(var_a, var_b));
 
 
@@ -107,7 +107,7 @@ void ArithmeticOperation::genBodyVisitExit(BodyGenContext* context) {
                     ((op1 != nullptr) ? "a" : "unknown") + ".  " +
                     "right operand:" + ((op2 != nullptr) ? "a" : "unknown"));
     }
-    TypeEn target_type = maxTypeVar(op1, op2)->getType();
+    TypeEn target_type = maxTypeVar(op1, op2)->type_;
 
     auto ret =
         newArithmeticOperation(garbage_container, target_type, newTypeConvOp(garbage_container, target_type, op1),

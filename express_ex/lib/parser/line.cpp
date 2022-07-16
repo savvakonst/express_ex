@@ -11,11 +11,6 @@ const T& max(const T& a, const T& b) {
 
 bool Line::isArg() const { return is_arg_; }
 
-void Line::assignValue(ExValue_ifs* var) {
-    assigned_val_ = var;
-    type_ = var->getType();
-}
-
 bool Line::checkName(const std::string& name) const {
     if (name_ == name) return true;
     return false;

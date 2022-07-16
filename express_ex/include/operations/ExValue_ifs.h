@@ -19,8 +19,8 @@ class ExValue_ifs : public SmallArr {
     ExValue_ifs() : SmallArr(){};
 
 
-    ExValue_ifs(TypeEn type, TypeEn time_type, DataStructureTypeEn data_structure_type_, length_t length)
-        : SmallArr(), type_(type), time_type_(time_type), data_structure_type_(data_structure_type_), length_(length){};
+    ExValue_ifs(TypeEn type, TypeEn time_type, DataStructureTypeEn data_structure_type, length_t length)
+        : SmallArr(), type_(type), time_type_(time_type), data_structure_type_(data_structure_type), length_(length){};
 
 
     ~ExValue_ifs() override = default;

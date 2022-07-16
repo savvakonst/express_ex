@@ -14,8 +14,7 @@ typedef int (*jit_f)(char*, char*);
 typedef int (*jit_fptr)(char, char*);
 typedef int32_t (*Jit_Call_t)(char***, char* const*);
 
-enum class TypeEn
-{
+enum class TypeEn {
     int1_jty = 0,
     int8_jty,
     int16_jty,
@@ -29,18 +28,16 @@ enum class TypeEn
 
 #define DEFAULT_JTY unknown_jty
 
-enum class DataStructureTypeEn
-{
+enum class DataStructureTypeEn {
     kConstant,
     kVariable,
     kSmallArr,
-    kLargeArr
+    kLargeArr,
 };
 
 ///////////////////////////////////////////////////
 
-enum class OpCodeEn
-{
+enum class OpCodeEn {
     neg = 0,
     fneg,
 
@@ -124,8 +121,7 @@ enum class OpCodeEn
     none_op
 };
 
-enum class TypeOpCodeEn
-{
+enum class TypeOpCodeEn {
     inv = (int)OpCodeEn::neg,
     arithetic = (int)OpCodeEn::add,
     comparsion = (int)OpCodeEn::eq,
@@ -150,8 +146,7 @@ enum class TypeOpCodeEn
     builtInFuncEnd = (int)OpCodeEn::exp + 1
 };
 
-enum class NodeTypeEn
-{
+enum class NodeTypeEn {
     kValue,
     kOperation,
     kLine,

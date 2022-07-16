@@ -24,10 +24,12 @@ class CallRecursiveFunction : public CallI_ifs {
 
 class TailCallDirective : public CallI_ifs {
    public:
-    explicit TailCallDirective(const stack<ExValue_ifs*>& args) : CallI_ifs() {
-        type_ = TypeEn::unknown_jty;
+    explicit TailCallDirective(const stack<ExValue_ifs*>& args)
+        : CallI_ifs(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
+        // type_ = TypeEn::unknown_jty;
         args_ = (args);
     }
+
     ~TailCallDirective() override = default;
 
     void genBlocksVisitExit(TableGenContext* context) override;

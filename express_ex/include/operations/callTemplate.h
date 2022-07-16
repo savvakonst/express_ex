@@ -8,7 +8,12 @@
 
 class CallTemplate_ifs : public ExValue_ifs {
    public:
-    CallTemplate_ifs() : ExValue_ifs() {}
+    CallTemplate_ifs(TypeEn ty, TypeEn time_ty, DataStructureTypeEn ds_ty, length_t length)
+        : ExValue_ifs(ty, time_ty, ds_ty, length) {}
+
+    CallTemplate_ifs(TypeEn ty, TypeEn time_ty, const ExValue_ifs* var)
+        : ExValue_ifs(ty, time_ty, var->getDSType(), var->getLength()) {}
+
     ~CallTemplate_ifs() override = default;
 
     void visitEnter(stack<ExValue_ifs*>* visitor_stack) override {
@@ -73,9 +78,10 @@ class CallRecursiveFunctionTemplate : public CallTemplate_ifs {
 
 class TailCallDirectiveTemplate : public CallTemplate_ifs {
    public:
-    explicit TailCallDirectiveTemplate(const stack<ExValue_ifs*>& args) : CallTemplate_ifs() {
+    explicit TailCallDirectiveTemplate(const stack<ExValue_ifs*>& args)
+        // TODO try with DataStructureTypeEn::kVariable
+        : CallTemplate_ifs(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
         args_ = args;
-        type_ = TypeEn::unknown_jty;
     }
 
     ~TailCallDirectiveTemplate() override = default;

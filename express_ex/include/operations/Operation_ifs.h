@@ -114,7 +114,7 @@ class Operation_ifs : public ExValue_ifs {
     std::vector<ExValue_ifs*> operand_;
     std::vector<ExValue_ifs*> simplified_operand_;
 
-    OpCodeEn op_code_ = OpCodeEn::none_op;
+    const OpCodeEn op_code_ = OpCodeEn::none_op;
 
     bool contain_rec_call_ = false;
 };

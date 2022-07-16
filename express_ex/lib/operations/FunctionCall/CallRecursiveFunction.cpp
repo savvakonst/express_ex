@@ -6,14 +6,17 @@
 
 #include "jit/IR_generator.h"
 
-static CallRecursiveFunction::length_t getLength(const stack<ExValue_ifs*>& args) {
+static ExValue_ifs* getTempVal(const stack<ExValue_ifs*>& args) {
     ExValue_ifs* temp = nullptr;
     for (auto i : args)
         if (i->isArray()) temp = i;
-    return temp ? temp->getLength() : 0;
+
+    if (temp == nullptr) print_error("cant construct TempVal");
+    return temp;
 }
 
-CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue_ifs*>& args) : CallI_ifs() {
+CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue_ifs*>& args)
+    : CallI_ifs(body->getRet().front()->getType(), TypeEn::unknown_jty, getTempVal(args)) {
     body_ = body;
     args_ = args;
 
@@ -35,14 +38,14 @@ CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue_ifs
         if (i->isArray()) temp = i;
     }
 
-    type_ = ret->getType();
 
-    if (temp == nullptr) print_error("CallRecursiveFunction::CallRecursiveFunction : temp == nullptr");
-
+    // if (temp == nullptr) print_error("CallRecursiveFunction::CallRecursiveFunction : temp == nullptr");
 
 
-    length_ = temp->getLength();
-    data_structure_type_ = temp->getDSType();
+    // type_ = ret->getType();
+    // length_ = temp->getLength();
+    // data_structure_type_ = temp->getDSType();
+
 
 
     for (auto i : args_)

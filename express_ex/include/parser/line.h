@@ -11,15 +11,15 @@
 class Line : public ExValue_ifs {
    public:
     Line(const std::string& name, ExValue_ifs* var)
-        : ExValue_ifs( var->getType(),                   //
-                      TypeEn::unknown_jty,  //
-                      var->getDSType(),                 //
-                      length_t(var->getLength()))        //
+        : ExValue_ifs(var->getType(),              //
+                      TypeEn::unknown_jty,         //
+                      var->getDSType(),            //
+                      length_t(var->getLength()))  //
     {
-        //TODO remove comment
-        //type_ = var->getType();
-        //data_structure_type_ = var->getDSType();
-        //length_ = var->getLength();
+        // TODO remove comment
+        // type_ = var->getType();
+        // data_structure_type_ = var->getDSType();
+        // length_ = var->getLength();
 
 
         names_.push_back(name);
@@ -29,7 +29,6 @@ class Line : public ExValue_ifs {
         }
         assigned_val_ = var;
         level_ = var->getLevel();
-
     }
 
     Line(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len)
@@ -40,10 +39,10 @@ class Line : public ExValue_ifs {
     {
         names_.push_back(name);
         name_ = name;
-        //TODO remove comment
-        // data_structure_type_ = dsty;
-        // type_ = ty;
-        // length_ = int64_t(len);
+        // TODO remove comment
+        //  data_structure_type_ = dsty;
+        //  type_ = ty;
+        //  length_ = int64_t(len);
         is_arg_ = true;
     }
 
@@ -56,8 +55,8 @@ class Line : public ExValue_ifs {
         names_.push_back(name);
         name_ = name;
         link_name_ = link_name;
-        //TODO remove comment
-        // data_structure_type_ = dsty;
+        // TODO remove comment
+        //  data_structure_type_ = dsty;
         is_arg_ = true;
     }
 
@@ -66,10 +65,10 @@ class Line : public ExValue_ifs {
                       TypeEn::unknown_jty,                       //
                       DataStructureTypeEn::kLargeArr,            //
                       parameter->getVirtualSize()) {
-        //TODO remove comment
-        // type_ = PRMType2JITType(parameter->getPrmType());
-        // data_structure_type_ = DataStructureTypeEn::kLargeArr;
-        // length_ = int64_t(parameter->getVirtualSize());
+        // TODO remove comment
+        //  type_ = PRMType2JITType(parameter->getPrmType());
+        //  data_structure_type_ = DataStructureTypeEn::kLargeArr;
+        //  length_ = int64_t(parameter->getVirtualSize());
 
 
 
@@ -82,16 +81,17 @@ class Line : public ExValue_ifs {
         } else parameter_ = new SyncParameter(*(SyncParameter*)parameter);
     }
 
-    explicit Line(const std::string& name) : ExValue_ifs() {
+    explicit Line(const std::string& name)
+        : ExValue_ifs(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
         names_.push_back(name);
         name_ = name;
-        type_ = TypeEn::unknown_jty;
+        // TODO remove comment
+        // type_ = TypeEn::unknown_jty;
         is_arg_ = true;
     }
 
     ~Line() override = default;
 
-    void assignValue(ExValue_ifs* var);
     ExValue_ifs* getAssignedVal(bool deep = false) override;
 
     bool isArg() const;

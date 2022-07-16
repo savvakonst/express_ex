@@ -9,7 +9,7 @@
 #include "operations/operations.h"
 
 CallRecursiveFunctionTemplate::CallRecursiveFunctionTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args)
-    : CallTemplate_ifs() {
+    : CallTemplate_ifs(body->getRet().front()->getType(), TypeEn::unknown_jty, body->getRet().front()) {
     body_template_ = body;
     args_ = args;
 
@@ -17,9 +17,10 @@ CallRecursiveFunctionTemplate::CallRecursiveFunctionTemplate(BodyTemplate *body,
     auto ret = body_template_->getRet().front();
 
     level_ = ret->getLevel();
-    type_ = ret->getType();
-    data_structure_type_ = ret->getDSType();
-    length_ = ret->getLength();
+    // TODO remove it
+    // type_ = ret->getType();
+    // data_structure_type_ = ret->getDSType();
+    // length_ = ret->getLength();
 
     if (isConst(ret)) {
         binary_value_ = ret->getBinaryValue();
@@ -101,7 +102,8 @@ void TailCallDirectiveTemplate::calculateConstRecursive(RecursiveGenContext *con
 
 
 
-CallTemplate::CallTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args) : CallTemplate_ifs() {
+CallTemplate::CallTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args)
+    : CallTemplate_ifs(body->getRet().front()->getType(), TypeEn::unknown_jty, body->getRet().front()) {
     body_template_ = body;
     args_ = args;
 
@@ -109,9 +111,9 @@ CallTemplate::CallTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args)
     auto ret = body_template_->getRet().front();
 
     level_ = ret->getLevel();
-    type_ = ret->getType();
-    data_structure_type_ = ret->getDSType();
-    length_ = ret->getLength();
+    // type_ = ret->getType();
+    // data_structure_type_ = ret->getDSType();
+    // length_ = ret->getLength();
 
     if (isConst(ret)) {
         binary_value_ = ret->getBinaryValue();

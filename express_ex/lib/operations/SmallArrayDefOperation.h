@@ -15,9 +15,7 @@ class SmallArrayDefOperation : public Operation_ifs {
     SmallArrayDefOperation(double start, double stop, length_t length, const std::vector<ExValue_ifs*>& args,
                            TypeEn target_type);
     SmallArrayDefOperation(const stack<ExValue_ifs*>& args, TypeEn target_type);
-
-    SmallArrayDefOperation(OpCodeEn op, stack<ExValue_ifs*>& args, TypeEn target_type);
-
+    
     ~SmallArrayDefOperation() override = default;
 
     // void visitEnterSetupBuffer(stack<Value*>* visitor_stack) override;

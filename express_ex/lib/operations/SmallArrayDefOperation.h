@@ -10,31 +10,13 @@ ExValue_ifs* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExVal
 
 class SmallArrayDefOperation : public Operation_ifs {
    public:
-    SmallArrayDefOperation(OpCodeEn op, stack<ExValue_ifs*>& args, TypeEn target_type) : Operation_ifs() {
-        size_t args_size = args.size();
-        op_code_ = op;
+    static SmallArrayDefOperation* create(OpCodeEn op, stack<ExValue_ifs*>& args, TypeEn target_type);
 
-        if (args.empty()) print_error("range() - invalid signature");
+    SmallArrayDefOperation(double start, double stop, length_t length, const std::vector<ExValue_ifs*>& args,
+                           TypeEn target_type);
+    SmallArrayDefOperation(const stack<ExValue_ifs*>& args, TypeEn target_type);
 
-        if (op == OpCodeEn::smallArrayDef) {
-            for (auto& i : args) operand_.push_back(i);
-
-            type_ = target_type;
-            data_structure_type_ = DataStructureTypeEn::kSmallArr;
-            length_ = int64_t(args_size);
-
-            level_ = 0;
-        } else if (op == OpCodeEn::smallArrayRange) {
-            for (auto& i : args) operand_.push_back(i);
-
-            if (isUnknownTy(target_type)) return;
-
-            data_structure_type_ = DataStructureTypeEn::kSmallArr;
-            smallArray();
-
-            if (args_size > 3) print_error("range( .. ) -invalid signature");
-        }
-    }
+    SmallArrayDefOperation(OpCodeEn op, stack<ExValue_ifs*>& args, TypeEn target_type);
 
     ~SmallArrayDefOperation() override = default;
 
@@ -53,11 +35,14 @@ class SmallArrayDefOperation : public Operation_ifs {
 
    private:
     void smallArrayGen();
-    void smallArray();
-    void smallArray(ExValue_ifs* arg1, ExValue_ifs* arg2, ExValue_ifs* arg3);
-    void smallArray(ExValue_ifs* arg1, ExValue_ifs* arg2);
-    void smallArray(ExValue_ifs* arg1);
 
+    static SmallArrayDefOperation* create(ExValue_ifs* arg1, ExValue_ifs* arg2, ExValue_ifs* arg3);
+    static SmallArrayDefOperation* create(ExValue_ifs* arg1, ExValue_ifs* arg2);
+    static SmallArrayDefOperation* create(ExValue_ifs* arg1);
+
+
+    const double start_;
+    const double stop_;
     // int64_t shift_parameter_ = 0;
 };
 

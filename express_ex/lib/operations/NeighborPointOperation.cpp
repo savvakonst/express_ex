@@ -10,16 +10,21 @@
 #include "parser/bodyTemplate.h"
 
 ExValue_ifs *newNeighborPointOperation(GarbageContainer *garbage_container, ExValue_ifs *arg, ExValue_ifs *shift) {
-    if (!(isConst(shift) && isInteger(shift))) {
+
+    if ( !isConst(shift) ) {
         print_error("neighbor point index is not integer");
         return nullptr;
     }
-    // NeighborPointOperation()
-
-    return nullptr;
+    return garbage_container->add(new NeighborPointOperation(arg,shift));
 }
 
-NeighborPointOperation::NeighborPointOperation(ExValue_ifs *large_arr, ExValue_ifs *small_arr, int64_t shift) {}
+NeighborPointOperation::NeighborPointOperation(ExValue_ifs *array, ExValue_ifs *shift) {
+    commonSetup(OpCodeEn::none_op, array);
+    type_ =shift->getType();
+    level_ = array->getLevel() + 1;
+    operand_.push_back(array);
+    operand_.push_back(shift);
+}
 
 void NeighborPointOperation::visitEnterSetupBuffer(stack<ExValue_ifs *> *visitor_stack) {
     Operation_ifs::visitEnterSetupBuffer(visitor_stack);

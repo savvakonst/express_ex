@@ -9,7 +9,10 @@ AlignTrailingComments: true
 AlignEscapedNewlines: Left
 AllowShortEnumsOnASingleLine: false
 IndentPPDirectives: AfterHash
-
+#AllowAllArgumentsOnNextLine: true
+#AllowAllConstructorInitializersOnNextLine: true
+#BinPackArguments: true
+AllowAllArgumentsOnNextLine: false
 
 AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 #AlignConsecutiveAssignments: AcrossComments

@@ -22,15 +22,15 @@ ExValue_ifs* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExVal
     TypeEn target_type = var->getType();
 
     if (isUnknownTy(target_type) || op_type == OpCodeEn::smallArrayRange)
-        return garbage_container->add(new SmallArrayDefOperation(op_type, args, target_type));
+        return garbage_container->add(SmallArrayDefOperation::create(op_type, args, target_type));
 
     if (is_template)
-        return garbage_container->add(new SmallArrayDefOperation(OpCodeEn::smallArrayDef, args, target_type));
+        return garbage_container->add(SmallArrayDefOperation::create(OpCodeEn::smallArrayDef, args, target_type));
 
     stack<ExValue_ifs*> typed_args;
     for (auto i : args) typed_args.push(newTypeConvOp(garbage_container, target_type, i));
 
-    return garbage_container->add(new SmallArrayDefOperation(OpCodeEn::smallArrayDef, typed_args, target_type));
+    return garbage_container->add(SmallArrayDefOperation::create(OpCodeEn::smallArrayDef, typed_args, target_type));
 }
 
 ExValue_ifs* newRangeOp(BodyTemplate* body_template, size_t arg_count) {
@@ -46,6 +46,34 @@ ExValue_ifs* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count) {
     for (size_t i = 0; i < arg_count; i++) op.push(body_template->pop());
     std::reverse(op.begin(), op.end());
     return newSmallArrayDefOp(body_template->getGarbageContainer(), op, OpCodeEn::smallArrayDef, true);
+}
+
+SmallArrayDefOperation::SmallArrayDefOperation(double start, double stop, ExValue_ifs::length_t length,
+                                               const std::vector<ExValue_ifs*>& args, TypeEn target_type)
+    : Operation_ifs(target_type,                     //
+                    TypeEn::unknown_jty,             //
+                    DataStructureTypeEn::kSmallArr,  //
+                    length_t(args.size()),           //
+                    OpCodeEn::smallArrayDef),        //
+      start_(start),
+      stop_(stop)  //
+{
+    if (args.empty()) print_error("range() - invalid signature");
+    for (auto& i : args) operand_.push_back(i);
+}
+
+SmallArrayDefOperation::SmallArrayDefOperation(const stack<ExValue_ifs*>& args, TypeEn target_type)
+    : Operation_ifs(target_type,                     //
+                    TypeEn::unknown_jty,             //
+                    DataStructureTypeEn::kSmallArr,  //
+                    length_t(args.size()),           //
+                    OpCodeEn::smallArrayDef),        //
+      start_(0),
+      stop_(0)  //
+{
+    if (args.empty()) print_error("range() - invalid signature");
+    for (auto& i : args) operand_.push_back(i);
+    level_ = 0;
 }
 
 
@@ -91,11 +119,11 @@ void SmallArrayDefOperation::printVisitExit(PrintBodyContext* context) {
 }
 
 void SmallArrayDefOperation::genBlocksVisitExit(TableGenContext* context) {
-    unique_name_ = (isLargeArr(this) ? "vb" : "vs") + std::to_string(context->getUniqueIndex());
-    context->setUint(this);
     is_visited_ = false;
 
-    PrmTypesEn prm_type = JITType2PRMType(type_);
+    unique_name_ = (isLargeArr(this) ? "vb" : "vs") + std::to_string(context->getUniqueIndex());
+    context->setUint(this);
+
 
     context->setParameter(parameter_);
 
@@ -128,12 +156,7 @@ void SmallArrayDefOperation::calculate() { /*do nothing*/
     else smallArrayGen();
 }
 
-void SmallArrayDefOperation::smallArray() {
-    size_t args_size = operand_.size();
-    if (args_size == 1) smallArray(operand_[0]);
-    else if (args_size == 2) smallArray(operand_[0], operand_[1]);
-    else if (args_size == 3) smallArray(operand_[0], operand_[1], operand_[2]);
-}
+
 
 void SmallArrayDefOperation::smallArrayGen() {
     double delta = 0.0;
@@ -155,39 +178,56 @@ void SmallArrayDefOperation::smallArrayGen() {
 
 
 
-void SmallArrayDefOperation::smallArray(ExValue_ifs* arg1, ExValue_ifs* arg2, ExValue_ifs* arg3) {
+SmallArrayDefOperation* SmallArrayDefOperation::create(ExValue_ifs* arg1, ExValue_ifs* arg2, ExValue_ifs* arg3) {
     if ((isConst(arg1) && isConst(arg2) && isConst(arg3) && isInteger(arg3))) {
-        start_ = ((ExConstValue*)arg1)->getDoubleValue();
-        stop_ = ((ExConstValue*)arg2)->getDoubleValue();
+        auto start = ((ExConstValue*)arg1)->getDoubleValue();
+        auto stop = ((ExConstValue*)arg2)->getDoubleValue();
 
-        type_ = TypeEn::double_jty;
-        length_ = arg3->getBinaryValue();
+        auto type = TypeEn::double_jty;
+        auto length = arg3->getBinaryValue();
+        return new SmallArrayDefOperation(start, stop, length, {arg1}, type);
     } else {
         // print_error("range(start_num,stop_num,length) -signature is not supported yet");
         print_error("range(start_num,stop_num,length) -signature is not supported yet");
-        return;
     }
+    return nullptr;
 };
 
-void SmallArrayDefOperation::smallArray(ExValue_ifs* arg1, ExValue_ifs* arg2) {
+SmallArrayDefOperation* SmallArrayDefOperation::create(ExValue_ifs* arg1, ExValue_ifs* arg2) {
     if (isConst(arg1) && isConst(arg2) && isInteger(arg1) && isInteger(arg2)) {
-        start_ = ((ExConstValue*)arg1)->getDoubleValue();
-        stop_ = ((ExConstValue*)arg2)->getDoubleValue();
+        auto start = ((ExConstValue*)arg1)->getDoubleValue();
+        auto stop = ((ExConstValue*)arg2)->getDoubleValue();
 
-        type_ = TypeEn::int64_jty;
-        length_ = (uint64_t)(stop_ - start_);
+        auto type = TypeEn::int64_jty;
+        auto length = length_t(stop - start);
+        return new SmallArrayDefOperation(start, stop, length, {arg1}, type);
     } else {
         print_error("range(start_num,stop_num) - arg must be integer constant");
     }
+    return nullptr;
 };
 
-void SmallArrayDefOperation::smallArray(ExValue_ifs* arg1) {
+SmallArrayDefOperation* SmallArrayDefOperation::create(ExValue_ifs* arg1) {
     if (isConst(arg1) && isInteger(arg1)) {
-        start_ = 0;
-        stop_ = (double)arg1->getBinaryValue();
-        type_ = TypeEn::int64_jty;
-        length_ = (uint64_t)stop_;
+        auto start = 0;
+        auto stop = (double)arg1->getBinaryValue();
+        auto type = TypeEn::int64_jty;
+        auto length = length_t(stop);
+        return new SmallArrayDefOperation(start, stop, length, {arg1}, type);
     } else {
         print_error("range(len) - arg must be integer constant");
     }
-};
+    return nullptr;
+}
+SmallArrayDefOperation* SmallArrayDefOperation::create(OpCodeEn op, stack<ExValue_ifs*>& args, TypeEn target_type) {
+    auto args_size = args.size();
+
+    if (op == OpCodeEn::smallArrayDef) {
+        return new SmallArrayDefOperation(args, target_type);
+    } else if (op == OpCodeEn::smallArrayRange) {
+        if (args_size == 1) return create(args[0]);
+        else if (args_size == 2) return create(args[0], args[1]);
+        else if (args_size == 3) return create(args[0], args[1], args[2]);
+    }
+    return nullptr;
+}

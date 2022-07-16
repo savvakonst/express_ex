@@ -77,13 +77,17 @@ class BodyTemplate {
 
     /**
      * if any operator occurs in corresponding ASG unit or any
-     * child BodyTemplate objects marked as operator
+     * child BodyTemplate objects are marked as operator
      * this field is set to true, It is necessary to determine
      * that function which is representing by current ASG unit is pure
      * and it is possible to use tail call or anything else...
      */
     bool is_operator_ = false;
 
+    /**
+     * if any tail call occurs inside body it sets to true,
+     * otherwise it equal false
+     */
     bool is_tail_callable_ = false;
 
    private:

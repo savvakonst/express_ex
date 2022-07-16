@@ -10,6 +10,9 @@ ExValue_ifs* newConvolveOperation(GarbageContainer* garbage_container, TypeEn ta
 
 class ConvolveOperation : public Operation_ifs {
    public:
+    /**
+     * you nust ensure that the data_structure_type_ of large_arr is more or equal small_arr data_structure_type_.
+     */
     ConvolveOperation(ExValue_ifs* large_arr, ExValue_ifs* small_arr, int64_t shift);
 
     ~ConvolveOperation() override = default;

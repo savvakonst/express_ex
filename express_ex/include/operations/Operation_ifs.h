@@ -10,9 +10,19 @@
 
 class Operation_ifs : public ExValue_ifs {
    public:
-    // constructor of arithmetic, logic or comparision operation
     Operation_ifs() : ExValue_ifs() {}
+    Operation_ifs(TypeEn ty, TypeEn time_ty, DataStructureTypeEn ds_ty, length_t length, OpCodeEn op)
+        : ExValue_ifs(ty, time_ty, ds_ty, length), op_code_(op) {}
 
+    /**
+     * initialize op_code_, data_structure_type_ and length_ fields
+     */
+    Operation_ifs(TypeEn ty, TypeEn time_ty, OpCodeEn op, const ExValue_ifs* var)
+        : ExValue_ifs(ty, time_ty, var->getDSType(), var->getLength()), op_code_(op) {}
+
+    /**
+     * initialize op_code_, data_structure_type_ and length_ fields
+     */
     void commonSetup(OpCodeEn op, const ExValue_ifs* var) {
         op_code_ = op;
         data_structure_type_ = var->getDSType();

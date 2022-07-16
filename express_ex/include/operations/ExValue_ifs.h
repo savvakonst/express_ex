@@ -14,11 +14,13 @@ class IRGenerator;
 
 class ExValue_ifs : public SmallArr {
    public:
+    typedef int64_t length_t;
+
     ExValue_ifs() : SmallArr(){};
 
 
-    ExValue_ifs(TypeEn type, TypeEn time_type, DataStructureTypeEn data_structure_type_)
-        : SmallArr(), type_(type), time_type_(time_type), data_structure_type_(data_structure_type_){};
+    ExValue_ifs(TypeEn type, TypeEn time_type, DataStructureTypeEn data_structure_type_, length_t length)
+        : SmallArr(), type_(type), time_type_(time_type), data_structure_type_(data_structure_type_), length_(length){};
 
 
     ~ExValue_ifs() override = default;
@@ -36,7 +38,7 @@ class ExValue_ifs : public SmallArr {
     std::string getTxtDSType() const;
     std::string getUniqueName() const { return unique_name_; }
 
-    int64_t getLength() const { return length_; }
+    length_t getLength() const { return length_; }
     int64_t getLevel() const { return level_; }
     int64_t getDecimation() const { return decimation_; }
     int64_t getBufferLen() const { return buffer_length_; }
@@ -98,6 +100,8 @@ class ExValue_ifs : public SmallArr {
 
     void calculate() override;
 
+
+
    protected:
     std::string checkBuffer(std::string arg) const {
         if (is_buffered_) return "storeToBuffer(" + arg + ")";
@@ -114,19 +118,25 @@ class ExValue_ifs : public SmallArr {
     DataStructureTypeEn data_structure_type_ = DataStructureTypeEn::kConstant;
 
 
-    TypeEn time_type_ = TypeEn::DEFAULT_JTY;
-    TypeEn type_ = TypeEn::DEFAULT_JTY;
+    TypeEn time_type_ = TypeEn::unknown_jty;
+    TypeEn type_ = TypeEn::unknown_jty;
 
     /**
      * it is used to const value calculation
      * inside functions with recursive tail call
      */
-    TypeEn temp_type_ = TypeEn::DEFAULT_JTY;
+    TypeEn temp_type_ = TypeEn::unknown_jty;
 
 
     std::string unique_name_;
 
-    int64_t length_ = 1;
+
+
+    /**
+     * for synchronous kLargeArr it represents frequency of data,
+     * otherwise it represents length of data
+     */
+    length_t length_ = 1;
     int64_t decimation_ = 0;
     int64_t level_ = 0;
 

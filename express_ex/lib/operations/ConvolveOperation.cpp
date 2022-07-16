@@ -9,7 +9,7 @@ ExValue_ifs* newConvolveOperation(GarbageContainer* garbage_container, TypeEn ta
                                   ExValue_ifs* arg_b, int64_t shift, OpCodeEn op_type) {
     if (op_type != OpCodeEn::convolve) print_error("convolve_f operation is not supported yet");
 
-    if ((isConst(arg_a) || isConst(arg_b)) && !(isUnknownTy(arg_a) || isUnknownTy(arg_b))) {
+    if ((isConst(arg_a) || isConst(arg_b)) && (!isUnknownTy(arg_a) && !isUnknownTy(arg_b))) {
         return garbage_container->add(
             newArithmeticOperation(garbage_container, target_type, arg_a, arg_b, OpCodeEn::mul));
     }
@@ -38,15 +38,29 @@ ExValue_ifs* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_o
                                 u_type_op);
 }
 
-ConvolveOperation::ConvolveOperation(ExValue_ifs* large_arr, ExValue_ifs* small_arr, int64_t shift) : Operation_ifs() {
-    commonSetup(OpCodeEn::convolve, maxDSVar(large_arr, small_arr));
 
-    shift_parameter_ = shift;
+ConvolveOperation::ConvolveOperation(ExValue_ifs* large_arr, ExValue_ifs* small_arr, int64_t shift)
+    : Operation_ifs(
+          large_arr->getType(), TypeEn::unknown_jty, large_arr->getDSType(),
+          isLargeArr(large_arr) ? large_arr->getLength() : maxInt(large_arr->getLength(), small_arr->getLength()),
+          OpCodeEn::convolve) {
+
+    //TODO remove comment
+    // commonSetup(OpCodeEn::convolve, maxDSVar(large_arr, small_arr));
+    // type_ = large_arr->getType();
+    //  if (data_structure_type_ == DataStructureTypeEn::kLargeArr) length_ = large_arr->getLength();
+    //  else length_ = maxInt(large_arr->getLength(), small_arr->getLength());
+    // length_ = isLargeArr(large_arr) ? large_arr->getLength() : maxInt(large_arr->getLength(),
+    // small_arr->getLength());
+
+
+    if (large_arr->getDSType() < small_arr->getDSType())
+        print_error(
+            "ConvolveOperation::ConvolveOperation:  you nust ensure that the data_structure_type_ of large_arr is more "
+            "or equal small_arr data_structure_type_. \n"
+            "Please let the developers know about this issue.");
+
     level_ = large_arr->getLevel() + 1;
-
-    type_ = large_arr->getType();
-    if (data_structure_type_ == DataStructureTypeEn::kLargeArr) length_ = large_arr->getLength();
-    else length_ = maxInt(large_arr->getLength(), small_arr->getLength());
 
     shift_parameter_ = shift;
 

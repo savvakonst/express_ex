@@ -10,7 +10,7 @@
 
 
 ExConstValue::ExConstValue(const std::string &text, TypeEn type)
-    : ExValue_ifs(type, TypeEn::unknown_jty, DataStructureTypeEn::kConstant), text_value_(text) {
+    : ExValue_ifs(type, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1), text_value_(text) {
     binary_value_ = 0;
 
     switch (type) {
@@ -54,7 +54,7 @@ static std::string getTxtConstValue(untyped_t binary_value, TypeEn type) {
 }
 
 ExConstValue::ExConstValue(untyped_t binary_value, TypeEn type)
-    : ExValue_ifs(type, TypeEn::unknown_jty, DataStructureTypeEn::kConstant),
+    : ExValue_ifs(type, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1),
       text_value_(getTxtConstValue(binary_value, type)) {
     binary_value_ = binary_value;
 };

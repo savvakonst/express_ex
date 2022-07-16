@@ -10,7 +10,18 @@
 
 class Line : public ExValue_ifs {
    public:
-    Line(const std::string& name, ExValue_ifs* var) : ExValue_ifs() {
+    Line(const std::string& name, ExValue_ifs* var)
+        : ExValue_ifs( var->getType(),                   //
+                      TypeEn::unknown_jty,  //
+                      var->getDSType(),                 //
+                      length_t(var->getLength()))        //
+    {
+        //TODO remove comment
+        //type_ = var->getType();
+        //data_structure_type_ = var->getDSType();
+        //length_ = var->getLength();
+
+
         names_.push_back(name);
         name_ = name;
         if (isConst(var)) {
@@ -18,37 +29,54 @@ class Line : public ExValue_ifs {
         }
         assigned_val_ = var;
         level_ = var->getLevel();
-        type_ = var->getType();
-        data_structure_type_ = var->getDSType();
-        length_ = var->getLength();
+
     }
 
-    Line(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len) : ExValue_ifs() {
+    Line(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len)
+        : ExValue_ifs(ty,                   //
+                      TypeEn::unknown_jty,  //
+                      dsty,                 //
+                      length_t(len))        //
+    {
         names_.push_back(name);
         name_ = name;
-        data_structure_type_ = dsty;
-        type_ = ty;
-        length_ = int64_t(len);
+        //TODO remove comment
+        // data_structure_type_ = dsty;
+        // type_ = ty;
+        // length_ = int64_t(len);
         is_arg_ = true;
     }
 
-    Line(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty) : ExValue_ifs() {
+    Line(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty)
+        : ExValue_ifs(TypeEn::unknown_jty,  //
+                      TypeEn::unknown_jty,  //
+                      dsty,                 //
+                      1)                    //
+    {
         names_.push_back(name);
         name_ = name;
         link_name_ = link_name;
-        data_structure_type_ = dsty;
+        //TODO remove comment
+        // data_structure_type_ = dsty;
         is_arg_ = true;
     }
 
-    Line(const std::string& name, ParameterIfs* parameter) : ExValue_ifs() {
+    Line(const std::string& name, ParameterIfs* parameter)
+        : ExValue_ifs(PRMType2JITType(parameter->getPrmType()),  //
+                      TypeEn::unknown_jty,                       //
+                      DataStructureTypeEn::kLargeArr,            //
+                      parameter->getVirtualSize()) {
+        //TODO remove comment
+        // type_ = PRMType2JITType(parameter->getPrmType());
+        // data_structure_type_ = DataStructureTypeEn::kLargeArr;
+        // length_ = int64_t(parameter->getVirtualSize());
+
+
+
+        is_arg_ = true;
         names_.push_back(name);
         name_ = name;
         link_name_ = parameter->getName();
-        type_ = PRMType2JITType(parameter->getPrmType());
-        length_ = int64_t(parameter->getVirtualSize());
-        data_structure_type_ = DataStructureTypeEn::kLargeArr;
-        is_arg_ = true;
-
         if (parameter->isAsync()) {
             parameter_ = new AsyncParameter(*(AsyncParameter*)parameter);
         } else parameter_ = new SyncParameter(*(SyncParameter*)parameter);

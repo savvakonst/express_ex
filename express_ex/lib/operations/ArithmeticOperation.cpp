@@ -65,11 +65,16 @@ ExValue_ifs* newInversionOperation(BodyTemplate* body_template) {
     return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, zero, arg, OpCodeEn::sub);
 }
 
-ArithmeticOperation::ArithmeticOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b) : Operation_ifs() {
-    commonSetup(op, maxDSVar(var_a, var_b));
 
-    type_ = maxTypeVar(var_a, var_b)->getType();
-    type_ = isComparison(op) && !isUnknownTy(type_) ? TypeEn::int1_jty : type_;
+
+ArithmeticOperation::ArithmeticOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b)
+    : Operation_ifs(maxTypeVar(var_a, var_b)->getType(), TypeEn::unknown_jty, op, maxDSVar(var_a, var_b)) {
+    // commonSetup(op, maxDSVar(var_a, var_b));
+
+
+    if (isComparison(op)) print_error("ArithmeticOperation::ArithmeticOperation isComparison(op)");
+    // type_ = maxTypeVar(var_a, var_b)->getType();
+    // type_ = isComparison(op) && !isUnknownTy(type_) ? TypeEn::int1_jty : type_;
 
     level_ = maxLevelVar(var_a, var_b)->getLevel();
 
@@ -95,8 +100,8 @@ void ArithmeticOperation::genBodyVisitExit(BodyGenContext* context) {
     auto op1 = context->pop();
 
     if ((op2 == nullptr) || (op1 == nullptr)) {
-        auto txtOperation = txtArOp(op_code_);
-        print_error(txtOperation +
+        auto txt_operation = txtArOp(op_code_);
+        print_error(txt_operation +
                     " "
                     "left operand:" +
                     ((op1 != nullptr) ? "a" : "unknown") + ".  " +

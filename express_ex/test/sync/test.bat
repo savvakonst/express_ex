@@ -2,7 +2,8 @@
 IF EXIST out.dat  DEL /f out.dat
 
 exho %0
-set Path=C:\Qt\5.12.8\msvc2017_64\bin;%Path%
+
+set path=C:\Qt\5.12.8\msvc2017_64\bin;C:\Qt\5.14.2\msvc2017_64\bin;%path%
 
 IF "%1"=="" (
     set PATH_TO_EXE=.

@@ -37,10 +37,6 @@ enum class DataStructureTypeEn
     kLargeArr
 };
 
-// enum class arrayTypeEn {
-//	simpleArray
-// };
-
 ///////////////////////////////////////////////////
 
 enum class OpCodeEn
@@ -163,7 +159,7 @@ enum class NodeTypeEn
     kTailCall,
     kTailCallSelect
 };
-
+/*
 inline bool isInv(OpCodeEn x) {
     auto t = (TypeOpCodeEn)x;
     return (t < TypeOpCodeEn::invEnd);
@@ -172,10 +168,12 @@ inline bool isArithmetic(OpCodeEn x) {
     auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::arithetic <= t) && (t < TypeOpCodeEn::arithetic_end);
 }
+ */
 inline bool isComparison(OpCodeEn x) {
     auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::comparsion <= t) && (t < TypeOpCodeEn::comparsion_end);
 }
+/*
 inline bool isBitwise(OpCodeEn x) {
     auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::bitwise <= t) && (t < TypeOpCodeEn::bitwise_end);
@@ -185,7 +183,9 @@ inline bool isTypeConv(OpCodeEn x) {
     return (TypeOpCodeEn::type_conv <= t) && (t < TypeOpCodeEn::typeConvEnd);
 }
 inline bool isIntegrate(OpCodeEn x) { return (OpCodeEn::integrate == x); }
+*/
 inline bool isSelect(OpCodeEn x) { return (OpCodeEn::select == x); }
+/*
 inline bool isCall(OpCodeEn x) { return (OpCodeEn::call == x); }
 inline bool isConvolve(OpCodeEn x) {
     auto t = (TypeOpCodeEn)x;
@@ -207,7 +207,7 @@ inline bool isSmallArrayDef(OpCodeEn x) {
     auto t = (TypeOpCodeEn)x;
     return (TypeOpCodeEn::smallArrayDef <= t) && (t < TypeOpCodeEn::smallArrayDefEnd);
 }
-
+*/
 inline std::string toString(TypeEn type) {
     std::string t = "pass";
 #define ENUM2STR(x) \

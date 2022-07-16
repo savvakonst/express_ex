@@ -178,10 +178,6 @@ class SmallArr {
    protected:
     PosInText pos_;
 
-    double start_ = 0;
-
-    double stop_ = 0;
-
     char* buffer_ptr_ = nullptr;
 };
 

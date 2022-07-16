@@ -11,9 +11,15 @@ ExValue_ifs* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn
 class BuiltInCallOperation : public Operation_ifs {
    public:
     // constructor of type conversion operation or shift and decimation
-    BuiltInCallOperation(OpCodeEn op, ExValue_ifs* var, TypeEn target_type) : Operation_ifs() {
-        commonSetup(op, var);
-        type_ = target_type;
+    BuiltInCallOperation(OpCodeEn op, ExValue_ifs* var, TypeEn target_type)
+        : Operation_ifs(target_type,          //
+                        TypeEn::unknown_jty,  //
+                        op,                   //
+                        var)                  //
+    {
+        // TODO remove comment
+        //  commonSetup(op, var);
+        //  type_ = target_type;
         level_ = var->getLevel();
         operand_.push_back(var);
     }

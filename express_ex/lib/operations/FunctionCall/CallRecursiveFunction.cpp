@@ -6,6 +6,13 @@
 
 #include "jit/IR_generator.h"
 
+static CallRecursiveFunction::length_t getLength(const stack<ExValue_ifs*>& args) {
+    ExValue_ifs* temp = nullptr;
+    for (auto i : args)
+        if (i->isArray()) temp = i;
+    return temp ? temp->getLength() : 0;
+}
+
 CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue_ifs*>& args) : CallI_ifs() {
     body_ = body;
     args_ = args;
@@ -31,6 +38,8 @@ CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue_ifs
     type_ = ret->getType();
 
     if (temp == nullptr) print_error("CallRecursiveFunction::CallRecursiveFunction : temp == nullptr");
+
+
 
     length_ = temp->getLength();
     data_structure_type_ = temp->getDSType();

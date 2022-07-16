@@ -7,7 +7,6 @@
 
 
 #include <vector>
-
 #include "operations/Operation_ifs.h"
 
 ExValue_ifs* newNeighborPointOperation(GarbageContainer* garbage_container, ExValue_ifs* arg, ExValue_ifs* shift);
@@ -15,7 +14,7 @@ ExValue_ifs* newNeighborPointOperation(GarbageContainer* garbage_container, ExVa
 
 class NeighborPointOperation : public Operation_ifs {
    public:
-    NeighborPointOperation(ExValue_ifs* large_arr, ExValue_ifs* small_arr, int64_t shift);
+    NeighborPointOperation(ExValue_ifs* large_arr, ExValue_ifs* shift);
 
     ~NeighborPointOperation() override = default;
 

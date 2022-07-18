@@ -40,7 +40,11 @@ class Operation_ifs : public ExValue_ifs {
         return contain_rec_call_ ? NodeTypeEn::kTailCallSelect : NodeTypeEn::kOperation;
     }
 
-
+    /**
+     * it is called by markUnusedVisitEnter() in simplification stage, when typed Body has been already built.
+     * This is used to define buffer bounds. Typically this is overridden by operations which implement operators
+     * like convolve, neighbour point (data shift), etc.
+     */
     virtual void visitEnterSetupBuffer(stack<ExValue_ifs*>* visitor_stack) {
         for (auto i : operand_) {
             i->setBufferLength(this);
@@ -64,6 +68,12 @@ class Operation_ifs : public ExValue_ifs {
         visitEnterStackUpdate(visitor_stack);
     }
 
+    /**
+     * It is called in simplification stage when typed Body has been already built.
+     * it pushes to visitor stack and calls commonMarkUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) which
+     * increase usage counter and visitEnterSetupBuffer(visitor_stack);
+     * @param visitor_stack
+     */
     void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
 
 

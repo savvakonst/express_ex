@@ -60,16 +60,16 @@ set(LIBRARY_SOURCES
         lib/operations/SmallArrayDefOperation.cpp
         lib/operations/StoreToBufferOperation.cpp
         lib/operations/TypeCastOperation.cpp
-        lib/operations/NeighborPointOperation.h
-
+        lib/operations/FunctionCall/CallTemplate.cpp
+        lib/operations/ExConstValue.cpp
+        lib/operations/NeighborPointOperation.cpp
+        lib/operations/RecursiveNeighborPointOperation.cpp
 
         #lib/jit/CL_generator.cpp
         lib/jit/IR_generator.cpp
         lib/jit/getWin32Intrinsinc.cpp
         lib/jit/table.cpp
-        lib/operations/FunctionCall/CallTemplate.cpp
-        lib/operations/NeighborPointOperation.cpp
-        lib/operations/ExConstValue.cpp
+
         )
 
 
@@ -117,7 +117,7 @@ set(LIBRARY_HEADERS
         lib/operations/TypeCastOperation.h
         lib/operations/FunctionCall/call.h
         lib/operations/NeighborPointOperation.h
-
+        lib/operations/RecursiveNeighborPointOperation.h
 
         #include/jit/CL_generator.h
         include/jit/IR_generator.h

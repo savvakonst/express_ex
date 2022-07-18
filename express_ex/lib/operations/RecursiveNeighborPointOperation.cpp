@@ -2,14 +2,14 @@
 // Created by SVK on 15.07.2022.
 //
 
-#include "NeighborPointOperation.h"
+#include "RecursiveNeighborPointOperation.h"
 
 #include "ArithmeticOperation.h"
 #include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
 #include "parser/bodyTemplate.h"
 
-ExValue_ifs *newNeighborPointOperation(GarbageContainer *garbage_container, ExValue_ifs *arg, ExValue_ifs *shift) {
+ExValue_ifs *newRecursiveNeighborPointOperation(GarbageContainer *garbage_container, ExValue_ifs *arg, ExValue_ifs *shift) {
     if (!isConst(shift)) {
         print_error("neighbor point index is not integer");
         return nullptr;
@@ -17,7 +17,7 @@ ExValue_ifs *newNeighborPointOperation(GarbageContainer *garbage_container, ExVa
     return garbage_container->add(new NeighborPointOperation(arg, shift));
 }
 
-NeighborPointOperation::NeighborPointOperation(ExValue_ifs *array, ExValue_ifs *shift)
+RecursiveNeighborPointOperation::RecursiveNeighborPointOperation(ExValue_ifs *array, ExValue_ifs *shift)
     : Operation_ifs(array->type_, TypeEn::unknown_jty, OpCodeEn::none_op, array) {
     // commonSetup(OpCodeEn::none_op, array);
     // type_ = array->getType();
@@ -26,7 +26,7 @@ NeighborPointOperation::NeighborPointOperation(ExValue_ifs *array, ExValue_ifs *
     operand_.push_back(shift);
 }
 
-void NeighborPointOperation::visitEnterSetupBuffer(stack<ExValue_ifs *> *visitor_stack) {
+void RecursiveNeighborPointOperation::visitEnterSetupBuffer(stack<ExValue_ifs *> *visitor_stack) {
     auto shift_val = operand_[1];
     if (!(isConst(shift_val) && isInteger(shift_val)))
         print_error("NeighborPointOperation argument is not const integer");
@@ -40,12 +40,12 @@ void NeighborPointOperation::visitEnterSetupBuffer(stack<ExValue_ifs *> *visitor
     operand_[0]->setBufferLength(left, right);
 }
 
-void NeighborPointOperation::visitEnterStackUpdate(stack<ExValue_ifs *> *visitor_stack) {
+void RecursiveNeighborPointOperation::visitEnterStackUpdate(stack<ExValue_ifs *> *visitor_stack) {
     visitor_stack->push(operand_[1]);
     visitor_stack->push(operand_[0]);
 }
 
-void NeighborPointOperation::genBodyVisitExit(BodyGenContext *context) {
+void RecursiveNeighborPointOperation::genBodyVisitExit(BodyGenContext *context) {
     is_visited_ = false;
 
     GarbageContainer *garbage_container = context->getGarbageContainer();
@@ -59,17 +59,17 @@ void NeighborPointOperation::genBodyVisitExit(BodyGenContext *context) {
     context->push(ret);
 }
 
-void NeighborPointOperation::calculateConstRecursive(RecursiveGenContext *context) {
-    print_SA_error("NeighborPointOperation::calculateConstRecursive invalid operation.");
+void RecursiveNeighborPointOperation::calculateConstRecursive(RecursiveGenContext *context) {
+    print_SA_error("RecursiveNeighborPointOperation::calculateConstRecursive invalid operation.");
 }
 
-void NeighborPointOperation::printVisitExit(PrintBodyContext *context) {
+void RecursiveNeighborPointOperation::printVisitExit(PrintBodyContext *context) {
     auto op2 = context->pop();
     auto op1 = context->pop();
     context->push(checkBuffer("(" + op1 + ")[" + op2 + "]"));
 }
 
-std::string NeighborPointOperation::printUint() {
+std::string RecursiveNeighborPointOperation::printUint() {
     is_visited_ = false;
 
     auto name_op_a = operand_[0]->getAssignedVal(true)->getUniqueName();
@@ -80,11 +80,11 @@ std::string NeighborPointOperation::printUint() {
     return u_name + " =  " + name_op_a + "[" + name_op_b + "]";
 }
 
-void NeighborPointOperation::setupIR(IRGenerator &builder) {
+void RecursiveNeighborPointOperation::setupIR(IRGenerator &builder) {
     print_IR_error("NeighborPointOperation::setupIR is not supported yet");
     finishSetupIR(builder);
 }
 
-void NeighborPointOperation::calculate() {
+void RecursiveNeighborPointOperation::calculate() {
     print_IR_error("NeighborPointOperation::calculate is not supported yet")
 }

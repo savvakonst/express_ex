@@ -161,7 +161,7 @@ void SmallArrayDefOperation::calculate() { /*do nothing*/
 void SmallArrayDefOperation::smallArrayGen() {
     double delta = 0.0;
     if (isInteger(type_)) {
-        delta = (stop_ - start_) / length_;
+        delta = (stop_ - start_) / double(length_);
     }
 
     buffer_ptr_ = calcSmallArrayAlloc(type_, (int)length_);
@@ -219,6 +219,7 @@ SmallArrayDefOperation* SmallArrayDefOperation::create(ExValue_ifs* arg1) {
     }
     return nullptr;
 }
+
 SmallArrayDefOperation* SmallArrayDefOperation::create(OpCodeEn op, stack<ExValue_ifs*>& args, TypeEn target_type) {
     auto args_size = args.size();
 

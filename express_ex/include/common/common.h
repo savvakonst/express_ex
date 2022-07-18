@@ -337,6 +337,20 @@ void convolveTemplate_(T* ret, T* a, T* b, int na, int nb, int offset = 0) {
     }
 }
 
+
+template <typename Ty>
+Ty typeCastConstValue(TypeEn arg_type, untyped_t arg_int) {
+    Ty return_val = 0;
+#define OP_LV2(T1, T2)                \
+    {                                 \
+        T2* typedArg = (T2*)&arg_int; \
+        return_val = (Ty)*typedArg;   \
+    }
+    OP_LV1(arg_type, arg_type);
+#undef OP_LV2
+    return return_val;
+}
+
 #undef SWITCH_UINT
 #undef AR_SWITCH_OP
 #undef BI_SWITCH_OP

@@ -33,19 +33,6 @@ void BodyTemplate::addArg(const std::string& name) {
     lines_.push_back(line);
 }
 
-void BodyTemplate::addParam(Line* line) {  //?delete
-    garbage_container_->add(line);
-    arg_count_++;
-    lines_.push_back(line);
-}
-
-void BodyTemplate::addParam(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len) {  //?delete
-    auto line = new Line(name, ty, dsty, len);
-    garbage_container_->add(line);
-    arg_count_++;
-    lines_.push_back(line);
-}
-
 void BodyTemplate::addParam(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty) {
     auto line = new Line(name, link_name, dsty);
     garbage_container_->add(line);

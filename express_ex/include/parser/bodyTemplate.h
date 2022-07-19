@@ -43,8 +43,6 @@ class BodyTemplate {
 
     // TODO is necessary to add returned status_ value with line ,pos end error code and string;
     void addArg(const std::string& name);
-    void addParam(Line* line);
-    void addParam(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len);
     void addParam(const std::string& name, const std::string& link_name,
                   DataStructureTypeEn dsty = DataStructureTypeEn::kConstant);
 

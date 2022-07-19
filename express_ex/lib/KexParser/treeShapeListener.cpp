@@ -99,6 +99,7 @@ void TreeShapeListener::exitNeighborhoodPoint(EGrammarParser::NeighborhoodPointC
     if (current_body_->getName() == id) {
         // TODO add recursive neighbor point operation
     } else {
+        current_body_->getLastLineFromName(ctx->ID()->getText());
         //  TODO: neighbor point operation
     }
 }

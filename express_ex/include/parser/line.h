@@ -22,7 +22,7 @@ class Line : public ExValue_ifs {
         // length_ = var->getLength();
 
 
-        names_.push_back(name);
+
         name_ = name;
         if (isConst(var)) {
             binary_value_ = var->getBinaryValue();
@@ -37,12 +37,7 @@ class Line : public ExValue_ifs {
                       dsty,                 //
                       length_t(len))        //
     {
-        names_.push_back(name);
         name_ = name;
-        // TODO remove comment
-        //  ds_ty_ = dsty;
-        //  type_ = ty;
-        //  length_ = int64_t(len);
         is_arg_ = true;
     }
 
@@ -52,11 +47,8 @@ class Line : public ExValue_ifs {
                       dsty,                 //
                       1)                    //
     {
-        names_.push_back(name);
         name_ = name;
         link_name_ = link_name;
-        // TODO remove comment
-        //  ds_ty_ = dsty;
         is_arg_ = true;
     }
 
@@ -65,15 +57,8 @@ class Line : public ExValue_ifs {
                       TypeEn::unknown_jty,                       //
                       DataStructureTypeEn::kLargeArr,            //
                       parameter->getVirtualSize()) {
-        // TODO remove comment
-        //  type_ = PRMType2JITType(parameter->getPrmType());
-        //  ds_ty_ = DataStructureTypeEn::kLargeArr;
-        //  length_ = int64_t(parameter->getVirtualSize());
-
-
-
         is_arg_ = true;
-        names_.push_back(name);
+
         name_ = name;
         link_name_ = parameter->getName();
         if (parameter->isAsync()) {
@@ -83,10 +68,7 @@ class Line : public ExValue_ifs {
 
     explicit Line(const std::string& name)
         : ExValue_ifs(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
-        names_.push_back(name);
         name_ = name;
-        // TODO remove comment
-        // type_ = TypeEn::unknown_jty;
         is_arg_ = true;
     }
 
@@ -94,8 +76,8 @@ class Line : public ExValue_ifs {
 
     ExValue_ifs* getAssignedVal(bool deep = false) override;
 
-    bool isArg() const;
-    bool checkName(const std::string&) const;
+    virtual bool isArg() const;
+    bool checkName(const std::string& name) const;
 
     std::string getName(bool only_name = false) const { return only_name ? name_ : checkBuffer(name_); }
     std::string getLinkName() const { return link_name_; }
@@ -116,8 +98,7 @@ class Line : public ExValue_ifs {
         binary_value_ = var->getBinaryValue();
     }
 
-   private:
-    uint32_t reference_ = 0;  // atavism
+
    public:
     void genRecursiveVisitExit(RecursiveGenContext* context) override {
         // context->setUint(this);
@@ -133,15 +114,85 @@ class Line : public ExValue_ifs {
         return unique_name_ + (is_arg_ ? " = arg()" : " = assign(" + assigned_val_->getUniqueName() + ")");
     }
 
-   private:
-    bool is_arg_ = false;
+   protected:
+    Line(TypeEn type, TypeEn time_type, DataStructureTypeEn data_structure_type, length_t length)
+        : ExValue_ifs(type, time_type, data_structure_type, length) {}
 
     ExValue_ifs* assigned_val_ = nullptr;
 
-    std::vector<std::string> names_;
 
-    std::string name_ = std::string();
-    std::string link_name_ = std::string();
+    std::string name_;
+    std::string link_name_;
+
+   private:
+    bool is_arg_ = false;
 };
+
+
+
+class ExArgument : public Line {
+   public:
+    ExArgument(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len)
+        : Line(ty,                   //
+               TypeEn::unknown_jty,  //
+               dsty,                 //
+               length_t(len))        //
+    {
+        name_ = name;
+    }
+
+    ExArgument(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty)
+        : Line(TypeEn::unknown_jty,  //
+               TypeEn::unknown_jty,  //
+               dsty,                 //
+               1)                    //
+    {
+        name_ = name;
+        link_name_ = link_name;
+    }
+
+    ExArgument(const std::string& name, ParameterIfs* parameter)
+        : Line(PRMType2JITType(parameter->getPrmType()),  //
+               TypeEn::unknown_jty,                       //
+               DataStructureTypeEn::kLargeArr,            //
+               parameter->getVirtualSize()) {
+        name_ = name;
+        link_name_ = parameter->getName();
+        if (parameter->isAsync()) {
+            parameter_ = new AsyncParameter(*(AsyncParameter*)parameter);
+        } else parameter_ = new SyncParameter(*(SyncParameter*)parameter);
+    }
+
+    explicit ExArgument(const std::string& name)
+        : Line(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
+        name_ = name;
+    }
+
+    ~ExArgument() override = default;
+
+    ExValue_ifs* getAssignedVal(bool deep = false) override { return this; }
+
+    bool isArg() const override { return true; }
+
+    void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) override {
+        commonMarkUnusedVisitEnter(visitor_stack);
+        is_unused_ = false;
+    }
+
+   public:
+    void genRecursiveVisitExit(RecursiveGenContext* context) override {
+        // context->setUint(this);
+        is_visited_ = false;
+    }
+
+    void calculateConstRecursive(RecursiveGenContext* context) override {
+        binary_value_ = binary_value_;
+        temp_type_ = assigned_val_->getTempType();
+    }
+
+    std::string printUint() override { return unique_name_ + " = arg()"; }
+};
+
+
 
 #endif

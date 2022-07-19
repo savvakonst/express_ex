@@ -27,11 +27,10 @@ class CallI_ifs : public ExValue {
         if (body_) {
             context->addVoid(body_->print(context->tab_ + "  ", context->DST_ena_, context->hide_unused_lines_));
 
-            for (auto& i : args_) auto x = context->pop();
-
-            context->push(body_->getName() + ".ret." + toString(type_));
-            is_visited_ = false;
+            context->push(body_->getName() + "( " + printArgs(context) + ").ret." + toString(type_));
+            // is_visited_ = false;
         }
+        is_visited_ = false;
     }
 
     ExValue* getAssignedVal(bool deep = false) override {
@@ -54,6 +53,12 @@ class CallI_ifs : public ExValue {
     }
 
    protected:
+    std::string printArgs(PrintBodyContext* context) {
+        std::string ret;
+        for (size_t i = args_.size(); i > 0; i--) ret += context->pop() + ((i != 1) ? ", " : "");
+        return ret;
+    }
+
     Body* body_ = nullptr;
     stack<ExValue*> args_;
 };
@@ -92,6 +97,12 @@ class TailCallDirective : public CallI_ifs {
     ~TailCallDirective() override = default;
 
     void setupIR(IRGenerator& builder) override;
+
+    void printVisitExit(PrintBodyContext* context) override {
+        std::string ret = "tailCall( " + printArgs(context) + ")";
+        context->push(ret);
+        is_visited_ = false;
+    }
 
     ExValue* getAssignedVal(bool deep = false) override { return this; }
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kTailCall; }

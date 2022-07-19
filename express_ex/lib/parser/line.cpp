@@ -1,5 +1,6 @@
 #include "parser/line.h"
 
+#include "jit/IR_generator.h"
 #include "operations/operations.h"
 
 // void print_error(std::string content);
@@ -9,46 +10,41 @@ const T& max(const T& a, const T& b) {
     return (a < b) ? b : a;  // or: return comp(a,b)?b:a; for version (2)
 }
 
-bool Line::isArg() const { return is_arg_; }
 
-bool Line::checkName(const std::string& name) const {
+
+bool ExLine::checkName(const std::string& name) const {
     if (name_ == name) return true;
     return false;
 }
 
-ExValue_ifs* Line::getAssignedVal(bool deep) {
-    if (is_arg_) return this;
-
+ExValue_ifs* ExLine::getAssignedVal(bool deep) {
     if (deep) return assigned_val_->getAssignedVal(true);
-
     return assigned_val_;
 }
 
 // safe functions .external stack is used
 
-void Line::reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
+void ExLine::reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
     commonMarkUnusedVisitEnter(visitor_stack);
-    if (!is_arg_) {
-        visitor_stack->push(assigned_val_);
-        assigned_val_->setBufferBordersLength(this);
-    }
+    visitor_stack->push(assigned_val_);
+    assigned_val_->setBufferBordersLength(this);
     is_unused_ = false;
 }
 
-void Line::genBlocksVisitExit(TableGenContext* context) {
+void ExLine::genBlocksVisitExit(TableGenContext* context) {
     unique_name_ = (isLargeArr(this) ? "vb" : "vs") + std::to_string(context->getUniqueIndex()) + "." + name_;
     // context_->setUint(this);
     is_visited_ = false;
 }
 
-void Line::visitEnter(stack<ExValue_ifs*>* visitor_stack) {
+void ExLine::visitEnter(stack<ExValue_ifs*>* visitor_stack) {
     visitor_stack->push(this);
     is_visited_ = true;
 }
 
-void Line::genBodyVisitExit(BodyGenContext* context) {
+void ExLine::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;
-    std::vector<Line*> namespace_l = context->getNamespace();
+    std::vector<ExLine*> namespace_l = context->getNamespace();
 
     std::string name = getName(true);
     if (namespace_l.empty()) return;
@@ -61,7 +57,35 @@ void Line::genBodyVisitExit(BodyGenContext* context) {
     print_error("visitExit can't find var name: " + name);
 }
 
-void Line::printVisitExit(PrintBodyContext* context) {
+void ExLine::printVisitExit(PrintBodyContext* context) {
     is_visited_ = false;
     context->push(name_ + "." + toString(type_));
+}
+
+
+
+void ExArgument::setupIR(IRGenerator& builder) {
+    // setBuffered();
+    if (isVariable(this)) {
+        builder.setInitInsertPoint();
+        llvm::Function* function = builder.getCurrentFunction();
+        IR_buffer_ptr_ = builder.CreateAlloca(builder.getLLVMType(type_));
+        size_t arg_number = builder.arg_ptr_list_.size();
+        builder.CreateStore(function->getArg((uint32_t)arg_number), IR_buffer_ptr_);
+        builder.arg_ptr_list_.push_back(IR_buffer_ptr_);
+
+        // insert to  loop_block
+        builder.setCalcInsertPoint();
+        IR_value_ = builder.CreateLoad(IR_buffer_ptr_);
+
+    } else {
+        if (!is_initialized_) {
+            builder.addBuffer(new InputBuffer(this));
+            IR_buffer_base_ptr_ = builder.createBufferInit(type_, "external_");
+            is_initialized_ = true;
+        }
+        IR_buffer_ptr_ = builder.createPositionalInBoundsGep(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(),
+                                                             "offset_arg_incr_");
+        IR_value_ = builder.createPositionalLoad(IR_buffer_ptr_, true, "arg_buffer_val_");
+    }
 }

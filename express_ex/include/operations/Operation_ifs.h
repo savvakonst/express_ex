@@ -54,6 +54,7 @@ class Operation_ifs : public ExValue_ifs {
     /**
      * it pushes operation operands/arguments to visitor_stack,
      * it is called by visitEnter()
+     * @param visitor_stack
      */
     virtual void visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack);
 
@@ -61,6 +62,7 @@ class Operation_ifs : public ExValue_ifs {
      * it sets is_visited_ to true push themself to visitor_stack and than
      * call visitEnterStackUpdate() which pushes operation operands to visitor_stack
      * is_visited_ variable must be set to false at the begin of function
+     * @param visitor_stack
      */
     void visitEnter(stack<ExValue_ifs*>* visitor_stack) override {
         is_visited_ = true;
@@ -73,6 +75,27 @@ class Operation_ifs : public ExValue_ifs {
      * it pushes to visitor stack and calls commonMarkUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) which
      * increase usage counter and visitEnterSetupBuffer(visitor_stack);
      * @param visitor_stack
+     *
+     * \verbatim embed:rst:leading-asterisk
+     *      .. uml::
+     *
+     *          @startuml
+     *          activate Body
+     *
+     *          Body -> Operation_ifs: reverseTraversalVisitEnter:
+     *
+     *              activate Operation_ifs
+     *
+     *                  Operation_ifs ->Operation_ifs:   commonMarkUnusedVisitEnter(visitor_stack);
+     *                  Operation_ifs ->Operation_ifs:   visitEnterSetupBuffer(visitor_stack);
+     *                  Operation_ifs ->Operation_ifs:   visitEnterStackUpdate(visitor_stack);
+     *
+     *              deactivate Operation_ifs
+     *
+     *          deactivate Body
+     *          @enduml
+     *
+     * \endverbatim
      */
     void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
 

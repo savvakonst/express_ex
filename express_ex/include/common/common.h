@@ -15,7 +15,7 @@ void print_IR_error(const std::string& content);
 void print_SA_error(const std::string& content);
 
 
-class Line;
+class ExLine;
 class ExValue_ifs;
 
 typedef struct {

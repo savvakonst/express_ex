@@ -10,7 +10,7 @@
 #include "common/types_jty.h"
 
 class ExValue_ifs;
-class Line;
+class ExLine;
 class Body;
 
 class GarbageContainer {
@@ -40,11 +40,11 @@ class PrintBodyContext {
     PrintBodyContext(std::string tab, bool DST_ena, bool hide_unused_lines)
         : tab_(std::move(tab)), DST_ena_(DST_ena), hide_unused_lines_(hide_unused_lines) {}
 
-    void createArg(Line* value);
+    void createArg(ExLine* value);
 
-    void createLine(Line* value);
+    void createLine(ExLine* value);
 
-    void createReturn(Line* value);
+    void createReturn(ExLine* value);
 
     void setName(const std::string& name);
 
@@ -96,7 +96,7 @@ class BodyGenContext {
 
     inline ExValue_ifs* pop() { return var_stack_.pop(); }
 
-    inline const std::vector<Line*>& getNamespace() const { return namespace_ptr_; }
+    inline const std::vector<ExLine*>& getNamespace() const { return namespace_ptr_; }
 
     inline GarbageContainer* getGarbageContainer() const { return garbage_container_; }
 
@@ -122,7 +122,7 @@ class BodyGenContext {
 
     Body* current_body_ = nullptr;
 
-    const std::vector<Line*>& namespace_ptr_;
+    const std::vector<ExLine*>& namespace_ptr_;
 
     friend CallRecursiveFunctionTemplate;
     friend CallTemplate;

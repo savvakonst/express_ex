@@ -11,7 +11,7 @@
 class BodyGenContext;
 class GarbageContainer;
 class ExValue_ifs;
-class Line;
+class ExLine;
 class Body;
 
 
@@ -54,9 +54,9 @@ class BodyTemplate {
     void addTailCall();
 
     std::map<std::string /*name*/, std::string /*link name*/> getParameterLinkNames(bool hide_unused = false) const;
-    const stack<Line*>& getRet() const { return return_stack_; }
+    const stack<ExLine*>& getRet() const { return return_stack_; }
     int getArgCount() const { return arg_count_; }
-    Line* getLastLineFromName(const std::string& name) const;
+    ExLine* getLastLineFromName(const std::string& name) const;
     const std::string& getName() const { return name_; }
 
     BodyTemplate* getParent() const { return parent_body_template_; }
@@ -94,8 +94,8 @@ class BodyTemplate {
     int arg_count_ = 0;
 
     stack<ExValue_ifs*> var_stack_;
-    stack<Line*> lines_;
-    stack<Line*> return_stack_;
+    stack<ExLine*> lines_;
+    stack<ExLine*> return_stack_;
 
     BodyTemplate* parent_body_template_ = nullptr;
     GarbageContainer* garbage_container_;

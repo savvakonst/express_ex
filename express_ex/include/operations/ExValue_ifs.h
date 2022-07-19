@@ -164,9 +164,32 @@ class ExValue_ifs : public SmallArr {
     uint64_t right_buffer_length_ = 0;
 
 
+
     /**
      * it is set oly by setBufferLength on Table calculateBufferLength stage
      * and only for
+     *
+     * \verbatim embed:rst:leading-asterisk
+     *   .. uml::
+     *
+     *       @startuml
+     *
+     *       Express_ex -> Table::calculateBufferLength
+     *       activate Table
+     *           Table -> TableColumn::setBufferLength
+     *           activate TableColumn
+     *               TableColumn -> Block::setBufferLength
+     *               activate Block
+     *                   Block ->  ExValue_ifs::setBufferLength
+     *               deactivate
+     *           deactivate
+     *       deactivate Table
+     *       Express_ex -> Table::llvmInit
+     *       Express_ex -> Table::generateIR
+     *
+     *       @enduml
+     *
+     * \endverbatim
      */
     int64_t buffer_length_ = 0;
 

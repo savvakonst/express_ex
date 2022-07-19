@@ -21,27 +21,27 @@ BodyTemplate::BodyTemplate(std::string name, BodyTemplate* parent_body_template)
 BodyTemplate::~BodyTemplate() { delete garbage_container_; }
 
 void BodyTemplate::addLine(const std::string& name, ExValue_ifs* var) {
-    auto line = new Line(name, var);
+    auto line = new ExLine(name, var);
     garbage_container_->add(line);
     lines_.push_back(line);
 }
 
 void BodyTemplate::addArg(const std::string& name) {
-    auto line = new Line(name);
+    auto line = new ExArgument(name);
     garbage_container_->add(line);
     arg_count_++;
     lines_.push_back(line);
 }
 
 void BodyTemplate::addParam(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty) {
-    auto line = new Line(name, link_name, dsty);
+    auto line = new ExArgument(name, link_name, dsty);
     garbage_container_->add(line);
     arg_count_++;
     lines_.push_back(line);
 }
 
 void BodyTemplate::addReturn(const std::string& name, ExValue_ifs* var) {  //?remove Value param
-    auto line = new Line(name, var);
+    auto line = new ExLine(name, var);
 
     if (is_tail_callable_) {
         auto assigned_var = var->getAssignedVal(true);
@@ -103,7 +103,7 @@ void BodyTemplate::addTailCall() {
     push(garbage_container_->add(new TailCallDirectiveTemplate(a)));
 }
 
-Line* BodyTemplate::getLastLineFromName(const std::string& name) const {
+ExLine* BodyTemplate::getLastLineFromName(const std::string& name) const {
     if (lines_.empty()) return nullptr;
     for (intptr_t i = intptr_t(lines_.size()) - 1; i >= 0; i--) {
         if (lines_[i]->checkName(name)) return (lines_[i]);
@@ -172,7 +172,7 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> arg
     for (const auto& value : lines_) {
         if (value->isArg()) {
             if (isTopBody()) {
-                body->addParam((Line*)*(arg));
+                body->addParam((ExLine*)*(arg));
                 ++arg;
 
             } else {

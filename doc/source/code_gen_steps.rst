@@ -81,9 +81,6 @@ methods like visitEnter() was omitted
 
 
 
-
-
-
 ExValue_ifs class description:
 =================
 
@@ -93,33 +90,6 @@ ExValue_ifs class description:
     :private-members:
     :allow-dot-graphs:
 
-
-setting the length of buffers boundaries
-=================
-none
-
-
-setting the length of buffers
-=================
-.. uml::
-
-    @startuml
-
-    Express_ex -> Table::calculateBufferLength
-    activate Table
-        Table -> TableColumn::setBufferLength
-        activate TableColumn
-            TableColumn -> Block::setBufferLength
-            activate Block
-                Block ->  ExValue_ifs::setBufferLength
-            deactivate
-        deactivate
-    deactivate Table
-
-    Express_ex -> Table::llvmInit
-    Express_ex -> Table::generateIR
-
-    @enduml
 
 
 Operation_ifs class description:
@@ -132,24 +102,3 @@ Operation_ifs class description:
     :allow-dot-graphs:
 
 
-corresponding diagrams:
-=================
-
-
-.. uml::
-
-    @startuml
-    activate Body
-
-        Body -> Operation_ifs: reverseTraversalVisitEnter:
-
-        activate Operation_ifs
-
-            Operation_ifs ->Operation_ifs:   commonMarkUnusedVisitEnter(visitor_stack);
-            Operation_ifs ->Operation_ifs:   visitEnterSetupBuffer(visitor_stack);
-            Operation_ifs ->Operation_ifs:   visitEnterStackUpdate(visitor_stack);
-
-        deactivate Operation_ifs
-
-    deactivate Body
-    @enduml

@@ -3,7 +3,7 @@
 #include "operations/ExValue_ifs.h"
 #include "parser/line.h"
 
-void PrintBodyContext::createArg(Line* value) {
+void PrintBodyContext::createArg(ExLine* value) {
     if (!hide_unused_lines_ || !value->isUnused()) {
         auto txt_line = "  " + tab_ + value->getName() + "=arg()";
         auto txt_shifts =
@@ -14,7 +14,7 @@ void PrintBodyContext::createArg(Line* value) {
     }
 }
 
-void PrintBodyContext::createLine(Line* value) {
+void PrintBodyContext::createLine(ExLine* value) {
     auto DST_postfix = DST_ena_ ? "." + toString(value->ds_ty_) : "";
 
     if (!hide_unused_lines_ || !value->isUnused()) {
@@ -29,7 +29,7 @@ void PrintBodyContext::createLine(Line* value) {
     }
 }
 
-void PrintBodyContext::createReturn(Line* value) {
+void PrintBodyContext::createReturn(ExLine* value) {
     auto DST_postfix = DST_ena_ ? "." + toString(value->ds_ty_) : "";
 
     auto txt_line = "  " + tab_ + value->getName() + DST_postfix + "  " + pop();

@@ -35,25 +35,25 @@ stack<ExValue_ifs*> Body::pop(size_t length) { return var_stack_.pop(length); }
 
 
 void Body::addLine(const std::string& name, ExValue_ifs* var) {
-    auto line = new Line(name, var);
+    auto line = new ExLine(name, var);
     garbage_contaiiner_->add(line);
     lines_.push_back(line);
 }
 
 void Body::addVariableLine(const std::string& name, ExValue_ifs* var) {
-    Line* line = new Line(name, var->type_, DataStructureTypeEn::kVariable, 1);
+    ExLine* line = new ExArgument(name, var->type_, DataStructureTypeEn::kVariable, 1);
     garbage_contaiiner_->add(line);
     lines_.push_back(line);
 }
 
-void Body::addParam(Line* line) {  //?delete
+void Body::addParam(ExLine* line) {  //?delete
     garbage_contaiiner_->add(line);
     arg_count_++;
     lines_.push_back(line);
 }
 
 void Body::addReturn(const std::string& name, ExValue_ifs* var) {  //?remove Value param
-    auto line = new Line(name, var);
+    auto line = new ExLine(name, var);
 
     if (is_tail_callable_) {
         var = var->getAssignedVal(true);
@@ -82,7 +82,7 @@ std::map<std::string, std::string> Body::getParameterLinkNames(bool hide_unused)
     return ret;
 }
 
-Line* Body::getLastLineFromName(const std::string& name) const {
+ExLine* Body::getLastLineFromName(const std::string& name) const {
     if (lines_.empty()) return nullptr;
 
     for (int i = (int)lines_.size() - 1; i >= 0; i--) {

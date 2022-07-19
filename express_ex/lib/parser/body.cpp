@@ -161,7 +161,6 @@ void Body::reverseTraversal() {
         do {
             auto var = visitor_stack.pop();
             var->reverseTraversalVisitEnter(&visitor_stack);
-
         } while (!visitor_stack.empty());
     }
 }

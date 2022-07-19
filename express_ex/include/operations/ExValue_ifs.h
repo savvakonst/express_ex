@@ -30,12 +30,16 @@ class ExValue_ifs : public SmallArr {
     void setReturned() { is_returned_ = true; }
 
     /**
-     * it is called by on Table calculateBufferLength stage
+     * it is called on Table calculateBufferLength stage, and sets buffer_length_
      * @param central_length
      */
     void setBufferLength(uint64_t central_length);
+
+
     void setBufferBordersLength(uint64_t left, uint64_t right);
+
     void setBufferBordersLength(ExValue_ifs* var);
+
 
     untyped_t getBinaryValue() const { return *((untyped_t*)(&binary_value_)); }
 
@@ -147,9 +151,23 @@ class ExValue_ifs : public SmallArr {
      */
     int64_t level_ = 0;
 
+    /**
+     * it is set only when Table::reverseTraversal() is called,
+     * by calling setBufferBordersLength().
+     */
     uint64_t left_buffer_length_ = 0;
+
+    /**
+     * it is set only when Table::reverseTraversal() is called,
+     * by calling setBufferBordersLength().
+     */
     uint64_t right_buffer_length_ = 0;
 
+
+    /**
+     * it is set oly by setBufferLength on Table calculateBufferLength stage
+     * and only for
+     */
     int64_t buffer_length_ = 0;
 
     untyped_t binary_value_ = 0;

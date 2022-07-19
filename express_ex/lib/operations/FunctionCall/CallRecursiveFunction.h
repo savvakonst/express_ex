@@ -12,7 +12,7 @@ class CallRecursiveFunction : public CallI_ifs {
     explicit CallRecursiveFunction(Body* body, const stack<ExValue_ifs*>& args = {});
     ~CallRecursiveFunction() override = default;
 
-    void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
+    void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
     void genBlocksVisitExit(TableGenContext* context) override;
     void setupIR(IRGenerator& builder) override;
 

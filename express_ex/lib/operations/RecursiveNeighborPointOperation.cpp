@@ -9,7 +9,8 @@
 #include "jit/IR_generator.h"
 #include "parser/bodyTemplate.h"
 
-ExValue_ifs *newRecursiveNeighborPointOperation(GarbageContainer *garbage_container, ExValue_ifs *arg, ExValue_ifs *shift) {
+ExValue_ifs *newRecursiveNeighborPointOperation(GarbageContainer *garbage_container, ExValue_ifs *arg,
+                                                ExValue_ifs *shift) {
     if (!isConst(shift)) {
         print_error("neighbor point index is not integer");
         return nullptr;
@@ -37,7 +38,7 @@ void RecursiveNeighborPointOperation::visitEnterSetupBuffer(stack<ExValue_ifs *>
     auto right = right_buffer_length_ + ((shift > 0) ? 0 : -shift);
 
     operand_[0]->getAssignedVal(true)->setBuffered();
-    operand_[0]->setBufferLength(left, right);
+    operand_[0]->setBufferBordersLength(left, right);
 }
 
 void RecursiveNeighborPointOperation::visitEnterStackUpdate(stack<ExValue_ifs *> *visitor_stack) {
@@ -86,5 +87,5 @@ void RecursiveNeighborPointOperation::setupIR(IRGenerator &builder) {
 }
 
 void RecursiveNeighborPointOperation::calculate() {
-    print_IR_error("NeighborPointOperation::calculate is not supported yet")
+    print_IR_error("NeighborPointOperation::calculate is not supported yet");
 }

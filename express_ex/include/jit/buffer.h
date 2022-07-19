@@ -5,7 +5,8 @@
 #include "ifs/parameterIO.h"
 #include "operations/ExValue_ifs.h"
 
-enum class BufferTypeEn {
+enum class BufferTypeEn
+{
     input,
     internal,
     output
@@ -27,6 +28,7 @@ class Buffer {
    public:
     explicit Buffer(ExValue_ifs* var) {
         length_ = var->getBufferLen();
+
         left_offset_ = var->getLeftBufferLen();
         right_offset_ = var->getRightBufferLen();
         type_ = TypeEn::unknown_jty;
@@ -80,10 +82,10 @@ class Buffer {
 
    protected:
     TypeEn type_ = TypeEn::unknown_jty;
-    int64_t sizeof_data_type_ = -1;
-    int64_t length_ = -1;
-    int64_t left_offset_ = -1;
-    int64_t right_offset_ = -1;
+    uint64_t sizeof_data_type_ = 0;
+    int64_t length_ = 0;
+    uint64_t left_offset_ = 0;
+    uint64_t right_offset_ = 0;
 
     char* ptr_ = nullptr;
     char* left_ptr_ = nullptr;

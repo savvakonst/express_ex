@@ -75,7 +75,7 @@ void ExConstValue::visitEnter(stack<ExValue_ifs *> *visitor_stack) {
     is_visited_ = true;
 }
 
-void ExConstValue::markUnusedVisitEnter(stack<ExValue_ifs *> *visitor_stack) {
+void ExConstValue::reverseTraversalVisitEnter(stack<ExValue_ifs *> *visitor_stack) {
     commonMarkUnusedVisitEnter(visitor_stack);
     is_unused_ = false;
 }

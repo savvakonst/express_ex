@@ -79,7 +79,7 @@ class Call : public CallI_ifs {
     explicit Call(Body* body, const stack<ExValue_ifs*>& args = {});
     ~Call() override = default;
 
-    void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
+    void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
     void genBlocksVisitExit(TableGenContext* context) override;
     void setupIR(IRGenerator& builder) override;
 

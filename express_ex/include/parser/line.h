@@ -104,7 +104,7 @@ class Line : public ExValue_ifs {
 
     // safe functions .external stack is used
     void visitEnter(stack<ExValue_ifs*>* visitor_stack) override;
-    void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
+    void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
 
     void genBodyVisitExit(BodyGenContext* context) override;
     void printVisitExit(PrintBodyContext* context) override;

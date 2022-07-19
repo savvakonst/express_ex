@@ -79,7 +79,7 @@ void ConvolveOperation::visitEnterSetupBuffer(stack<ExValue_ifs*>* visitor_stack
     auto right = this->getRightBufferLen() + ((shift > 0) ? 0 : -shift) + ri;
 
     operand_[0]->getAssignedVal(true)->setBuffered();
-    operand_[0]->setBufferLength(left, right);
+    operand_[0]->setBufferBordersLength(left, right);
 }
 
 void ConvolveOperation::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) {

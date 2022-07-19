@@ -55,7 +55,7 @@ class Block {
     void setBufferLength(uint64_t buffer_length);
     uint64_t getLevel() const { return level_; };
     uint64_t getLength() const { return length_; };
-    void recalcLeftRightBufferLengths();
+
     std::string print() const;
 
     bool generateIR(IRGenerator& builder, CycleStageEn type = CycleStageEn::midle,
@@ -101,9 +101,8 @@ class TableColumn {
             }
         return nullptr;
     }
-    void recalcLeftRightBufferLengths() {
-        for (auto i : block_list_) i->recalcLeftRightBufferLengths();
-    }
+
+
     std::string print();
 
     bool generateIR(IRGenerator& builder, CycleStageEn type = CycleStageEn::midle,
@@ -131,10 +130,6 @@ class Table {
     }
 
     void setUint(ExValue_ifs* var);
-
-    void recalcLeftRightBufferLengths() {
-        for (auto i : column_list_) i->recalcLeftRightBufferLengths();
-    }
 
     TableColumn* getColumn(uint64_t length) {
         for (auto i : column_list_)

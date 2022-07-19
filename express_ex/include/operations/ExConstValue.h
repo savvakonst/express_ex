@@ -22,7 +22,7 @@ class ExConstValue : public ExValue_ifs {
 
     void visitEnter(stack<ExValue_ifs*>* visitor_stack) override;
 
-    void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
+    void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
 
     void genBodyVisitExit(BodyGenContext* context) override;
 

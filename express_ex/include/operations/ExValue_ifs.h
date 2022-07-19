@@ -28,12 +28,17 @@ class ExValue_ifs : public SmallArr {
     virtual void setBuffered();
 
     void setReturned() { is_returned_ = true; }
+
+    /**
+     * it is called by on Table calculateBufferLength stage
+     * @param central_length
+     */
     void setBufferLength(uint64_t central_length);
-    void setBufferLength(uint64_t left, uint64_t right);
-    void setBufferLength(ExValue_ifs* var);
+    void setBufferBordersLength(uint64_t left, uint64_t right);
+    void setBufferBordersLength(ExValue_ifs* var);
 
     untyped_t getBinaryValue() const { return *((untyped_t*)(&binary_value_)); }
-    
+
     std::string getUniqueName() const { return unique_name_; }
 
     length_t getLength() const { return length_; }
@@ -73,7 +78,7 @@ class ExValue_ifs : public SmallArr {
 
     virtual void visitEnter(stack<ExValue_ifs*>* visitor_stack) = 0;
 
-    virtual void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
+    virtual void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
         commonMarkUnusedVisitEnter(visitor_stack);
         is_unused_ = false;
     }
@@ -136,7 +141,9 @@ class ExValue_ifs : public SmallArr {
 
     /**
      * it is immutable variable, it must be initialized in constructor
-     * and then never changes.
+     * and never changed afterwards. (now it is difficult to make it const? however it should be)
+     * it is used to determine when buffer usage is necessary, any operand that doesn't have the same level_ is marked
+     * as buffered by setting the operand's is_buffered_ field to true;
      */
     int64_t level_ = 0;
 

@@ -25,15 +25,15 @@ Call::Call(Body* body, const stack<ExValue_ifs*>& args)
     }
 }
 
-void Call::markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
+void Call::reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
     commonMarkUnusedVisitEnter(visitor_stack);
 
-    if (body_->getRet().empty()) print_error("markUnusedVisitEnter: body_->getRet().empty() == true ");
+    if (body_->getRet().empty()) print_error("reverseTraversalVisitEnter: body_->getRet().empty() == true ");
 
     auto ret = body_->getRet().front();
 
     visitor_stack->push(ret);
-    ret->setBufferLength(this);
+    ret->setBufferBordersLength(this);
 
     is_unused_ = false;
 }

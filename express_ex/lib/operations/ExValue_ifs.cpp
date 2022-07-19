@@ -12,14 +12,15 @@ void ExValue_ifs::setBuffered() {
 
 void ExValue_ifs::setBufferLength(uint64_t central_length) { buffer_length_ = central_length; }
 
-void ExValue_ifs::setBufferLength(uint64_t left, uint64_t right) {
+
+void ExValue_ifs::setBufferBordersLength(uint64_t left, uint64_t right) {
     if (isLargeArr(this)) {
         left_buffer_length_ = maxInt(left_buffer_length_, left);
         right_buffer_length_ = maxInt(right_buffer_length_, right);
     }
 }
 
-void ExValue_ifs::setBufferLength(ExValue_ifs* var) {
+void ExValue_ifs::setBufferBordersLength(ExValue_ifs* var) {
     if (isLargeArr(this)) {
         left_buffer_length_ = maxInt(left_buffer_length_, var->getLeftBufferLen());
         right_buffer_length_ = maxInt(right_buffer_length_, var->getRightBufferLen());

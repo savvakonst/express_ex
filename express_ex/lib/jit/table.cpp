@@ -42,11 +42,6 @@ void Block::setBufferLength(uint64_t buffer_length) {
     }
 }
 
-void Block::recalcLeftRightBufferLengths() {
-    for (auto i : uint_list_) {
-        i->setBufferLength(left_length_, right_length_);
-    }
-}
 
 string Block::print() const {
     constexpr size_t max_line_length = 90;

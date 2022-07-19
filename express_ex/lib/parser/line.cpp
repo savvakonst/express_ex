@@ -26,11 +26,11 @@ ExValue_ifs* Line::getAssignedVal(bool deep) {
 
 // safe functions .external stack is used
 
-void Line::markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
+void Line::reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
     commonMarkUnusedVisitEnter(visitor_stack);
     if (!is_arg_) {
         visitor_stack->push(assigned_val_);
-        assigned_val_->setBufferLength(this);
+        assigned_val_->setBufferBordersLength(this);
     }
     is_unused_ = false;
 }

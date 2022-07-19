@@ -37,7 +37,7 @@ void NeighborPointOperation::visitEnterSetupBuffer(stack<ExValue_ifs *> *visitor
     auto right = right_buffer_length_ + ((shift > 0) ? 0 : -shift);
 
     operand_[0]->getAssignedVal(true)->setBuffered();
-    operand_[0]->setBufferLength(left, right);
+    operand_[0]->setBufferBordersLength(left, right);
 }
 
 void NeighborPointOperation::visitEnterStackUpdate(stack<ExValue_ifs *> *visitor_stack) {
@@ -85,6 +85,4 @@ void NeighborPointOperation::setupIR(IRGenerator &builder) {
     finishSetupIR(builder);
 }
 
-void NeighborPointOperation::calculate() {
-    print_IR_error("NeighborPointOperation::calculate is not supported yet")
-}
+void NeighborPointOperation::calculate() { print_IR_error("NeighborPointOperation::calculate is not supported yet"); }

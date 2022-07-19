@@ -64,8 +64,9 @@ methods like visitEnter() was omitted
 
     "Express_ex:" -> "Body:\nbody_": simplify
     activate "Body:\nbody_"
-    "Body:\nbody_" -> "ExValue_ifs:second set":markUnusedVisitEnter
-    /'markUnusedVisitEnter
+    "Body:\nbody_" -> "ExValue_ifs:second set":reverseTraversalVisitEnter
+        ExValue_ifs::setBufferBordersLength
+
     deactivate "Body:\nbody_"
 
 
@@ -78,8 +79,40 @@ methods like visitEnter() was omitted
 
 
 
+setting the length of buffers boundaries
+##########################################
+Operation_ifs::reverseTraversalVisitEnter
+    Operation_ifs::visitEnterSetupBuffer
+        ExValue_ifs::setBufferBordersLength
+
+ExValue_ifs::reverseTraversalVisitEnter
+    ExValue_ifs::setBufferBordersLength
+
+
+
+.. uml::
+
+    @startuml
+
+    Express_ex -> Table::calculateBufferLength
+    activate Table
+        Table -> TableColumn::setBufferLength
+        activate TableColumn
+            TableColumn -> Block::setBufferLength
+            activate Block
+                Block ->  ExValue_ifs::setBufferLength
+            deactivate
+        deactivate
+    deactivate Table
+
+    Express_ex -> Table::llvmInit
+    Express_ex -> Table::generateIR
+
+    @enduml
+
+
 Operation_ifs class description:
-##########################
+##########################################
 
 .. doxygenclass:: Operation_ifs
     :members:
@@ -89,14 +122,14 @@ Operation_ifs class description:
 
 
 corresponding diagrams:
-##########################
+##########################################
 
 .. uml::
 
     @startuml
     activate Body
 
-        Body -> Operation_ifs: markUnusedVisitEnter:
+        Body -> Operation_ifs: reverseTraversalVisitEnter:
 
         activate Operation_ifs
 

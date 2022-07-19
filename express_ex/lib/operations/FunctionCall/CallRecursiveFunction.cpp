@@ -58,12 +58,12 @@ CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue_ifs
 }
 
 
-void CallRecursiveFunction::markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
+void CallRecursiveFunction::reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
     commonMarkUnusedVisitEnter(visitor_stack);
     for (int64_t i = ((int64_t)args_.size() - 1); i >= 0; i--) {
         auto arg = args_[i];
         visitor_stack->push(arg);
-        if (arg->isArray()) arg->setBufferLength(this);
+        if (arg->isArray()) arg->setBufferBordersLength(this);
     }
     is_unused_ = false;
 }

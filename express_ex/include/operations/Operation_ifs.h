@@ -41,13 +41,13 @@ class Operation_ifs : public ExValue_ifs {
     }
 
     /**
-     * it is called by markUnusedVisitEnter() in simplification stage, when typed Body has been already built.
+     * it is called by reverseTraversalVisitEnter() in simplification stage, when typed Body has been already built.
      * This is used to define buffer bounds. Typically this is overridden by operations which implement operators
      * like convolve, neighbour point (data shift), etc.
      */
     virtual void visitEnterSetupBuffer(stack<ExValue_ifs*>* visitor_stack) {
         for (auto i : operand_) {
-            i->setBufferLength(this);
+            i->setBufferBordersLength(this);
         }
     }
 
@@ -74,7 +74,7 @@ class Operation_ifs : public ExValue_ifs {
      * increase usage counter and visitEnterSetupBuffer(visitor_stack);
      * @param visitor_stack
      */
-    void markUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
+    void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
 
 
     /**

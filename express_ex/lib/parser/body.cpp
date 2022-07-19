@@ -160,7 +160,7 @@ void Body::simplify() {
         visitor_stack.push(value->getAssignedVal());
         do {
             auto var = visitor_stack.pop();
-            var->markUnusedVisitEnter(&visitor_stack);
+            var->reverseTraversalVisitEnter(&visitor_stack);
 
         } while (!visitor_stack.empty());
     }

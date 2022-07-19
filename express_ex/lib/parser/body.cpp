@@ -10,7 +10,7 @@
 
 Body::Body(const std::string& name, const std::list<std::string>& names_of_defined_functions, Body* parent,
            bool is_operator)
-    : declarated_pure_functions_map_(names_of_defined_functions),
+    : declarated_functions_map_(names_of_defined_functions),
       parent_body_(parent),
       is_operator_(is_operator),
       name_(name) {
@@ -68,9 +68,9 @@ void Body::addReturn(const std::string& name, ExValue_ifs* var) {  //?remove Val
 
 
 
-void Body::setPureFunctionBody(Body* body) {
-    if (!declarated_pure_functions_map_.setPureFunctionBody(body)) {
-        if (parent_body_) parent_body_->setPureFunctionBody(body);
+void Body::setFunctionBody(Body* body) {  // NOLINT
+    if (!declarated_functions_map_.setFunctionBody(body)) {
+        if (parent_body_) parent_body_->setFunctionBody(body);
     }
 }
 
@@ -107,11 +107,11 @@ Signature Body::getSignature() const {
     return ret;
 }
 
-Body* Body::getPureFunctionBody(const std::string& name, const Signature& signature) const {
-    Body* body = declarated_pure_functions_map_.getPureFunctionBody(name, signature);
+Body* Body::getFunctionBody(const std::string& name, const Signature& signature) const {  // NOLINT
+    Body* body = declarated_functions_map_.getFunctionBody(name, signature);
     if (body) return body;
 
-    if (parent_body_) return parent_body_->getPureFunctionBody(name, signature);
+    if (parent_body_) return parent_body_->getFunctionBody(name, signature);
     return nullptr;
 }
 
@@ -154,7 +154,7 @@ std::string Body::print(const string& tab, bool DSTEna, bool hide_unused_lines) 
 
 
 
-void Body::symplyfy() {
+void Body::simplify() {
     stack<ExValue_ifs*> visitor_stack;
     for (auto& value : return_stack_) {
         visitor_stack.push(value->getAssignedVal());
@@ -203,7 +203,7 @@ void Body::genTable(TableGenContext* context) {
 }
 
 
-Body* DeclaredBodiesMap::getPureFunctionBody(const std::string& name, const Signature& signature) const {
+Body* DeclaredBodiesMap::getFunctionBody(const std::string& name, const Signature& signature) const {
     auto a = find(name);
     if (a == end()) return nullptr;
 
@@ -213,7 +213,7 @@ Body* DeclaredBodiesMap::getPureFunctionBody(const std::string& name, const Sign
     return nullptr;
 }
 
-bool DeclaredBodiesMap::setPureFunctionBody(Body* body) {
+bool DeclaredBodiesMap::setFunctionBody(Body* body) {
     auto a = find(body->getName());
     if (a == end()) return false;
     a->second.push_back(body);

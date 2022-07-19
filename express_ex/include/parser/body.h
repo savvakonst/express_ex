@@ -30,9 +30,9 @@ class DeclaredBodiesMap : private std::map<std::string, std::list<Body*> > {
         for (const auto& i : names_list) operator[](i) = std::list<Body*>();
     }
 
-    Body* getPureFunctionBody(const std::string& name, const Signature& signature) const;
+    Body* getFunctionBody(const std::string& name, const Signature& signature) const;
 
-    bool setPureFunctionBody(Body* body);
+    bool setFunctionBody(Body* body);
 };
 
 
@@ -56,7 +56,7 @@ class Body {
     ExValue_ifs* pop();
     stack<ExValue_ifs*> pop(size_t length);
 
-    void setPureFunctionBody(Body* body);
+    void setFunctionBody(Body* body);
 
     std::map<std::string /*name*/, std::string /*link name*/> getParameterLinkNames(bool hide_unused = false) const;
     const stack<Line*>& getRet() const { return return_stack_; }
@@ -67,12 +67,12 @@ class Body {
     Line* getLastLineFromName(const std::string& name) const;
     std::list<ParameterIfs*> getOutputParameterList() const;
     Signature getSignature() const;
-    Body* getPureFunctionBody(const std::string& name, const Signature& signature) const;
+    Body* getFunctionBody(const std::string& name, const Signature& signature) const;
     // Body*               getOrCreatePureFunctionBody(const BodyTemplate* name, const Signature& signature) const;
 
     // tree walker methods
     std::string print(const std::string& tab = "", bool DSTEna = false, bool hide_unused_lines = false);
-    void symplyfy();
+    void simplify();
     void genTable(TableGenContext* tableGenContext);
     llvm::Function* getOrGenIRPureFunction(IRGenerator& builder);
 
@@ -93,7 +93,7 @@ class Body {
 
 
     Body* parent_body_ = nullptr;
-    DeclaredBodiesMap declarated_pure_functions_map_;
+    DeclaredBodiesMap declarated_functions_map_;
 
     int arg_count_ = 0;
 

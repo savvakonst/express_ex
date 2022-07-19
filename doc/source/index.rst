@@ -5,6 +5,20 @@ express-ex's documentation
     :maxdepth: 2
     :caption: Contents:
     io_ex
+    table
+    code_gen_steps
+
+
+pages:
+####################
+
+
+ :doc:`io_ex`
+
+ :doc:`code_gen_steps`
+
+ :doc:`table`
+
 
 
 main part of api:

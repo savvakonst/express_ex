@@ -1,0 +1,104 @@
+digraph G {
+    fontname = "Helvetica,Arial,sans-serif"
+    node [fontname = "Courier" shape = rectangle,fixedsize = false, penwidth = 0]
+    edge [fontname = "Courier", color = darkred]
+    labeljust = "l";
+    rankdir = LR;
+
+    subgraph cluster_0 {
+
+    node [style = filled, shape = box,height = 0.2];
+    edge [fontname = "Courier", color = darkred]
+    color = gray;
+
+
+    subgraph cluster_0_0 {
+    prm_2 [label = "PRM_2048"];
+    ">"
+    prm_2 -> ">"
+    label = "level 0";
+    }
+
+    subgraph cluster_0_1 {
+    c_20 [label = "20"]
+    c_4 [label = "-4"]
+    sh_2 [label = "[]"];
+    sh_2_ [label = "[]"];
+    //{rank = "same" c_20 sh_2_ c_4 sh_2 }
+    c_20 -> sh_2_
+    c_4 -> sh_2
+    sub_2 [label = "-"]
+
+    ternary [label = "op 0 ? op 1 : op 2"]
+
+    label = "level 1";
+    }
+
+    subgraph cluster_0_2 {
+    p_2 [label = "+"];
+
+    label = "level 3";
+    }
+
+
+    prm_2 -> sh_2 -> sub_2
+    prm_2 -> sh_2_ -> sub_2
+    prm_2 -> ternary [label = "op 2"]
+    ">" -> ternary [label = "op 0"]
+    sub_2 -> ternary [label = "op 1"]
+
+    ternary -> p_2
+
+    label = "frequency = 2048 Hz";
+    }
+
+
+
+    subgraph cluster_1 {
+
+    node [style = filled, shape = box,height = 0.2];
+    edge [fontname = "Courier", color = darkred];
+    color = gray;
+
+    subgraph cluster_1_0 {
+
+    prm_1 [label = "PRM_4086"];
+    p_1 [label = "+"];
+    "1.0"
+    "cos()"
+
+    label = "level 0";
+    }
+
+    subgraph cluster_1_1 {
+    small_array
+    c_1 [label = "convolve"];
+
+    m_1 [label = "*"];
+
+    label = "level 1";
+    }
+
+    subgraph cluster_1_2 {
+    node [style = filled, shape = box,height = 0.2];
+    decim [label = "decimation x2"]
+    label = "level 2";
+    }
+
+
+    "1.0" -> p_1;
+    small_array -> c_1 -> m_1 -> decim -> p_2;
+
+    prm_1 -> p_1 -> c_1;
+    prm_1 -> "cos()" -> m_1;
+
+    label = "frequency = 4086 Hz";
+
+    }
+
+
+
+
+    p_2 -> return;
+
+}

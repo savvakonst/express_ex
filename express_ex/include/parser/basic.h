@@ -101,10 +101,10 @@ class BodyGenContext {
     inline GarbageContainer* getGarbageContainer() const { return garbage_container_; }
 
     inline Body* getPureFunctionBody(const std::string& name, const Signature& signature) const {
-        return current_body_->getPureFunctionBody(name, signature);
+        return current_body_->getFunctionBody(name, signature);
     }
 
-    inline void setPureFunctionBody(Body* body) const { current_body_->setPureFunctionBody(body); }
+    inline void setFunctionBody(Body* body) const { current_body_->setFunctionBody(body); }
 
 
     /* inline Body* getOrCreatePureFunctionBody(const BodyTemplate* body, const Signature& signature) const{

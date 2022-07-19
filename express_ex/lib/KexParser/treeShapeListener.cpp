@@ -94,10 +94,13 @@ void TreeShapeListener::exitNeighborhoodPoint(EGrammarParser::NeighborhoodPointC
     if (current_body_->isTopBody())
         print_error("it is impossible to take neighbor point in top scope, only inside functions");
 
+    const std::string id = ctx->ID()->getText();
 
-    // ctx->ID()
-
-    //  TODO: implement
+    if (current_body_->getName() == id) {
+        // TODO add recursive neighbor point operation
+    } else {
+        //  TODO: neighbor point operation
+    }
 }
 
 void TreeShapeListener::exitConst(EGrammarParser::ConstContext* ctx) {

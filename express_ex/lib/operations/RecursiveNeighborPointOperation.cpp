@@ -14,7 +14,7 @@ ExValue_ifs *newRecursiveNeighborPointOperation(GarbageContainer *garbage_contai
         print_error("neighbor point index is not integer");
         return nullptr;
     }
-    return garbage_container->add(new NeighborPointOperation(arg, shift));
+    return garbage_container->add(new RecursiveNeighborPointOperation(arg, shift));
 }
 
 RecursiveNeighborPointOperation::RecursiveNeighborPointOperation(ExValue_ifs *array, ExValue_ifs *shift)
@@ -54,7 +54,7 @@ void RecursiveNeighborPointOperation::genBodyVisitExit(BodyGenContext *context) 
     auto op2 = context->pop();
     auto op1 = context->pop();
 
-    auto ret = newNeighborPointOperation(garbage_container, op1, op2);
+    auto ret = newRecursiveNeighborPointOperation(garbage_container, op1, op2);
 
     context->push(ret);
 }

@@ -15,8 +15,9 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 import textwrap
+
 # import exhale.utils
-#from exhale import utils
+# from exhale import utils
 
 # -- Project information -----------------------------------------------------
 
@@ -30,8 +31,10 @@ author = 'SVK'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 # extensions = ["breathe", 'exhale', "sphinx.ext.graphviz"]
-extensions = ["breathe", "sphinx.ext.graphviz"]
-
+extensions = ["breathe", "sphinx.ext.graphviz", 'sphinxcontrib.plantuml']
+# plantuml = 'java -jar plantuml.jar'
+plantuml = 'java -jar "C:\\Program Files\\Graphviz\\bin\\plantuml.jar"'
+plantuml_output_format = "svg_obj"
 # Breathe Configuration
 breathe_projects = {"express-ex": "../xml/"}
 breathe_default_project = "express-ex"

@@ -1,0 +1,77 @@
+LLVM IR code generation steps
+====================================
+
+
+methods like visitEnter() was omitted
+
+.. uml::
+
+    @startuml
+    User-> "Express_ex:": parseText
+    activate "Express_ex:"
+
+    "Express_ex:" -> "KexParser:"**: new
+    activate "KexParser:"
+    "KexParser:"  -> "BodyTemplate:" ** : new
+    "KexParser:" -> "Value: first set" ** :
+    deactivate "KexParser:"
+
+
+    "Express_ex:" -> "KexParser:":getCurrentBody
+    activate "KexParser:"
+    "KexParser:"->"Express_ex:":BodyTemplate:
+    deactivate "KexParser:"
+
+
+
+
+
+
+    "Express_ex:" -> User: bool:
+    deactivate "Express_ex:"
+
+    /'----------------------------------------'/
+
+    User-> "Express_ex:": getParameterLinkNamesMap
+    activate "Express_ex:"
+
+    "Express_ex:" -> "BodyTemplate:":: getParameterLinkNames
+    activate "BodyTemplate:"
+    "BodyTemplate:"->"Express_ex:"
+    deactivate "BodyTemplate:"
+
+    "Express_ex:" -> User:
+    deactivate "Express_ex:"
+
+    /'----------------------------------------'/
+
+    User-> "Express_ex:": setParameters
+    activate "Express_ex:"
+    "Express_ex:"-> "BodyTemplate:" : genBodyByTemplate
+    activate "BodyTemplate:"
+    "BodyTemplate:"-> "Body:\nbody_" ** : new
+
+    "BodyTemplate:" -> "Value: first set": genBodyVisitExit
+    activate "Value: first set"
+    "Value: first set" -> "Value:second set" **
+    deactivate "Value: first set"
+
+
+
+    "BodyTemplate:"->"Express_ex:" : Body:
+
+    deactivate "BodyTemplate:"
+
+    "Express_ex:" -> "Body:\nbody_": simplify
+    activate "Body:\nbody_"
+    "Body:\nbody_" -> "Value:second set":markUnusedVisitEnter
+    /'markUnusedVisitEnter
+    deactivate "Body:\nbody_"
+
+
+    "Express_ex:" -> User: bool:
+
+
+    deactivate "Express_ex:"
+
+    @enduml

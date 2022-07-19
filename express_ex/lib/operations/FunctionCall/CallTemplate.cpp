@@ -48,7 +48,7 @@ void CallRecursiveFunctionTemplate::genBodyVisitExit(BodyGenContext *context) {
 
         if (body == nullptr) {
             body = body_template_->genBodyByTemplate(context->current_body_, a, true);
-            context->setPureFunctionBody(body);
+            context->setFunctionBody(body);
         }
 
         context->push(context->getGarbageContainer()->add(new CallRecursiveFunction(body, a)));
@@ -128,7 +128,7 @@ void CallTemplate::genBodyVisitExit(BodyGenContext *context) {
     Body *body = body_template_->genBodyByTemplate(context->current_body_, a, context->is_function_);
 
     if (context->is_function_) {
-        context->setPureFunctionBody(body);
+        context->setFunctionBody(body);
         context->push(context->getGarbageContainer()->add(new CallRecursiveFunction(body, a)));
     } else {
         context->push(context->getGarbageContainer()->add(new Call(body, a)));

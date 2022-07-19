@@ -68,7 +68,7 @@ bool Express_ex::setParameters(const std::map<std::string, ParameterIfs *> &para
         if (!i.second->checkDataResource(true, error_stream_)) return false;
 
 
-    for (auto p : parameters_map)
+    for (const auto &p : parameters_map)
         if (p.second != nullptr) args.push(new Line(p.first, p.second));
         else {
             if (error_stream_)
@@ -83,7 +83,7 @@ bool Express_ex::setParameters(const std::map<std::string, ParameterIfs *> &para
         REMOVE_MEMBER(body_);
 
         body_ = body_template_->genBodyByTemplate(nullptr, args, false);
-        body_->symplyfy();
+        body_->simplify();
 
         // body_->getParameterLinkNames(true); TODO try to remove
 

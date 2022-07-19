@@ -13,7 +13,7 @@ methods like visitEnter() was omitted
     "Express_ex:" -> "KexParser:"**: new
     activate "KexParser:"
     "KexParser:"  -> "BodyTemplate:" ** : new
-    "KexParser:" -> "Value: first set" ** :
+    "KexParser:" -> "ExValue_ifs: first set" ** :
     deactivate "KexParser:"
 
 
@@ -51,10 +51,10 @@ methods like visitEnter() was omitted
     activate "BodyTemplate:"
     "BodyTemplate:"-> "Body:\nbody_" ** : new
 
-    "BodyTemplate:" -> "Value: first set": genBodyVisitExit
-    activate "Value: first set"
-    "Value: first set" -> "Value:second set" **
-    deactivate "Value: first set"
+    "BodyTemplate:" -> "ExValue_ifs: first set": genBodyVisitExit
+    activate "ExValue_ifs: first set"
+    "ExValue_ifs: first set" -> "ExValue_ifs:second set" **
+    deactivate "ExValue_ifs: first set"
 
 
 
@@ -64,7 +64,7 @@ methods like visitEnter() was omitted
 
     "Express_ex:" -> "Body:\nbody_": simplify
     activate "Body:\nbody_"
-    "Body:\nbody_" -> "Value:second set":markUnusedVisitEnter
+    "Body:\nbody_" -> "ExValue_ifs:second set":markUnusedVisitEnter
     /'markUnusedVisitEnter
     deactivate "Body:\nbody_"
 
@@ -74,4 +74,37 @@ methods like visitEnter() was omitted
 
     deactivate "Express_ex:"
 
+    @enduml
+
+
+
+Operation_ifs class description:
+##########################
+
+.. doxygenclass:: Operation_ifs
+    :members:
+    :protected-members:
+    :private-members:
+    :allow-dot-graphs:
+
+
+corresponding diagrams:
+##########################
+
+.. uml::
+
+    @startuml
+    activate Body
+
+        Body -> Operation_ifs: markUnusedVisitEnter:
+
+        activate Operation_ifs
+
+            Operation_ifs ->Operation_ifs:   commonMarkUnusedVisitEnter(visitor_stack);
+            Operation_ifs ->Operation_ifs:   visitEnterSetupBuffer(visitor_stack);
+            Operation_ifs ->Operation_ifs:   visitEnterStackUpdate(visitor_stack);
+
+        deactivate Operation_ifs
+
+    deactivate Body
     @enduml

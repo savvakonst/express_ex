@@ -1,0 +1,15 @@
+@startuml
+activate Body
+
+    Body -> Operation_ifs: markUnusedVisitEnter:
+
+    activate Operation_ifs
+
+        Operation_ifs ->Operation_ifs:   commonMarkUnusedVisitEnter(visitor_stack);
+        Operation_ifs ->Operation_ifs:   visitEnterSetupBuffer(visitor_stack);
+        Operation_ifs ->Operation_ifs:   visitEnterStackUpdate(visitor_stack);
+
+    deactivate Operation_ifs
+
+deactivate Body
+@enduml

@@ -4,6 +4,7 @@ express-ex's documentation
 .. toctree::
     :maxdepth: 2
     :caption: Contents:
+    express_ex_api
     io_ex
     table
     code_gen_steps
@@ -12,6 +13,7 @@ express-ex's documentation
 pages:
 ####################
 
+ :doc:`express_ex_api`
 
  :doc:`io_ex`
 
@@ -21,40 +23,6 @@ pages:
 
 
 
-main part of api:
-####################
-
-.. doxygenclass:: Express_ex
-    :members:
-    :protected-members:
-    :private-members:
-    :allow-dot-graphs:
-
-
-components:
-####################
-
-
-.. doxygenstruct:: ExDataInterval
-    :members:
-    :protected-members:
-    :private-members:
-    :allow-dot-graphs:
-
-
-.. doxygenclass:: ParameterIfs
-    :members:
-    :protected-members:
-    :private-members:
-    :allow-dot-graphs:
-
-
-
-.. doxygenclass:: ExStreamIfs
-    :members:
-    :protected-members:
-    :private-members:
-    :allow-dot-graphs:
 
 
 

@@ -1,4 +1,4 @@
 the execution order table
 ======================================
 
-.. graphviz:: table_graph.dot
+.. graphviz:: trash/table_graph.dot

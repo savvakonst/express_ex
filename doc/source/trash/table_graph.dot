@@ -3,7 +3,7 @@ digraph G {
     node [fontname = "Courier" shape = rectangle,fixedsize = false, penwidth = 0]
     edge [fontname = "Courier", color = darkred]
     labeljust = "l";
-    rankdir = LR;
+    //rankdir = LR;
 
     subgraph cluster_0 {
 

@@ -12,7 +12,7 @@ if (Doxygen_FOUND)
     set(DOXYGEN_EXTRACT_ALL NO)
     set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     doxygen_add_docs(gen_doxygen_doc
-            ../express_ex/include/ifs ../io_ex #syntaxhighlighter
+            ../express_ex/include/ifs ../express_ex/include/operations ../io_ex #syntaxhighlighter
             ALL)
 
 

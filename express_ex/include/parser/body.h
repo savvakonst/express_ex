@@ -72,7 +72,7 @@ class Body {
 
     // tree walker methods
     std::string print(const std::string& tab = "", bool DSTEna = false, bool hide_unused_lines = false);
-    void simplify();
+    void reverseTraversal();
     void genTable(TableGenContext* tableGenContext);
     llvm::Function* getOrGenIRPureFunction(IRGenerator& builder);
 

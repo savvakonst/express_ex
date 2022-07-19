@@ -62,7 +62,7 @@ methods like visitEnter() was omitted
 
     deactivate "BodyTemplate:"
 
-    "Express_ex:" -> "Body:\nbody_": simplify
+    "Express_ex:" -> "Body:\nbody_": reverseTraversal
     activate "Body:\nbody_"
     "Body:\nbody_" -> "ExValue_ifs:second set":reverseTraversalVisitEnter
         ExValue_ifs::setBufferBordersLength

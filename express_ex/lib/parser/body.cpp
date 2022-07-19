@@ -154,7 +154,7 @@ std::string Body::print(const string& tab, bool DSTEna, bool hide_unused_lines) 
 
 
 
-void Body::simplify() {
+void Body::reverseTraversal() {
     stack<ExValue_ifs*> visitor_stack;
     for (auto& value : return_stack_) {
         visitor_stack.push(value->getAssignedVal());

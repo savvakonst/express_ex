@@ -83,7 +83,7 @@ bool Express_ex::setParameters(const std::map<std::string, ParameterIfs *> &para
         REMOVE_MEMBER(body_);
 
         body_ = body_template_->genBodyByTemplate(nullptr, args, false);
-        body_->simplify();
+        body_->reverseTraversal();
 
         // body_->getParameterLinkNames(true); TODO try to remove
 

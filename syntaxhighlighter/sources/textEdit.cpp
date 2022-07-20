@@ -1,10 +1,12 @@
-
 #include "highlightListener.h"
+//
 #include "textEdit.h"
 
-KexEdit::KexEdit(): TemplateTextEdit() {
+
+
+KexEdit::KexEdit() : TemplateTextEdit() {
     highlighter__ = new Highlighter(this->document());
-    highlight_style_ =new HighlightStyle();
+    highlight_style_ = new HighlightStyle();
     connect(this, SIGNAL(textChanged()), this, SLOT(rehighlight()));
 
     line_number_area_ = new LineNumberArea(this);
@@ -18,28 +20,27 @@ KexEdit::KexEdit(): TemplateTextEdit() {
 
     setTabStopWidth(fontMetrics().width(' ') * tab_width_);
     delete run_output_highlighter_;
-    run_output_highlighter_=highlighter__;
+    run_output_highlighter_ = highlighter__;
 }
 
 
 
 KexEdit::~KexEdit() {
-    //delete highlighter__;
-    //delete highlight_style_;
-    //delete line_number_area_;
-    for (auto i : namespase_list_)
-        delete i;
+    // delete highlighter__;
+    // delete highlight_style_;
+    // delete line_number_area_;
+    for (auto i : namespase_list_) delete i;
 }
 
 
 
-void KexEdit::rehighlight(){
-    //qDebug()<<"--------------------------- "<<"\n";
-    if (rehighlight_in_progress_==true) return ;
+void KexEdit::rehighlight() {
+    // qDebug()<<"--------------------------- "<<"\n";
+    if (rehighlight_in_progress_ == true) return;
     Q_EMIT start_rehighlight();
 
-    rehighlight_in_progress_=true;
-    auto content=this->toPlainText().toStdString()+"\n";
+    rehighlight_in_progress_ = true;
+    auto content = this->toPlainText().toStdString() + "\n";
 
     antlr4::ANTLRInputStream input(content);
     EGrammarLexer lexer(&input);
@@ -51,25 +52,25 @@ void KexEdit::rehighlight(){
     parser.addErrorListener(&errorListner);
 
 
-    antlr4::tree::ParseTree* tree = NULL;
-    try{
+    antlr4::tree::ParseTree *tree = NULL;
+    try {
         tree = parser.start();
-    }catch(antlr4::NoViableAltException ){
+    } catch (antlr4::NoViableAltException) {
         return;
     }
 
-    if (errorListner.hasError()){
-        is_invalid_syntax_=true;
+    if (errorListner.hasError()) {
+        is_invalid_syntax_ = true;
         Q_EMIT uncorrect_syntax(errorListner.getErrorMessage());
     }
 
-    else if(is_invalid_syntax_){
-        is_invalid_syntax_=false;
+    else if (is_invalid_syntax_) {
+        is_invalid_syntax_ = false;
         Q_EMIT correct_syntax();
     }
 
 
-    TreeShapeListener listener(highlight_style_, namespase_list_); 
+    TreeShapeListener listener(highlight_style_, namespase_list_);
     antlr4::tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
 
     highlighter__->setListener(&listener);
@@ -78,19 +79,15 @@ void KexEdit::rehighlight(){
 }
 
 void KexEdit::updateNamespace(QList<QString> &sources) {
-    for(auto i : namespase_list_)
-        delete i;
-    for (auto i : sources)
-        addToNamespace(i.toStdString());
+    for (auto i : namespase_list_) delete i;
+    for (const auto &i : sources) addToNamespace(i.toStdString());
 }
 
 void KexEdit::clearNamespace() {
-    for (auto i : namespase_list_)
-        delete i;
+    for (auto i : namespase_list_) delete i;
 }
 
 void KexEdit::addToNamespace(const std::string &content) {
-
     antlr4::ANTLRInputStream input(content);
     EGrammarLexer lexer(&input);
     antlr4::CommonTokenStream tokens(&lexer);
@@ -101,77 +98,61 @@ void KexEdit::addToNamespace(const std::string &content) {
     parser.addErrorListener(&errorListner);
 
 
-    antlr4::tree::ParseTree* tree=NULL;
+    antlr4::tree::ParseTree *tree = nullptr;
     try {
         tree = parser.start();
-    }
-    catch (antlr4::NoViableAltException) {
+    } catch (antlr4::NoViableAltException) {
         return;
     }
 
     if (errorListner.hasError()) {
-        is_invalid_syntax_=true;
+        is_invalid_syntax_ = true;
         Q_EMIT uncorrect_syntax(errorListner.getErrorMessage());
     }
 
     else if (is_invalid_syntax_) {
-        is_invalid_syntax_=false;
+        is_invalid_syntax_ = false;
         Q_EMIT correct_syntax();
     }
 
-    TreeShapeListener listener(highlight_style_,namespase_list_); //??????????????????????????
+    TreeShapeListener listener(highlight_style_, namespase_list_);  //??????????????????????????
     antlr4::tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
 
-    for (auto i : namespase_list_)
-        delete i;
+    for (auto i : namespase_list_) delete i;
     namespase_list_ = listener.getNamespaceList();
 }
 
-void KexEdit::highlitText(const QString &text){
-        highlighter__->setPattern(text);
-        rehighlight();
+void KexEdit::highlitText(const QString &text) {
+    highlighter__->setPattern(text);
+    rehighlight();
 }
 
-void KexEdit::wheelEvent(QWheelEvent* event) {
+void KexEdit::wheelEvent(QWheelEvent *event) {
     TemplateTextEdit::wheelEvent(event);
-    if ((event->modifiers() == Qt::ControlModifier)){
-        if (event->delta()>0)
-            zoomIn(1);
-        else
-            zoomOut(1);
+    if ((event->modifiers() == Qt::ControlModifier)) {
+        if (event->delta() > 0) zoomIn(1);
+        else zoomOut(1);
     }
 }
 
-void KexEdit::changeEvent(QEvent *event) {
-    TemplateTextEdit::changeEvent(event);
-}
+void KexEdit::changeEvent(QEvent *event) { TemplateTextEdit::changeEvent(event); }
 
-void KexEdit::keyPressEvent(QKeyEvent* event)  {
-    if (spaces_instead_of_tabs_ && (event->key()==Qt::Key_Tab))
-        insertPlainText(QString(tab_width_, ' '));
-    else
-        TemplateTextEdit::keyPressEvent(event);
+void KexEdit::keyPressEvent(QKeyEvent *event) {
+    if (spaces_instead_of_tabs_ && (event->key() == Qt::Key_Tab)) insertPlainText(QString(tab_width_, ' '));
+    else TemplateTextEdit::keyPressEvent(event);
 }
 
 
-void KexEdit::updateLineNumberAreaWidth(int /* newBlockCount */){
+void KexEdit::updateLineNumberAreaWidth(int /* newBlockCount */) { setViewportMargins(lineNumberAreaWidth(), 0, 0, 0); }
 
-    setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
+void KexEdit::updateLineNumberArea(const QRect &rect, int dy) {
+    if (dy) line_number_area_->scroll(0, dy);
+    else line_number_area_->update(0, rect.y(), line_number_area_->width(), rect.height());
+
+    if (rect.contains(viewport()->rect())) updateLineNumberAreaWidth(0);
 }
 
-void KexEdit::updateLineNumberArea(const QRect &rect, int dy){
-
-    if (dy)
-        line_number_area_->scroll(0, dy);
-    else
-        line_number_area_->update(0, rect.y(), line_number_area_->width(), rect.height());
-
-    if (rect.contains(viewport()->rect()))
-        updateLineNumberAreaWidth(0);
-}
-
-void KexEdit::resizeEvent(QResizeEvent *e){
-
+void KexEdit::resizeEvent(QResizeEvent *e) {
     TemplateTextEdit::resizeEvent(e);
 
     QRect cr = contentsRect();
@@ -179,16 +160,15 @@ void KexEdit::resizeEvent(QResizeEvent *e){
     setTabStopWidth(fontMetrics().width(' ') * tab_width_);
 }
 
-void KexEdit::highlightCurrentLine(){
-
+void KexEdit::highlightCurrentLine() {
     QList<QTextEdit::ExtraSelection> extraSelections;
 
     if (!isReadOnly()) {
         QTextEdit::ExtraSelection selection;
 
-        //QColor lineColor = QColor(Qt::yellow).lighter(160);
+        // QColor lineColor = QColor(Qt::yellow).lighter(160);
 
-        //selection.format.setBackground(lineColor);
+        // selection.format.setBackground(lineColor);
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
@@ -199,8 +179,7 @@ void KexEdit::highlightCurrentLine(){
 }
 
 
-void KexEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
-{
+void KexEdit::lineNumberAreaPaintEvent(QPaintEvent *event) {
     QPainter painter(line_number_area_);
     painter.fillRect(event->rect(), Qt::lightGray);
 
@@ -216,7 +195,7 @@ void KexEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
 
 
             painter.setFont(this->font());
-            painter.drawText(0, top, line_number_area_->width(),  qRound(blockBoundingRect(block).height()),
+            painter.drawText(0, top, line_number_area_->width(), qRound(blockBoundingRect(block).height()),
                              Qt::AlignRight, number);
         }
 
@@ -227,8 +206,7 @@ void KexEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
     }
 }
 
-int KexEdit::lineNumberAreaWidth()
-{
+int KexEdit::lineNumberAreaWidth() {
     int digits = 1;
     int max = qMax(1, blockCount());
     while (max >= 10) {
@@ -241,23 +219,15 @@ int KexEdit::lineNumberAreaWidth()
     return space;
 }
 
-void KexEdit::setHighlightStyle(HighlightStyle * h)
-{
-    delete highlight_style_ ;
-    highlight_style_ = h ;
+void KexEdit::setHighlightStyle(HighlightStyle *h) {
+    delete highlight_style_;
+    highlight_style_ = h;
 }
 
 
 
+LineNumberArea::LineNumberArea(KexEdit *editor) : QWidget(editor), editor(editor) {}
 
+QSize LineNumberArea::sizeHint() const { return QSize(editor->lineNumberAreaWidth(), 0); }
 
-LineNumberArea::LineNumberArea(KexEdit *editor) : QWidget(editor), editor(editor){}
-
-QSize LineNumberArea::sizeHint() const {
-    return QSize(editor->lineNumberAreaWidth(), 0);
-}
-
-void LineNumberArea::paintEvent(QPaintEvent *event)
-{
-    editor->lineNumberAreaPaintEvent(event);
-}
+void LineNumberArea::paintEvent(QPaintEvent *event) { editor->lineNumberAreaPaintEvent(event); }

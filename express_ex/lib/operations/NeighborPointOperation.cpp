@@ -17,6 +17,15 @@ ExValue_ifs *newNeighborPointOperation(GarbageContainer *garbage_container, ExVa
     return garbage_container->add(new NeighborPointOperation(arg, shift));
 }
 
+ExValue_ifs *newNeighborPointOperation(BodyTemplate *body_template) {
+    ExValue_ifs *arg_b = body_template->pop();
+    ExValue_ifs *arg_a = body_template->pop();
+
+    body_template->is_operator_ = true ;
+
+    return newNeighborPointOperation(body_template->getGarbageContainer(), arg_a, arg_b);
+}
+
 NeighborPointOperation::NeighborPointOperation(ExValue_ifs *array, ExValue_ifs *shift)
     : Operation_ifs(array->type_, TypeEn::unknown_jty, OpCodeEn::none_op, array) {
     // commonSetup(OpCodeEn::none_op, array);

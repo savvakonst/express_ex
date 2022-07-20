@@ -3,7 +3,6 @@
 #include <string>
 #include <utility>
 
-#include "../operations/FunctionCall/call.h"
 #include "operations/ExValue_ifs.h"
 #include "operations/callTemplate.h"
 #include "operations/operations.h"
@@ -112,7 +111,7 @@ ExLine* BodyTemplate::getLastLineFromName(const std::string& name) const {
     return nullptr;
 }
 
-BodyTemplate* BodyTemplate::getFunctionBody(const std::string& name) const {
+BodyTemplate* BodyTemplate::getFunctionBody(const std::string& name) const {  // NOLINT
     for (auto i : child_body_template_list_)
         if (i->getName() == name) return i;
 
@@ -120,8 +119,8 @@ BodyTemplate* BodyTemplate::getFunctionBody(const std::string& name) const {
     return nullptr;
 }
 
-std::string BodyTemplate::print(const std::string& tab, bool DST_ena, bool hide_unused_lines) const {
-    PrintBodyContext context(tab, DST_ena, hide_unused_lines);
+std::string BodyTemplate::print(const std::string& tab, bool dst_ena, bool hide_unused_lines) const {
+    PrintBodyContext context(tab, dst_ena, hide_unused_lines);
     stack<ExValue_ifs*> visitor_stack;
 
     context.setName(getName());
@@ -213,7 +212,7 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> arg
             }
         } while (!visitor_stack.empty());
 
-        body->addReturn(return_stack_[0]->getName(), context.pop());
+        body->addReturn("return", context.pop());
     }
 
     return body;
@@ -252,9 +251,10 @@ untyped_t BodyTemplate::genConstRecursiveByTemplate(stack<ExValue_ifs*>& args) c
 
     size_t size = context.instructions_list_.size();
     for (int32_t iteration_cnt = 0; !context.exitFromLoop(); iteration_cnt++) {
-        for (size_t index = 0; index < size; index++)
-            context.instructions_list_[index]->calculateConstRecursive(&context);
-
+        for (size_t index = 0; index < size; index++) {
+            auto ptr = context.instructions_list_[index];
+            ptr->calculateConstRecursive(&context);
+        }
         if (iteration_cnt == -1) print_error("recursion too deep");
     }
 

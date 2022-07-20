@@ -54,7 +54,7 @@ class BodyTemplate {
     void addTailCall();
 
     std::map<std::string /*name*/, std::string /*link name*/> getParameterLinkNames(bool hide_unused = false) const;
-    const stack<ExLine*>& getRet() const { return return_stack_; }
+    const stack<ExValue_ifs*>& getRet() const { return return_stack_; }
     int getArgCount() const { return arg_count_; }
     ExLine* getLastLineFromName(const std::string& name) const;
     const std::string& getName() const { return name_; }
@@ -66,7 +66,7 @@ class BodyTemplate {
 
     // tree walker methods
 
-    std::string print(const std::string& tab = "", bool DSTEna = false, bool hide_unused_lines = false) const;
+    std::string print(const std::string& tab = "", bool dst_ena = false, bool hide_unused_lines = false) const;
     std::list<std::string> getNamesOfDefinedFunctions() const;
     Body* genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> args, bool is_function) const;
     untyped_t genConstRecursiveByTemplate(stack<ExValue_ifs*>& args) const;
@@ -88,6 +88,10 @@ class BodyTemplate {
      */
     bool is_tail_callable_ = false;
 
+
+    bool is_recurrence_relation_ = false;
+
+
    private:
     const std::string name_;
 
@@ -95,7 +99,7 @@ class BodyTemplate {
 
     stack<ExValue_ifs*> var_stack_;
     stack<ExLine*> lines_;
-    stack<ExLine*> return_stack_;
+    stack<ExValue_ifs*> return_stack_;
 
     BodyTemplate* parent_body_template_ = nullptr;
     GarbageContainer* garbage_container_;

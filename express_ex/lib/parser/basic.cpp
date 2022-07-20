@@ -29,10 +29,11 @@ void PrintBodyContext::createLine(ExLine* value) {
     }
 }
 
-void PrintBodyContext::createReturn(ExLine* value) {
+void PrintBodyContext::createReturn(ExValue_ifs* value) {
     auto DST_postfix = DST_ena_ ? "." + toString(value->ds_ty_) : "";
 
-    auto txt_line = "  " + tab_ + value->getName() + DST_postfix + "  " + pop();
+    // auto txt_line = "  " + tab_ + value->getName() + DST_postfix + "  " + pop();
+    auto txt_line = "  " + tab_ + "return" + DST_postfix + "  " + pop();
     auto txt_shifts = std::to_string(value->getLeftBufferLen()) + " : " + std::to_string(value->getRightBufferLen());
     auto txt_skip =
         std::string(max_line_length_ - ((txt_line.length() > max_line_length_) ? 0 : txt_line.length()), ' ');

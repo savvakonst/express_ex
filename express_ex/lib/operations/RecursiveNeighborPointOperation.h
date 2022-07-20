@@ -16,7 +16,7 @@ ExValue_ifs* newRecursiveNeighborPointOperation(GarbageContainer* garbage_contai
 
 class RecursiveNeighborPointOperation : public Operation_ifs {
    public:
-    RecursiveNeighborPointOperation(ExValue_ifs* large_arr, ExValue_ifs* shift);
+    RecursiveNeighborPointOperation(TypeEn target_type, ExValue_ifs* shift);
 
     ~RecursiveNeighborPointOperation() override = default;
 

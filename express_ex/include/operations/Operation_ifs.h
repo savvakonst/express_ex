@@ -31,10 +31,7 @@ class Operation_ifs : public ExValue_ifs {
     }
     */
 
-    virtual int64_t getSliceParameter() const {
-        print_error("getSliceParameter");
-        return -1;
-    }
+
 
     NodeTypeEn getNodeType() const override {
         return contain_rec_call_ ? NodeTypeEn::kTailCallSelect : NodeTypeEn::kOperation;

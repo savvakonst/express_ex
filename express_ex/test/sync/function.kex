@@ -1,0 +1,23 @@
+x = param("#1_A01__1")
+
+
+
+
+
+function loop_const(ref, a, i):
+    return (i>10)? a : loop_const(ref,a+ref,i+1)
+end
+
+
+h = loop_const( 6, 4, 1)
+
+
+
+function loop_example(arg_1, arg_2):
+    return arg_1 * arg_2
+end
+
+z = loop_example(x,x+h)
+
+
+return double(z)

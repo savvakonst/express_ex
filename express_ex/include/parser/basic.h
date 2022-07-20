@@ -44,7 +44,7 @@ class PrintBodyContext {
 
     void createLine(ExLine* value);
 
-    void createReturn(ExLine* value);
+    void createReturn(ExValue_ifs* value);
 
     void setName(const std::string& name);
 

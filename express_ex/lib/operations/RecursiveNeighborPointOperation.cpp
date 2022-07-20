@@ -10,12 +10,12 @@
 #include "parser/bodyTemplate.h"
 
 ExValue_ifs *newRecursiveNeighborPointOperation(GarbageContainer *garbage_container, TypeEn target_type,
-                                                ExValue_ifs *shift) {
+                                                Operation_ifs::length_t length, ExValue_ifs *shift) {
     if (!isConst(shift)) {
         print_error("neighbor point index is not integer");
         return nullptr;
     }
-    return garbage_container->add(new RecursiveNeighborPointOperation(target_type, shift));
+    return garbage_container->add(new RecursiveNeighborPointOperation(target_type, length, shift));
 }
 
 ExValue_ifs *newRecursiveNeighborPointOperation(BodyTemplate *body_template) {
@@ -24,13 +24,13 @@ ExValue_ifs *newRecursiveNeighborPointOperation(BodyTemplate *body_template) {
 
     body_template->is_operator_ = true;
     body_template->is_recurrence_relation_ = true;
-    return newRecursiveNeighborPointOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, arg_b);
+    return newRecursiveNeighborPointOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, 0, arg_b);
 }
 
 
-RecursiveNeighborPointOperation::RecursiveNeighborPointOperation(TypeEn target_type, ExValue_ifs *shift)
+RecursiveNeighborPointOperation::RecursiveNeighborPointOperation(TypeEn target_type, length_t length,
+                                                                 ExValue_ifs *shift)
     : Operation_ifs(target_type, TypeEn::unknown_jty, DataStructureTypeEn::kLargeArr, 0, OpCodeEn::none_op) {
-    // level_ = array->getLevel() + 1;
     operand_.push_back(shift);
 }
 

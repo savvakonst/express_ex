@@ -7,11 +7,12 @@
 
 #include "common/types_jty.h"
 
-// extern bool g_gpu_acceleration_enable;
+
 
 class Operation_ifs : public ExValue_ifs {
    public:
     Operation_ifs() : ExValue_ifs() {}
+
     Operation_ifs(TypeEn ty, TypeEn time_ty, DataStructureTypeEn ds_ty, length_t length, OpCodeEn op)
         : ExValue_ifs(ty, time_ty, ds_ty, length), op_code_(op) {}
 

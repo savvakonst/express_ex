@@ -9,6 +9,7 @@
 //
 #include <QtWidgets>
 #include <sstream>
+#include <utility>
 
 #include "highlightStyle.h"
 #include "highlighter.h"
@@ -23,11 +24,11 @@ typedef struct {
 
 class Namespace {
    public:
-    Namespace(std::string name, Namespace* parent = nullptr) {
-        name_ = name;
+    explicit Namespace(std::string name, Namespace* parent = nullptr) {
+        name_ = std::move(name);
         parent_ = parent;
     }
-    ~Namespace() {}
+    ~Namespace() = default;
 
     void addId(const std::string& id) { variable_list_.push_back(id); }
 
@@ -75,7 +76,7 @@ class EErrorListener : public antlr4::BaseErrorListener {
 
    public:
     QString getErrorMessage() { return QString::fromStdString(out_.str()); }
-    bool hasError() { return error_; }
+    bool hasError() const { return error_; }
 
    private:
     bool error_ = false;
@@ -224,6 +225,8 @@ class TreeShapeListener : public EGrammarBaseListener {
         }
 
         if (ctx->SPEC_SYM) addFormatUint(ctx->SPEC_SYM, &highlight_style_->specSymbolFormat);
+
+        activ_namespace_->addId(ctx->ID()->getText());
     }
 
     void exitFunc(EGrammarParser::FuncContext* ctx) override {

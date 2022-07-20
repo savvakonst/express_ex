@@ -6,13 +6,13 @@
 #include <set>
 #include <vector>
 
+#include "TableGenContext.h"
 #include "common/common.h"
 #include "common/undefWarningIgnore.h"
 #include "ifs/parameterIO.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
 #include "parser/defWarningIgnore.h"
-
 using std::string;
 class ExValue_ifs;
 
@@ -219,24 +219,6 @@ class Table {
     uint64_t iterations_ = 0;
 
     std::string error_info_;
-};
-
-class TableGenContext {
-   public:
-    explicit TableGenContext(Table* arg) { table_ = arg; }
-    ~TableGenContext() = default;
-
-    uint64_t getUniqueIndex() { return unique_name_counter_++; }
-    void setUint(ExValue_ifs* var) const { table_->setUint(var); };
-    void setParameter(ParameterIfs* var) const { table_->parameter_set_.insert(var); };
-    void setMaxBufferLength(int64_t length) const {
-        int64_t temp = (int64_t)1 << (int8_t)(floor(log2(length)) - 1);
-        if (table_->max_buffer_length_ > temp) table_->max_buffer_length_ = temp;
-    };
-
-   private:
-    Table* table_;
-    uint64_t unique_name_counter_ = 0;
 };
 
 #endif

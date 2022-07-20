@@ -3,10 +3,10 @@
 #include <list>
 #include <string>
 
+//#include "jit/table.h"
+#include "jit/TableGenContext.h"
 #include "parser/bodyTemplate.h"
 #include "parser/line.h"
-
-
 
 Body::Body(const std::string& name, const std::list<std::string>& names_of_defined_functions, Body* parent,
            bool is_operator)

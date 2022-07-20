@@ -1,6 +1,7 @@
 #include "parser/line.h"
 
 #include "jit/IR_generator.h"
+#include "jit/TableGenContext.h"
 #include "operations/operations.h"
 
 // void print_error(std::string content);

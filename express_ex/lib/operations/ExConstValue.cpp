@@ -7,7 +7,7 @@
 #include <utility>
 
 #include "jit/IR_generator.h"
-
+#include "jit/TableGenContext.h"
 
 ExConstValue::ExConstValue(const std::string &text, TypeEn type)
     : ExValue_ifs(type, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1), text_value_(text) {

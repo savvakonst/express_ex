@@ -2,11 +2,13 @@
 
 #include "ifs/express_ex.h"
 
+#include "jit/table.h"
 #include "parser/KexParser.h"
 #include "parser/body.h"
 #include "parser/bodyTemplate.h"
 #include "parser/line.h"
 #include "printer.h"
+
 
 #define REMOVE_MEMBER(X) \
     delete X;            \

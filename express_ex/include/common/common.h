@@ -46,10 +46,10 @@ class stack : public std::vector<T> {
     void push(T var) { std::vector<T>::push_back(var); }
 };
 
-bool operator==(const ExValue_ifs* var_a, DataStructureTypeEn var_b);
-bool operator==(DataStructureTypeEn var_a, const ExValue_ifs* var_b);
-bool operator<(TypeEn var_a, const ExValue_ifs* var_b);
-bool operator<(const ExValue_ifs* var_a, TypeEn var_b);
+// bool operator==(const ExValue_ifs* var_a, DataStructureTypeEn var_b);
+// bool operator==(DataStructureTypeEn var_a, const ExValue_ifs* var_b);
+// bool operator<(TypeEn var_a, const ExValue_ifs* var_b);
+// bool operator<(const ExValue_ifs* var_a, TypeEn var_b);
 /*
 bool isConst(const Value* var_a);
 bool isSmallArr(const Value* var_a);

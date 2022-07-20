@@ -1,8 +1,10 @@
 #include "TypeCastOperation.h"
 
 #include "jit/IR_generator.h"
+#include "jit/TableGenContext.h"
 #include "operations/ExConstValue.h"
 #include "parser/bodyTemplate.h"
+
 static const std::string ar_t_conv_[10] = {"trunc", "zext",   "sext",   "fptrunc", "fpext",
                                            "fptoi", "fptosi", "uitofp", "sitofp",  "common_cast"};
 static std::string txtTypeCastOp(OpCodeEn op_code) { return ar_t_conv_[((int)op_code - (int)TypeOpCodeEn::type_conv)]; }
@@ -49,9 +51,6 @@ ExValue_ifs* newTypeConvOp(BodyTemplate* body_template, TypeEn target_type) {
 
 TypeCastOperation::TypeCastOperation(OpCodeEn op, ExValue_ifs* var, TypeEn target_type)
     : Operation_ifs(target_type, TypeEn::unknown_jty, op, var) {
-    // TODO remove comment
-    // commonSetup(op, var);
-    // type_ = target_type;
 
     level_ = var->getLevel();
 

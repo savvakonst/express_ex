@@ -5,6 +5,7 @@
 #include "CallRecursiveFunction.h"
 
 #include "jit/IR_generator.h"
+#include "jit/TableGenContext.h"
 
 static ExValue_ifs* getTempVal(const stack<ExValue_ifs*>& args) {
     ExValue_ifs* temp = nullptr;

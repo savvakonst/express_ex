@@ -53,6 +53,7 @@ add_executable(syntaxhighlighter_app
         include/mainwindow.h
         )
 
+
 #target_compile_definitions(syntaxhighlighter PRIVATE QUIMONO_EXE)
 target_include_directories(syntaxhighlighter_app PUBLIC include)
 

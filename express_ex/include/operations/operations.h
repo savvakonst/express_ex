@@ -26,8 +26,8 @@ ExValue_ifs* newConvolveOperation(GarbageContainer* garbage_container, TypeEn ta
 
 ExValue_ifs* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg);
 
-ExValue_ifs* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg_a,
-                         ExValue_ifs* arg_b, ExValue_ifs* arg_c, bool rec_call = false);
+ExValue_ifs* newTernaryOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg_a,
+                                 ExValue_ifs* arg_b, ExValue_ifs* arg_c, bool rec_call = false);
 
 // Value* newSliceOp(GarbageContainer* garbage_container, Value* arg_a, Value* arg_b, OpCodeEn op_type);
 // Value* newSliceOp(GarbageContainer* garbage_container, Value* arg_a, int64_t int_val, OpCodeEn type_op);
@@ -44,7 +44,7 @@ ExValue_ifs* newInversionOperation(BodyTemplate* body_template);
 ExValue_ifs* newArithmeticOperation(BodyTemplate* body_template, OpCodeEn u_type_op);
 ExValue_ifs* newComparisonOperation(BodyTemplate* body_template, OpCodeEn op_type);
 ExValue_ifs* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_op, uint32_t shift);
-ExValue_ifs* newSelectOp(BodyTemplate* body_template);
+ExValue_ifs* newTernaryOperation(BodyTemplate* body_template);
 ExValue_ifs* newRangeOp(BodyTemplate* body_template, size_t arg_count);
 ExValue_ifs* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count);
 

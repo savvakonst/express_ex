@@ -10,7 +10,7 @@
 
 #include "operations/Operation_ifs.h"
 
-ExValue_ifs* newRecursiveNeighborPointOperation(GarbageContainer* garbage_container, ExValue_ifs* arg,
+ExValue_ifs* newRecursiveNeighborPointOperation(GarbageContainer* garbage_container, TypeEn target_type,
                                                 ExValue_ifs* shift);
 
 

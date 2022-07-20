@@ -1,12 +1,12 @@
-#include "SelectOperation.h"
+#include "TernaryOperation.h"
 
 #include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
 #include "operations/ExConstValue.h"
 #include "parser/bodyTemplate.h"
 
-ExValue_ifs* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg_a,
-                         ExValue_ifs* arg_b, ExValue_ifs* arg_c, bool rec_call) {
+ExValue_ifs* newTernaryOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg_a,
+                                 ExValue_ifs* arg_b, ExValue_ifs* arg_c, bool rec_call) {
     if (!isCompatible(arg_b, arg_c) || !isCompatible(arg_a, arg_b)) print_error("incompatible values");
 
     auto i1 = newTypeConvOp(garbage_container, TypeEn::int1_jty, arg_a);
@@ -24,10 +24,10 @@ ExValue_ifs* newSelectOp(GarbageContainer* garbage_container, TypeEn target_type
         }
     }
 
-    return garbage_container->add(new SelectOperation(OpCodeEn::select, i1, arg_b, arg_c, target_type, rec_call));
+    return garbage_container->add(new TernaryOperation(OpCodeEn::select, i1, arg_b, arg_c, target_type, rec_call));
 }
 
-ExValue_ifs* newSelectOp(BodyTemplate* body_template) {
+ExValue_ifs* newTernaryOperation(BodyTemplate* body_template) {
     ExValue_ifs* arg_c = body_template->pop();
     ExValue_ifs* arg_b = body_template->pop();
     ExValue_ifs* arg_a = body_template->pop();
@@ -40,11 +40,12 @@ ExValue_ifs* newSelectOp(BodyTemplate* body_template) {
         valid_recursion = valid_recursion || (arg_b->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall);
     }
 
-    return newSelectOp(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, arg_c, valid_recursion);
+    return newTernaryOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, arg_c,
+                               valid_recursion);
 }
 
-SelectOperation::SelectOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b, ExValue_ifs* var_c,
-                                 TypeEn target_type, bool rec_call)
+TernaryOperation::TernaryOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b, ExValue_ifs* var_c,
+                                   TypeEn target_type, bool rec_call)
     : Operation_ifs(target_type, TypeEn::unknown_jty, op, maxDSVar(var_a, var_b)) {
     // commonSetup(op, maxDSVar(var_a, var_b));
     //  type_ = target_type;
@@ -60,13 +61,13 @@ SelectOperation::SelectOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* v
         if (i->getLevel() < level_) i->getAssignedVal(true)->setBuffered();
 }
 
-void SelectOperation::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) {
+void TernaryOperation::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) {
     visitor_stack->push(operand_[2]);
     visitor_stack->push(operand_[1]);
     visitor_stack->push(operand_[0]);
 }
 
-void SelectOperation::genBodyVisitExit(BodyGenContext* context) {
+void TernaryOperation::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;
     GarbageContainer* garbage_container = context->getGarbageContainer();
     g_pos = pos_;
@@ -85,11 +86,11 @@ void SelectOperation::genBodyVisitExit(BodyGenContext* context) {
         op3 = newTypeConvOp(garbage_container, target_type, op3);
     }
 
-    auto ret = newSelectOp(garbage_container, target_type, op1, op2, op3, contain_rec_call_);
+    auto ret = newTernaryOperation(garbage_container, target_type, op1, op2, op3, contain_rec_call_);
     context->push(ret);
 }
 
-void SelectOperation::calculateConstRecursive(RecursiveGenContext* context) {
+void TernaryOperation::calculateConstRecursive(RecursiveGenContext* context) {
     auto op_a = operand_[0], op_b = operand_[1], op_c = operand_[2];
 
     auto arg_a = calcTypeConvConst(TypeEn::int1_jty, op_a->getTempType(), op_a->getBinaryValue());
@@ -107,7 +108,7 @@ void SelectOperation::calculateConstRecursive(RecursiveGenContext* context) {
     }
 }
 
-void SelectOperation::printVisitExit(PrintBodyContext* context) {
+void TernaryOperation::printVisitExit(PrintBodyContext* context) {
     is_visited_ = false;
 
     auto op3 = context->pop();
@@ -116,7 +117,7 @@ void SelectOperation::printVisitExit(PrintBodyContext* context) {
     context->push(checkBuffer("(" + op1 + "? " + op2 + ": " + op3 + ")"));
 }
 
-std::string SelectOperation::printUint() {
+std::string TernaryOperation::printUint() {
     is_visited_ = false;
 
     auto txt_op_a = operand_[0]->getAssignedVal(true)->getUniqueName();
@@ -126,7 +127,7 @@ std::string SelectOperation::printUint() {
     return getUniqueName() + " = " + txt_op_a + "? " + txt_op_b + ": " + txt_op_c;
 }
 
-void SelectOperation::setupIR(IRGenerator& builder) {
+void TernaryOperation::setupIR(IRGenerator& builder) {
     auto ir_op_a = operand_[0]->getAssignedVal(true)->getIRValue(builder, level_);
     auto ir_op_b = operand_[1]->getAssignedVal(true)->getIRValue(builder, level_);
     auto ir_op_c = operand_[2]->getAssignedVal(true)->getIRValue(builder, level_);
@@ -148,7 +149,7 @@ void SelectOperation::setupIR(IRGenerator& builder) {
     finishSetupIR(builder);
 }
 
-void SelectOperation::calculate() {
+void TernaryOperation::calculate() {
     int length = (int)length_;
 
     auto op_a = operand_[0]->getAssignedVal(true);

@@ -2,6 +2,7 @@
 
 #include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
+#include "jit/TableGenContext.h"
 #include "operations/ExConstValue.h"
 #include "parser/bodyTemplate.h"
 

@@ -62,7 +62,8 @@ void RecursiveNeighborPointOperation::genBodyVisitExit(BodyGenContext *context) 
     auto op2 = context->pop();
     auto op1 = context->pop();
 
-    auto ret = newRecursiveNeighborPointOperation(garbage_container, op1, op2);
+    auto ret = nullptr;
+    // newRecursiveNeighborPointOperation(garbage_container, op1, op2);
 
     context->push(ret);
 }

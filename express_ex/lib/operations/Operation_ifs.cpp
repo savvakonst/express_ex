@@ -2,6 +2,7 @@
 #include "operations/Operation_ifs.h"
 
 #include "jit/IR_generator.h"
+#include "jit/TableGenContext.h"
 
 void Operation_ifs::visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) {
     print_error("visitEnter unknown command");

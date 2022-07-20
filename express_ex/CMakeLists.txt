@@ -56,7 +56,7 @@ set(LIBRARY_SOURCES
         lib/operations/ConvolveOperation.cpp
         lib/operations/IntegrateOperation.cpp
         lib/operations/Operation_ifs.cpp
-        lib/operations/SelectOperation.cpp
+        lib/operations/TernaryOperation.cpp
         lib/operations/SmallArrayDefOperation.cpp
         lib/operations/StoreToBufferOperation.cpp
         lib/operations/TypeCastOperation.cpp
@@ -69,7 +69,7 @@ set(LIBRARY_SOURCES
         lib/jit/IR_generator.cpp
         lib/jit/getWin32Intrinsinc.cpp
         lib/jit/table.cpp
-
+        lib/jit/TableGenContext.cpp
         )
 
 
@@ -111,7 +111,7 @@ set(LIBRARY_HEADERS
         lib/operations/ComparisonOperation.h
         lib/operations/ConvolveOperation.h
         lib/operations/IntegrateOperation.h
-        lib/operations/SelectOperation.h
+        lib/operations/TernaryOperation.h
         lib/operations/SmallArrayDefOperation.h
         lib/operations/StoreToBufferOperation.h
         lib/operations/TypeCastOperation.h
@@ -124,8 +124,10 @@ set(LIBRARY_HEADERS
         include/jit/buffer.h
         include/jit/context.h
         include/jit/llvmHdrs.h
-        include/jit/orcjit.h
+        #include/jit/orcjit.h
         include/jit/table.h
+        include/jit/TableGenContext.h
+
         include/ifs/ExStreamIfs.h
         )
 

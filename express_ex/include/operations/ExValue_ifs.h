@@ -6,8 +6,11 @@
 
 #include "common/common.h"
 #include "ifs/parameterIO.h"
-#include "jit/table.h"
 #include "parser/basic.h"
+
+namespace llvm {
+class Value;
+}
 
 using std::string;
 class IRGenerator;
@@ -206,15 +209,15 @@ class ExValue_ifs : public SmallArr {
     friend class TailCallDirectiveTemplate;
 };
 
-inline bool operator==(const ExValue_ifs* var_a, DataStructureTypeEn var_b) { return var_a->ds_ty_ == var_b; }
-inline bool operator==(DataStructureTypeEn var_a, const ExValue_ifs* var_b) { return var_a == var_b->ds_ty_; }
-inline bool operator<(TypeEn var_a, const ExValue_ifs* var_b) { return var_a < var_b->type_; }
-inline bool operator<(const ExValue_ifs* var_a, TypeEn var_b) { return var_a->type_ < var_b; }
+//   inline bool operator==(const ExValue_ifs* var_a, DataStructureTypeEn var_b) { return var_a->ds_ty_ == var_b; }
+//   inline bool operator==(DataStructureTypeEn var_a, const ExValue_ifs* var_b) { return var_a == var_b->ds_ty_; }
+//   inline bool operator<(TypeEn var_a, const ExValue_ifs* var_b) { return var_a < var_b->type_; }
+//   inline bool operator<(const ExValue_ifs* var_a, TypeEn var_b) { return var_a->type_ < var_b; }
 
-inline bool isConst(const ExValue_ifs* var_a) { return var_a == DataStructureTypeEn::kConstant; }
-inline bool isVariable(const ExValue_ifs* var_a) { return var_a == DataStructureTypeEn::kVariable; }
-inline bool isSmallArr(const ExValue_ifs* var_a) { return var_a == DataStructureTypeEn::kSmallArr; }
-inline bool isLargeArr(const ExValue_ifs* var_a) { return var_a == DataStructureTypeEn::kLargeArr; }
+inline bool isConst(const ExValue_ifs* var_a) { return var_a->ds_ty_ == DataStructureTypeEn::kConstant; }
+inline bool isVariable(const ExValue_ifs* var_a) { return var_a->ds_ty_ == DataStructureTypeEn::kVariable; }
+inline bool isSmallArr(const ExValue_ifs* var_a) { return var_a->ds_ty_ == DataStructureTypeEn::kSmallArr; }
+inline bool isLargeArr(const ExValue_ifs* var_a) { return var_a->ds_ty_ == DataStructureTypeEn::kLargeArr; }
 inline bool isSimilar(const ExValue_ifs* var_a, const ExValue_ifs* var_b) {
     return (var_a->ds_ty_ == var_b->ds_ty_ && (var_a->getLength() == var_b->getLength()));
 }

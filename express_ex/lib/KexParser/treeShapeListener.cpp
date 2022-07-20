@@ -130,7 +130,7 @@ void TreeShapeListener::exitShift(EGrammarParser::ShiftContext* ctx) {
 
 void TreeShapeListener::exitCondExpr(EGrammarParser::CondExprContext* ctx) {
     setPos(ctx);
-    current_body_->push(newSelectOp(current_body_));
+    current_body_->push(newTernaryOperation(current_body_));
 }
 
 void TreeShapeListener::exitRange(EGrammarParser::RangeContext* ctx) {

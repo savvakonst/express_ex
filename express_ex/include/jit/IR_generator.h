@@ -7,9 +7,8 @@
 
 #include "buffer.h"
 #include "common/types_jty.h"
-#include "common/undefWarningIgnore.h"
 #include "llvm/IR/IRBuilder.h"
-#include "parser/defWarningIgnore.h"
+
 
 class Table;
 class ExValue_ifs;

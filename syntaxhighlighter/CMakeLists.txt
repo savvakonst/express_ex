@@ -5,7 +5,6 @@ if (CMAKE_VERSION VERSION_LESS "3.7.0")
 endif ()
 
 
-
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
@@ -32,6 +31,7 @@ set(LIBRARY_HEADERS
 
 
 add_library(syntaxhighlighter SHARED
+        resource.qrc
         ${LIBRARY_SOURCES}
         ${LIBRARY_HEADERS}
         )
@@ -46,3 +46,17 @@ target_link_libraries(syntaxhighlighter
         PRIVATE Qt5::Widgets)
 
 
+add_executable(syntaxhighlighter_app
+        resource.qrc
+        sources/mainWindow.cpp
+        sources/main.cpp
+        include/mainwindow.h
+        )
+
+#target_compile_definitions(syntaxhighlighter PRIVATE QUIMONO_EXE)
+target_include_directories(syntaxhighlighter_app PUBLIC include)
+
+
+target_link_libraries(syntaxhighlighter_app PUBLIC
+        syntaxhighlighter
+        PRIVATE Qt5::Widgets)

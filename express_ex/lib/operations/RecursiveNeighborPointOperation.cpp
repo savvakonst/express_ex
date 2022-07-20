@@ -24,13 +24,13 @@ ExValue_ifs *newRecursiveNeighborPointOperation(BodyTemplate *body_template) {
 
     body_template->is_operator_ = true;
     body_template->is_recurrence_relation_ = true;
-    return newRecursiveNeighborPointOperation(body_template->getGarbageContainer(), arg_b);
+    return newRecursiveNeighborPointOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, arg_b);
 }
 
 
 RecursiveNeighborPointOperation::RecursiveNeighborPointOperation(TypeEn target_type, ExValue_ifs *shift)
-    : Operation_ifs(target_type, TypeEn::unknown_jty, OpCodeEn::none_op, array) {
-    level_ = array->getLevel() + 1;
+    : Operation_ifs(target_type, TypeEn::unknown_jty, DataStructureTypeEn::kLargeArr, 0, OpCodeEn::none_op) {
+    // level_ = array->getLevel() + 1;
     operand_.push_back(shift);
 }
 

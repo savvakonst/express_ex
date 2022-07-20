@@ -1,16 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "TextEdit.h"
+#include "textEdit.h"
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
-public:
+   public:
     MainWindow(QWidget *parent = 0);
 
-public Q_SLOTS:
+   public Q_SLOTS:
     void runScript();
     void about();
     void newFile();
@@ -23,10 +22,10 @@ public Q_SLOTS:
 
     void outError(QString errTxt);
 
-private Q_SLOTS:
+   private Q_SLOTS:
 
 
-private:
+   private:
     void setupEditor();
     void setupRunOutput();
     void setupSearchWidget();
@@ -36,16 +35,14 @@ private:
     void setupHelpMenu();
 
     void addProperty(QString name);
-    QString currentFileName =QString();
+    QString currentFileName = QString();
 
-    RunOutputBrowser*   runOutput;
+    RunOutputBrowser *runOutput;
 
-    KexEdit*           editor;
-    QProcess*           currentProcess =NULL;
+    KexEdit *editor;
+    QProcess *currentProcess = NULL;
 
-    QMap<QString,QCheckBox*> properties;
-
-
+    QMap<QString, QCheckBox *> properties;
 };
 
 #endif

@@ -5,7 +5,6 @@
 #include "RecursiveNeighborPointOperation.h"
 
 #include "ArithmeticOperation.h"
-#include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
 #include "parser/bodyTemplate.h"
 

@@ -15,6 +15,10 @@ class TernaryOperation : public Operation_ifs {
 
     ~TernaryOperation() override = default;
 
+    NodeTypeEn getNodeType() const override {
+        return contain_rec_call_ ? NodeTypeEn::kTailCallTernary : NodeTypeEn::kOperation;
+    }
+
     // void visitEnterSetupBuffer(stack<Value*>* visitor_stack) override;
     void visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) override;
 
@@ -29,6 +33,7 @@ class TernaryOperation : public Operation_ifs {
     void calculate() override;
 
    private:
+    bool contain_rec_call_ = false;
 };
 
 #endif

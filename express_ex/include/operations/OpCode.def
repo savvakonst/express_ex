@@ -1,0 +1,112 @@
+//
+// Created by SVK on 21.07.2022.
+//
+
+
+
+#ifndef EX_DEFINE_OPERATION
+#    define EX_DEFINE_OPERATION(OP_NAME, STRING_NAME)
+#endif
+
+
+//#ifndef EX_DEFINE_OPERATION_TYPE
+//#    define EX_DEFINE_OPERATION_TYPE(OP_TYPE, FIRST_OP_NAME)
+//#endif
+
+
+//#define EX_DEFINE_OPERATION_AUTO(A) EX_DEFINE_OPERATION(A, A)
+
+
+EX_DEFINE_OPERATION(neg, -)
+EX_DEFINE_OPERATION(fneg, -)
+
+
+
+EX_DEFINE_OPERATION(add, +)
+EX_DEFINE_OPERATION(fadd, +.)
+EX_DEFINE_OPERATION(sub, -)
+EX_DEFINE_OPERATION(fsub, -.)
+EX_DEFINE_OPERATION(mul, *)
+EX_DEFINE_OPERATION(fmul, *.)
+EX_DEFINE_OPERATION(udiv, /)
+EX_DEFINE_OPERATION(sdiv, /)
+EX_DEFINE_OPERATION(fdiv, /.)
+EX_DEFINE_OPERATION(urem, %)
+EX_DEFINE_OPERATION(srem, %)
+EX_DEFINE_OPERATION(frem, %.)
+EX_DEFINE_OPERATION(pow, **)
+EX_DEFINE_OPERATION(fpow, **.)
+
+EX_DEFINE_OPERATION(eq, ==)   //  equal
+EX_DEFINE_OPERATION(ne, !=)   //  not equal
+EX_DEFINE_OPERATION(ugt, >)   //  unsigned greater than
+EX_DEFINE_OPERATION(uge, >=)  //  unsigned greater or equal
+EX_DEFINE_OPERATION(ult, <)   //  unsigned less than
+EX_DEFINE_OPERATION(ule, <=)  //  unsigned less or equal
+EX_DEFINE_OPERATION(sgt, >)   //  signed greater than
+EX_DEFINE_OPERATION(sge, >=)  //  signed greater or equal
+EX_DEFINE_OPERATION(slt, <)   //  signed less than
+EX_DEFINE_OPERATION(sle, <=)  //  signed less or equal
+
+
+// better to use unordered
+EX_DEFINE_OPERATION(oeq, ==)   // ordered and equal
+EX_DEFINE_OPERATION(one, !=)   // ordered and not equal
+EX_DEFINE_OPERATION(ogt, >)    // ordered and greater than
+EX_DEFINE_OPERATION(oge, >=)   // ordered and greater than or equal
+EX_DEFINE_OPERATION(olt, <)    // ordered and less than
+EX_DEFINE_OPERATION(ole, <=)   // ordered and less than or equal
+EX_DEFINE_OPERATION(ord, ord)  // ordered (no nans)
+
+
+
+EX_DEFINE_OPERATION(
+    shl, <<)  // The ‘shl’ instruction returns the first operand shifted to the left a specified number of bits.
+EX_DEFINE_OPERATION(lshr, >>)  // The ‘lshr’ instruction (logical shift right) returns the first operand shifted to
+                               // the right a specified number of bits with zero fill.
+EX_DEFINE_OPERATION(ashr, >>)  // The ‘ashr’ instruction (arithmetic shift right) returns the first operand shifted to
+                               // the right a specified number of bits with sign extension.
+EX_DEFINE_OPERATION(and, and)  // The ‘and’ instruction returns the bitwise logical and of its two operands.
+EX_DEFINE_OPERATION(or, or)    // The ‘or’ instruction returns the bitwise logical inclusive or of its two operands.
+EX_DEFINE_OPERATION(xor, xor)  // The ‘xor’ instruction returns the bitwise logical exclusive or of its two operands.
+
+
+
+EX_DEFINE_OPERATION(trunc, trunc)
+EX_DEFINE_OPERATION(zext, zext)
+EX_DEFINE_OPERATION(sext, sext)
+EX_DEFINE_OPERATION(fptrunc, fptrunc)  // double to float
+EX_DEFINE_OPERATION(fpext, fpext)      // float to double
+EX_DEFINE_OPERATION(fptoi, fptoi)
+EX_DEFINE_OPERATION(fptosi, fptosi)
+EX_DEFINE_OPERATION(uitofp, uitofp)
+EX_DEFINE_OPERATION(sitofp, sitofp)
+EX_DEFINE_OPERATION(common_cast, common_cast)
+
+EX_DEFINE_OPERATION(convolve, convolve)
+EX_DEFINE_OPERATION(convolve_f, convolve_f)
+
+EX_DEFINE_OPERATION(integrate, integrate)
+
+EX_DEFINE_OPERATION(decimation, decimation)
+EX_DEFINE_OPERATION(upsampling, upsampling)
+
+EX_DEFINE_OPERATION(storeToBuffer, storeToBuffer)
+
+EX_DEFINE_OPERATION(smallArrayDef, smallArrayDef)
+EX_DEFINE_OPERATION(smallArrayRange, smallArrayRange)
+
+EX_DEFINE_OPERATION(select, select)
+
+EX_DEFINE_OPERATION(call, call)
+
+
+EX_DEFINE_OPERATION(log, log)
+EX_DEFINE_OPERATION(log2, log2)
+EX_DEFINE_OPERATION(log10, log10)
+EX_DEFINE_OPERATION(cos, cos)
+EX_DEFINE_OPERATION(sin, sin)
+EX_DEFINE_OPERATION(exp, exp)
+
+
+EX_DEFINE_OPERATION(none_op, none_op)

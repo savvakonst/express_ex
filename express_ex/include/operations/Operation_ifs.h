@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "ExValue_ifs.h"
-
 #include "common/types_jty.h"
 
 // extern bool g_gpu_acceleration_enable;
@@ -22,21 +21,7 @@ class Operation_ifs : public ExValue_ifs {
         : ExValue_ifs(ty, time_ty, var->ds_ty_, var->getLength()), op_code_(op) {}
 
 
-    /**
-     * initialize op_code_, ds_ty_ and length_ fields
-
-    void commonSetup(OpCodeEn op, const ExValue_ifs* var) {
-        op_code_ = op;
-        ds_ty_ = var->getDSType();
-        length_ = var->getLength();
-    }
-    */
-
-
-
-    NodeTypeEn getNodeType() const override {
-        return contain_rec_call_ ? NodeTypeEn::kTailCallSelect : NodeTypeEn::kOperation;
-    }
+    NodeTypeEn getNodeType() const override { return NodeTypeEn::kOperation; }
 
     /**
      * it is called by reverseTraversalVisitEnter() in simplification stage, when typed Body has been already built.
@@ -146,8 +131,6 @@ class Operation_ifs : public ExValue_ifs {
     std::vector<ExValue_ifs*> simplified_operand_;
 
     const OpCodeEn op_code_ = OpCodeEn::none_op;
-
-    bool contain_rec_call_ = false;
 };
 
 #endif

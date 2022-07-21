@@ -5,11 +5,9 @@
 #include "operations/ExConstValue.h"
 #include "parser/bodyTemplate.h"
 
-const std::string ar_built_in_[6] = {"log", "log2", "log10", "cos", "sin", "exp"};
 
-static std::string txtBuiltInOp(OpCodeEn op_code) {
-    return ar_built_in_[((int)op_code - (int)TypeOpCodeEn::builtInFunc)];
-}
+
+static std::string txtBuiltInOp(OpCodeEn op_code) { return kOpCodesStr[(int)op_code]; }
 
 ExValue_ifs* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg,
                                      OpCodeEn op_type) {
@@ -70,8 +68,7 @@ void BuiltInCallOperation::calculateConstRecursive(RecursiveGenContext* context)
 
 void BuiltInCallOperation::printVisitExit(PrintBodyContext* context) {
     is_visited_ = false;
-
-    std::string txt_operation = ar_built_in_[((int)op_code_ - (int)TypeOpCodeEn::builtInFunc)];
+    
     context->push(checkBuffer(txtBuiltInOp(op_code_) + "(" + context->pop() + ")"));
 }
 

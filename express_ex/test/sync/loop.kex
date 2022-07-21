@@ -22,7 +22,7 @@ end
 
 
 h = loop_const( 6, 4, 1)
-z = loop_example( x, x, h)
+z = loop_example( x, x, h*7)
 
 
 #function loop_example(arg_1, arg_2):

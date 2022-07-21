@@ -5,11 +5,8 @@
 #include "operations/ExConstValue.h"
 #include "parser/bodyTemplate.h"
 
-static const std::string ar_t_conv_[10] = {"trunc", "zext",   "sext",   "fptrunc", "fpext",
-                                           "fptoi", "fptosi", "uitofp", "sitofp",  "common_cast"};
-static std::string txtTypeCastOp(OpCodeEn op_code) { return ar_t_conv_[((int)op_code - (int)TypeOpCodeEn::type_conv)]; }
 
-
+static std::string txtTypeCastOp(OpCodeEn op_code) { return kOpCodesStr[(int)op_code]; }
 
 ExValue_ifs* newTypeConvOp(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg) {
     const TypeEn arg_type = arg->type_;
@@ -51,7 +48,6 @@ ExValue_ifs* newTypeConvOp(BodyTemplate* body_template, TypeEn target_type) {
 
 TypeCastOperation::TypeCastOperation(OpCodeEn op, ExValue_ifs* var, TypeEn target_type)
     : Operation_ifs(target_type, TypeEn::unknown_jty, op, var) {
-
     level_ = var->getLevel();
 
     operand_.push_back(var);

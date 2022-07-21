@@ -58,7 +58,7 @@ void Body::addReturn(const std::string& name, ExValue_ifs* var) {  //?remove Val
     if (is_tail_callable_) {
         var = var->getAssignedVal(true);
 
-        bool valid_recursion = var->getNodeType() == NodeTypeEn::kTailCallSelect;
+        bool valid_recursion = var->getNodeType() == NodeTypeEn::kTailCallTernary;
         if (!valid_recursion) print_error("it isn't tail recursion");
     }
 

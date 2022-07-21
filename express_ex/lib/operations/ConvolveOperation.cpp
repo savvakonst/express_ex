@@ -34,7 +34,7 @@ ExValue_ifs* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_o
     ExValue_ifs* arg_b = body_template->pop();
     ExValue_ifs* arg_a = body_template->pop();
     body_template->is_operator_ = true;
-    return newConvolveOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, shift,
+    return newConvolveOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, arg_a, arg_b, shift,
                                 u_type_op);
 }
 

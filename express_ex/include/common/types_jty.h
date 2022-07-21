@@ -14,7 +14,8 @@ typedef int (*jit_f)(char*, char*);
 typedef int (*jit_fptr)(char, char*);
 typedef int32_t (*Jit_Call_t)(char***, char* const*);
 
-enum class TypeEn {
+enum class TypeEn
+{
     int1_jty = 0,
     int8_jty,
     int16_jty,
@@ -26,183 +27,43 @@ enum class TypeEn {
     unknown_jty = 32
 };
 
-#define DEFAULT_JTY unknown_jty
 
-enum class DataStructureTypeEn {
+enum class DataStructureTypeEn
+{
     kConstant,
     kVariable,
     kSmallArr,
     kLargeArr,
 };
 
-///////////////////////////////////////////////////
-
-enum class OpCodeEn {
-    neg = 0,
-    fneg,
-
-    add,
-    fadd,
-    sub,
-    fsub,
-    mul,
-    fmul,
-    udiv,
-    sdiv,
-    fdiv,
-    urem,
-    srem,
-    frem,
-    pow,
-    fpow,
-
-    eq,   //   equal
-    ne,   //   not equal
-    ugt,  //  unsigned greater than
-    uge,  //  unsigned greater or equal
-    ult,  //  unsigned less than
-    ule,  //  unsigned less or equal
-    sgt,  //  signed greater than
-    sge,  //  signed greater or equal
-    slt,  //  signed less than
-    sle,  //  signed less or equal
-
-    oeq,  // ordered and equal
-    one,  // ordered and not equal
-    ogt,  // ordered and greater than
-    oge,  // ordered and greater than or equal
-    olt,  // ordered and less than
-    ole,  // ordered and less than or equal
-    ord,  // ordered (no nans)
-
-    LSHL,
-    LSHR,
-    ASHR,
-    AND,
-    OR,
-    XOR,
-
-    trunc,
-    zext,
-    sext,
-    fptrunc,  // double 16777217.0 to float
-    fpext,    // float 3.125 to double
-    fptoi,
-    fptosi,
-    uitofp,
-    sitofp,
-    common_cast,
-
-    convolve,
-    convolve_f,
-
-    integrate,
-
-    decimation,
-    upsampling,
-    shift,
-
-    storeToBuffer,
-
-    smallArrayDef,
-    smallArrayRange,
-
-    select,
-
-    call,
-
-    log,
-    log2,
-    log10,
-    cos,
-    sin,
-    exp,
-
-    none_op
-};
-
-enum class TypeOpCodeEn {
-    inv = (int)OpCodeEn::neg,
-    arithetic = (int)OpCodeEn::add,
-    comparsion = (int)OpCodeEn::eq,
-    bitwise = (int)OpCodeEn::LSHL,
-    type_conv = (int)OpCodeEn::trunc,
-    convolve_op = (int)OpCodeEn::convolve,
-    integrate_op = (int)OpCodeEn::integrate,
-    slice_op = (int)OpCodeEn::decimation,
-    storeToBuffer = (int)OpCodeEn::storeToBuffer,
-    smallArrayDef = (int)OpCodeEn::smallArrayDef,
-    builtInFunc = (int)OpCodeEn::log,
-
-    invEnd = arithetic,
-    arithetic_end = comparsion,
-    comparsion_end = bitwise,
-    bitwise_end = type_conv,
-    typeConvEnd = convolve_op,
-    convolve_op_end = (int)OpCodeEn::convolve_f + 1,
-    integrate_op_end = (int)OpCodeEn::integrate + 1,
-    smallArrayDefEnd = (int)OpCodeEn::smallArrayRange + 1,
-    slice_opEnd = (int)OpCodeEn::shift + 1,
-    builtInFuncEnd = (int)OpCodeEn::exp + 1
-};
-
-enum class NodeTypeEn {
+enum class NodeTypeEn
+{
     kValue,
     kOperation,
     kLine,
     kCall,
     kTailCall,
-    kTailCallSelect
+    kTailCallTernary,
+    kRecursiveNeighborPoint
 };
-/*
-inline bool isInv(OpCodeEn x) {
-    auto t = (TypeOpCodeEn)x;
-    return (t < TypeOpCodeEn::invEnd);
-}
-inline bool isArithmetic(OpCodeEn x) {
-    auto t = (TypeOpCodeEn)x;
-    return (TypeOpCodeEn::arithetic <= t) && (t < TypeOpCodeEn::arithetic_end);
-}
- */
-inline bool isComparison(OpCodeEn x) {
-    auto t = (TypeOpCodeEn)x;
-    return (TypeOpCodeEn::comparsion <= t) && (t < TypeOpCodeEn::comparsion_end);
-}
-/*
-inline bool isBitwise(OpCodeEn x) {
-    auto t = (TypeOpCodeEn)x;
-    return (TypeOpCodeEn::bitwise <= t) && (t < TypeOpCodeEn::bitwise_end);
-}
-inline bool isTypeConv(OpCodeEn x) {
-    auto t = (TypeOpCodeEn)x;
-    return (TypeOpCodeEn::type_conv <= t) && (t < TypeOpCodeEn::typeConvEnd);
-}
-inline bool isIntegrate(OpCodeEn x) { return (OpCodeEn::integrate == x); }
-*/
-inline bool isSelect(OpCodeEn x) { return (OpCodeEn::select == x); }
-/*
-inline bool isCall(OpCodeEn x) { return (OpCodeEn::call == x); }
-inline bool isConvolve(OpCodeEn x) {
-    auto t = (TypeOpCodeEn)x;
-    return (TypeOpCodeEn::convolve_op <= t) && (t < TypeOpCodeEn::convolve_op_end);
-}
-inline bool isSlice(OpCodeEn x) {
-    auto t = (TypeOpCodeEn)x;
-    return (TypeOpCodeEn::slice_op <= t) && (t < TypeOpCodeEn::slice_opEnd);
-}
-inline bool isDecimation(OpCodeEn x) { return x == OpCodeEn::decimation; }
-inline bool isUpSampling(OpCodeEn x) { return x == OpCodeEn::upsampling; }
-inline bool isShift(OpCodeEn x) { return x == OpCodeEn::shift; }
-inline bool isStoreToBuffer(OpCodeEn x) { return (OpCodeEn::storeToBuffer == x); }
-inline bool isBuiltInFunc(OpCodeEn x) {
-    auto t = (TypeOpCodeEn)x;
-    return (TypeOpCodeEn::builtInFunc <= t) && (t < TypeOpCodeEn::builtInFuncEnd);
-}
-inline bool isSmallArrayDef(OpCodeEn x) {
-    auto t = (TypeOpCodeEn)x;
-    return (TypeOpCodeEn::smallArrayDef <= t) && (t < TypeOpCodeEn::smallArrayDefEnd);
-}
-*/
+
+
+
+enum class OpCodeEn
+{
+#define EX_DEFINE_OPERATION(OP_NAME, OP_STR_REPR) OP_NAME,
+#include "operations/OpCode.def"
+#undef EX_DEFINE_OPERATION
+};
+
+const char* const kOpCodesStr[] = {
+#define EX_DEFINE_OPERATION(OP_NAME, OP_STR_REPR) (" " #OP_STR_REPR " "),
+#include "operations/OpCode.def"
+#undef EX_DEFINE_OPERATION
+};
+
+
+
 inline std::string toString(TypeEn type) {
     std::string t = "pass";
 #define ENUM2STR(x) \

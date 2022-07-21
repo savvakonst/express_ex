@@ -40,7 +40,7 @@ ExValue_ifs* newTernaryOperation(BodyTemplate* body_template) {
         valid_recursion = valid_recursion || (arg_b->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall);
     }
 
-    return newTernaryOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, arg_c,
+    return newTernaryOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, arg_a, arg_b, arg_c,
                                valid_recursion);
 }
 

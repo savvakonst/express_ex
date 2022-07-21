@@ -5,11 +5,8 @@
 #include "operations/ExConstValue.h"
 #include "parser/bodyTemplate.h"
 
-static const std::string kArComp[17] = {
-    "==", "!=", " ugt ", " uge ", " ult ", " ule ",  ">",  ">=", " less ",
-    "<=", "==", "!=",    ">",     ">=",    " less ", "<=", "_",
-};
-static std::string txtCompOp(OpCodeEn op_code) { return kArComp[((int)op_code - (int)TypeOpCodeEn::comparsion)]; }
+
+static std::string txtCompOp(OpCodeEn op_code) { return kOpCodesStr[(int)op_code]; }
 
 ExValue_ifs* newComparisonOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg_a,
                                     ExValue_ifs* arg_b, OpCodeEn op_type) {
@@ -59,7 +56,7 @@ ExValue_ifs* newComparisonOperation(GarbageContainer* garbage_container, TypeEn 
 ExValue_ifs* newComparisonOperation(BodyTemplate* body_template, OpCodeEn op_type) {
     ExValue_ifs* arg_b = body_template->pop();
     ExValue_ifs* arg_a = body_template->pop();
-    return newComparisonOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, op_type);
+    return newComparisonOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, arg_a, arg_b, op_type);
 }
 
 ComparisonOperation::ComparisonOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b)

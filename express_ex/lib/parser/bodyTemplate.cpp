@@ -45,7 +45,7 @@ void BodyTemplate::addReturn(const std::string& name, ExValue_ifs* var) {  //?re
     if (is_tail_callable_) {
         auto assigned_var = var->getAssignedVal(true);
 
-        bool valid_recursion = assigned_var->getNodeType() == NodeTypeEn::kTailCallSelect;
+        bool valid_recursion = assigned_var->getNodeType() == NodeTypeEn::kTailCallTernary;
         if (!valid_recursion) print_error("it isn't tail recursion");
     }
 

@@ -106,7 +106,7 @@ void TreeShapeListener::exitNeighborhoodPoint(EGrammarParser::NeighborhoodPointC
 
 void TreeShapeListener::exitConst(EGrammarParser::ConstContext* ctx) {
     setPos(ctx);
-    auto target_type = TypeEn::DEFAULT_JTY;
+    auto target_type = TypeEn::unknown_jty;
 #define CONV_TY(depend, target) \
     case (depend):              \
         target_type = (target); \
@@ -163,7 +163,7 @@ void TreeShapeListener::exitDecimation(EGrammarParser::DecimationContext* ctx) {
 
 void TreeShapeListener::exitCallTConvBInFunc(EGrammarParser::CallTConvBInFuncContext* ctx) {
     setPos(ctx);
-    auto target_type = TypeEn::DEFAULT_JTY;
+    auto target_type = TypeEn::unknown_jty;
 #define CONV_TY(depend, target) \
     case (depend):              \
         target_type = (target); \

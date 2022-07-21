@@ -20,6 +20,10 @@ class RecursiveNeighborPointOperation : public Operation_ifs {
 
     ~RecursiveNeighborPointOperation() override = default;
 
+    NodeTypeEn getNodeType() const override {
+        return  NodeTypeEn::kRecursiveNeighborPoint ;
+    }
+
     void visitEnterSetupBuffer(stack<ExValue_ifs*>* visitor_stack) override;
     void visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) override;
 

@@ -129,7 +129,7 @@ set(LIBRARY_HEADERS
         include/jit/TableGenContext.h
 
         include/ifs/ExStreamIfs.h
-        )
+        include/operations/OpCode.def)
 
 set(LLVM_COMPONENTS
         Core

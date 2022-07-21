@@ -6,8 +6,8 @@
 #include "parser/bodyTemplate.h"
 
 
-static const std::string kArSym[14] = {"+", "+.", "-", "-.", "*", "*.", "/", "/", "/.", "%", "%", "%.", "**", "**."};
-static std::string txtArOp(OpCodeEn op_code) { return kArSym[((int)op_code - (int)TypeOpCodeEn::arithetic)]; }
+
+static std::string txtArOp(OpCodeEn op_code) { return kOpCodesStr[((int)op_code)]; }
 
 ExValue_ifs* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg_a,
                                     ExValue_ifs* arg_b, OpCodeEn op_type) {
@@ -56,13 +56,13 @@ ExValue_ifs* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn 
 ExValue_ifs* newArithmeticOperation(BodyTemplate* body_template, OpCodeEn u_type_op) {
     auto* arg_b = body_template->pop();
     auto* arg_a = body_template->pop();
-    return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, arg_a, arg_b, u_type_op);
+    return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, arg_a, arg_b, u_type_op);
 }
 
 ExValue_ifs* newInversionOperation(BodyTemplate* body_template) {
     ExValue_ifs* arg = body_template->pop();
     ExValue_ifs* zero = body_template->getGarbageContainer()->add(new ExConstValue("0", TypeEn::int32_jty));
-    return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::DEFAULT_JTY, zero, arg, OpCodeEn::sub);
+    return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, zero, arg, OpCodeEn::sub);
 }
 
 
@@ -72,9 +72,9 @@ ArithmeticOperation::ArithmeticOperation(OpCodeEn op, ExValue_ifs* var_a, ExValu
     // commonSetup(op, maxDSVar(var_a, var_b));
 
 
-    if (isComparison(op)) print_error("ArithmeticOperation::ArithmeticOperation isComparison(op)");
-    // type_ = maxTypeVar(var_a, var_b)->getType();
-    // type_ = isComparison(op) && !isUnknownTy(type_) ? TypeEn::int1_jty : type_;
+    // if (isComparison(op)) print_error("ArithmeticOperation::ArithmeticOperation isComparison(op)");
+    //  type_ = maxTypeVar(var_a, var_b)->getType();
+    //  type_ = isComparison(op) && !isUnknownTy(type_) ? TypeEn::int1_jty : type_;
 
     level_ = maxLevelVar(var_a, var_b)->getLevel();
 

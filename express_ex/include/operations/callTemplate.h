@@ -2,9 +2,9 @@
 #define CALL_TEMPLATE_H_
 
 
+#include "ExLine.h"
 #include "parser/body.h"
 #include "parser/bodyTemplate.h"
-#include "parser/line.h"
 
 
 class CallTemplate_ifs : public ExValue_ifs {
@@ -30,18 +30,19 @@ class CallTemplate_ifs : public ExValue_ifs {
     }
 
     void printVisitExit(PrintBodyContext* context) override {
-        if (body_template_) {
-            context->addVoid(
-                body_template_->print(context->tab_ + "  ", context->DST_ena_, context->hide_unused_lines_));
+        if (corresponding_body_template_) {
+            context->addVoid(corresponding_body_template_->print(context->tab_ + "  ", context->DST_ena_,
+                                                                 context->hide_unused_lines_));
 
-            context->push(body_template_->getName() + "( " + printArgs(context) + ").ret." + toString(type_));
+            context->push(corresponding_body_template_->getName() + "( " + printArgs(context) + ").ret." +
+                          toString(type_));
         }
         is_visited_ = false;
     }
 
     std::string printUint() override {
         return unique_name_ + " = assignCallTemplate(" +
-               body_template_->getRet().front()->getAssignedVal(true)->getUniqueName() + ")";
+               corresponding_body_template_->getRet().front()->getAssignedVal(true)->getUniqueName() + ")";
     }
 
     void genRecursiveVisitExit(RecursiveGenContext* context) override {
@@ -58,7 +59,7 @@ class CallTemplate_ifs : public ExValue_ifs {
         return ret;
     }
 
-    BodyTemplate* body_template_ = nullptr;
+    BodyTemplate* corresponding_body_template_ = nullptr;
     stack<ExValue_ifs*> args_;
 };
 

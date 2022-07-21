@@ -1,4 +1,4 @@
-#include "parser/line.h"
+#include "operations/ExLine.h"
 
 #include "jit/IR_generator.h"
 #include "jit/TableGenContext.h"
@@ -64,8 +64,21 @@ void ExLine::printVisitExit(PrintBodyContext* context) {
 }
 
 
+void ExRecursiveArg::setupIR(IRGenerator& builder) {
+    builder.setInitInsertPoint();
+    llvm::Function* function = builder.getCurrentFunction();
+    IR_buffer_ptr_ = builder.CreateAlloca(builder.getLLVMType(type_));
+    size_t arg_number = builder.arg_ptr_list_.size();
+    builder.CreateStore(function->getArg((uint32_t)arg_number), IR_buffer_ptr_);
+    builder.arg_ptr_list_.push_back(IR_buffer_ptr_);
 
-void ExArgument::setupIR(IRGenerator& builder) {
+    // insert to  loop_block
+    builder.setCalcInsertPoint();
+    IR_value_ = builder.CreateLoad(IR_buffer_ptr_);
+}
+
+
+void ExParam::setupIR(IRGenerator& builder) {
     // setBuffered();
     if (isVariable(this)) {
         builder.setInitInsertPoint();

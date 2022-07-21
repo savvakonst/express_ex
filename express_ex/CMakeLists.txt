@@ -43,7 +43,7 @@ set(LIBRARY_SOURCES
         lib/parser/body.cpp
         lib/parser/bodyTemplate.cpp
 
-        lib/parser/line.cpp
+        lib/parser/ExLine.cpp
         lib/operations/ExValue_ifs.cpp
         #lib/parser/operations.cpp
 
@@ -94,7 +94,7 @@ set(LIBRARY_HEADERS
         include/parser/bodyTemplate.h
         include/operations/callTemplate.h
         include/parser/defWarningIgnore.h
-        include/parser/line.h
+        include/operations/ExLine.h
         include/parser/parsingException.h
         include/parser/KexParser.h
 
@@ -129,7 +129,7 @@ set(LIBRARY_HEADERS
         include/jit/TableGenContext.h
 
         include/ifs/ExStreamIfs.h
-        include/operations/OpCode.def)
+        include/operations/OpCode.def lib/operations/FunctionCall/CallRecursiveFunctionTemplate.cpp)
 
 set(LLVM_COMPONENTS
         Core

@@ -68,7 +68,7 @@ class BodyTemplate {
 
     std::string print(const std::string& tab = "", bool dst_ena = false, bool hide_unused_lines = false) const;
     std::list<std::string> getNamesOfDefinedFunctions() const;
-    Body* genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> args, bool is_function) const;
+    Body* genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> args, bool is_recursive_function) const;
     untyped_t genConstRecursiveByTemplate(stack<ExValue_ifs*>& args) const;
 
     std::list<BodyTemplate*> child_body_template_list_;

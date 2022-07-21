@@ -17,9 +17,7 @@ Call::Call(Body* body, const stack<ExValue_ifs*>& args)
     auto ret = body_->getRet().front();
 
     level_ = ret->getLevel();
-    // type_ = ret->getType();
-    // ds_ty_ = ret->getDSType();
-    // length_ = ret->getLength();
+
 
     if (isConst(ret)) {
         binary_value_ = ret->getBinaryValue();

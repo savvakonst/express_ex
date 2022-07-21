@@ -15,8 +15,8 @@
 #include "antlr4-runtime.h"
 #pragma warning(pop)
 #include "common/undefWarningIgnore.h"
+#include "operations/ExLine.h"
 #include "parser/bodyTemplate.h"
-#include "parser/line.h"
 
 using namespace antlr4;
 // using namespace  parser_cpp;
@@ -150,7 +150,7 @@ class TreeShapeListener : public EGrammarBaseListener {
 
     /////////////////////////
 
-    
+
     BodyTemplate* current_body_ = nullptr;
 
    private:

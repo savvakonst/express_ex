@@ -1,10 +1,10 @@
 #ifndef CALL_H_
 #define CALL_H_
 
+#include "operations/ExLine.h"
 #include "operations/ExValue_ifs.h"
 #include "parser/basic.h"
 #include "parser/body.h"
-#include "parser/line.h"
 
 namespace llvm {
 class Function;

@@ -71,25 +71,53 @@ class ExLine : public ExValue_ifs {
 
     std::string name_;
     std::string link_name_;
+};
 
-   private:
-    const bool is_arg_ = false;
+class ExArg : public ExLine {
+   public:
+    explicit ExArg(const std::string& name)
+        : ExLine(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
+        name_ = name;
+    }
+    ~ExArg() override = default;
+
+    bool isArg() const override { return true; }
+    std::string printUint() override { return unique_name_ + " = arg()"; }
+
+   protected:
+    ExArg(TypeEn type, TypeEn time_type, DataStructureTypeEn data_structure_type, length_t length)
+        : ExLine(type, time_type, data_structure_type, length) {}
 };
 
 
 
-class ExArgument : public ExLine {
+class ExRecursiveArg : public ExArg {
    public:
-    ExArgument(const std::string& name, TypeEn ty, DataStructureTypeEn dsty, uint64_t len)
-        : ExLine(ty,                   //
-                 TypeEn::unknown_jty,  //
-                 dsty,                 //
-                 length_t(len))        //
+    ExRecursiveArg(const std::string& name, TypeEn ty)
+        : ExArg(ty,                              //
+                TypeEn::unknown_jty,             //
+                DataStructureTypeEn::kVariable,  //
+                length_t(0))                     //
     {
         name_ = name;
     }
 
-    ExArgument(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty)
+    ~ExRecursiveArg() override = default;
+    ExValue_ifs* getAssignedVal(bool deep = false) override { return this; }
+
+    void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) override {
+        commonMarkUnusedVisitEnter(visitor_stack);
+        is_unused_ = false;
+    }
+    void setupIR(IRGenerator& builder) override;
+    void calculateConstRecursive(RecursiveGenContext* context) override { temp_type_ = assigned_val_->getTempType(); }
+};
+
+
+
+class ExParam : public ExLine {
+   public:
+    ExParam(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty)
         : ExLine(TypeEn::unknown_jty,  //
                  TypeEn::unknown_jty,  //
                  dsty,                 //
@@ -99,7 +127,7 @@ class ExArgument : public ExLine {
         link_name_ = link_name;
     }
 
-    ExArgument(const std::string& name, ParameterIfs* parameter)
+    ExParam(const std::string& name, ParameterIfs* parameter)
         : ExLine(PRMType2JITType(parameter->getPrmType()),  //
                  TypeEn::unknown_jty,                       //
                  DataStructureTypeEn::kLargeArr,            //
@@ -111,12 +139,8 @@ class ExArgument : public ExLine {
         } else parameter_ = new SyncParameter(*(SyncParameter*)parameter);
     }
 
-    explicit ExArgument(const std::string& name)
-        : ExLine(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
-        name_ = name;
-    }
 
-    ~ExArgument() override = default;
+    ~ExParam() override = default;
 
     ExValue_ifs* getAssignedVal(bool deep = false) override { return this; }
 
@@ -127,11 +151,10 @@ class ExArgument : public ExLine {
         is_unused_ = false;
     }
 
-
     void setupIR(IRGenerator& builder) override;
-    void calculateConstRecursive(RecursiveGenContext* context) override { temp_type_ = assigned_val_->getTempType(); }
 
-    std::string printUint() override { return unique_name_ + " = arg()"; }
+    void calculateConstRecursive(RecursiveGenContext* context) override { temp_type_ = assigned_val_->getTempType(); }
+    std::string printUint() override { return unique_name_ + " = parameter()"; }
 };
 
 

@@ -3,10 +3,10 @@
 #include "ifs/express_ex.h"
 
 #include "jit/table.h"
+#include "operations/ExLine.h"
 #include "parser/KexParser.h"
 #include "parser/body.h"
 #include "parser/bodyTemplate.h"
-#include "parser/line.h"
 #include "printer.h"
 
 
@@ -71,7 +71,7 @@ bool Express_ex::setParameters(const std::map<std::string, ParameterIfs *> &para
 
 
     for (const auto &p : parameters_map)
-        if (p.second != nullptr) args.push(new ExArgument(p.first, p.second));
+        if (p.second != nullptr) args.push(new ExParam(p.first, p.second));
         else {
             if (error_stream_)
                 (*error_stream_ << ExColors::RED << "Error: null_ptr in parameters_map \n"

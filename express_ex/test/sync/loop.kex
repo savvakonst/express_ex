@@ -12,9 +12,16 @@ x = param("#1_A01__1")
 #    return (i>10)? i :i+1
 #end
 
-function loop_example(ref, a, i):
-    return (i>10)? a :loop_example((ref),double(a+ref),i+1)
+
+function encapsulate(ref, a, i):
+    function
+
+    function loop_example(ref, a, i):
+        return (i>10)? a :loop_example((ref),double(a+ref),i+1)
+    end
+    return loop_example(ref, a, i)
 end
+
 
 function loop_const(ref, a, i):
     return (i>10)? a : loop_const((ref),a+ref,i+1)
@@ -22,7 +29,7 @@ end
 
 
 h = loop_const( 6, 4, 1)
-z = loop_example( x, x, h*7)
+z = encapsulate( x, x, h*7)
 
 
 #function loop_example(arg_1, arg_2):

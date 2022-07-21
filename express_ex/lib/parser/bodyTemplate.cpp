@@ -3,11 +3,11 @@
 #include <string>
 #include <utility>
 
+#include "operations/ExLine.h"
 #include "operations/ExValue_ifs.h"
 #include "operations/callTemplate.h"
 #include "operations/operations.h"
 #include "parser/body.h"
-#include "parser/line.h"
 
 
 
@@ -26,21 +26,21 @@ void BodyTemplate::addLine(const std::string& name, ExValue_ifs* var) {
 }
 
 void BodyTemplate::addArg(const std::string& name) {
-    auto line = new ExArgument(name);
+    auto line = new ExArg(name);
     garbage_container_->add(line);
     arg_count_++;
     lines_.push_back(line);
 }
 
 void BodyTemplate::addParam(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty) {
-    auto line = new ExArgument(name, link_name, dsty);
+    auto line = new ExParam(name, link_name, dsty);
     garbage_container_->add(line);
     arg_count_++;
     lines_.push_back(line);
 }
 
 void BodyTemplate::addReturn(const std::string& name, ExValue_ifs* var) {  //?remove Value param
-    auto line = new ExLine(name, var);
+    // auto line = new ExLine(name, var);
 
     if (is_tail_callable_) {
         auto assigned_var = var->getAssignedVal(true);
@@ -49,8 +49,8 @@ void BodyTemplate::addReturn(const std::string& name, ExValue_ifs* var) {  //?re
         if (!valid_recursion) print_error("it isn't tail recursion");
     }
 
-    garbage_container_->add(line);
-    return_stack_.push_back(line);
+    garbage_container_->add(var);
+    return_stack_.push_back(var);
 }
 
 
@@ -76,16 +76,17 @@ std::map<std::string, std::string> BodyTemplate::getParameterLinkNames(bool hide
 
 
 void BodyTemplate::addCall(BodyTemplate* body) {
-    stack<ExValue_ifs*> a;
-    a.resize(body->getArgCount());
+    stack<ExValue_ifs*> args;
+    args.resize(body->getArgCount());
+
     for (int i = body->getArgCount() - 1; i >= 0; i--) {
-        a[i] = pop();
+        args[i] = pop();
     }
 
     is_operator_ = is_operator_ || body->is_operator_;
 
-    if (body->is_tail_callable_) push(garbage_container_->add(new CallRecursiveFunctionTemplate(body, a)));
-    else push(garbage_container_->add(new CallTemplate(body, a)));
+    if (body->is_tail_callable_) push(garbage_container_->add(new CallRecursiveFunctionTemplate(body, args)));
+    else push(garbage_container_->add(new CallTemplate(body, args)));
 }
 
 void BodyTemplate::addTailCall() {
@@ -161,9 +162,9 @@ std::list<std::string> BodyTemplate::getNamesOfDefinedFunctions() const {
     return ret;
 }
 
-Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> args, bool is_function) const {
+Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> args, bool is_recursive_function) const {
     auto body = new Body(name_, getNamesOfDefinedFunctions(), parent_body, is_operator_);
-    BodyGenContext context(body, is_function);
+    BodyGenContext context(body, is_recursive_function);
 
     stack<ExValue_ifs*> visitor_stack;
 
@@ -172,17 +173,13 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> arg
         if (value->isArg()) {
             if (isTopBody()) {
                 body->addParam((ExLine*)*(arg));
-                ++arg;
+
 
             } else {
-                if (is_function) {
-                    body->addVariableLine(value->getName(), *(arg));
-                } else {
-                    body->addLine(value->getName(), *(arg));
-                }
-
-                ++arg;
+                if (is_recursive_function) body->addParam(new ExRecursiveArg(value->getName(), (*arg)->type_));
+                else body->addParam(new ExLine(value->getName(), *arg));
             }
+            ++arg;
         } else {
             visitor_stack.push(value->getAssignedVal());
 

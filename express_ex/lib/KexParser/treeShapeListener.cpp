@@ -237,6 +237,8 @@ void TreeShapeListener::exitCallFunc(EGrammarParser::CallFuncContext* ctx) {
 
     const std::string function_name = ctx->ID()->getText();
     BodyTemplate* called_body = current_body_->getFunctionBody(function_name);
+
+
     if (called_body) {
         if (called_body->getArgCount() != int(expr.size()))
             print_error("there are invalid signature call in function: " + function_name + " ");

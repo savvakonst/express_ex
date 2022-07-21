@@ -60,7 +60,7 @@ class Body {
 
     std::map<std::string /*name*/, std::string /*link name*/> getParameterLinkNames(bool hide_unused = false) const;
     const stack<ExLine*>& getRet() const { return return_stack_; }
-    int getArgCount() const { return arg_count_; }
+
     std::string getName() const { return name_; };
     GarbageContainer* getGarbageContainer() const { return garbage_contaiiner_; }
 

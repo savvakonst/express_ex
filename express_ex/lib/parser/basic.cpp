@@ -1,7 +1,7 @@
 #include "parser/basic.h"
 
+#include "operations/ExLine.h"
 #include "operations/ExValue_ifs.h"
-#include "parser/line.h"
 
 void PrintBodyContext::createArg(ExLine* value) {
     if (!hide_unused_lines_ || !value->isUnused()) {

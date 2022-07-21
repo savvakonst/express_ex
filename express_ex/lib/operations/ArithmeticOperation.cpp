@@ -111,7 +111,7 @@ void ArithmeticOperation::genBodyVisitExit(BodyGenContext* context) {
 
     auto ret =
         newArithmeticOperation(garbage_container, target_type, newTypeConvOp(garbage_container, target_type, op1),
-                               newTypeConvOp(garbage_container, target_type, op2), (OpCodeEn)(int)op_code_);
+                               newTypeConvOp(garbage_container, target_type, op2), op_code_);
     context->push(ret);
 }
 

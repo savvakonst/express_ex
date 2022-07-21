@@ -5,8 +5,8 @@
 
 //#include "jit/table.h"
 #include "jit/TableGenContext.h"
+#include "operations/ExLine.h"
 #include "parser/bodyTemplate.h"
-#include "parser/line.h"
 
 Body::Body(const std::string& name, const std::list<std::string>& names_of_defined_functions, Body* parent,
            bool is_operator)
@@ -41,14 +41,13 @@ void Body::addLine(const std::string& name, ExValue_ifs* var) {
 }
 
 void Body::addVariableLine(const std::string& name, ExValue_ifs* var) {
-    ExLine* line = new ExArgument(name, var->type_, DataStructureTypeEn::kVariable, 1);
+    ExLine* line = new ExRecursiveArg(name, var->type_);
     garbage_contaiiner_->add(line);
     lines_.push_back(line);
 }
 
 void Body::addParam(ExLine* line) {  //?delete
     garbage_contaiiner_->add(line);
-    arg_count_++;
     lines_.push_back(line);
 }
 
@@ -173,15 +172,17 @@ void Body::genTable(TableGenContext* context) {
         for (auto& value : return_stack_) value->getAssignedVal(true)->setReturned();
 
     for (auto& value : lines_) {
-        if (value->isArg() && (!value->isUnused())) {
-            context->setUint(value);
-        } else if (!value->isUnused()) {
-            visitor_stack.push(value->getAssignedVal());
-            do {
-                auto var = visitor_stack.pop();
-                if (var->isVisited()) var->genBlocksVisitExit(context);
-                else var->visitEnter(&visitor_stack);
-            } while (!visitor_stack.empty());
+        if (!value->isUnused()) {
+            if (value->isArg()) {
+                context->setUint(value);
+            } else {
+                visitor_stack.push(value->getAssignedVal());
+                do {
+                    auto var = visitor_stack.pop();
+                    if (var->isVisited()) var->genBlocksVisitExit(context);
+                    else var->visitEnter(&visitor_stack);
+                } while (!visitor_stack.empty());
+            }
         }
     }
     int64_t maxBufferLength = 0;

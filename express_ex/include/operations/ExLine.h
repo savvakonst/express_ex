@@ -75,8 +75,7 @@ class ExLine : public ExValue_ifs {
 
 class ExArg : public ExLine {
    public:
-
-    ExArg(const std::string& name, ExValue_ifs* var): ExLine(name, var){}
+    ExArg(const std::string& name, ExValue_ifs* var) : ExLine(name, var) {}
 
     explicit ExArg(const std::string& name)
         : ExLine(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
@@ -100,12 +99,13 @@ class ExRecursiveArg : public ExArg {
         : ExArg(ty,                              //
                 TypeEn::unknown_jty,             //
                 DataStructureTypeEn::kVariable,  //
-                length_t(0))                     //
+                length_t(1))                     //
     {
         name_ = name;
     }
 
     ~ExRecursiveArg() override = default;
+
     ExValue_ifs* getAssignedVal(bool deep = false) override { return this; }
 
     void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) override {
@@ -113,7 +113,10 @@ class ExRecursiveArg : public ExArg {
         is_unused_ = false;
     }
     void setupIR(IRGenerator& builder) override;
+
     void calculateConstRecursive(RecursiveGenContext* context) override { temp_type_ = assigned_val_->getTempType(); }
+    
+    std::string printUint() override { return unique_name_ + " = arg()"; }
 };
 
 

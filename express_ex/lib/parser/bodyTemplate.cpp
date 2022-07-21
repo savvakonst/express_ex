@@ -172,12 +172,12 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> arg
     for (const auto& value : lines_) {
         if (value->isArg()) {
             if (isTopBody()) {
-                body->addParam((ExLine*)*(arg));
+                body->addLine((ExLine*)*(arg));
 
 
             } else {
-                if (is_recursive_function) body->addParam(new ExRecursiveArg(value->getName(), (*arg)->type_));
-                else body->addParam(new ExLine(value->getName(), *arg));
+                if (is_recursive_function) body->addLine(new ExRecursiveArg(value->getName(), (*arg)->type_));
+                else body->addLine(new ExArg(value->getName(), *arg));
             }
             ++arg;
         } else {
@@ -192,7 +192,7 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> arg
                     var->visitEnter(&visitor_stack);
                 }
             } while (!visitor_stack.empty());
-            body->addLine(value->getName(), context.pop());
+            body->addLine(new ExLine(value->getName(), context.pop()));
         }
     }
 

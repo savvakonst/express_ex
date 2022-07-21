@@ -69,13 +69,6 @@ ExValue_ifs* newInversionOperation(BodyTemplate* body_template) {
 
 ArithmeticOperation::ArithmeticOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b)
     : Operation_ifs(maxTypeVar(var_a, var_b)->type_, TypeEn::unknown_jty, op, maxDSVar(var_a, var_b)) {
-    // commonSetup(op, maxDSVar(var_a, var_b));
-
-
-    // if (isComparison(op)) print_error("ArithmeticOperation::ArithmeticOperation isComparison(op)");
-    //  type_ = maxTypeVar(var_a, var_b)->getType();
-    //  type_ = isComparison(op) && !isUnknownTy(type_) ? TypeEn::int1_jty : type_;
-
     level_ = maxLevelVar(var_a, var_b)->getLevel();
 
     operand_.push_back(var_a);

@@ -43,12 +43,10 @@ class Body {
          bool is_operator);
     ~Body();
 
-    bool isRetStackFull() { return (name_ != "main") ? 0 < return_stack_.size() : false; }
-    bool isRetStackEmpty() { return 0 == return_stack_.size(); }
+    bool isTopBody() const { return name_ == "main"; }
 
-    void addLine(const std::string& name, ExValue_ifs* var);
-    void addVariableLine(const std::string& name, ExValue_ifs* var);
-    void addParam(ExLine* line);
+
+    void addLine(ExLine* line);
     void addReturn(const std::string& name, ExValue_ifs* var);
 
     // var_stack_ push/pop
@@ -62,7 +60,7 @@ class Body {
     const stack<ExLine*>& getRet() const { return return_stack_; }
 
     std::string getName() const { return name_; };
-    GarbageContainer* getGarbageContainer() const { return garbage_contaiiner_; }
+    GarbageContainer* getGarbageContainer() const { return garbage_container_; }
 
     ExLine* getLastLineFromName(const std::string& name) const;
     std::list<ParameterIfs*> getOutputParameterList() const;
@@ -73,14 +71,14 @@ class Body {
     // tree walker methods
     std::string print(const std::string& tab = "", bool DSTEna = false, bool hide_unused_lines = false);
     void reverseTraversal();
-    void genTable(TableGenContext* tableGenContext);
+    void genTable(TableGenContext* table_gen_context);
     llvm::Function* getOrGenIRPureFunction(IRGenerator& builder);
 
     const bool is_operator_ = false;
     const bool is_pure_function_ = false;
 
    protected:
-    GarbageContainer* garbage_contaiiner_;
+    GarbageContainer* garbage_container_;
 
     llvm::Function* function_ = nullptr;
     bool is_tail_callable_ = false;
@@ -93,7 +91,7 @@ class Body {
 
 
     Body* parent_body_ = nullptr;
-    DeclaredBodiesMap declarated_functions_map_;
+    DeclaredBodiesMap declared_bodies_map_;
 
     int arg_count_ = 0;
 

@@ -49,6 +49,8 @@ string Block::print() const {
 
     out += std::string(4, ' ') + "L,R: " + std::to_string(left_length_) + "," + std::to_string(right_length_) + "\n";
     for (auto i : uint_list_) {
+        std::string unit = i->printUint();
+        if (unit.empty()) continue;
         std::string txt = i->printUint() + ";" + (i->isBuffered() ? " store" : "");
         std::string txtShifts = std::to_string(i->getLeftBufferLen()) + " : " + std::to_string(i->getRightBufferLen());
         std::string txtSkip = std::string(max_line_length - ((txt.length() > max_line_length) ? 0 : txt.length()), ' ');
@@ -283,12 +285,16 @@ string Table::print() const {
     std::string out;
 
     out += "constant defenition:\n";
+
+
     for (auto i : const_list_) {
-        out += "\t" + i->printUint() + ";\n";
+        const auto tmp = i->printUint();
+        if (!tmp.empty()) out += "\t" + tmp + ";\n";
     }
     out += "small array defenition:\n";
     for (auto i : small_array_list_) {
-        out += "\t" + i->printUint() + ";\n";
+        const auto tmp = i->printUint();
+        if (!tmp.empty()) out += "\t" + tmp + ";\n";
     }
     out += "table:\n";
     for (auto i : column_list_) {
@@ -719,69 +725,3 @@ std::string Table::printLlvmIr() {
 /// which provide llvm IR generation.
 ///
 ///
-
-
-
-llvm::Function* Body::getOrGenIRPureFunction(IRGenerator& builder) {
-    if (function_) return function_;
-
-    llvm::LLVMContext& context = builder.getContext();
-    IRGenerator local_builder(context, nullptr, true);
-
-    std::vector<llvm::Type*> params;
-    const std::vector<TypeEn> signature = getSignature().getList();
-    for (auto i : signature) params.push_back(local_builder.getLLVMType(i));
-
-    function_ = llvm::Function::Create(
-        llvm::FunctionType::get(local_builder.getLLVMType(return_stack_.front()->type_), params, false),
-        llvm::Function::ExternalLinkage, getName(), builder.getCurrentModule());
-
-    local_builder.setCurrentFunction(function_);
-
-    local_builder.setInitInsertPoint(llvm::BasicBlock::Create(context, "init_block", function_));
-    local_builder.setCalcInsertPoint(llvm::BasicBlock::Create(context, "loop_block", function_));
-    local_builder.setExitInsertPoint(llvm::BasicBlock::Create(context, "exit_block", function_));
-    local_builder.setCalcInsertPoint();
-
-    stack<ExValue_ifs*> visitor_stack;
-    RecursiveGenContext gen_context(is_tail_callable_, false);
-
-    for (auto& line : lines_) {
-        if (line->isArg()) {
-            gen_context.addArg(line);
-        } else {
-            visitor_stack.push(line->getAssignedVal());
-            do {
-                auto var = visitor_stack.pop();
-                if (var->isVisited()) var->genRecursiveVisitExit(&gen_context);
-                else var->visitEnter(&visitor_stack);
-            } while (!visitor_stack.empty());
-            gen_context.setUint(line);
-        }
-    }
-
-    for (auto& value : return_stack_) {
-        visitor_stack.push(value->getAssignedVal());
-        do {
-            auto var = visitor_stack.pop();
-            if (var->isVisited()) var->genRecursiveVisitExit(&gen_context);
-            else var->visitEnter(&visitor_stack);
-        } while (!visitor_stack.empty());
-        gen_context.setUint(value);
-    }
-
-    size_t size = gen_context.instructions_list_.size();
-    for (size_t index = 0; index < size; index++) gen_context.instructions_list_[index]->setupIR(local_builder);
-
-    if (!local_builder.getCurrentBlock()->back().isTerminator()) {
-        local_builder.setCalcInsertPoint();
-        local_builder.CreateBr(builder.getExitBlock());
-        local_builder.setExitInsertPoint();
-        local_builder.CreateRet(return_stack_.front()->getAssignedVal(true)->getIRValue(builder, 0));
-    }
-
-    local_builder.setInitInsertPoint();
-    local_builder.CreateBr(local_builder.getCalcBlock());
-
-    return function_;
-}

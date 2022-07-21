@@ -75,6 +75,9 @@ class ExLine : public ExValue_ifs {
 
 class ExArg : public ExLine {
    public:
+
+    ExArg(const std::string& name, ExValue_ifs* var): ExLine(name, var){}
+
     explicit ExArg(const std::string& name)
         : ExLine(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
         name_ = name;
@@ -82,7 +85,7 @@ class ExArg : public ExLine {
     ~ExArg() override = default;
 
     bool isArg() const override { return true; }
-    std::string printUint() override { return unique_name_ + " = arg()"; }
+    std::string printUint() override { return ""; }
 
    protected:
     ExArg(TypeEn type, TypeEn time_type, DataStructureTypeEn data_structure_type, length_t length)

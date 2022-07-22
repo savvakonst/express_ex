@@ -131,18 +131,18 @@ void TailCallDirective::setupIR(IRGenerator& builder) {
     size_t size = builder.arg_ptr_list_.size();
 
     size_t i = 0;
-    for (auto a = args_.rbegin(); a != args_.rend(); a++) {
+    for (auto a = args_.begin(); a != args_.end(); a++) {
         auto ex_value = (*a)->getAssignedVal(true);
         llvm::Value* arg = ex_value->getIRValue(builder, level_);
         builder.CreateStore(arg, builder.arg_ptr_list_[size - 1 - i]);
         i++;
     }
 
-    //for (size_t i = 0; i < size; i++) {
-    //    auto ex_value = args_[i]->getAssignedVal(true);
-    //    llvm::Value* arg = ex_value->getIRValue(builder, level_);
-    //    builder.CreateStore(arg, builder.arg_ptr_list_[size - 1 - i]);
-    //}
+    // for (size_t i = 0; i < size; i++) {
+    //     auto ex_value = args_[i]->getAssignedVal(true);
+    //     llvm::Value* arg = ex_value->getIRValue(builder, level_);
+    //     builder.CreateStore(arg, builder.arg_ptr_list_[size - 1 - i]);
+    // }
 }
 
 void TailCallDirective::printVisitExit(PrintBodyContext* context) {

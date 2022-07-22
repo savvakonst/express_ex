@@ -99,7 +99,7 @@ void TailCallDirectiveTemplate::calculateConstRecursive(RecursiveGenContext *con
     size_t size = context->args_reference_.size();
 
     auto &ds_list = context->args_reference_;
-    for (auto dst = ds_list.begin(), src = args_.begin(); dst != ds_list.end(); ++dst, ++src) {
+    for (auto dst = ds_list.begin(), src = args_.begin(); dst != ds_list.end(); dst++, src++) {
         (*dst)->binary_value_ = (*src)->binary_value_;
     }
     // for (size_t i = 0; i < size; i++)

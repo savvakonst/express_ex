@@ -20,9 +20,7 @@ class RecursiveNeighborPointOperation : public Operation_ifs {
 
     ~RecursiveNeighborPointOperation() override = default;
 
-    NodeTypeEn getNodeType() const override {
-        return  NodeTypeEn::kRecursiveNeighborPoint ;
-    }
+    NodeTypeEn getNodeType() const override { return NodeTypeEn::kRecursiveNeighborPoint; }
 
     void visitEnterSetupBuffer(stack<ExValue_ifs*>* visitor_stack) override;
     void visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack) override;
@@ -36,6 +34,11 @@ class RecursiveNeighborPointOperation : public Operation_ifs {
     void setupIR(IRGenerator& builder) override;
 
     void calculate() override;
+
+    /**
+     * @return negative value if success otherwise return zero
+     */
+    int64_t getShift() const { return shift_parameter_; }
 
    private:
     // convolve params

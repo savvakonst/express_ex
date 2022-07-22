@@ -70,9 +70,9 @@ double ExConstValue::getDoubleValue() const {
 
 void ExConstValue::setupIR(IRGenerator &builder) { IR_value_ = builder.createConst(binary_value_, type_, ""); }
 
-void ExConstValue::visitEnter(stack<ExValue_ifs *> *visitor_stack) {
+void ExConstValue::visitEnter(stack<ExValue_ifs *> *visitor_stack, bool set_visited) {
     visitor_stack->push(this);
-    is_visited_ = true;
+    is_visited_ = set_visited;
 }
 
 void ExConstValue::reverseTraversalVisitEnter(stack<ExValue_ifs *> *visitor_stack) {

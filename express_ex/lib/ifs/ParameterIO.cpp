@@ -79,7 +79,7 @@ TypeEn PRMType2JITType(PrmTypesEn arg) {
     }
 }
 
-PrmTypesEn JITType2PRMType(TypeEn arg) {
+PrmTypesEn toPrmType(TypeEn arg) {
     if (isFloating(arg)) return (PrmTypesEn)(0x20 | sizeOfTy(arg));
     if (isInteger(arg)) return (PrmTypesEn)(0x10 | sizeOfTy(arg));
     return PrmTypesEn::PRM_TYPE_UNKNOWN;

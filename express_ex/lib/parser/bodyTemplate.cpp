@@ -14,28 +14,14 @@
 BodyTemplate::BodyTemplate(std::string name, BodyTemplate* parent_body_template)
     : name_(std::move(name)), parent_body_template_(parent_body_template) {
     garbage_container_ = new GarbageContainer();
-    lines_.reserve(30);
+    // lines_.reserve(30);
 }
 
 BodyTemplate::~BodyTemplate() { delete garbage_container_; }
 
-void BodyTemplate::addLine(const std::string& name, ExValue_ifs* var) {
-    auto line = new ExLine(name, var);
+void BodyTemplate::addLine(ExLine* line) {
     garbage_container_->add(line);
-    lines_.push_back(line);
-}
-
-void BodyTemplate::addArg(const std::string& name) {
-    auto line = new ExArg(name);
-    garbage_container_->add(line);
-    arg_count_++;
-    lines_.push_back(line);
-}
-
-void BodyTemplate::addParam(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty) {
-    auto line = new ExParam(name, link_name, dsty);
-    garbage_container_->add(line);
-    arg_count_++;
+    if (line->isArg()) arg_count_++;
     lines_.push_back(line);
 }
 
@@ -44,9 +30,9 @@ void BodyTemplate::addReturn(const std::string& name, ExValue_ifs* var) {  //?re
 
     if (is_tail_callable_) {
         auto assigned_var = var->getAssignedVal(true);
-
         bool valid_recursion = assigned_var->getNodeType() == NodeTypeEn::kTailCallTernary;
         if (!valid_recursion) print_error("it isn't tail recursion");
+    } else if (is_recurrence_relation_) {
     }
 
     garbage_container_->add(var);
@@ -77,10 +63,9 @@ std::map<std::string, std::string> BodyTemplate::getParameterLinkNames(bool hide
 
 void BodyTemplate::addCall(BodyTemplate* body) {
     stack<ExValue_ifs*> args;
-    args.resize(body->getArgCount());
 
     for (int i = body->getArgCount() - 1; i >= 0; i--) {
-        args[i] = pop();
+        args.push_front(pop());
     }
 
     is_operator_ = is_operator_ || body->is_operator_;
@@ -91,9 +76,9 @@ void BodyTemplate::addCall(BodyTemplate* body) {
 
 void BodyTemplate::addTailCall() {
     stack<ExValue_ifs*> a;
-    a.resize(this->getArgCount());
+
     for (int i = this->getArgCount() - 1; i >= 0; i--) {
-        a[i] = pop();
+        a.push_front(pop());
     }
 
     if (is_tail_callable_) print_error("second recursive call");
@@ -105,8 +90,12 @@ void BodyTemplate::addTailCall() {
 
 ExLine* BodyTemplate::getLastLineFromName(const std::string& name) const {
     if (lines_.empty()) return nullptr;
-    for (intptr_t i = intptr_t(lines_.size()) - 1; i >= 0; i--) {
-        if (lines_[i]->checkName(name)) return (lines_[i]);
+    //for (intptr_t i = intptr_t(lines_.size()) - 1; i >= 0; i--) {
+    //    if (lines_[i]->checkName(name)) return (lines_[i]);
+    //}
+
+    for (auto l = lines_.rbegin(); l != lines_.rend(); l++) {
+        if ((*l)->checkName(name)) return *l;
     }
     print_error("unknown symbol " + name);
     return nullptr;
@@ -171,14 +160,11 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> arg
     auto arg = args.begin();
     for (const auto& value : lines_) {
         if (value->isArg()) {
-            if (isTopBody()) {
-                body->addLine((ExLine*)*(arg));
+            auto line = isTopBody()             ? (ExLine*)(*arg)
+                        : is_recursive_function ? new ExRecursiveArg(value->getName(), (*arg)->type_)
+                                                : new ExArg(value->getName(), *arg);
 
-
-            } else {
-                if (is_recursive_function) body->addLine(new ExRecursiveArg(value->getName(), (*arg)->type_));
-                else body->addLine(new ExArg(value->getName(), *arg));
-            }
+            body->addLine(line);
             ++arg;
         } else {
             visitor_stack.push(value->getAssignedVal());

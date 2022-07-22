@@ -10,7 +10,7 @@ ExValue_ifs* newSmallArrayDefOp(GarbageContainer* garbage_container, stack<ExVal
                                 bool is_template) {
     if (args.empty()) print_error("SmallArray is empty");
 
-    ExValue_ifs* var = args[0];
+    ExValue_ifs* var = args.front();
 
     bool all_is_const = true;
     for (auto i : args) {
@@ -222,14 +222,16 @@ SmallArrayDefOperation* SmallArrayDefOperation::create(ExValue_ifs* arg1) {
 }
 
 SmallArrayDefOperation* SmallArrayDefOperation::create(OpCodeEn op, stack<ExValue_ifs*>& args, TypeEn target_type) {
+
+    std::vector varg(args.begin(),args.end());
     auto args_size = args.size();
 
     if (op == OpCodeEn::smallArrayDef) {
         return new SmallArrayDefOperation(args, target_type);
     } else if (op == OpCodeEn::smallArrayRange) {
-        if (args_size == 1) return create(args[0]);
-        else if (args_size == 2) return create(args[0], args[1]);
-        else if (args_size == 3) return create(args[0], args[1], args[2]);
+        if (args_size == 1) return create(varg[0]);
+        else if (args_size == 2) return create(varg[0], varg[1]);
+        else if (args_size == 3) return create(varg[0], varg[1], varg[2]);
     }
     return nullptr;
 }

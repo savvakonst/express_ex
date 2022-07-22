@@ -83,7 +83,10 @@ class ExValue_ifs : public SmallArr {
 
     void commonMarkUnusedVisitEnter(stack<ExValue_ifs*>* visitor_stack) { usage_counter_++; }
 
-    virtual void visitEnter(stack<ExValue_ifs*>* visitor_stack) = 0;
+    /**
+     * it sets is_visited_ to true if set_visited = true and pushes themself to visitor_stack
+     */
+    virtual void visitEnter(stack<ExValue_ifs*>* visitor_stack, bool set_visited = true) = 0;
 
     virtual void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
         commonMarkUnusedVisitEnter(visitor_stack);
@@ -194,7 +197,7 @@ class ExValue_ifs : public SmallArr {
      *
      * \endverbatim
      */
-    int64_t buffer_length_ = 0;
+    uint64_t buffer_length_ = 0;
 
     untyped_t binary_value_ = 0;
     uint64_t usage_counter_ = 0;

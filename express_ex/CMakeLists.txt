@@ -43,13 +43,13 @@ set(LIBRARY_SOURCES
         lib/parser/body.cpp
         lib/parser/bodyTemplate.cpp
 
-        lib/parser/ExLine.cpp
+        lib/operations/ExLine.cpp
         lib/operations/ExValue_ifs.cpp
         #lib/parser/operations.cpp
 
         lib/operations/FunctionCall/CallRecursiveFunction.cpp
         lib/operations/FunctionCall/call.cpp
-
+        lib/operations/FunctionCall/CallRecursiveFunctionTemplate.cpp
         lib/operations/ArithmeticOperation.cpp
         lib/operations/BuiltInCallOperation.cpp
         lib/operations/ComparisonOperation.cpp
@@ -64,6 +64,7 @@ set(LIBRARY_SOURCES
         lib/operations/ExConstValue.cpp
         lib/operations/NeighborPointOperation.cpp
         lib/operations/RecursiveNeighborPointOperation.cpp
+        lib/operations/RecurrenceRelationTemplate.cpp
 
         #lib/jit/CL_generator.cpp
         lib/jit/IR_generator.cpp
@@ -85,7 +86,6 @@ set(LIBRARY_HEADERS
         lib/ifs/printer.h
 
         include/common/types_jty.h
-        include/common/undefWarningIgnore.h
         include/common/common.h
 
 
@@ -93,9 +93,7 @@ set(LIBRARY_HEADERS
         include/parser/body.h
         include/parser/bodyTemplate.h
         include/operations/callTemplate.h
-        include/parser/defWarningIgnore.h
         include/operations/ExLine.h
-        include/parser/parsingException.h
         include/parser/KexParser.h
 
         lib/KexParser/treeShapeListener.h
@@ -118,6 +116,7 @@ set(LIBRARY_HEADERS
         lib/operations/FunctionCall/call.h
         lib/operations/NeighborPointOperation.h
         lib/operations/RecursiveNeighborPointOperation.h
+        lib/operations/RecurrenceRelationTemplate.h
 
         #include/jit/CL_generator.h
         include/jit/IR_generator.h
@@ -129,7 +128,7 @@ set(LIBRARY_HEADERS
         include/jit/TableGenContext.h
 
         include/ifs/ExStreamIfs.h
-        include/operations/OpCode.def lib/operations/FunctionCall/CallRecursiveFunctionTemplate.cpp)
+        include/operations/OpCode.def)
 
 set(LLVM_COMPONENTS
         Core

@@ -21,7 +21,7 @@ class ExConstValue : public ExValue_ifs {
 
     double getDoubleValue() const;
 
-    void visitEnter(stack<ExValue_ifs*>* visitor_stack) override;
+    void visitEnter(stack<ExValue_ifs*>* visitor_stack, bool set_visited = true) override;
 
     void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
 

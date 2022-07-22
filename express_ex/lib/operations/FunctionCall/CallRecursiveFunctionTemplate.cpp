@@ -97,6 +97,12 @@ void TailCallDirectiveTemplate::printVisitExit(PrintBodyContext *context) {
 
 void TailCallDirectiveTemplate::calculateConstRecursive(RecursiveGenContext *context) {
     size_t size = context->args_reference_.size();
-    for (size_t i = 0; i < size; i++) context->args_reference_[i]->binary_value_ = args_[i]->binary_value_;
+
+    auto &ds_list = context->args_reference_;
+    for (auto dst = ds_list.begin(), src = args_.begin(); dst != ds_list.end(); ++dst, ++src) {
+        (*dst)->binary_value_ = (*src)->binary_value_;
+    }
+    // for (size_t i = 0; i < size; i++)
+    //     context->args_reference_[i]->binary_value_ = args_[i]->binary_value_;
     is_visited_ = false;
 }

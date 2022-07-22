@@ -10,7 +10,7 @@ ExValue_ifs* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn 
 
 class ArithmeticOperation : public Operation_ifs {
    public:
-    // constructor of arithmetic, logic or comparision operation
+    // constructor of arithmetic operation
     ArithmeticOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b);
 
     // void visitEnterSetupBuffer(stack<Value*>* visitor_stack) override;

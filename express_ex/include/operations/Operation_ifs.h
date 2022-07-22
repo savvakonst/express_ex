@@ -43,13 +43,14 @@ class Operation_ifs : public ExValue_ifs {
     virtual void visitEnterStackUpdate(stack<ExValue_ifs*>* visitor_stack);
 
     /**
-     * it sets is_visited_ to true push themself to visitor_stack and than
+     * it sets is_visited_ to true if set_visited = true, pushes themself to visitor_stack and than
      * call visitEnterStackUpdate() which pushes operation operands to visitor_stack
      * is_visited_ variable must be set to false at the begin of function
+     * @param set_visited
      * @param visitor_stack
      */
-    void visitEnter(stack<ExValue_ifs*>* visitor_stack) override {
-        is_visited_ = true;
+    void visitEnter(stack<ExValue_ifs*>* visitor_stack, bool set_visited = true) override {
+        is_visited_ = set_visited;
         visitor_stack->push(this);
         visitEnterStackUpdate(visitor_stack);
     }

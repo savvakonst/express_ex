@@ -8,16 +8,14 @@
 
 #include "TableGenContext.h"
 #include "common/common.h"
-#include "common/undefWarningIgnore.h"
 #include "ifs/parameterIO.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
-#include "parser/defWarningIgnore.h"
+
 using std::string;
 class ExValue_ifs;
 
-enum class CycleStageEn
-{
+enum class CycleStageEn {
     start,
     midle,
     end

@@ -27,11 +27,13 @@ typedef struct {
 } PosInText;
 
 template <typename T>
-class stack : public std::vector<T> {
+class stack : public std::list<T> {
    public:
+    //stack(const std::vector<T> vec) : std::list<T>(vec.begin(), vec.end()) {}
+
     T pop() {
-        T res = std::vector<T>::back();
-        std::vector<T>::pop_back();
+        T res = std::list<T>::back();
+        std::list<T>::pop_back();
 
         return res;
     }
@@ -43,7 +45,7 @@ class stack : public std::vector<T> {
         return op;
     }
 
-    void push(T var) { std::vector<T>::push_back(var); }
+    void push(T var) { std::list<T>::push_back(var); }
 };
 
 // bool operator==(const ExValue_ifs* var_a, DataStructureTypeEn var_b);
@@ -401,7 +403,7 @@ inline size_t sizeOfTy(TypeEn type) {
 }
 
 TypeEn PRMType2JITType(PrmTypesEn arg);
-PrmTypesEn JITType2PRMType(TypeEn arg);
+PrmTypesEn toPrmType(TypeEn arg);
 
 template <typename T>
 void calcMinMax(char* carg, int64_t Number, double& dmax, double& dmin, bool init) {

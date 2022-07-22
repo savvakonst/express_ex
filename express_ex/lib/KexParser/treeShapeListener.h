@@ -6,15 +6,10 @@
 #include <list>
 #include <strstream>
 
-#include "parser/defWarningIgnore.h"
-#pragma warning(push)
-#pragma warning(disable : 4251)
 #include "EGrammarBaseListener.h"
 #include "EGrammarLexer.h"
 #include "EGrammarParser.h"
 #include "antlr4-runtime.h"
-#pragma warning(pop)
-#include "common/undefWarningIgnore.h"
 #include "operations/ExLine.h"
 #include "parser/bodyTemplate.h"
 

@@ -23,12 +23,11 @@ class CallI_ifs : public ExValue_ifs {
     CallI_ifs() : ExValue_ifs() {}
     ~CallI_ifs() override = default;
 
-    void visitEnter(stack<ExValue_ifs*>* visitor_stack) override {
+    void visitEnter(stack<ExValue_ifs*>* visitor_stack, bool set_visited = true) override {
         visitor_stack->push(this);
-        for (int64_t i = ((int64_t)args_.size() - 1); i >= 0; i--) {
-            visitor_stack->push(args_[(size_t)i]);
-        }
-        is_visited_ = true;
+        for (auto arg = args_.rbegin(); arg != args_.rend(); arg++) visitor_stack->push(*arg);
+
+        is_visited_ = set_visited;
     }
 
     void printVisitExit(PrintBodyContext* context) override {

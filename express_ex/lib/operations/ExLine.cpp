@@ -38,23 +38,29 @@ void ExLine::genBlocksVisitExit(TableGenContext* context) {
     is_visited_ = false;
 }
 
-void ExLine::visitEnter(stack<ExValue_ifs*>* visitor_stack) {
+void ExLine::visitEnter(stack<ExValue_ifs*>* visitor_stack, bool set_visited) {
     visitor_stack->push(this);
-    is_visited_ = true;
+    is_visited_ = set_visited;
 }
 
 void ExLine::genBodyVisitExit(BodyGenContext* context) {
     is_visited_ = false;
-    std::vector<ExLine*> namespace_l = context->getNamespace();
+    stack<ExLine*> namespace_l = context->getNamespace();
 
     std::string name = getName(true);
     if (namespace_l.empty()) return;
-    for (int i = (int)namespace_l.size() - 1; i >= 0; i--) {
-        if (namespace_l[i]->checkName(name)) {
-            context->push(namespace_l[i]);
+    for (auto it = namespace_l.rbegin(); it != namespace_l.rend(); it++) {
+        if ((*it)->checkName(name)) {
+            context->push(*it);
             return;
         }
     }
+    // for (int i = (int)namespace_l.size() - 1; i >= 0; i--) {
+    //     if (namespace_l[i]->checkName(name)) {
+    //         context->push(namespace_l[i]);
+    //         return;
+    //     }
+    // }
     print_error("visitExit can't find var name: " + name);
 }
 

@@ -1,5 +1,5 @@
-#ifndef TYPES_JTS_H
-#define TYPES_JTS_H
+#ifndef TYPES_JIT_H
+#define TYPES_JIT_H
 
 
 #include <string>
@@ -45,7 +45,8 @@ enum class NodeTypeEn
     kCall,
     kTailCall,
     kTailCallTernary,
-    kRecursiveNeighborPoint
+    kRecursiveNeighborPoint,
+    kRecurrenceRelation
 };
 
 

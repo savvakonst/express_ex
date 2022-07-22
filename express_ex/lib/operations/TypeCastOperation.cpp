@@ -81,7 +81,7 @@ void TypeCastOperation::genBlocksVisitExit(TableGenContext* context) {
     context->setUint(this);
     is_visited_ = false;
 
-    PrmTypesEn prm_type = JITType2PRMType(type_);
+    PrmTypesEn prm_type = toPrmType(type_);
 
     parameter_ = retyping(operand_.front()->getAssignedVal(true)->getParameter(), prm_type, "");
 

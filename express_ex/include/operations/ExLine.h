@@ -37,7 +37,7 @@ class ExLine : public ExValue_ifs {
     untyped_t* getBinaryValuePtr() { return &binary_value_; }
 
     // safe functions .external stack is used
-    void visitEnter(stack<ExValue_ifs*>* visitor_stack) override;
+    void visitEnter(stack<ExValue_ifs*>* visitor_stack, bool set_visited = true) override;
     void reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) override;
 
     void genBodyVisitExit(BodyGenContext* context) override;
@@ -83,7 +83,10 @@ class ExArg : public ExLine {
     }
     ~ExArg() override = default;
 
+    ExValue_ifs* getAssignedVal(bool deep = false) override { return assigned_val_ ? ExLine::getAssignedVal() : this; }
+
     bool isArg() const override { return true; }
+
     std::string printUint() override { return ""; }
 
    protected:
@@ -115,7 +118,7 @@ class ExRecursiveArg : public ExArg {
     void setupIR(IRGenerator& builder) override;
 
     void calculateConstRecursive(RecursiveGenContext* context) override { temp_type_ = assigned_val_->getTempType(); }
-    
+
     std::string printUint() override { return unique_name_ + " = arg()"; }
 };
 

@@ -21,7 +21,7 @@ void Operation_ifs::genBlocksVisitExit(TableGenContext* context) {
     unique_name_ = (isLargeArr(this) ? "vb" : "vs") + std::to_string(context->getUniqueIndex());
     context->setUint(this);
 
-    PrmTypesEn prm_type = JITType2PRMType(type_);
+    PrmTypesEn prm_type = toPrmType(type_);
 
     std::vector<ParameterIfs*> p_list;
     for (auto i : operand_) p_list.push_back(i->getAssignedVal(true)->getParameter());
@@ -30,8 +30,7 @@ void Operation_ifs::genBlocksVisitExit(TableGenContext* context) {
 
     context->setParameter(parameter_);
     if (isReturned()) {
-        parameter_ = parameter_->newParameter();  // new SyncParameter("", parameter_->getMainTimeInterval(),
-        // parameter_->getDataIntervalList(),false);
+        parameter_ = parameter_->newParameter();
         context->setParameter(parameter_);
     }
 

@@ -28,7 +28,7 @@ class TailCallDirective : public CallI_ifs {
     explicit TailCallDirective(const stack<ExValue_ifs*>& args)
         : CallI_ifs(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
         // type_ = TypeEn::unknown_jty;
-        args_ = (args);
+        args_ = args;  //(args);
     }
 
     ~TailCallDirective() override = default;

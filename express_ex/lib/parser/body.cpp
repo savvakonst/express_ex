@@ -2,18 +2,20 @@
 
 #include <list>
 #include <string>
+#include <utility>
 
-//#include "jit/table.h"
 #include "jit/IR_generator.h"
 #include "jit/TableGenContext.h"
 #include "operations/ExLine.h"
 #include "parser/bodyTemplate.h"
 
-Body::Body(const std::string& name, const std::list<std::string>& names_of_defined_functions, Body* parent,
-           bool is_operator)
-    : declared_bodies_map_(names_of_defined_functions), parent_body_(parent), is_operator_(is_operator), name_(name) {
+Body::Body(std::string name, const std::list<std::string>& names_of_defined_functions, Body* parent, bool is_operator)
+    : declared_bodies_map_(names_of_defined_functions),
+      parent_body_(parent),
+      is_operator_(is_operator),
+      name_(std::move(name)) {
     garbage_container_ = new GarbageContainer;
-    lines_.reserve(30);
+    // lines_.reserve(30);
 }
 
 Body::~Body() { delete garbage_container_; }
@@ -69,10 +71,10 @@ std::map<std::string, std::string> Body::getParameterLinkNames(bool hide_unused)
 
 ExLine* Body::getLastLineFromName(const std::string& name) const {
     if (lines_.empty()) return nullptr;
-
-    for (int i = (int)lines_.size() - 1; i >= 0; i--) {
-        if (lines_[i]->checkName(name)) return (lines_[i]);
+    for (auto l = lines_.rbegin(); l != lines_.rend(); l++) {
+        if ((*l)->checkName(name)) return *l;
     }
+
     print_error("unknown symbol " + name);
     return nullptr;
 }

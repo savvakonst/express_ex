@@ -2,13 +2,11 @@
 #define PRINTIFS_H
 
 #include <map>
-#include "ifs/parameterIfs.h"
-#include "ifs/ExStreamIfs.h"
 
-#include "parser/defWarningIgnore.h"
+#include "ifs/ExStreamIfs.h"
+#include "ifs/parameterIfs.h"
 #include "llvm/Support/raw_ostream.h"
 
-#include "common/undefWarningIgnore.h"
 
 
 extern bool g_ansi_escape_codes;
@@ -43,12 +41,12 @@ inline llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, ParameterIfs & arg) 
 
 
 
-llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const ExColors & arg);
+llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const ExColors &arg);
 
-llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const Delimiter & arg);
+llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const Delimiter &arg);
 
-llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const PrmTypesEn & arg);
+llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const PrmTypesEn &arg);
 
 
 
-#endif //PRINTIFS_H
+#endif  // PRINTIFS_H

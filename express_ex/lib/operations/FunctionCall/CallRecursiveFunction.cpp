@@ -61,11 +61,11 @@ CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue_ifs
 
 void CallRecursiveFunction::reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stack) {
     commonMarkUnusedVisitEnter(visitor_stack);
-    for (int64_t i = ((int64_t)args_.size() - 1); i >= 0; i--) {
-        auto arg = args_[i];
-        visitor_stack->push(arg);
-        if (arg->isArray()) arg->setBufferBordersLength(this);
+    for (auto arg = args_.rbegin(); arg != args_.rend(); arg++) {
+        visitor_stack->push(*arg);
+        if ((*arg)->isArray()) (*arg)->setBufferBordersLength(this);
     }
+
     is_unused_ = false;
 }
 
@@ -101,7 +101,7 @@ void CallRecursiveFunction::genBlocksVisitExit(TableGenContext* context) {
     is_visited_ = false;
 
 
-    PrmTypesEn RPMType = JITType2PRMType(type_);
+    PrmTypesEn RPMType = toPrmType(type_);
 
     for (auto i : args_)
         if (i->isArray()) {
@@ -129,11 +129,20 @@ void TailCallDirective::genBlocksVisitExit(TableGenContext* context) {
 
 void TailCallDirective::setupIR(IRGenerator& builder) {
     size_t size = builder.arg_ptr_list_.size();
-    for (size_t i = 0; i < size; i++) {
-        auto ex_value = args_[i]->getAssignedVal(true);
+
+    size_t i = 0;
+    for (auto a = args_.rbegin(); a != args_.rend(); a++) {
+        auto ex_value = (*a)->getAssignedVal(true);
         llvm::Value* arg = ex_value->getIRValue(builder, level_);
         builder.CreateStore(arg, builder.arg_ptr_list_[size - 1 - i]);
+        i++;
     }
+
+    //for (size_t i = 0; i < size; i++) {
+    //    auto ex_value = args_[i]->getAssignedVal(true);
+    //    llvm::Value* arg = ex_value->getIRValue(builder, level_);
+    //    builder.CreateStore(arg, builder.arg_ptr_list_[size - 1 - i]);
+    //}
 }
 
 void TailCallDirective::printVisitExit(PrintBodyContext* context) {

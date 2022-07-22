@@ -37,14 +37,14 @@ void RecursiveNeighborPointOperation::visitEnterSetupBuffer(stack<ExValue_ifs *>
     auto shift_val = operand_[0];
     if (!(isConst(shift_val) && isInteger(shift_val)))
         print_error("NeighborPointOperation argument is not const integer");
-    auto shift = typeCastConstValue<int64_t>(shift_val->type_, shift_val->getBinaryValue());
+    shift_parameter_ = typeCastConstValue<int64_t>(shift_val->type_, shift_val->getBinaryValue());
 
+    if (shift_parameter_ >= 0) print_error("NeighborPointOperation argument must be negative");
 
-    auto left = left_buffer_length_ + ((shift < 0) ? 0 : shift);
-    auto right = right_buffer_length_ + ((shift > 0) ? 0 : -shift);
+    int64_t buffer_increment = shift_parameter_ - int64_t(left_buffer_length_);
 
-    // operand_[0]->getAssignedVal(true)->setBuffered();
-    // operand_[0]->setBufferBordersLength(left, right);
+    if (buffer_increment > 0) left_buffer_length_ = left_buffer_length_ + buffer_increment;
+
 }
 
 void RecursiveNeighborPointOperation::visitEnterStackUpdate(stack<ExValue_ifs *> *visitor_stack) {
@@ -54,12 +54,10 @@ void RecursiveNeighborPointOperation::visitEnterStackUpdate(stack<ExValue_ifs *>
 
 void RecursiveNeighborPointOperation::genBodyVisitExit(BodyGenContext *context) {
     is_visited_ = false;
-
-    GarbageContainer *garbage_container = context->getGarbageContainer();
+    //context->GarbageContainer *garbage_container = context->getGarbageContainer();
     g_pos = pos_;
 
-    auto op2 = context->pop();
-    auto op1 = context->pop();
+    auto op = context->pop();
 
     auto ret = nullptr;
     // newRecursiveNeighborPointOperation(garbage_container, op1, op2);

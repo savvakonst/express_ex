@@ -39,8 +39,7 @@ class DeclaredBodiesMap : private std::map<std::string, std::list<Body*> > {
 
 class Body {
    public:
-    Body(const std::string& name, const std::list<std::string>& names_of_defined_functions, Body* body,
-         bool is_operator);
+    Body(std::string name, const std::list<std::string>& names_of_defined_functions, Body* body, bool is_operator);
     ~Body();
 
     bool isTopBody() const { return name_ == "main"; }

@@ -98,7 +98,7 @@ class BodyGenContext {
 
     inline ExValue_ifs* pop() { return var_stack_.pop(); }
 
-    inline const std::vector<ExLine*>& getNamespace() const { return namespace_ptr_; }
+    inline const stack<ExLine*>& getNamespace() const { return namespace_ptr_; }
 
     inline GarbageContainer* getGarbageContainer() const { return garbage_container_; }
 
@@ -124,7 +124,7 @@ class BodyGenContext {
 
     Body* current_body_ = nullptr;
 
-    const std::vector<ExLine*>& namespace_ptr_;
+    const stack<ExLine*>& namespace_ptr_;
 
     friend CallRecursiveFunctionTemplate;
     friend CallTemplate;
@@ -138,19 +138,19 @@ class RecursiveGenContext {
 
     ~RecursiveGenContext() = default;
 
-    void setUint(ExValue_ifs* var) { instructions_list_.push(var); }
+    void setUint(ExValue_ifs* var) { instructions_list_.push_back(var); }
 
     uint32_t getReference() { return reference_cnt_++; }
 
     void addArg(ExValue_ifs* arg) {
-        if (!hide_const_values_) instructions_list_.push(arg);
+        if (!hide_const_values_) instructions_list_.push_back(arg);
         args_reference_.push(arg);
     }
 
     bool exitFromLoop() const { return exit_from_loop_; }
 
 
-    stack<ExValue_ifs*> instructions_list_;
+    std::vector<ExValue_ifs*> instructions_list_;
     const bool hide_const_values_;
 
     bool exit_from_loop_;

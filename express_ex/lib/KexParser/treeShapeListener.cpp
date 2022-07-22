@@ -43,14 +43,15 @@ void TreeShapeListener::exitAssignParam(EGrammarParser::AssignParamContext* ctx)
     const auto stl = ctx->STRINGLITERAL();
 
     if (stl.empty())
-        for (const auto i : id) current_body_->addParam(i->getText(), "", DataStructureTypeEn::kLargeArr);
+        for (const auto i : id) current_body_->addLine(new ExParam(i->getText(), "", DataStructureTypeEn::kLargeArr));
 
     else if (id.size() == stl.size())
         for (size_t i = 0; i < id.size(); i++) {
             // activ_body_->addParam(id[i]->getText(), TypeEn::double_jty, DataStructureTypeEn::kLargeArr,
             // stoi(stl[i]->getText().substr(1)));
             std::string s = stl[i]->getText();
-            current_body_->addParam(id[i]->getText(), s.substr(1, s.length() - 2), DataStructureTypeEn::kLargeArr);
+            current_body_->addLine(
+                new ExParam(id[i]->getText(), s.substr(1, s.length() - 2), DataStructureTypeEn::kLargeArr));
         }
     else print_error("there are invalid signature ");
 }
@@ -66,7 +67,7 @@ void TreeShapeListener::enterFunc(EGrammarParser::FuncContext* ctx) {
     current_body_ = body;
 
     for (auto i : ctx->args()->ID()) {
-        current_body_->addArg(i->getText());
+        current_body_->addLine(new ExArg(i->getText()));
     }
 }
 
@@ -79,7 +80,8 @@ void TreeShapeListener::exitFunc(EGrammarParser::FuncContext* ctx) {
 
 void TreeShapeListener::exitAssign(EGrammarParser::AssignContext* ctx) {
     setPos(ctx);
-    current_body_->addLine(ctx->ID()->getText(), current_body_->pop());
+
+    current_body_->addLine(new ExLine(ctx->ID()->getText(), current_body_->pop()));
 }
 
 void TreeShapeListener::exitAssignRetParam(EGrammarParser::AssignRetParamContext* ctx) {

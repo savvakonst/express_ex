@@ -38,13 +38,7 @@ class BodyTemplate {
     ExValue_ifs* pop();
     stack<ExValue_ifs*> pop(size_t length);
 
-
-    void addLine(const std::string& name, ExValue_ifs* var);
-
-    // TODO is necessary to add returned status_ value with line ,pos end error code and string;
-    void addArg(const std::string& name);
-    void addParam(const std::string& name, const std::string& link_name,
-                  DataStructureTypeEn dsty = DataStructureTypeEn::kConstant);
+    void addLine(ExLine* line);
 
     // TODO is necessary to add returned status_ value with line ,pos end error code and string;
     void addReturn(const std::string& name, ExValue_ifs* var);
@@ -54,12 +48,17 @@ class BodyTemplate {
     void addTailCall();
 
     std::map<std::string /*name*/, std::string /*link name*/> getParameterLinkNames(bool hide_unused = false) const;
+
     const stack<ExValue_ifs*>& getRet() const { return return_stack_; }
+
     int getArgCount() const { return arg_count_; }
+
     ExLine* getLastLineFromName(const std::string& name) const;
+
     const std::string& getName() const { return name_; }
 
     BodyTemplate* getParent() const { return parent_body_template_; }
+
     BodyTemplate* getFunctionBody(const std::string& name) const;
 
     GarbageContainer* getGarbageContainer() const { return garbage_container_; }
@@ -67,8 +66,11 @@ class BodyTemplate {
     // tree walker methods
 
     std::string print(const std::string& tab = "", bool dst_ena = false, bool hide_unused_lines = false) const;
+
     std::list<std::string> getNamesOfDefinedFunctions() const;
+
     Body* genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> args, bool is_recursive_function) const;
+
     untyped_t genConstRecursiveByTemplate(stack<ExValue_ifs*>& args) const;
 
     std::list<BodyTemplate*> child_body_template_list_;

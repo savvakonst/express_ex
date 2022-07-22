@@ -32,6 +32,7 @@ class RecurrenceRelationTemplate : public Operation_ifs {
 
    private:
     // convolve params
+
     int64_t shift_parameter_ = 0;
 };
 

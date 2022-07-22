@@ -73,41 +73,49 @@ class ExLine : public ExValue_ifs {
     std::string link_name_;
 };
 
-class ExArg : public ExLine {
-   public:
-    ExArg(const std::string& name, ExValue_ifs* var) : ExLine(name, var) {}
 
-    explicit ExArg(const std::string& name)
+/**
+ * ExArgument class objects is used as function argument
+ *
+ */
+class ExArgument : public ExLine {
+   public:
+    ExArgument(const std::string& name, ExValue_ifs* var) : ExLine(name, var) {}
+
+    explicit ExArgument(const std::string& name)
         : ExLine(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
         name_ = name;
     }
-    ~ExArg() override = default;
+    ~ExArgument() override = default;
 
     ExValue_ifs* getAssignedVal(bool deep = false) override { return assigned_val_ ? ExLine::getAssignedVal() : this; }
-
+    NodeTypeEn getNodeType() const override { return NodeTypeEn::kArgument; }
     bool isArg() const override { return true; }
 
     std::string printUint() override { return ""; }
 
    protected:
-    ExArg(TypeEn type, TypeEn time_type, DataStructureTypeEn data_structure_type, length_t length)
+    ExArgument(TypeEn type, TypeEn time_type, DataStructureTypeEn data_structure_type, length_t length)
         : ExLine(type, time_type, data_structure_type, length) {}
 };
 
 
-
-class ExRecursiveArg : public ExArg {
+/**
+ * ExArgument class objects is used as function argument
+ *
+ */
+class ExRecursiveArgument : public ExArgument {
    public:
-    ExRecursiveArg(const std::string& name, TypeEn ty)
-        : ExArg(ty,                              //
-                TypeEn::unknown_jty,             //
-                DataStructureTypeEn::kVariable,  //
-                length_t(1))                     //
+    ExRecursiveArgument(const std::string& name, TypeEn ty)
+        : ExArgument(ty,                              //
+                     TypeEn::unknown_jty,             //
+                     DataStructureTypeEn::kVariable,  //
+                     length_t(1))                     //
     {
         name_ = name;
     }
 
-    ~ExRecursiveArg() override = default;
+    ~ExRecursiveArgument() override = default;
 
     ExValue_ifs* getAssignedVal(bool deep = false) override { return this; }
 

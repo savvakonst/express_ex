@@ -42,6 +42,7 @@ enum class NodeTypeEn
     kValue,
     kOperation,
     kLine,
+    kArgument,
     kCall,
     kTailCall,
     kTailCallTernary,

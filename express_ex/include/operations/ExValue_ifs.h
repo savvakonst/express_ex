@@ -150,8 +150,6 @@ class ExValue_ifs : public SmallArr {
     const length_t length_ = 1;
 
     /**
-     * it is immutable variable, it must be initialized in constructor
-     * and never changed afterwards. (now it is difficult to make it const? however it should be)
      * it is used to determine when buffer usage is necessary, any operand that doesn't have the same level_ is marked
      * as buffered by setting the operand's is_buffered_ field to true;
      */
@@ -210,6 +208,7 @@ class ExValue_ifs : public SmallArr {
 
     ParameterIfs* parameter_ = nullptr;
     friend class TailCallDirectiveTemplate;
+    friend class RecurrenceRelationTemplate;
 };
 
 //   inline bool operator==(const ExValue_ifs* var_a, DataStructureTypeEn var_b) { return var_a->ds_ty_ == var_b; }

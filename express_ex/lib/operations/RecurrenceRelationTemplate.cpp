@@ -25,27 +25,66 @@ void RecurrenceRelationTemplate::visitEnterStackUpdate(stack<ExValue_ifs *> *vis
     // Operation_ifs::visitEnterStackUpdate(visitor_stack);
 }
 
+bool isOperator(const stack<ExValue_ifs *> &temp_stack) {
+    auto it = temp_stack.begin();
+    auto ref_level = (*it++)->getLevel();
+    int64_t max_input_level = 0;
+    for (; it != temp_stack.end(); it++) {
+        max_input_level = std::max(max_input_level, (*it++)->getLevel());
+    }
+
+    if (ref_level > max_input_level) {
+        return true;
+    }
+    return false;
+}
+
 void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
     // Operation_ifs::genBodyVisitExit(context);
 
-    stack<ExValue_ifs *> path_stack;
+    stack<ExValue_ifs *> values_to_change_level;
+
+    stack<std::pair<ExValue_ifs *, bool>> path_stack;
     stack<ExValue_ifs *> temp_stack;
     stack<ExValue_ifs *> visitor_stack;
 
     visitor_stack.push(operand_[0]->getAssignedVal());
+
+    uint32_t operator_cnt = 0;
+
     do {
         auto var = visitor_stack.pop();
-        if (var->getNodeType() == NodeTypeEn::kRecursiveNeighborPoint) {
-            // var->
+
+        if (path_stack.front().first == var) {
+            // is visited
+            operator_cnt -= path_stack.front().second ? 1 : 0;
+            path_stack.pop_front();
+            continue;
         }
 
-        var->reverseTraversalVisitEnter(&temp_stack);
-        path_stack.push_back(temp_stack.front());
-        temp_stack.pop_front();
-        visitor_stack.emplace_back(temp_stack);
+        if (var->getNodeType() == NodeTypeEn::kRecursiveNeighborPoint) {
+            if (operator_cnt) print_error("operator application inside recursion is prohibited");
+            for (auto i : path_stack) values_to_change_level.push(i.first);
+            values_to_change_level.push(var);
+        }
 
+        // determine terminal node
+        if (var->getNodeType() == NodeTypeEn::kArgument) temp_stack.push(var);
+        else var->visitEnter(&temp_stack, false);
+
+        bool is_operator = isOperator(temp_stack);
+
+
+        operator_cnt += is_operator ? 1 : 0;
+        path_stack.push_back({temp_stack.front(), is_operator});
+        visitor_stack.splice(visitor_stack.end(), temp_stack);
 
     } while (!visitor_stack.empty());
+
+    int64_t max_level = 0;
+    for (auto i : values_to_change_level) max_level = std::max(max_level, i->level_);
+
+    for (auto i : values_to_change_level) i->level_ = max_level;
 }
 
 void RecurrenceRelationTemplate::calculateConstRecursive(RecursiveGenContext *context) {

@@ -6,6 +6,7 @@
 
 #include "ArithmeticOperation.h"
 #include "jit/IR_generator.h"
+#include "operations/ExLine.h"
 #include "parser/bodyTemplate.h"
 
 ExValue_ifs *newRecursiveNeighborPointOperation(GarbageContainer *garbage_container, TypeEn target_type,
@@ -44,23 +45,29 @@ void RecursiveNeighborPointOperation::visitEnterSetupBuffer(stack<ExValue_ifs *>
     int64_t buffer_increment = shift_parameter_ - int64_t(left_buffer_length_);
 
     if (buffer_increment > 0) left_buffer_length_ = left_buffer_length_ + buffer_increment;
-
 }
 
 void RecursiveNeighborPointOperation::visitEnterStackUpdate(stack<ExValue_ifs *> *visitor_stack) {
-    // visitor_stack->push(operand_[1]);
     visitor_stack->push(operand_[0]);
 }
 
 void RecursiveNeighborPointOperation::genBodyVisitExit(BodyGenContext *context) {
     is_visited_ = false;
-    //context->GarbageContainer *garbage_container = context->getGarbageContainer();
+    // context->GarbageContainer *garbage_container = context->getGarbageContainer();
     g_pos = pos_;
 
-    auto op = context->pop();
+    auto type = context->getSourceBodyTemplate()->getRet().front()->type_;
+    auto op_a = context->pop();
 
-    auto ret = nullptr;
-    // newRecursiveNeighborPointOperation(garbage_container, op1, op2);
+
+    // TODO add check for different lengths, or best add add graph pass from root and made length mutable
+    length_t len = 0;
+    for (auto line : context->getNamespace())
+        if (line->isArg() && isLargeArr(line)) len = line->getLength();
+
+    auto ret = newRecursiveNeighborPointOperation(context->getGarbageContainer(), type, len, op_a);
+
+
 
     context->push(ret);
 }
@@ -70,9 +77,8 @@ void RecursiveNeighborPointOperation::calculateConstRecursive(RecursiveGenContex
 }
 
 void RecursiveNeighborPointOperation::printVisitExit(PrintBodyContext *context) {
-    auto op2 = context->pop();
-    auto op1 = context->pop();
-    context->push(checkBuffer("(" + op1 + ")[" + op2 + "]"));
+    auto op = context->pop();
+    context->push(checkBuffer("return[" + op + "]"));
 }
 
 std::string RecursiveNeighborPointOperation::printUint() {

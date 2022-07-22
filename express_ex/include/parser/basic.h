@@ -84,10 +84,11 @@ class PrintBodyContext {
 // body generation context from Template
 class BodyGenContext {
    public:
-    BodyGenContext(Body* current_body, bool is_function)
+    BodyGenContext(Body* current_body, const BodyTemplate* source_body_template, bool is_function)
         : is_recursive_function_(is_function),
           garbage_container_(current_body->getGarbageContainer()),
           current_body_(current_body),
+          source_body_template_(source_body_template),
           namespace_ptr_(current_body->lines_) {
         //
     }
@@ -115,6 +116,9 @@ class BodyGenContext {
 
     inline const Body* getCurrentBody() const { return current_body_; }
 
+
+    inline const BodyTemplate* getSourceBodyTemplate() const { return source_body_template_; }
+
     const bool is_recursive_function_;
 
    private:
@@ -122,6 +126,7 @@ class BodyGenContext {
 
     stack<ExValue_ifs*> var_stack_;
 
+    const BodyTemplate* source_body_template_ = nullptr;
     Body* current_body_ = nullptr;
 
     const stack<ExLine*>& namespace_ptr_;

@@ -70,7 +70,7 @@ void ExLine::printVisitExit(PrintBodyContext* context) {
 }
 
 
-void ExRecursiveArg::setupIR(IRGenerator& builder) {
+void ExRecursiveArgument::setupIR(IRGenerator& builder) {
     builder.setInitInsertPoint();
     llvm::Function* function = builder.getCurrentFunction();
     IR_buffer_ptr_ = builder.CreateAlloca(builder.getLLVMType(type_));

@@ -90,9 +90,9 @@ void BodyTemplate::addTailCall() {
 
 ExLine* BodyTemplate::getLastLineFromName(const std::string& name) const {
     if (lines_.empty()) return nullptr;
-    //for (intptr_t i = intptr_t(lines_.size()) - 1; i >= 0; i--) {
-    //    if (lines_[i]->checkName(name)) return (lines_[i]);
-    //}
+    // for (intptr_t i = intptr_t(lines_.size()) - 1; i >= 0; i--) {
+    //     if (lines_[i]->checkName(name)) return (lines_[i]);
+    // }
 
     for (auto l = lines_.rbegin(); l != lines_.rend(); l++) {
         if ((*l)->checkName(name)) return *l;
@@ -153,7 +153,7 @@ std::list<std::string> BodyTemplate::getNamesOfDefinedFunctions() const {
 
 Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> args, bool is_recursive_function) const {
     auto body = new Body(name_, getNamesOfDefinedFunctions(), parent_body, is_operator_);
-    BodyGenContext context(body, is_recursive_function);
+    BodyGenContext context(body, this, is_recursive_function);
 
     stack<ExValue_ifs*> visitor_stack;
 
@@ -161,8 +161,8 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> arg
     for (const auto& value : lines_) {
         if (value->isArg()) {
             auto line = isTopBody()             ? (ExLine*)(*arg)
-                        : is_recursive_function ? new ExRecursiveArg(value->getName(), (*arg)->type_)
-                                                : new ExArg(value->getName(), *arg);
+                        : is_recursive_function ? new ExRecursiveArgument(value->getName(), (*arg)->type_)
+                                                : new ExArgument(value->getName(), *arg);
 
             body->addLine(line);
             ++arg;

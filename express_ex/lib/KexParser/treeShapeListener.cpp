@@ -67,7 +67,7 @@ void TreeShapeListener::enterFunc(EGrammarParser::FuncContext* ctx) {
     current_body_ = body;
 
     for (auto i : ctx->args()->ID()) {
-        current_body_->addLine(new ExArg(i->getText()));
+        current_body_->addLine(new ExArgument(i->getText()));
     }
 }
 

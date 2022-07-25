@@ -21,6 +21,7 @@ RecurrenceRelationTemplate::RecurrenceRelationTemplate(ExValue_ifs *ret_value)
     if (isUnknownTy(ret_value))
         print_error("you need to determine type of function which implement recurrence relation");
     level_ = ret_value->getLevel();
+    operand_.push_back(ret_value);
 }
 
 
@@ -35,10 +36,10 @@ void RecurrenceRelationTemplate::visitEnterStackUpdate(stack<ExValue_ifs *> *vis
 
 bool isOperator(const stack<ExValue_ifs *> &temp_stack) {
     auto it = temp_stack.begin();
-    auto ref_level = (*it++)->getLevel();
+    auto ref_level = (*(it++))->getLevel();
     int64_t max_input_level = 0;
     for (; it != temp_stack.end(); it++) {
-        max_input_level = std::max(max_input_level, (*it++)->getLevel());
+        max_input_level = std::max(max_input_level, (*it)->getLevel());
     }
 
     if (ref_level > max_input_level) {
@@ -59,26 +60,25 @@ void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
     uint32_t operator_cnt = 0;
 
     std::list<RecursiveNeighborPointOperation *> ref_list;
+    visitor_stack.push(operand);
     do {
         auto var = visitor_stack.pop();
 
-        if (path_stack.front().first == var) {
+        if (!path_stack.empty() && path_stack.back().first == var) {
             // is visited
-            operator_cnt -= path_stack.front().second ? 1 : 0;
-            path_stack.pop_front();
+            operator_cnt -= path_stack.back().second ? 1 : 0;
+            path_stack.pop_back();
             continue;
         }
-
+        // determine terminal nodes
         if (var->getNodeType() == NodeTypeEn::kRecursiveNeighborPoint) {
             if (operator_cnt) print_error("operator application inside recursion is prohibited");
 
             ref_list.push_back((RecursiveNeighborPointOperation *)var);
             for (auto i : path_stack) values_to_change_level.push(i.first);
             values_to_change_level.push(var);
-        }
-
-        // determine terminal node
-        if (var->getNodeType() == NodeTypeEn::kArgument) temp_stack.push(var);
+            temp_stack.push(var);
+        } else if (var->getNodeType() == NodeTypeEn::kArgument) temp_stack.push(var);
         else var->visitEnter(&temp_stack, false);
 
         bool is_operator = isOperator(temp_stack);
@@ -121,9 +121,7 @@ std::string RecurrenceRelationTemplate::printUint() {
     return getUniqueName() + " = rec_relation(" + name_op_a + ")";
 }
 
-void RecurrenceRelationTemplate::setupIR(IRGenerator &builder) {
-    finishSetupIR(builder);
-}
+void RecurrenceRelationTemplate::setupIR(IRGenerator &builder) { finishSetupIR(builder); }
 
 void RecurrenceRelationTemplate::calculate() {
     // Operation_ifs::calculate();

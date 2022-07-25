@@ -99,8 +99,10 @@ void TreeShapeListener::exitNeighborhoodPoint(EGrammarParser::NeighborhoodPointC
     const std::string id = ctx->ID()->getText();
 
     if (current_body_->getName() == id) {
+        current_body_->push( newRecursiveNeighborPointOperation(current_body_));
         // TODO add recursive neighbor point operation
     } else {
+
         current_body_->getLastLineFromName(ctx->ID()->getText());
         //  TODO: neighbor point operation
     }

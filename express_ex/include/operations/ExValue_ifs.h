@@ -216,8 +216,15 @@ inline bool isConst(const ExValue_ifs* var_a) { return var_a->ds_ty_ == DataStru
 inline bool isVariable(const ExValue_ifs* var_a) { return var_a->ds_ty_ == DataStructureTypeEn::kVariable; }
 inline bool isSmallArr(const ExValue_ifs* var_a) { return var_a->ds_ty_ == DataStructureTypeEn::kSmallArr; }
 inline bool isLargeArr(const ExValue_ifs* var_a) { return var_a->ds_ty_ == DataStructureTypeEn::kLargeArr; }
+
 inline bool isSimilar(const ExValue_ifs* var_a, const ExValue_ifs* var_b) {
-    return (var_a->ds_ty_ == var_b->ds_ty_ && (var_a->getLength() == var_b->getLength()));
+    /* TODO it is not compatible with frequencies less than 1Hz. overall it's bad idea to store some extra information
+     * in the length field */
+
+    bool lengths_equal = var_a->getLength() == var_b->getLength();
+    bool one_length_equal_one = var_a->getLength() == 1 || var_b->getLength() == 1;
+
+    return (var_a->ds_ty_ == var_b->ds_ty_ && (lengths_equal || one_length_equal_one));
 }
 inline bool isCompatible(const ExValue_ifs* var_a, const ExValue_ifs* var_b) {
     return isConst(var_a) || isConst(var_b) || isVariable(var_a) || isVariable(var_b) || isSimilar(var_a, var_b);

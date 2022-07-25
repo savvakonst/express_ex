@@ -40,6 +40,7 @@ void ExLine::genBlocksVisitExit(TableGenContext* context) {
 
 void ExLine::visitEnter(stack<ExValue_ifs*>* visitor_stack, bool set_visited) {
     visitor_stack->push(this);
+    if (!set_visited) visitor_stack->push(assigned_val_);
     is_visited_ = set_visited;
 }
 
@@ -85,16 +86,13 @@ void ExRecursiveArgument::setupIR(IRGenerator& builder) {
 
 
 void ExParam::setupIR(IRGenerator& builder) {
-
-
     if (!is_initialized_) {
         builder.addBuffer(new InputBuffer(this));
         IR_buffer_base_ptr_ = builder.createBufferInit(type_, "external_");
         is_initialized_ = true;
     }
 
-    IR_buffer_ptr_ = builder.createPositionalInBoundsGep(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(),
-                                                             "offset_arg_incr_");
+    IR_buffer_ptr_ =
+        builder.createPositionalInBoundsGep(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(), "offset_arg_incr_");
     IR_value_ = builder.createPositionalLoad(IR_buffer_ptr_, true, "arg_buffer_val_");
-
 }

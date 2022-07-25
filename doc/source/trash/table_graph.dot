@@ -4,6 +4,7 @@ digraph G {
     edge [fontname = "Courier", color = darkred]
     labeljust = "l";
     //rankdir = LR;
+    return [label = return]
 
     subgraph cluster_0 {
 
@@ -36,7 +37,7 @@ digraph G {
 
     subgraph cluster_0_2 {
     p_2 [label = "+"];
-
+    p_2 -> return;
     label = "level 3";
     }
 
@@ -99,6 +100,6 @@ digraph G {
 
 
 
-    p_2 -> return;
+
 
 }

@@ -111,6 +111,12 @@ def genereteDataByFile(name):
 
 
 def execFile(name):
+    if os.path.exists("test_tasks.py"):
+        import test_tasks
+        if hasattr(test_tasks, os.path.splitext(name)[0]):
+            exFunc = getattr(test_tasks, 'bar')
+            return exFunc()
+
     f = open(name, "r", encoding='utf-8')
     lines = []
     for i in f.read().split("\n"):

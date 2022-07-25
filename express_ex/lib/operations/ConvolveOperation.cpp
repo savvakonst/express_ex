@@ -109,7 +109,6 @@ void ConvolveOperation::calculateConstRecursive(RecursiveGenContext* context) {
 
 void ConvolveOperation::printVisitExit(PrintBodyContext* context) {
     is_visited_ = false;
-
     auto op_2 = context->pop();
     auto op_1 = context->pop();
     context->push(checkBuffer("convolve(" + op_1 + ", " + op_2 + "," + std::to_string(shift_parameter_) + ")"));
@@ -121,9 +120,8 @@ std::string ConvolveOperation::printUint() {
     auto name_op_a = operand_[0]->getAssignedVal(true)->getUniqueName();
     auto name_op_b = operand_[1]->getAssignedVal(true)->getUniqueName();
 
-    std::string u_name = getUniqueName();
-
-    return u_name + " = convolve( " + name_op_a + ", " + name_op_b + ", " + std::to_string(shift_parameter_) + ")";
+    return getUniqueName() + " = convolve( " + name_op_a + ", " + name_op_b + ", " + std::to_string(shift_parameter_) +
+           ")";
 }
 
 void ConvolveOperation::setupIR(IRGenerator& builder) {

@@ -9,12 +9,6 @@
 #include "jit/IR_generator.h"
 #include "parser/bodyTemplate.h"
 
-ExValue_ifs *newRecurrenceRelationTemplate(GarbageContainer *garbage_container, ExValue_ifs *ret_value) {
-    if (isUnknownTy(ret_value))
-        print_error("you need to determine type of function which implement recurrence relation");
-
-    return garbage_container->add(new RecurrenceRelationTemplate(ret_value));
-}
 
 RecurrenceRelationTemplate::RecurrenceRelationTemplate(ExValue_ifs *ret_value)
     : Operation_ifs(ret_value->type_, ret_value->time_type_, OpCodeEn::none_op, ret_value) {
@@ -24,13 +18,13 @@ RecurrenceRelationTemplate::RecurrenceRelationTemplate(ExValue_ifs *ret_value)
 }
 
 
-
 void RecurrenceRelationTemplate::visitEnterSetupBuffer(stack<ExValue_ifs *> *visitor_stack) {
     Operation_ifs::visitEnterSetupBuffer(visitor_stack);
+    this->setBuffered();
 }
 
 void RecurrenceRelationTemplate::visitEnterStackUpdate(stack<ExValue_ifs *> *visitor_stack) {
-    // Operation_ifs::visitEnterStackUpdate(visitor_stack);
+    visitor_stack->push(operand_[0]);
 }
 
 bool isOperator(const stack<ExValue_ifs *> &temp_stack) {
@@ -48,8 +42,6 @@ bool isOperator(const stack<ExValue_ifs *> &temp_stack) {
 }
 
 void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
-    // Operation_ifs::genBodyVisitExit(context);
-
     stack<ExValue_ifs *> values_to_change_level;
 
     stack<std::pair<ExValue_ifs *, bool>> path_stack;
@@ -108,12 +100,20 @@ void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
 }
 
 void RecurrenceRelationTemplate::calculateConstRecursive(RecursiveGenContext *context) {
-    // Operation_ifs::calculateConstRecursive(context);
+    print_IR_error("RecurrenceRelationTemplate::calculateConstRecursive invalid operation.");
 }
 
-void RecurrenceRelationTemplate::printVisitExit(PrintBodyContext *context) { Operation_ifs::printVisitExit(context); }
+void RecurrenceRelationTemplate::printVisitExit(PrintBodyContext *context) {
+    is_visited_ = false;
+    auto op_1 = context->pop();
+    context->push(checkBuffer("rec_relation(" + op_1 + ")"));
+}
 
-std::string RecurrenceRelationTemplate::printUint() { return Operation_ifs::printUint(); }
+std::string RecurrenceRelationTemplate::printUint() {
+    is_visited_ = false;
+    auto name_op_a = operand_[0]->getAssignedVal(true)->getUniqueName();
+    return getUniqueName() + " = rec_relation(" + name_op_a + ")";
+}
 
 void RecurrenceRelationTemplate::setupIR(IRGenerator &builder) { Operation_ifs::setupIR(builder); }
 

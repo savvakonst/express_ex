@@ -37,11 +37,9 @@ class RecursiveNeighborPointOperation : public Operation_ifs {
 
 
     void setRef(RecurrenceRelationTemplate* ref) { ref_ = ref; };
-
-
-
+    
    private:
-    RecurrenceRelationTemplate* ref_;
+    RecurrenceRelationTemplate* ref_ = nullptr;
     // convolve params
     int64_t shift_parameter_ = 0;
 };

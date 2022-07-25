@@ -7,15 +7,11 @@
 
 #include "operations/Operation_ifs.h"
 
-ExValue_ifs* newRecurrenceRelationTemplate(GarbageContainer* garbage_container, ExValue_ifs* ret_value);
-
 
 
 class RecurrenceRelationTemplate : public Operation_ifs {
    public:
     explicit RecurrenceRelationTemplate(ExValue_ifs* ret_value);
-
-
 
     ~RecurrenceRelationTemplate() override = default;
 
@@ -34,7 +30,7 @@ class RecurrenceRelationTemplate : public Operation_ifs {
 
     void calculate() override;
 
-    //void set()
+    // void set()
 
    private:
 };

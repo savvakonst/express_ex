@@ -47,9 +47,8 @@ ExValue_ifs* newTypeConvOp(BodyTemplate* body_template, TypeEn target_type) {
 
 
 TypeCastOperation::TypeCastOperation(OpCodeEn op, ExValue_ifs* var, TypeEn target_type)
-    : Operation_ifs(target_type, TypeEn::unknown_jty, op, var) {
+    : Operation_ifs(target_type, var->time_type_, op, var) {
     level_ = var->getLevel();
-
     operand_.push_back(var);
 }
 

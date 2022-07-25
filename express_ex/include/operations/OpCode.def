@@ -83,10 +83,12 @@ EX_DEFINE_OPERATION(uitofp, uitofp)
 EX_DEFINE_OPERATION(sitofp, sitofp)
 EX_DEFINE_OPERATION(common_cast, common_cast)
 
-EX_DEFINE_OPERATION(convolve, convolve)
-EX_DEFINE_OPERATION(convolve_f, convolve_f)
 
+
+EX_DEFINE_OPERATION(convolve, convolve)
 EX_DEFINE_OPERATION(integrate, integrate)
+
+
 
 EX_DEFINE_OPERATION(decimation, decimation)
 EX_DEFINE_OPERATION(upsampling, upsampling)

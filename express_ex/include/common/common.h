@@ -29,7 +29,7 @@ typedef struct {
 template <typename T>
 class stack : public std::list<T> {
    public:
-    //stack(const std::vector<T> vec) : std::list<T>(vec.begin(), vec.end()) {}
+    // stack(const std::vector<T> vec) : std::list<T>(vec.begin(), vec.end()) {}
 
     T pop() {
         T res = std::list<T>::back();
@@ -78,10 +78,7 @@ inline Int_T_ minInt(Int_T_ var1, Int_T_ var2) {
     return (var1 < var2) ? var2 : var2;
 }
 
-ExValue_ifs* maxTypeVar(ExValue_ifs* var_a, ExValue_ifs* var_b);
-ExValue_ifs* maxDSVar(ExValue_ifs* var_a, ExValue_ifs* var_b);
-ExValue_ifs* maxLevelVar(ExValue_ifs* var_a, ExValue_ifs* var_b);
-ExValue_ifs* minLevelVar(ExValue_ifs* var_a, ExValue_ifs* var_b);
+
 
 #define CASE_OP_GLOBAL(depend, target) \
 case (depend):                         \

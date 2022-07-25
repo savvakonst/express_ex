@@ -147,7 +147,7 @@ class ExValue_ifs : public SmallArr {
      * for synchronous kLargeArr it represents frequency of data,
      * otherwise it represents length of data
      */
-    const length_t length_ = 1;
+    length_t length_ = 1;
 
     /**
      * it is used to determine when buffer usage is necessary, any operand that doesn't have the same level_ is marked
@@ -211,10 +211,6 @@ class ExValue_ifs : public SmallArr {
     friend class RecurrenceRelationTemplate;
 };
 
-//   inline bool operator==(const ExValue_ifs* var_a, DataStructureTypeEn var_b) { return var_a->ds_ty_ == var_b; }
-//   inline bool operator==(DataStructureTypeEn var_a, const ExValue_ifs* var_b) { return var_a == var_b->ds_ty_; }
-//   inline bool operator<(TypeEn var_a, const ExValue_ifs* var_b) { return var_a < var_b->type_; }
-//   inline bool operator<(const ExValue_ifs* var_a, TypeEn var_b) { return var_a->type_ < var_b; }
 
 inline bool isConst(const ExValue_ifs* var_a) { return var_a->ds_ty_ == DataStructureTypeEn::kConstant; }
 inline bool isVariable(const ExValue_ifs* var_a) { return var_a->ds_ty_ == DataStructureTypeEn::kVariable; }
@@ -236,26 +232,24 @@ inline bool isBool(const ExValue_ifs* var) { return isBool(var->type_); }
 inline ExValue_ifs* maxTypeVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
     return var_a->type_ < var_b->type_ ? var_b : var_a;
 }
+
 inline ExValue_ifs* maxTempTypeVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
     return var_a->getTempType() < var_b->getTempType() ? var_b : var_a;
 }
-inline ExValue_ifs* minTypeVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
-    return var_a->type_ < var_b->type_ ? var_a : var_b;
-}
-inline ExValue_ifs* maxTypeVar(std::vector<ExValue_ifs*> args) {
-    ExValue_ifs* var = args[0];
-    for (auto i : args) var = maxTypeVar(i, var);
-    return var;
-}  // unsafe function .zero size array check missing
 
-inline ExValue_ifs* maxDSVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
-    return var_a->ds_ty_ < var_b->ds_ty_ ? var_b : var_a;
+inline DataStructureTypeEn maxDataStructType(const ExValue_ifs* var_a, const ExValue_ifs* var_b) {
+    return var_a->ds_ty_ < var_b->ds_ty_ ? var_b->ds_ty_ : var_a->ds_ty_;
 }
+
+inline ExValue_ifs::length_t maxLength(const ExValue_ifs* var_a, const ExValue_ifs* var_b) {
+    return std::max(var_a->getLength(), var_b->getLength());
+}
+
+
 inline ExValue_ifs* maxLevelVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
     return var_a->getLevel() < var_b->getLevel() ? var_b : var_a;
 }
-inline ExValue_ifs* minLevelVar(ExValue_ifs* var_a, ExValue_ifs* var_b) {
-    return var_a->getLevel() < var_b->getLevel() ? var_a : var_b;
-}
+
+
 
 #endif

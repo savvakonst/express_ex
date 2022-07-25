@@ -12,10 +12,14 @@
 ExValue_ifs *newRecurrenceRelationTemplate(GarbageContainer *garbage_container, ExValue_ifs *ret_value) {
     if (isUnknownTy(ret_value))
         print_error("you need to determine type of function which implement recurrence relation");
-    return nullptr;
+
+    return garbage_container->add(new RecurrenceRelationTemplate(ret_value));
 }
 
-RecurrenceRelationTemplate::RecurrenceRelationTemplate(ExValue_ifs *ret_value) {}
+RecurrenceRelationTemplate::RecurrenceRelationTemplate(ExValue_ifs *ret_value)
+    : Operation_ifs(ret_value->type_, ret_value->time_type_, OpCodeEn::none_op, ret_value) {
+    level_ = ret_value->getLevel();
+}
 
 void RecurrenceRelationTemplate::visitEnterSetupBuffer(stack<ExValue_ifs *> *visitor_stack) {
     Operation_ifs::visitEnterSetupBuffer(visitor_stack);
@@ -47,8 +51,8 @@ void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
     stack<std::pair<ExValue_ifs *, bool>> path_stack;
     stack<ExValue_ifs *> temp_stack;
     stack<ExValue_ifs *> visitor_stack;
-
-    visitor_stack.push(operand_[0]->getAssignedVal());
+    auto operand = context->pop();
+    visitor_stack.push(operand);
 
     uint32_t operator_cnt = 0;
 
@@ -82,9 +86,16 @@ void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
     } while (!visitor_stack.empty());
 
     int64_t max_level = 0;
-    for (auto i : values_to_change_level) max_level = std::max(max_level, i->level_);
+    for (auto i : values_to_change_level) max_level = std::max(max_level, i->getLevel());
 
-    for (auto i : values_to_change_level) i->level_ = max_level;
+    for (auto i : values_to_change_level) {
+        i->length_ = operand->getLength();
+        i->level_ = max_level;
+    }
+
+    GarbageContainer *garbage_container = context->getGarbageContainer();
+    auto ret = newRecurrenceRelationTemplate(garbage_container, operand);
+    context->push(ret);
 }
 
 void RecurrenceRelationTemplate::calculateConstRecursive(RecursiveGenContext *context) {

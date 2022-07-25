@@ -46,10 +46,8 @@ ExValue_ifs* newTernaryOperation(BodyTemplate* body_template) {
 
 TernaryOperation::TernaryOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b, ExValue_ifs* var_c,
                                    TypeEn target_type, bool rec_call)
-    : Operation_ifs(target_type, TypeEn::unknown_jty, op, maxDSVar(var_a, var_b)) {
-    // commonSetup(op, maxDSVar(var_a, var_b));
-    //  type_ = target_type;
-
+    : Operation_ifs(target_type, TypeEn::unknown_jty, maxDataStructType(var_a, var_b),
+                    std::max(var_c->getLength(), maxLength(var_a, var_b)), op) {
     level_ = maxLevelVar(maxLevelVar(var_a, var_b), var_c)->getLevel();
     contain_rec_call_ = rec_call;
 

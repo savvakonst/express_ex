@@ -62,8 +62,9 @@ ExValue_ifs* newComparisonOperation(BodyTemplate* body_template, OpCodeEn op_typ
 ComparisonOperation::ComparisonOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b)
     : Operation_ifs((isUnknownTy(var_a) || isUnknownTy(var_b) ? TypeEn::unknown_jty : TypeEn::int1_jty),  //
                     TypeEn::unknown_jty,                                                                  //
-                    op,                                                                                   //
-                    maxDSVar(var_a, var_b))                                                               //
+                    maxDataStructType(var_a, var_b),                                                      //
+                    maxLength(var_a, var_b),                                                              //
+                    op)                                                                                   //
 {
     // TODO remove comment
     //  commonSetup(op, maxDSVar(var_a, var_b));

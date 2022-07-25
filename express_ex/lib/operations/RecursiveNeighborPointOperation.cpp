@@ -10,27 +10,26 @@
 #include "parser/bodyTemplate.h"
 
 ExValue_ifs *newRecursiveNeighborPointOperation(GarbageContainer *garbage_container, TypeEn target_type,
-                                                Operation_ifs::length_t length, ExValue_ifs *shift) {
+                                                ExValue_ifs *shift) {
     if (!isConst(shift)) {
         print_error("neighbor point index is not integer");
         return nullptr;
     }
-    return garbage_container->add(new RecursiveNeighborPointOperation(target_type, length, shift));
+    return garbage_container->add(new RecursiveNeighborPointOperation(target_type, shift));
 }
 
 ExValue_ifs *newRecursiveNeighborPointOperation(BodyTemplate *body_template) {
     ExValue_ifs *arg_b = body_template->pop();
-    // ExValue_ifs *arg_a = body_template->pop();
+
 
     body_template->is_operator_ = true;
     body_template->is_recurrence_relation_ = true;
-    return newRecursiveNeighborPointOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, 0, arg_b);
+    return newRecursiveNeighborPointOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, arg_b);
 }
 
 
-RecursiveNeighborPointOperation::RecursiveNeighborPointOperation(TypeEn target_type, length_t length,
-                                                                 ExValue_ifs *shift)
-    : Operation_ifs(target_type, TypeEn::unknown_jty, DataStructureTypeEn::kLargeArr, 0, OpCodeEn::none_op) {
+RecursiveNeighborPointOperation::RecursiveNeighborPointOperation(TypeEn target_type, ExValue_ifs *shift)
+    : Operation_ifs(target_type, TypeEn::unknown_jty, DataStructureTypeEn::kLargeArr, 1, OpCodeEn::none_op) {
     operand_.push_back(shift);
 }
 
@@ -61,13 +60,14 @@ void RecursiveNeighborPointOperation::genBodyVisitExit(BodyGenContext *context) 
 
 
     // TODO add check for different lengths, or best add add graph pass from root and made length mutable
-    length_t len = 0;
-    for (auto line : context->getNamespace())
-        if (line->isArg() && isLargeArr(line)) len = line->getLength();
+    // length_t len = 0;
+    // for (auto line : context->getNamespace())
+    //    if (line->isArg() && isLargeArr(line)) {
+    //        if (len == 0) len = line->getLength();
+    //        else if (len != line->getLength()) print_error("can't determine length, use arguments with same length");
+    //    }
 
-    auto ret = newRecursiveNeighborPointOperation(context->getGarbageContainer(), type, len, op_a);
-
-
+    auto ret = newRecursiveNeighborPointOperation(context->getGarbageContainer(), type, op_a);
 
     context->push(ret);
 }
@@ -77,19 +77,14 @@ void RecursiveNeighborPointOperation::calculateConstRecursive(RecursiveGenContex
 }
 
 void RecursiveNeighborPointOperation::printVisitExit(PrintBodyContext *context) {
-    auto op = context->pop();
-    context->push(checkBuffer("return[" + op + "]"));
+    is_visited_ = false;
+    context->push(checkBuffer("return[" + context->pop() + "]"));
 }
 
 std::string RecursiveNeighborPointOperation::printUint() {
     is_visited_ = false;
-
     auto name_op_a = operand_[0]->getAssignedVal(true)->getUniqueName();
-    auto name_op_b = operand_[1]->getAssignedVal(true)->getUniqueName();
-
-    std::string u_name = getUniqueName();
-
-    return u_name + " =  " + name_op_a + "[" + name_op_b + "]";
+    return getUniqueName() + " =  return [" + name_op_a + "]";
 }
 
 void RecursiveNeighborPointOperation::setupIR(IRGenerator &builder) {

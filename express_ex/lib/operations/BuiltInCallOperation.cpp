@@ -68,15 +68,12 @@ void BuiltInCallOperation::calculateConstRecursive(RecursiveGenContext* context)
 
 void BuiltInCallOperation::printVisitExit(PrintBodyContext* context) {
     is_visited_ = false;
-    
     context->push(checkBuffer(txtBuiltInOp(op_code_) + "(" + context->pop() + ")"));
 }
 
 std::string BuiltInCallOperation::printUint() {
     is_visited_ = false;
-
     auto name_op_a = operand_[0]->getAssignedVal(true)->getUniqueName();
-
     return getUniqueName() + " = " + txtBuiltInOp(op_code_) + "( " + name_op_a + ")";
 }
 

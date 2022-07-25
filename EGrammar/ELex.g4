@@ -38,10 +38,10 @@ ID  :   [a-zA-Z][a-zA-Z0-9_]* ;
 
 
 
-INT64 : [0-9]+'i64'  ;
-INT :   [0-9]+'i32'? ;
-DOUBLE  :   [0-9]+'.'[0-9]*(DoublePostfix)? ;
-FLOAT   :   [0-9]+'.'[0-9]*(FloatPostfix);
+INT64 : [0-9]+'.i64'  ;
+INT :   [0-9]+'.i32'? ;
+DOUBLE  :   [0-9]+'.'[0-9]*(DoublePostfix) ;
+FLOAT   :   [0-9]+'.'[0-9]*(FloatPostfix)? ;
 DoublePostfix:  'd' ;
 FloatPostfix :  'f' ;
 

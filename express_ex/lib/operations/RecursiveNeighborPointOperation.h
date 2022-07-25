@@ -11,12 +11,12 @@
 #include "operations/Operation_ifs.h"
 
 ExValue_ifs* newRecursiveNeighborPointOperation(GarbageContainer* garbage_container, TypeEn target_type,
-                                                Operation_ifs::length_t length, ExValue_ifs* shift);
+                                                ExValue_ifs* shift);
 
 
 class RecursiveNeighborPointOperation : public Operation_ifs {
    public:
-    RecursiveNeighborPointOperation(TypeEn target_type, length_t length, ExValue_ifs* shift);
+    RecursiveNeighborPointOperation(TypeEn target_type, ExValue_ifs* shift);
 
     ~RecursiveNeighborPointOperation() override = default;
 

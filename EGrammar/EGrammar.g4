@@ -40,6 +40,7 @@ expr:   ID '(' (expr (','expr)*) ')'                                    # callFu
     |   ID'[' expr ']'                                                  # neighborhoodPoint
     |   unaryBInFunc '(' expr ')'                                       # callUnaryBInFunc
     |   tConvBInFunc '(' expr ')'                                       # callTConvBInFunc
+    |   ID '.' 'type' '(' expr ')'                                      # callLinkedTypeCast
     |   expr ('**'|'^')   expr                                          # pow
     |   '-' expr                                                        # inv
     |   expr op=('*'|'/') expr                                          # mulDiv

@@ -85,27 +85,16 @@ void ExRecursiveArgument::setupIR(IRGenerator& builder) {
 
 
 void ExParam::setupIR(IRGenerator& builder) {
-    // setBuffered();
-    if (isVariable(this)) {
-        builder.setInitInsertPoint();
-        llvm::Function* function = builder.getCurrentFunction();
-        IR_buffer_ptr_ = builder.CreateAlloca(builder.getLLVMType(type_));
-        size_t arg_number = builder.arg_ptr_list_.size();
-        builder.CreateStore(function->getArg((uint32_t)arg_number), IR_buffer_ptr_);
-        builder.arg_ptr_list_.push_back(IR_buffer_ptr_);
 
-        // insert to  loop_block
-        builder.setCalcInsertPoint();
-        IR_value_ = builder.CreateLoad(IR_buffer_ptr_);
 
-    } else {
-        if (!is_initialized_) {
-            builder.addBuffer(new InputBuffer(this));
-            IR_buffer_base_ptr_ = builder.createBufferInit(type_, "external_");
-            is_initialized_ = true;
-        }
-        IR_buffer_ptr_ = builder.createPositionalInBoundsGep(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(),
-                                                             "offset_arg_incr_");
-        IR_value_ = builder.createPositionalLoad(IR_buffer_ptr_, true, "arg_buffer_val_");
+    if (!is_initialized_) {
+        builder.addBuffer(new InputBuffer(this));
+        IR_buffer_base_ptr_ = builder.createBufferInit(type_, "external_");
+        is_initialized_ = true;
     }
+
+    IR_buffer_ptr_ = builder.createPositionalInBoundsGep(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(),
+                                                             "offset_arg_incr_");
+    IR_value_ = builder.createPositionalLoad(IR_buffer_ptr_, true, "arg_buffer_val_");
+
 }

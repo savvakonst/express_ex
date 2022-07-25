@@ -7,7 +7,8 @@
 
 ExValue_ifs* newConvolveOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg_a,
                                   ExValue_ifs* arg_b, int64_t shift, OpCodeEn op_type) {
-    if (op_type != OpCodeEn::convolve) print_error("convolve_f operation is not supported yet");
+    op_type = OpCodeEn::convolve;
+
 
     if ((isConst(arg_a) || isConst(arg_b)) && (!isUnknownTy(arg_a) && !isUnknownTy(arg_b))) {
         return garbage_container->add(

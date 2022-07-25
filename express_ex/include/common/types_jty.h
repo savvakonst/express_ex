@@ -52,6 +52,7 @@ enum class NodeTypeEn
 
 
 
+// TODO this design isn't useful, only several operations really require enumeration
 enum class OpCodeEn
 {
 #define EX_DEFINE_OPERATION(OP_NAME, OP_STR_REPR) OP_NAME,

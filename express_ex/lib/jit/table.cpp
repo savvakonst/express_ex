@@ -7,13 +7,8 @@
 
 #include "../operations/FunctionCall/call.h"
 #include "jit/IR_generator.h"
-#include "jit/buffer.h"
 #include "jit/llvmHdrs.h"
-#include "llvm/ExecutionEngine/SectionMemoryManager.h"
 #include "llvm/Support/DynamicLibrary.h"
-#include "operations/ExLine.h"
-#include "parser/basic.h"
-#include "parser/body.h"
 
 
 
@@ -39,6 +34,7 @@ void Block::setBufferLength(uint64_t buffer_length) {
     buffer_length_ = buffer_length;
     for (auto i : uint_list_) {
         i->setBufferLength(buffer_length_);
+        i->setBufferBordersLength(left_length_, right_length_);
     }
 }
 
@@ -52,10 +48,12 @@ string Block::print() const {
         std::string unit = i->printUint();
         if (unit.empty()) continue;
         std::string txt = i->printUint() + ";" + (i->isBuffered() ? " store" : "");
-        std::string txtShifts = std::to_string(i->getLeftBufferLen()) + " : " + std::to_string(i->getRightBufferLen());
-        std::string txtSkip = std::string(max_line_length - ((txt.length() > max_line_length) ? 0 : txt.length()), ' ');
+        std::string txt_shifts = std::to_string(i->getLeftBufferLen()) + " : " + std::to_string(i->getRightBufferLen());
+        std::string txt_skip =
+            std::string(max_line_length - ((txt.length() > max_line_length) ? 0 : txt.length()), ' ');
 
-        out += std::string(6, ' ') + txt + txtSkip + txtShifts + "\n";
+        out += std::string(6, ' ') + txt;
+        out += txt_skip + txt_shifts + "\n";
     }
 
     return out;
@@ -185,12 +183,12 @@ double convolveDouble(double* i, double* j) { return 100.0; }
 float convolveFloat(float* i, float* j) { return 100.0; }
 
 llvm::Value* genConvolve(IRGenerator& builder, llvm::Type* type, uintptr_t addr) {
-    llvm::Value* convolveFunction =
+    llvm::Value* convolve_function =
         builder.CreateIntToPtr(llvm::ConstantInt::get(builder.getInt64Ty(), uintptr_t(addr)),
                                llvm::PointerType::getUnqual(llvm::FunctionType::get(
                                    builder.getInt64Ty(), {type->getPointerTo(), type->getPointerTo()}, false)));
     // convolveFunction->setName("convolve");
-    return convolveFunction;
+    return convolve_function;
 }
 
 std::vector<std::list<Buffer*>*>* g_list_of_buffer_groups = nullptr;
@@ -284,14 +282,14 @@ void Table::declareBuiltInFunctions(BuiltInFuncMap& UBIFMap, llvm::Type* Ty) {
 string Table::print() const {
     std::string out;
 
-    out += "constant defenition:\n";
+    out += "constant definition:\n";
 
 
     for (auto i : const_list_) {
         const auto tmp = i->printUint();
         if (!tmp.empty()) out += "\t" + tmp + ";\n";
     }
-    out += "small array defenition:\n";
+    out += "small array definition:\n";
     for (auto i : small_array_list_) {
         const auto tmp = i->printUint();
         if (!tmp.empty()) out += "\t" + tmp + ";\n";
@@ -414,7 +412,7 @@ llvm::Function* createConvolveFunction(llvm::Module* M, TypeEn type) {
 
     int64_t zero = 0;
     double one = 0;
-    uint64_t oneint = *((uint64_t*)&one);
+    uint64_t one_int = *((uint64_t*)&one);
 
     builder.CreateStore(builder.createConst(zero, type), sum_ptr);
     builder.CreateStore(builder.getInt64(0), index_ptr);

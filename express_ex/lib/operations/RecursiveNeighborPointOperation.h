@@ -35,12 +35,13 @@ class RecursiveNeighborPointOperation : public Operation_ifs {
 
     void calculate() override;
 
-    /**
-     * @return negative value if success otherwise return zero
-     */
-    int64_t getShift() const { return shift_parameter_; }
+
+    void setRef(RecurrenceRelationTemplate* ref) { ref_ = ref; };
+
+
 
    private:
+    RecurrenceRelationTemplate* ref_;
     // convolve params
     int64_t shift_parameter_ = 0;
 };

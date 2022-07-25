@@ -8,6 +8,8 @@
 #include "jit/IR_generator.h"
 #include "operations/ExLine.h"
 #include "parser/bodyTemplate.h"
+#include "RecurrenceRelationTemplate.h"
+
 
 ExValue_ifs *newRecursiveNeighborPointOperation(GarbageContainer *garbage_container, TypeEn target_type,
                                                 ExValue_ifs *shift) {
@@ -43,7 +45,10 @@ void RecursiveNeighborPointOperation::visitEnterSetupBuffer(stack<ExValue_ifs *>
 
     int64_t buffer_increment = shift_parameter_ - int64_t(left_buffer_length_);
 
-    if (buffer_increment > 0) left_buffer_length_ = left_buffer_length_ + buffer_increment;
+    if (buffer_increment > 0) ref_->setBufferBordersLength(left_buffer_length_ + buffer_increment,0);
+        //left_buffer_length_ = left_buffer_length_ + buffer_increment;
+
+
 }
 
 void RecursiveNeighborPointOperation::visitEnterStackUpdate(stack<ExValue_ifs *> *visitor_stack) {

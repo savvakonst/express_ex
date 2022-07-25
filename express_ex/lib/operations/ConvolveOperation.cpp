@@ -54,11 +54,11 @@ ConvolveOperation::ConvolveOperation(ExValue_ifs* large_arr, ExValue_ifs* small_
     //  small_arr->getLength());
 
 
-    if (large_arr->ds_ty_ < small_arr->ds_ty_)
-        print_error(
-            "ConvolveOperation::ConvolveOperation:  you nust ensure that the ds_ty_ of large_arr is more "
-            "or equal small_arr ds_ty_. \n"
-            "Please let the developers know about this issue.");
+    // if (large_arr->ds_ty_ < small_arr->ds_ty_)
+    //     print_error(
+    //         "ConvolveOperation::ConvolveOperation:  you nust ensure that the ds_ty_ of large_arr is more "
+    //         "or equal small_arr ds_ty_. \n"
+    //         "Please let the developers know about this issue.");
 
     level_ = large_arr->getLevel() + 1;
 
@@ -110,9 +110,9 @@ void ConvolveOperation::calculateConstRecursive(RecursiveGenContext* context) {
 void ConvolveOperation::printVisitExit(PrintBodyContext* context) {
     is_visited_ = false;
 
-    auto op2 = context->pop();
-    auto op1 = context->pop();
-    context->push(checkBuffer("convolve(" + op1 + ", " + op2 + "," + std::to_string(shift_parameter_) + ")"));
+    auto op_2 = context->pop();
+    auto op_1 = context->pop();
+    context->push(checkBuffer("convolve(" + op_1 + ", " + op_2 + "," + std::to_string(shift_parameter_) + ")"));
 }
 
 std::string ConvolveOperation::printUint() {

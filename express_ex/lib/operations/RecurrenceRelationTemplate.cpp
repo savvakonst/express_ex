@@ -18,8 +18,12 @@ ExValue_ifs *newRecurrenceRelationTemplate(GarbageContainer *garbage_container, 
 
 RecurrenceRelationTemplate::RecurrenceRelationTemplate(ExValue_ifs *ret_value)
     : Operation_ifs(ret_value->type_, ret_value->time_type_, OpCodeEn::none_op, ret_value) {
+    if (isUnknownTy(ret_value))
+        print_error("you need to determine type of function which implement recurrence relation");
     level_ = ret_value->getLevel();
 }
+
+
 
 void RecurrenceRelationTemplate::visitEnterSetupBuffer(stack<ExValue_ifs *> *visitor_stack) {
     Operation_ifs::visitEnterSetupBuffer(visitor_stack);
@@ -56,6 +60,7 @@ void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
 
     uint32_t operator_cnt = 0;
 
+    std::list<RecursiveNeighborPointOperation *> ref_list;
     do {
         auto var = visitor_stack.pop();
 
@@ -68,6 +73,8 @@ void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
 
         if (var->getNodeType() == NodeTypeEn::kRecursiveNeighborPoint) {
             if (operator_cnt) print_error("operator application inside recursion is prohibited");
+
+            ref_list.push_back((RecursiveNeighborPointOperation *)var);
             for (auto i : path_stack) values_to_change_level.push(i.first);
             values_to_change_level.push(var);
         }
@@ -82,7 +89,6 @@ void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
         operator_cnt += is_operator ? 1 : 0;
         path_stack.push_back({temp_stack.front(), is_operator});
         visitor_stack.splice(visitor_stack.end(), temp_stack);
-
     } while (!visitor_stack.empty());
 
     int64_t max_level = 0;
@@ -94,8 +100,11 @@ void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
     }
 
     GarbageContainer *garbage_container = context->getGarbageContainer();
-    auto ret = newRecurrenceRelationTemplate(garbage_container, operand);
-    context->push(ret);
+    auto ret = new RecurrenceRelationTemplate(operand);
+
+    for (auto i : ref_list) i->setRef(ret);
+
+    context->push(garbage_container->add(ret));
 }
 
 void RecurrenceRelationTemplate::calculateConstRecursive(RecursiveGenContext *context) {

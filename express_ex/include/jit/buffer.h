@@ -26,14 +26,16 @@ enum class BufferTypeEn
 
 class Buffer {
    public:
-    explicit Buffer(ExValue_ifs* var) {
-        length_ = var->getBufferLen();
+    explicit Buffer(ExValue_ifs* var, uint64_t left_offset, uint64_t right_offset)
+        : length_(var->getBufferLen()),
+          left_offset_(left_offset),
+          right_offset_(right_offset),
+          type_(var->type_),
+          sizeof_data_type_(sizeOfTy(type_)) {
+        setBufferAlloca();
+    }
 
-        left_offset_ = var->getLeftBufferLen();
-        right_offset_ = var->getRightBufferLen();
-        type_ = TypeEn::unknown_jty;
-        type_ = var->type_;
-        sizeof_data_type_ = sizeOfTy(type_);
+    explicit Buffer(ExValue_ifs* var) : Buffer(var, var->getLeftBufferLen(), var->getRightBufferLen()) {
         setBufferAlloca();
     }
 
@@ -81,11 +83,11 @@ class Buffer {
     }
 
    protected:
-    TypeEn type_ = TypeEn::unknown_jty;
-    uint64_t sizeof_data_type_ = 0;
-    int64_t length_ = 0;
-    uint64_t left_offset_ = 0;
-    uint64_t right_offset_ = 0;
+    const TypeEn type_;
+    const uint64_t sizeof_data_type_;
+    const uint64_t length_;
+    const uint64_t left_offset_;
+    const uint64_t right_offset_;
 
     char* ptr_ = nullptr;
     char* left_ptr_ = nullptr;

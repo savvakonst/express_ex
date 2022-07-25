@@ -9,9 +9,13 @@
 
 ExValue_ifs* newRecurrenceRelationTemplate(GarbageContainer* garbage_container, ExValue_ifs* ret_value);
 
+
+
 class RecurrenceRelationTemplate : public Operation_ifs {
    public:
     explicit RecurrenceRelationTemplate(ExValue_ifs* ret_value);
+
+
 
     ~RecurrenceRelationTemplate() override = default;
 
@@ -30,10 +34,9 @@ class RecurrenceRelationTemplate : public Operation_ifs {
 
     void calculate() override;
 
-   private:
-    // convolve params
+    //void set()
 
-    int64_t shift_parameter_ = 0;
+   private:
 };
 
 

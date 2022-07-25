@@ -15,7 +15,8 @@
 using std::string;
 class ExValue_ifs;
 
-enum class CycleStageEn {
+enum class CycleStageEn
+{
     start,
     midle,
     end
@@ -42,9 +43,13 @@ class IRGenerator;
 
 typedef std::map<OpCodeEn, llvm::Function*> BuiltInFuncMap;
 
+
+/**
+ * Block object contains ExValue_ifs objects with the same level and length_.
+ *
+ */
 class Block {
    public:
-    // Block (uint64_t l) {level =l; }
     explicit Block(ExValue_ifs* var);
 
     ~Block() = default;
@@ -69,6 +74,11 @@ class Block {
     uint64_t buffer_length_ = 1 << 20;
 };
 
+
+/**
+ * TableColumn object contains Block objects with the same length_.
+ *
+ */
 class TableColumn {
    public:
     explicit TableColumn(uint64_t len) { length_ = len; }

@@ -123,6 +123,7 @@ class Operation_ifs : public ExValue_ifs {
     void calculate() override = 0;
 
    protected:
+
     /**
      * must be called in the end of setupIR()
      * @param builder

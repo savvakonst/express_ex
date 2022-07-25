@@ -6,7 +6,9 @@
 #include "ExValue_ifs.h"
 #include "common/types_jty.h"
 
-
+namespace llvm {
+class BasicBlock;
+}
 
 class Operation_ifs : public ExValue_ifs {
    public:
@@ -122,18 +124,22 @@ class Operation_ifs : public ExValue_ifs {
 
     void calculate() override = 0;
 
-   protected:
 
     /**
-     * must be called in the end of setupIR()
+     * must be called in the end of setupIR(), external call also possible,
+     * in particle by RecursiveNeighborPointOperation::setupIR()
      * @param builder
      */
     void finishSetupIR(IRGenerator& builder);
 
+   protected:
     std::vector<ExValue_ifs*> operand_;
-    std::vector<ExValue_ifs*> simplified_operand_;
+
 
     const OpCodeEn op_code_ = OpCodeEn::none_op;
+
+   private:
+    llvm::BasicBlock* last_insert_block_ = nullptr;
 };
 
 #endif

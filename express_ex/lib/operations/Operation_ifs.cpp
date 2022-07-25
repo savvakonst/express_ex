@@ -46,7 +46,13 @@ void Operation_ifs::finishSetupIR(IRGenerator& builder) {
             IR_buffer_base_ptr_ = builder.createBufferInit(type_, "internal_");
             is_initialized_ = true;
         }
+
+
         auto last_block = builder.GetInsertBlock();
+        if(last_insert_block_ == last_block)
+            return ;
+        last_insert_block_ = last_block;
+
         builder.setStoreInsertPoint();
 
         IR_buffer_ptr_ =

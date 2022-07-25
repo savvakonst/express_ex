@@ -25,14 +25,17 @@ void BodyTemplate::addLine(ExLine* line) {
     lines_.push_back(line);
 }
 
-void BodyTemplate::addReturn(const std::string& name, ExValue_ifs* var) {  //?remove Value param
+void BodyTemplate::addReturn() {  //?remove Value param
     // auto line = new ExLine(name, var);
+    auto var = pop();
 
     if (is_tail_callable_) {
         auto assigned_var = var->getAssignedVal(true);
         bool valid_recursion = assigned_var->getNodeType() == NodeTypeEn::kTailCallTernary;
         if (!valid_recursion) print_error("it isn't tail recursion");
     } else if (is_recurrence_relation_) {
+        var_stack_.push_back(var);
+        var = newRecurrenceRelationTemplate(this);
     }
 
     garbage_container_->add(var);

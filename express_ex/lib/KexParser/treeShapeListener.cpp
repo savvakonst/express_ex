@@ -88,7 +88,7 @@ void TreeShapeListener::exitAssignRetParam(EGrammarParser::AssignRetParamContext
     setPos(ctx);
     for (auto k : ctx->expr())
         if (current_body_->isRetStackFull()) print_error("there are more then one returned value");
-        else current_body_->addReturn("return", current_body_->pop());
+        else current_body_->addReturn();
 }
 
 void TreeShapeListener::exitNeighborhoodPoint(EGrammarParser::NeighborhoodPointContext* ctx) {

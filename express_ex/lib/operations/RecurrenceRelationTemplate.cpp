@@ -121,7 +121,9 @@ std::string RecurrenceRelationTemplate::printUint() {
     return getUniqueName() + " = rec_relation(" + name_op_a + ")";
 }
 
-void RecurrenceRelationTemplate::setupIR(IRGenerator &builder) { Operation_ifs::setupIR(builder); }
+void RecurrenceRelationTemplate::setupIR(IRGenerator &builder) {
+    finishSetupIR(builder);
+}
 
 void RecurrenceRelationTemplate::calculate() {
     // Operation_ifs::calculate();

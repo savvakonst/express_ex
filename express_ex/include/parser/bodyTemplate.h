@@ -41,7 +41,7 @@ class BodyTemplate {
     void addLine(ExLine* line);
 
     // TODO is necessary to add returned status_ value with line ,pos end error code and string;
-    void addReturn(const std::string& name, ExValue_ifs* var);
+    void addReturn();
 
     // create call
     void addCall(BodyTemplate* body);

@@ -90,8 +90,10 @@ std::string RecursiveNeighborPointOperation::printUint() {
 }
 
 void RecursiveNeighborPointOperation::setupIR(IRGenerator &builder) {
+    ref_->finishSetupIR(builder);
+
+    //finishSetupIR(builder);
     print_IR_error("NeighborPointOperation::setupIR is not supported yet");
-    finishSetupIR(builder);
 }
 
 void RecursiveNeighborPointOperation::calculate() {

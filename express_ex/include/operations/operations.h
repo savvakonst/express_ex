@@ -48,5 +48,6 @@ ExValue_ifs* newTernaryOperation(BodyTemplate* body_template);
 ExValue_ifs* newRangeOp(BodyTemplate* body_template, size_t arg_count);
 ExValue_ifs* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count);
 
+ExValue_ifs* newRecurrenceRelationTemplate(BodyTemplate* body_template);
 
 #endif

@@ -10,6 +10,12 @@
 #include "parser/bodyTemplate.h"
 
 
+ExValue_ifs *newRecurrenceRelationTemplate(BodyTemplate *body_template) {  // TODO: add type matching
+    ExValue_ifs *arg_a = body_template->pop();
+    return body_template->getGarbageContainer()->add(new RecurrenceRelationTemplate(arg_a));
+}
+
+
 RecurrenceRelationTemplate::RecurrenceRelationTemplate(ExValue_ifs *ret_value)
     : Operation_ifs(ret_value->type_, ret_value->time_type_, OpCodeEn::none_op, ret_value) {
     if (isUnknownTy(ret_value))

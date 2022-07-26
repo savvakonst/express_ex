@@ -8,7 +8,7 @@ def loop_const(ref, a, i):
 def recurrence_relation():
     shift = 1
 
-    x = param("#1_A01__1")
+    x = param("#1_A01__2")
     y = np.zeros(len(x) + shift, dtype=x.dtype)
 
     index = shift

@@ -90,22 +90,22 @@ void ArithmeticOperation::genBodyVisitExit(BodyGenContext* context) {
 
     g_pos = pos_;
 
-    auto op2 = context->pop();
-    auto op1 = context->pop();
+    auto op_2 = context->pop();
+    auto op_1 = context->pop();
 
-    if ((op2 == nullptr) || (op1 == nullptr)) {
+    if ((op_2 == nullptr) || (op_1 == nullptr)) {
         auto txt_operation = txtArOp(op_code_);
         print_error(txt_operation +
                     " "
                     "left operand:" +
-                    ((op1 != nullptr) ? "a" : "unknown") + ".  " +
-                    "right operand:" + ((op2 != nullptr) ? "a" : "unknown"));
+                    ((op_1 != nullptr) ? "a" : "unknown") + ".  " +
+                    "right operand:" + ((op_2 != nullptr) ? "a" : "unknown"));
     }
-    TypeEn target_type = maxTypeVar(op1, op2)->type_;
+    TypeEn target_type = maxTypeVar(op_1, op_2)->type_;
 
     auto ret =
-        newArithmeticOperation(garbage_container, target_type, newTypeConvOp(garbage_container, target_type, op1),
-                               newTypeConvOp(garbage_container, target_type, op2), op_code_);
+        newArithmeticOperation(garbage_container, target_type, newTypeConvOp(garbage_container, target_type, op_1),
+                               newTypeConvOp(garbage_container, target_type, op_2), op_code_);
     context->push(ret);
 }
 
@@ -120,9 +120,9 @@ void ArithmeticOperation::calculateConstRecursive(RecursiveGenContext* context) 
 
 void ArithmeticOperation::printVisitExit(PrintBodyContext* context) {
     is_visited_ = false;
-    auto op2 = context->pop();
-    auto op1 = context->pop();
-    context->push(checkBuffer("(" + op1 + txtArOp(op_code_) + op2 + ")"));
+    auto op_2 = context->pop();
+    auto op_1 = context->pop();
+    context->push(checkBuffer("(" + op_1 + txtArOp(op_code_) + op_2 + ")"));
 }
 
 std::string ArithmeticOperation::printUint() {

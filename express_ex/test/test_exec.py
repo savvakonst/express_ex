@@ -39,7 +39,7 @@ def genereteDataByFile(name):
 
 
 def execFile(name):
-    if os.path.exists("test_tasks.py"):
+    if os.path.exists("../test_tasks.py"):
         # import sys
         # sys.path.append(os.path.dirname(os.path.abspath(__file__)))
         # print("path: ", os.path.dirname(os.path.abspath(__file__)), sys.path)

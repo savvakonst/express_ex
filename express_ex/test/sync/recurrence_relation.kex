@@ -1,10 +1,35 @@
 
 
-x = param("#1_A01__1")
+x = param("#1_A01__2")
+
 
 function recurrence_relation(a):
-    c = recurrence_relation[-1] + a
-    return double(c)
+   cond_1 = a[ 0] < 0
+   cond_2 = a[-1] > 0
+
+   c = recurrence_relation[-1] + a*a
+
+   res = cond_1 ? ( cond_2 ? 0 : c) : c
+
+   return double(res )
 end
 
-return recurrence_relation((x))
+function rms(arg):
+
+
+    cond_1 = arg[ 0] < 0
+    cond_2 = arg[-1] > 0
+
+    intermediate = recurrence_relation((arg*0.01))**0.5
+
+    res = cond_1 ? ( cond_2 ? intermediate[-100] :  rms[-1] ) : rms[-1]
+
+    return double(res)
+end
+
+
+
+
+
+
+return rms(x)

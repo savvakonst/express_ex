@@ -18,8 +18,8 @@ ExValue_ifs *newNeighborPointOperation(GarbageContainer *garbage_container, ExVa
 }
 
 ExValue_ifs *newNeighborPointOperation(BodyTemplate *body_template) {
-    ExValue_ifs *shift_val = body_template->pop();
     ExValue_ifs *array_val = body_template->pop();
+    ExValue_ifs *shift_val = body_template->pop();
 
     body_template->is_operator_ = true;
 
@@ -42,8 +42,8 @@ void NeighborPointOperation::visitEnterSetupBuffer(stack<ExValue_ifs *> *visitor
     auto shift = typeCastConstValue<int64_t>(shift_val->type_, shift_val->getBinaryValue());
 
 
-    auto left = left_buffer_length_ + ((shift < 0) ? 0 : shift);
-    auto right = right_buffer_length_ + ((shift > 0) ? 0 : -shift);
+    auto left = left_buffer_length_ + ((shift < 0) ? -shift : 0);
+    auto right = right_buffer_length_ + ((shift > 0) ? shift : 0);
 
     operand_[0]->getAssignedVal(true)->setBuffered();
     operand_[0]->setBufferBordersLength(left, right);
@@ -59,6 +59,7 @@ void NeighborPointOperation::genBodyVisitExit(BodyGenContext *context) {
 
     GarbageContainer *garbage_container = context->getGarbageContainer();
     g_pos = pos_;
+
 
     auto shift_val = context->pop();
     auto array_val = context->pop();
@@ -76,6 +77,8 @@ void NeighborPointOperation::calculateConstRecursive(RecursiveGenContext *contex
 }
 
 void NeighborPointOperation::printVisitExit(PrintBodyContext *context) {
+    is_visited_ = false;
+
     auto shift_val = context->pop();
     auto array_val = context->pop();
     context->push(checkBuffer(" " + array_val + "[" + shift_val + "]"));
@@ -83,8 +86,6 @@ void NeighborPointOperation::printVisitExit(PrintBodyContext *context) {
 
 std::string NeighborPointOperation::printUint() {
     is_visited_ = false;
-
-
 
     auto name_op_a = operand_[0]->getAssignedVal(true)->getUniqueName();
     auto name_op_b = operand_[1]->getAssignedVal(true)->getUniqueName();

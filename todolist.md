@@ -1,7 +1,7 @@
 # To do list
 
 * add existence check for input files (filenames, data storage, etc.)
-and output check: filenames, data storage, etc.. Place this check before execution (maybe earlier).
+  and output check: filenames, data storage, etc.. Place this check before execution (maybe earlier).
 
 ## block structure
 
@@ -9,3 +9,7 @@ and output check: filenames, data storage, etc.. Place this check before executi
     * load_block
     * calc_block
     * store_block -> load_block | (next block)
+
+
+
+

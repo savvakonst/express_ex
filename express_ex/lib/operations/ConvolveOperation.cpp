@@ -45,7 +45,6 @@ ConvolveOperation::ConvolveOperation(ExValue_ifs* large_arr, ExValue_ifs* small_
           large_arr->type_, TypeEn::unknown_jty, large_arr->ds_ty_,
           isLargeArr(large_arr) ? large_arr->getLength() : maxInt(large_arr->getLength(), small_arr->getLength()),
           OpCodeEn::convolve) {
-
     // if (large_arr->ds_ty_ < small_arr->ds_ty_)
     //     print_error(
     //         "ConvolveOperation::ConvolveOperation:  you nust ensure that the ds_ty_ of large_arr is more "
@@ -86,11 +85,11 @@ void ConvolveOperation::genBodyVisitExit(BodyGenContext* context) {
     GarbageContainer* garbage_container = context->getGarbageContainer();
     g_pos = pos_;
 
-    auto op2 = context->pop();
-    auto op1 = context->pop();
-    const TypeEn target_type = maxTypeVar(op1, op2)->type_;
-    auto ret = newConvolveOperation(garbage_container, target_type, newTypeConvOp(garbage_container, target_type, op1),
-                                    newTypeConvOp(garbage_container, target_type, op2), shift_parameter_, op_code_);
+    auto op_2 = context->pop();
+    auto op_1 = context->pop();
+    const TypeEn target_type = maxTypeVar(op_1, op_2)->type_;
+    auto ret = newConvolveOperation(garbage_container, target_type, newTypeConvOp(garbage_container, target_type, op_1),
+                                    newTypeConvOp(garbage_container, target_type, op_2), shift_parameter_, op_code_);
 
     context->push(ret);
 }

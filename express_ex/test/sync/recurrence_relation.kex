@@ -16,18 +16,18 @@ function rms(arg):
 
 
 
-    function get_num( ar ):
-       cond = (ar[ 0] < 0) * (ar[-1] > 0)
-       c = get_num[-1] + 0 * ar + 1
-       res = cond ? 1 : c
-       return double( res )
-    end
+    #function get_num( ar ):
+    #   cond = (ar[ 0] < 0) * (ar[-1] > 0)
+    #   c = get_num[-1] + 0 * ar + 1
+    #   res = cond ? 1 : c
+    #   return double( res )
+    #end
 
-    cond = (arg[ 0] < 0) * (arg[-1] > 0)
-    num = get_num(arg*1)
+    #cond = (arg[ 0] < 0) * (arg[-1] > 0)
+    #num = get_num(arg*1)
 
 
-    intermediate = recurrence_relation( arg *1  )**0.5
+    intermediate = recurrence_relation( arg  )**0.5
 
     #res = cond ? intermediate[-1] / num : rms[-1]
 

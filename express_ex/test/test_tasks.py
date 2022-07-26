@@ -16,7 +16,7 @@ def recurrence_relation():
         y[index] = y[index - shift] + i
         index += 1
 
-    return y[shift:]
+    return x  # y[shift:]
 
 # print("\n")
 

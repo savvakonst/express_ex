@@ -95,7 +95,7 @@ bool Block::generateIR(IRGenerator& builder, CycleStageEn type, const std::strin
     builder.clearInitializedValueList();
 
     builder.setIntermediateInsertPoint(bb_intermediate);
-    int64_t loop_start_offset = (type == CycleStageEn::start) ? -int64_t(left_length_) : int64_t(right_length_);
+    int64_t loop_start_offset = (type == CycleStageEn::start) ? -int64_t(0) : int64_t(right_length_);
     builder.setOffsetTo(loop_start_offset);
 
     builder.setLoadInsertPoint(bb_load);

@@ -7,4 +7,4 @@ function recurrence_relation(a):
     return double(c)
 end
 
-return recurrence_relation(x**2)
+return recurrence_relation((x))

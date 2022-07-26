@@ -22,7 +22,7 @@ BodyTemplate::~BodyTemplate() { delete garbage_container_; }
 void BodyTemplate::addLine(ExLine* line) {
     garbage_container_->add(line);
     if (line->isArg()) arg_count_++;
-    lines_.push_back(line);
+    references_.push_back(line);
 }
 
 void BodyTemplate::addReturn() {  //?remove Value param
@@ -57,7 +57,7 @@ stack<ExValue_ifs*> BodyTemplate::pop(size_t length) { return var_stack_.pop(len
 
 std::map<std::string, std::string> BodyTemplate::getParameterLinkNames(bool hide_unused) const {
     std::map<std::string, std::string> ret;
-    for (auto& value : lines_)
+    for (auto& value : references_)
         if (value->isArg())
             if (!(hide_unused && value->isUnused())) ret[value->getName(true)] = value->getLinkName();
     return ret;
@@ -91,13 +91,13 @@ void BodyTemplate::addTailCall() {
     push(garbage_container_->add(new TailCallDirectiveTemplate(a)));
 }
 
-ExLine* BodyTemplate::getLastLineFromName(const std::string& name) const {
-    if (lines_.empty()) return nullptr;
+ExLine* BodyTemplate::getLastReferenceByName(const std::string& name) const {
+    if (references_.empty()) return nullptr;
     // for (intptr_t i = intptr_t(lines_.size()) - 1; i >= 0; i--) {
     //     if (lines_[i]->checkName(name)) return (lines_[i]);
     // }
 
-    for (auto l = lines_.rbegin(); l != lines_.rend(); l++) {
+    for (auto l = references_.rbegin(); l != references_.rend(); l++) {
         if ((*l)->checkName(name)) return *l;
     }
     print_error("unknown symbol " + name);
@@ -118,7 +118,7 @@ std::string BodyTemplate::print(const std::string& tab, bool dst_ena, bool hide_
 
     context.setName(getName());
 
-    for (auto& value : lines_) {
+    for (auto& value : references_) {
         if (value->isArg()) {
             context.createArg(value);
         } else {
@@ -161,7 +161,7 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> arg
     stack<ExValue_ifs*> visitor_stack;
 
     auto arg = args.begin();
-    for (const auto& value : lines_) {
+    for (const auto& value : references_) {
         if (value->isArg()) {
             auto line = isTopBody()             ? (ExLine*)(*arg)
                         : is_recursive_function ? new ExRecursiveArgument(value->getName(), (*arg)->type_)
@@ -210,7 +210,7 @@ untyped_t BodyTemplate::genConstRecursiveByTemplate(stack<ExValue_ifs*>& args) c
 
     auto arg = args.begin();
 
-    for (auto& line : lines_) {
+    for (auto& line : references_) {
         if (line->isArg()) {
             line->setTempTypeAndBinaryValue(*arg++);
             context.addArg(line);

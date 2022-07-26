@@ -53,7 +53,7 @@ class BodyTemplate {
 
     int getArgCount() const { return arg_count_; }
 
-    ExLine* getLastLineFromName(const std::string& name) const;
+    ExLine* getLastReferenceByName(const std::string& name) const;
 
     const std::string& getName() const { return name_; }
 
@@ -100,7 +100,7 @@ class BodyTemplate {
     int arg_count_ = 0;
 
     stack<ExValue_ifs*> var_stack_;
-    stack<ExLine*> lines_;
+    stack<ExLine*> references_;
     stack<ExValue_ifs*> return_stack_;
 
     BodyTemplate* parent_body_template_ = nullptr;

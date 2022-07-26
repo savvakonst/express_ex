@@ -45,14 +45,6 @@ ConvolveOperation::ConvolveOperation(ExValue_ifs* large_arr, ExValue_ifs* small_
           large_arr->type_, TypeEn::unknown_jty, large_arr->ds_ty_,
           isLargeArr(large_arr) ? large_arr->getLength() : maxInt(large_arr->getLength(), small_arr->getLength()),
           OpCodeEn::convolve) {
-    // TODO remove comment
-    //  commonSetup(OpCodeEn::convolve, maxDSVar(large_arr, small_arr));
-    //  type_ = large_arr->getType();
-    //   if (ds_ty_ == DataStructureTypeEn::kLargeArr) length_ = large_arr->getLength();
-    //   else length_ = maxInt(large_arr->getLength(), small_arr->getLength());
-    //  length_ = isLargeArr(large_arr) ? large_arr->getLength() : maxInt(large_arr->getLength(),
-    //  small_arr->getLength());
-
 
     // if (large_arr->ds_ty_ < small_arr->ds_ty_)
     //     print_error(

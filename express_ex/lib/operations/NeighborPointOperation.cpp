@@ -18,12 +18,12 @@ ExValue_ifs *newNeighborPointOperation(GarbageContainer *garbage_container, ExVa
 }
 
 ExValue_ifs *newNeighborPointOperation(BodyTemplate *body_template) {
-    ExValue_ifs *arg_b = body_template->pop();
-    ExValue_ifs *arg_a = body_template->pop();
+    ExValue_ifs *shift_val = body_template->pop();
+    ExValue_ifs *array_val = body_template->pop();
 
-    body_template->is_operator_ = true ;
+    body_template->is_operator_ = true;
 
-    return newNeighborPointOperation(body_template->getGarbageContainer(), arg_a, arg_b);
+    return newNeighborPointOperation(body_template->getGarbageContainer(), array_val, shift_val);
 }
 
 NeighborPointOperation::NeighborPointOperation(ExValue_ifs *array, ExValue_ifs *shift)
@@ -60,10 +60,13 @@ void NeighborPointOperation::genBodyVisitExit(BodyGenContext *context) {
     GarbageContainer *garbage_container = context->getGarbageContainer();
     g_pos = pos_;
 
-    auto op2 = context->pop();
-    auto op1 = context->pop();
+    auto shift_val = context->pop();
+    auto array_val = context->pop();
 
-    auto ret = newNeighborPointOperation(garbage_container, op1, op2);
+    if (!(isConst(shift_val) && isInteger(shift_val)))
+        print_error("NeighborPointOperation argument is not const integer");
+
+    auto ret = newNeighborPointOperation(garbage_container, array_val, shift_val);
 
     context->push(ret);
 }
@@ -73,13 +76,15 @@ void NeighborPointOperation::calculateConstRecursive(RecursiveGenContext *contex
 }
 
 void NeighborPointOperation::printVisitExit(PrintBodyContext *context) {
-    auto op2 = context->pop();
-    auto op1 = context->pop();
-    context->push(checkBuffer("(" + op1 + ")[" + op2 + "]"));
+    auto shift_val = context->pop();
+    auto array_val = context->pop();
+    context->push(checkBuffer(" " + array_val + "[" + shift_val + "]"));
 }
 
 std::string NeighborPointOperation::printUint() {
     is_visited_ = false;
+
+
 
     auto name_op_a = operand_[0]->getAssignedVal(true)->getUniqueName();
     auto name_op_b = operand_[1]->getAssignedVal(true)->getUniqueName();
@@ -90,7 +95,13 @@ std::string NeighborPointOperation::printUint() {
 }
 
 void NeighborPointOperation::setupIR(IRGenerator &builder) {
-    print_IR_error("NeighborPointOperation::setupIR is not supported yet");
+    auto current_ptr = operand_[0]->getAssignedVal(true)->getIrValuePtr(builder, level_);
+
+    auto ptr =
+        builder.createPositionalInBoundsGep(current_ptr, operand_[1]->getIRValue(builder, level_), "neighbor_ptr");
+
+    IR_value_ = builder.createPositionalLoad(ptr, true, "neighbor");
+
     finishSetupIR(builder);
 }
 

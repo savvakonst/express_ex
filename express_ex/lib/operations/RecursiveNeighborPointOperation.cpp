@@ -4,8 +4,8 @@
 
 #include "RecursiveNeighborPointOperation.h"
 
-#include "ArithmeticOperation.h"
 #include "RecurrenceRelationTemplate.h"
+#include "TypeCastOperation.h"
 #include "jit/IR_generator.h"
 #include "operations/ExLine.h"
 #include "parser/bodyTemplate.h"
@@ -43,7 +43,7 @@ void RecursiveNeighborPointOperation::visitEnterSetupBuffer(stack<ExValue_ifs *>
 
     if (shift_parameter_ >= 0) print_error("NeighborPointOperation argument must be negative");
 
-    int64_t buffer_increment = shift_parameter_ - int64_t(left_buffer_length_);
+    int64_t buffer_increment = -shift_parameter_ - int64_t(left_buffer_length_);
 
     if (buffer_increment > 0) ref_->setBufferBordersLength(left_buffer_length_ + buffer_increment, 0);
 }
@@ -59,6 +59,9 @@ void RecursiveNeighborPointOperation::genBodyVisitExit(BodyGenContext *context) 
 
     auto type = context->getSourceBodyTemplate()->getRet().front()->type_;
     auto op_a = context->pop();
+
+    if (!(isConst(op_a) && isInteger(op_a))) print_error("NeighborPointOperation argument is not const integer");
+
 
 
     // TODO add check for different lengths, or best add add graph pass from root and made length mutable
@@ -91,16 +94,15 @@ std::string RecursiveNeighborPointOperation::printUint() {
 
 void RecursiveNeighborPointOperation::setupIR(IRGenerator &builder) {
     ref_->finishSetupIR(builder);
-    auto anchor_ptr = ref_->getAssignedVal(true)->getIrValuePtr(builder, level_);
+    auto current_ptr = ref_->getAssignedVal(true)->getIrValuePtr(builder, level_);
 
 
-    auto ptr = builder.createPositionalInBoundsGep(anchor_ptr, operand_[0]->getIRValue(builder, level_ + 1),
-                                                   "rec_neighbor_ptr");
+    auto ptr =
+        builder.createPositionalInBoundsGep(current_ptr, operand_[0]->getIRValue(builder, level_), "rec_neighbor_ptr");
 
     IR_value_ = builder.createPositionalLoad(ptr, true, "rec_neighbor");
 
     // finishSetupIR(builder);
-    // print_IR_error("NeighborPointOperation::setupIR is not supported yet");
 }
 
 void RecursiveNeighborPointOperation::calculate() {

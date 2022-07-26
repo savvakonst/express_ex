@@ -137,12 +137,14 @@ class OutputBuffer : public Buffer {
     void addParameter(ParameterIfs* parameter) { parameter_ = parameter; }
 
     int64_t init() override {
+        std::memset(ptr_, 0, (size_t)(sizeof_data_type_ * (length_ + left_offset_ + right_offset_)));
         parameter_->open(true);
         return 0;
     }
 
     int64_t update() override {
-        parameter_->write(ptr_, length_);
+        parameter_->write(left_ptr_, length_);
+        std::memcpy(ptr_, top_ptr_, (size_t)((left_offset_ + right_offset_) * sizeof_data_type_));
         return 0;
     }
 

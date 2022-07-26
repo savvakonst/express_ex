@@ -99,11 +99,12 @@ void TreeShapeListener::exitNeighborhoodPoint(EGrammarParser::NeighborhoodPointC
     const std::string id = ctx->ID()->getText();
 
     if (current_body_->getName() == id) {
-        current_body_->push( newRecursiveNeighborPointOperation(current_body_));
+        current_body_->push(newRecursiveNeighborPointOperation(current_body_));
         // TODO add recursive neighbor point operation
     } else {
-
-        current_body_->getLastLineFromName(ctx->ID()->getText());
+        auto ref = current_body_->getLastReferenceByName(ctx->ID()->getText());
+        current_body_->push(current_body_->getLastReferenceByName(ctx->ID()->getText()));
+        current_body_->push(newNeighborPointOperation(current_body_));
         //  TODO: neighbor point operation
     }
 }
@@ -190,7 +191,7 @@ void TreeShapeListener::exitPow(EGrammarParser::PowContext* ctx) {
 
 void TreeShapeListener::enterId(EGrammarParser::IdContext* ctx) {
     setPos(ctx);
-    current_body_->push(current_body_->getLastLineFromName(ctx->ID()->getText()));
+    current_body_->push(current_body_->getLastReferenceByName(ctx->ID()->getText()));
 }
 
 void TreeShapeListener::exitEquality(EGrammarParser::EqualityContext* ctx) {

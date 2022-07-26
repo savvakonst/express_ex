@@ -1,4 +1,6 @@
 x = param("#1_A01__1")
 y = param("#1_A01__2")
-z = x + double(y)**2
+y = x
+z = convolve(x, [0, 1, -1]) * 9 +  x  + convolve(x, [2,0, 1, -1,7 ]) + x
+#z = x + double(y)**2
 return double(z)

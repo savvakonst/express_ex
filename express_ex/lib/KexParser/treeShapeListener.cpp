@@ -103,7 +103,9 @@ void TreeShapeListener::exitNeighborhoodPoint(EGrammarParser::NeighborhoodPointC
         // TODO add recursive neighbor point operation
     } else {
         auto ref = current_body_->getLastReferenceByName(ctx->ID()->getText());
-        current_body_->push(current_body_->getLastReferenceByName(ctx->ID()->getText()));
+        if (ref == nullptr) print_error("name \"" + ctx->ID()->getText() + "\" doesn't exists");
+
+        current_body_->push(ref);
         current_body_->push(newNeighborPointOperation(current_body_));
         //  TODO: neighbor point operation
     }

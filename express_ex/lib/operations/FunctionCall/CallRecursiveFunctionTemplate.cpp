@@ -9,9 +9,9 @@
 
 
 CallRecursiveFunctionTemplate::CallRecursiveFunctionTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args)
-    : CallTemplate_ifs(body->getRet().front()->type_, TypeEn::unknown_jty, body->getRet().front()) {
+    : CallTemplate_ifs(body->getRet().front()->type_, TypeEn::unknown_jty, body->getRet().front(), args) {
     corresponding_body_template_ = body;
-    args_ = args;
+
 
     if (corresponding_body_template_->getRet().empty()) return;
     auto ret = corresponding_body_template_->getRet().front();
@@ -35,7 +35,7 @@ void CallRecursiveFunctionTemplate::genBodyVisitExit(BodyGenContext *context) {
         ExValue_ifs *var = context->pop();
         large_array |= isLargeArr(var);
         small_array |= isSmallArr(var);
-        a.push(var);
+        a.push_front(var);
     }
 
     if (large_array && small_array) {

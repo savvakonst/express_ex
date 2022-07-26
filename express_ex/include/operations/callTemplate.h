@@ -9,11 +9,12 @@
 
 class CallTemplate_ifs : public ExValue_ifs {
    public:
-    CallTemplate_ifs(TypeEn ty, TypeEn time_ty, DataStructureTypeEn ds_ty, length_t length)
-        : ExValue_ifs(ty, time_ty, ds_ty, length) {}
+    CallTemplate_ifs(TypeEn ty, TypeEn time_ty, DataStructureTypeEn ds_ty, length_t length,
+                     const stack<ExValue_ifs*>& args)
+        : ExValue_ifs(ty, time_ty, ds_ty, length), args_(args) {}
 
-    CallTemplate_ifs(TypeEn ty, TypeEn time_ty, const ExValue_ifs* var)
-        : ExValue_ifs(ty, time_ty, DataStructureTypeEn::kVariable, var->getLength()) {}
+    CallTemplate_ifs(TypeEn ty, TypeEn time_ty, const ExValue_ifs* var, const stack<ExValue_ifs*>& args)
+        : ExValue_ifs(ty, time_ty, DataStructureTypeEn::kVariable, var->getLength()), args_(args) {}
 
     ~CallTemplate_ifs() override = default;
 
@@ -65,6 +66,27 @@ class CallTemplate_ifs : public ExValue_ifs {
     stack<ExValue_ifs*> args_;
 };
 
+/**
+ *
+ *
+ */
+class CallTemplate : public CallTemplate_ifs {
+   public:
+    explicit CallTemplate(BodyTemplate* body, const stack<ExValue_ifs*>& args = {});
+
+    ~CallTemplate() override = default;
+
+    void genBodyVisitExit(BodyGenContext* context) override;
+
+    void calculateConstRecursive(RecursiveGenContext* context) override;
+
+    NodeTypeEn getNodeType() const override { return NodeTypeEn::kCall; }
+};
+
+/**
+ *
+ *
+ */
 class CallRecursiveFunctionTemplate : public CallTemplate_ifs {
    public:
     explicit CallRecursiveFunctionTemplate(BodyTemplate* body, const stack<ExValue_ifs*>& args = {});
@@ -78,15 +100,15 @@ class CallRecursiveFunctionTemplate : public CallTemplate_ifs {
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kCall; }
 };
 
-
-
+/**
+ *
+ *
+ */
 class TailCallDirectiveTemplate : public CallTemplate_ifs {
    public:
     explicit TailCallDirectiveTemplate(const stack<ExValue_ifs*>& args)
         // TODO try with DataStructureTypeEn::kVariable
-        : CallTemplate_ifs(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
-        args_ = args;
-    }
+        : CallTemplate_ifs(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1, args) {}
 
     ~TailCallDirectiveTemplate() override = default;
 
@@ -100,18 +122,5 @@ class TailCallDirectiveTemplate : public CallTemplate_ifs {
 };
 
 
-
-class CallTemplate : public CallTemplate_ifs {
-   public:
-    explicit CallTemplate(BodyTemplate* body, const stack<ExValue_ifs*>& args = {});
-
-    ~CallTemplate() override = default;
-
-    void genBodyVisitExit(BodyGenContext* context) override;
-
-    void calculateConstRecursive(RecursiveGenContext* context) override;
-
-    NodeTypeEn getNodeType() const override { return NodeTypeEn::kCall; }
-};
 
 #endif

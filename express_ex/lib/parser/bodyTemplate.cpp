@@ -67,7 +67,7 @@ std::map<std::string, std::string> BodyTemplate::getParameterLinkNames(bool hide
 void BodyTemplate::addCall(BodyTemplate* body) {
     stack<ExValue_ifs*> args;
 
-    for (int i = body->getArgCount() - 1; i >= 0; i--) {
+    for (int i = body->getArgCount(); i > 0; i--) {
         args.push_front(pop());
     }
 
@@ -78,17 +78,17 @@ void BodyTemplate::addCall(BodyTemplate* body) {
 }
 
 void BodyTemplate::addTailCall() {
-    stack<ExValue_ifs*> a;
+    stack<ExValue_ifs*> args;
 
-    for (int i = this->getArgCount() - 1; i >= 0; i--) {
-        a.push_front(pop());
+    for (int i = this->getArgCount(); i > 0; i--) {
+        args.push_front(pop());
     }
 
     if (is_tail_callable_) print_error("second recursive call");
 
     is_tail_callable_ = true;
     // new TailCallDirective(a);
-    push(garbage_container_->add(new TailCallDirectiveTemplate(a)));
+    push(garbage_container_->add(new TailCallDirectiveTemplate(args)));
 }
 
 ExLine* BodyTemplate::getLastReferenceByName(const std::string& name) const {

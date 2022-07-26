@@ -10,9 +10,8 @@
 
 
 CallTemplate::CallTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args)
-    : CallTemplate_ifs(body->getRet().front()->type_, TypeEn::unknown_jty, body->getRet().front()) {
+    : CallTemplate_ifs(body->getRet().front()->type_, TypeEn::unknown_jty, body->getRet().front(), args) {
     corresponding_body_template_ = body;
-    args_ = args;
 
     if (corresponding_body_template_->getRet().empty()) return;
     auto ret = corresponding_body_template_->getRet().front();
@@ -30,7 +29,7 @@ CallTemplate::CallTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args)
 
 void CallTemplate::genBodyVisitExit(BodyGenContext *context) {
     stack<ExValue_ifs *> a;
-    for (auto &i : args_) a.push(context->pop());
+    for (auto &i : args_) a.push_front(context->pop());
 
     Body *body =
         corresponding_body_template_->genBodyByTemplate(context->current_body_, a, context->is_recursive_function_);

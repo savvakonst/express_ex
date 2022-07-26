@@ -17,21 +17,23 @@ function encapsulate(ref, a, i):
     function loop_example(ref, a, i):
         return (i>10)? a :loop_example((ref),double(a+ref),i+1)
     end
-    return loop_example(ref, a, i)
+    return loop_example(ref, a*2, i)
 end
 
 
 function loop_const(ref, a, i):
-    return (i>10)? a : loop_const((ref), a+ref , i+1)
+    return (i >= 10)? a : loop_const((ref), a+ref , i+1)
 end
 
 
-#h = loop_const( 6, 4, 1)
+#
 
-x = x**2
+#x = x**2
 
-z = convolve(x, [0, 1, -1]) * 9 +  x  + convolve(x, [2,0, 1, -1,7 ]) + x
-#z = encapsulate( x, x, 10 * 7)
+#z = convolve(x, [0, 1, -1]) * 9 +  x  + convolve(x, [2,0, 1, -1,7 ]) + x
+
+h = loop_const( 6, 4, 10)
+z = encapsulate( x, x**2, 10 * 7)
 
 
 #function loop_example(arg_1, arg_2):

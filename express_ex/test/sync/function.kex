@@ -14,12 +14,10 @@ x = param("#1_A01__1")
 
 
 function add(arg_1, arg_2):
-
-
-    return convolve(arg_1,[1,2,3,4,5]) * convolve(arg_2,[1,2,5])
+    return arg_1 * 1 + arg_2 * 2 #convolve(arg_1,[1,2,3,4,5]) * convolve(arg_2,[1,2,5])
 end
 
-z = add(x+5, x*2)
+z = add(x+1, x+2)
 
 
 return double(z)

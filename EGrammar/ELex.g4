@@ -23,10 +23,11 @@ EQ :      '==';
 NEQ :     '!=';
 LESS_ :    '<' ;
 MORE_ :    '>' ;
+LESSEQ :  '<=';
+MOREEQ :  '>=';
 LSH :     '<<';
 RSH :     '>>';
-LESSEQ :  '<=';
-MOREEQ :  '=>';
+
 
 BITWISE_AND : '&';
 BITWISE_OR : '|';

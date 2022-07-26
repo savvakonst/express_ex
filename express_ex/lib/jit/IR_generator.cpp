@@ -134,7 +134,7 @@ llvm::Value* IRGenerator::createComparison(llvm::Value* a_operand, llvm::Value* 
         ret = CreateICmpSLT(a_operand, b_operand, name);
         break;
     case OpCodeEn::sle:
-        ret = CreateICmpSLT(a_operand, b_operand, name);
+        ret = CreateICmpSLE(a_operand, b_operand, name);
         break;
 
     case OpCodeEn::oeq:

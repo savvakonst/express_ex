@@ -9,9 +9,8 @@
 /// //////////////////////////////////////////////////////////////////////////////////////////////////
 
 Call::Call(Body* body, const stack<ExValue_ifs*>& args)
-    : CallI_ifs(body->getRet().front()->type_, TypeEn::unknown_jty, body->getRet().front()) {
+    : CallI_ifs(body->getRet().front()->type_, TypeEn::unknown_jty, body->getRet().front(), args) {
     body_ = body;
-    args_ = args;
 
     if (body_->getRet().empty()) return;
     auto ret = body_->getRet().front();

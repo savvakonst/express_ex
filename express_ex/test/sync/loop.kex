@@ -34,8 +34,8 @@ end
 
 
 
-h = 10 #loop_const( 6, 4, 10)
-z = encapsulate( x, x**2, h )
+h = loop_const( 6, 4, 11)
+z = encapsulate( x, x**2, h+1 )
 
 
 #function loop_example(arg_1, arg_2):

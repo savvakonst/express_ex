@@ -17,9 +17,8 @@ static ExValue_ifs* getTempVal(const stack<ExValue_ifs*>& args) {
 }
 
 CallRecursiveFunction::CallRecursiveFunction(Body* body, const stack<ExValue_ifs*>& args)
-    : CallI_ifs(body->getRet().front()->type_, TypeEn::unknown_jty, getTempVal(args)) {
+    : CallI_ifs(body->getRet().front()->type_, TypeEn::unknown_jty, getTempVal(args), args) {
     body_ = body;
-    args_ = args;
 
     if (body_->getRet().empty()) return;
 
@@ -72,8 +71,8 @@ void CallRecursiveFunction::reverseTraversalVisitEnter(stack<ExValue_ifs*>* visi
 void CallRecursiveFunction::setupIR(IRGenerator& builder) {
     llvm::Function* function = body_->getOrGenIRPureFunction(builder);
     std::vector<llvm::Value*> arg_list;
-    for (auto i : args_) {
-        arg_list.push_back(i->getAssignedVal(true)->getIRValue(builder, level_));
+    for (auto arg = args_.rbegin(); arg != args_.rend(); arg++) {
+        arg_list.push_back((*arg)->getAssignedVal(true)->getIRValue(builder, level_));
     }
     IR_value_ = builder.CreateCall(function, arg_list, "call_" + body_->getName());
 

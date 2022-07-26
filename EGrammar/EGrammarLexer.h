@@ -15,13 +15,13 @@ public:
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
     T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, T__19 = 20, 
-    T__20 = 21, T__21 = 22, T__22 = 23, T__23 = 24, LOG = 25, LOG10 = 26, 
-    COS = 27, SIN = 28, EXP = 29, C_FLOAT = 30, C_INT = 31, C_DOUBLE = 32, 
-    C_INT64 = 33, SPEC_SYMBOL = 34, MUL = 35, DIV = 36, ADD = 37, SUB = 38, 
-    EQ = 39, NEQ = 40, LESS_ = 41, MORE_ = 42, LSH = 43, RSH = 44, LESSEQ = 45, 
-    MOREEQ = 46, BITWISE_AND = 47, BITWISE_OR = 48, BITWISE_XOR = 49, ID = 50, 
-    INT64 = 51, INT = 52, DOUBLE = 53, FLOAT = 54, DoublePostfix = 55, FloatPostfix = 56, 
-    STRINGLITERAL = 57, COMMENT = 58, NEWLINE = 59, WS = 60
+    T__20 = 21, T__21 = 22, T__22 = 23, T__23 = 24, T__24 = 25, LOG = 26, 
+    LOG10 = 27, COS = 28, SIN = 29, EXP = 30, C_FLOAT = 31, C_INT = 32, 
+    C_DOUBLE = 33, C_INT64 = 34, SPEC_SYMBOL = 35, MUL = 36, DIV = 37, ADD = 38, 
+    SUB = 39, EQ = 40, NEQ = 41, LESS_ = 42, MORE_ = 43, LESSEQ = 44, MOREEQ = 45, 
+    LSH = 46, RSH = 47, BITWISE_AND = 48, BITWISE_OR = 49, BITWISE_XOR = 50, 
+    ID = 51, INT64 = 52, INT = 53, DOUBLE = 54, FLOAT = 55, DoublePostfix = 56, 
+    FloatPostfix = 57, STRINGLITERAL = 58, COMMENT = 59, NEWLINE = 60, WS = 61
   };
 
   explicit EGrammarLexer(antlr4::CharStream *input);

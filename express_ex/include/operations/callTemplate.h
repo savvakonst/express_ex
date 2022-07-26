@@ -34,8 +34,8 @@ class CallTemplate_ifs : public ExValue_ifs {
 
     void printVisitExit(PrintBodyContext* context) override {
         if (corresponding_body_template_) {
-            context->addVoid(corresponding_body_template_->print(context->tab_ + "  ", context->DST_ena_,
-                                                                 context->hide_unused_lines_));
+            context->addFunction(corresponding_body_template_->print(context->tab_ + "  ", context->DST_ena_,
+                                                                     context->hide_unused_lines_));
 
             context->push(corresponding_body_template_->getName() + "( " + printArgs(context) + ").ret." +
                           toString(type_));

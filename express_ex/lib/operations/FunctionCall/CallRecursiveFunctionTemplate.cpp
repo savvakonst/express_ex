@@ -17,10 +17,7 @@ CallRecursiveFunctionTemplate::CallRecursiveFunctionTemplate(BodyTemplate *body,
     auto ret = corresponding_body_template_->getRet().front();
 
     level_ = ret->getLevel();
-    // TODO remove it
-    // type_ = ret->getType();
-    // ds_ty_ = ret->getDSType();
-    // length_ = ret->getLength();
+
 
     if (isConst(ret)) {
         binary_value_ = ret->getBinaryValue();
@@ -82,7 +79,7 @@ void TailCallDirectiveTemplate::genBodyVisitExit(BodyGenContext *context) {
     for (auto &type : signature) {
         auto val = newTypeConvOp(context->getGarbageContainer(), type, context->pop());
         context->getGarbageContainer()->add(val);
-        a.push(val);
+        a.push_front(val);
     };
 
     context->push(context->getGarbageContainer()->add(new TailCallDirective(a)));

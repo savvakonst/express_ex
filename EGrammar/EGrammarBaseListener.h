@@ -79,6 +79,9 @@ public:
   virtual void enterCallRecConvolve(EGrammarParser::CallRecConvolveContext * /*ctx*/) override { }
   virtual void exitCallRecConvolve(EGrammarParser::CallRecConvolveContext * /*ctx*/) override { }
 
+  virtual void enterCallLinkedTypeCast(EGrammarParser::CallLinkedTypeCastContext * /*ctx*/) override { }
+  virtual void exitCallLinkedTypeCast(EGrammarParser::CallLinkedTypeCastContext * /*ctx*/) override { }
+
   virtual void enterSmallArrayDefinition(EGrammarParser::SmallArrayDefinitionContext * /*ctx*/) override { }
   virtual void exitSmallArrayDefinition(EGrammarParser::SmallArrayDefinitionContext * /*ctx*/) override { }
 

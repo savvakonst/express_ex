@@ -52,14 +52,14 @@ class PrintBodyContext {
 
     inline std::string pop() { return string_stack_.pop(); }
 
-    inline void addVoid(const std::string& var) { return void_definition_list_.push(var); }
+    inline void addFunction(const std::string& var) { return void_definition_list_.push(var); }
 
     inline std::string getResult() {
         std::ostringstream imploded;
         std::copy(void_definition_list_.begin(), void_definition_list_.end(),
                   std::ostream_iterator<std::string>(imploded, " \n"));
 
-        return tab_ + "\n" + name_ + imploded.str() + "\n" + result_;
+        return tab_ + "\n" + tab_ + "function " + name_ + "():" + imploded.str() + "\n" + result_ + "\n" + tab_ + "end";
     }
 
 

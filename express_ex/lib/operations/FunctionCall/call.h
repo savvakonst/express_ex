@@ -13,13 +13,17 @@ class Function;
 class IRGenerator;
 
 class CallI_ifs : public ExValue_ifs {
+   protected:
+    CallI_ifs(TypeEn ty, TypeEn time_ty, DataStructureTypeEn ds_ty, length_t length, const stack<ExValue_ifs*>& args)
+        : ExValue_ifs(ty, time_ty, ds_ty, length) {
+        args_ = args;
+        args_.reverse();
+    }
+
+    CallI_ifs(TypeEn ty, TypeEn time_ty, const ExValue_ifs* var, const stack<ExValue_ifs*>& args)
+        : CallI_ifs(ty, time_ty, var->ds_ty_, var->getLength(), args) {}
+
    public:
-    CallI_ifs(TypeEn ty, TypeEn time_ty, const ExValue_ifs* var)
-        : ExValue_ifs(ty, time_ty, var->ds_ty_, var->getLength()) {}
-
-    CallI_ifs(TypeEn ty, TypeEn time_ty, DataStructureTypeEn ds_ty, length_t length)
-        : ExValue_ifs(ty, time_ty, ds_ty, length) {}
-
     CallI_ifs() : ExValue_ifs() {}
     ~CallI_ifs() override = default;
 
@@ -32,7 +36,7 @@ class CallI_ifs : public ExValue_ifs {
 
     void printVisitExit(PrintBodyContext* context) override {
         if (body_) {
-            context->addVoid(body_->print(context->tab_ + "  ", context->DST_ena_, context->hide_unused_lines_));
+            context->addFunction(body_->print(context->tab_ + "  ", context->DST_ena_, context->hide_unused_lines_));
 
             context->push(body_->getName() + "( " + printArgs(context) + ").ret." + toString(type_));
             // is_visited_ = false;

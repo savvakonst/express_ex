@@ -22,7 +22,7 @@ end
 
 
 function loop_const(ref, a, i):
-    return (i >= 10)? a : loop_const((ref), a+ref , i+1)
+    return (i > 10)? a : loop_const((ref), a+ref , i+1)
 end
 
 
@@ -32,8 +32,10 @@ end
 
 #z = convolve(x, [0, 1, -1]) * 9 +  x  + convolve(x, [2,0, 1, -1,7 ]) + x
 
-h = loop_const( 6, 4, 10)
-z = encapsulate( x, x**2, 10 * 7)
+
+
+h = 10 #loop_const( 6, 4, 10)
+z = encapsulate( x, x**2, h )
 
 
 #function loop_example(arg_1, arg_2):

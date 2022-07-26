@@ -187,8 +187,7 @@ Body* BodyTemplate::genBodyByTemplate(Body* parent_body, stack<ExValue_ifs*> arg
 
 
     for (const auto& value : return_stack_) {
-        visitor_stack.push(value->getAssignedVal());
-
+        visitor_stack.push(value);
         do {
             auto var = visitor_stack.pop();
             if (var->isVisited()) {

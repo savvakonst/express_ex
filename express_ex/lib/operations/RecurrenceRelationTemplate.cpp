@@ -54,6 +54,8 @@ void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
     stack<std::pair<ExValue_ifs *, bool>> path_stack;
     stack<ExValue_ifs *> temp_stack;
     stack<ExValue_ifs *> visitor_stack;
+
+
     auto operand = context->pop();
     visitor_stack.push(operand);
 
@@ -78,8 +80,9 @@ void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
             for (auto i : path_stack) values_to_change_level.push(i.first);
             values_to_change_level.push(var);
             temp_stack.push(var);
-        } else if (var->getNodeType() == NodeTypeEn::kArgument) temp_stack.push(var);
-        else var->visitEnter(&temp_stack, false);
+        } else if (var->getNodeType() == NodeTypeEn::kArgument) {
+            temp_stack.push(var);
+        } else var->visitEnter(&temp_stack, false);
 
         bool is_operator = isOperator(temp_stack);
 

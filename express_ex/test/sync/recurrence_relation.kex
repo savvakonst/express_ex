@@ -29,9 +29,9 @@ function rms(arg):
 
     intermediate = recurrence_relation( arg *1  )**0.5
 
-    res = cond ? intermediate[-100] *num[-100] : rms[-1]
+    #res = cond ? intermediate[-1] / num : rms[-1]
 
-    return double(res)
+    return double(intermediate)
 end
 
 

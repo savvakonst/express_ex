@@ -19,7 +19,7 @@ ExValue_ifs* newIntegrateOperation(BodyTemplate* body_template) {
 
 
 IntegrateOperation::IntegrateOperation(ExValue_ifs* var)
-    : Operation_ifs(type_, TypeEn::unknown_jty, OpCodeEn::integrate, var) {
+    : Operation_ifs(var->type_, var->time_type_, OpCodeEn::integrate, var) {
     // TODO: to remove
     // commonSetup(OpCodeEn::integrate, var);
     // type_ = var->getType();

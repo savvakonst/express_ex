@@ -110,30 +110,6 @@ def genereteDataByFile(name):
     f.close()
 
 
-def execFile(name):
-    if os.path.exists("test_tasks.py"):
-        import test_tasks
-        if hasattr(test_tasks, os.path.splitext(name)[0]):
-            exFunc = getattr(test_tasks, 'bar')
-            return exFunc()
-
-    f = open(name, "r", encoding='utf-8')
-    lines = []
-    for i in f.read().split("\n"):
-        s = i + "\n"
-        m = re.search(r'([^=]*)=([^\?]*)\?([^:]*):([^\n]*)\n', s)
-        if m:
-            s = m.group(1) + "= np.choose(" + m.group(2) + ", [" + m.group(4) + "," + m.group(3) + "])\n"
-        lines.append(s)
-
-    code = "def exFunc():\n\t" + "\t".join(lines)
-    print(code)
-    f.close()
-
-    exec(code, globals())
-    return exFunc()
-
-
 cos = np.cos
 sin = np.sin
 

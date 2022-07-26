@@ -49,15 +49,18 @@ void Operation_ifs::finishSetupIR(IRGenerator& builder) {
 
 
         auto last_block = builder.GetInsertBlock();
-        if(last_insert_block_ == last_block)
-            return ;
+
+        if (last_insert_block_ == last_block) return;
+
         last_insert_block_ = last_block;
 
-        builder.setStoreInsertPoint();
-
+        builder.setLoadInsertPoint();
         IR_buffer_ptr_ =
             builder.CreateInBoundsGEP(IR_buffer_base_ptr_, builder.getCurrentOffsetValue(), "offset_op_incr_");
-        builder.createPositionalStore(IR_value_, IR_buffer_ptr_);
+
+
+
+        if (IR_value_) builder.createPositionalStore(IR_value_, IR_buffer_ptr_);
 
         builder.SetInsertPoint(last_block);
     }

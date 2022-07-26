@@ -3,7 +3,7 @@
 x = param("#1_A01__1")
 
 function recurrence_relation(a):
-    c = recurrence_relation[-1] + 0.3 * recurrence_relation[-10] + a
+    c = recurrence_relation[-1] + a
     return double(c)
 end
 

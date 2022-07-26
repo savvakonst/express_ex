@@ -91,9 +91,16 @@ std::string RecursiveNeighborPointOperation::printUint() {
 
 void RecursiveNeighborPointOperation::setupIR(IRGenerator &builder) {
     ref_->finishSetupIR(builder);
+    auto anchor_ptr = ref_->getAssignedVal(true)->getIrValuePtr(builder, level_);
 
-    //finishSetupIR(builder);
-    print_IR_error("NeighborPointOperation::setupIR is not supported yet");
+
+    auto ptr = builder.createPositionalInBoundsGep(anchor_ptr, operand_[0]->getIRValue(builder, level_ + 1),
+                                                   "rec_neighbor_ptr");
+
+    IR_value_ = builder.createPositionalLoad(ptr, true, "rec_neighbor");
+
+    // finishSetupIR(builder);
+    // print_IR_error("NeighborPointOperation::setupIR is not supported yet");
 }
 
 void RecursiveNeighborPointOperation::calculate() {

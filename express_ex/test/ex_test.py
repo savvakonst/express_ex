@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 from ex_lib import *
+from test_exec import *
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 
@@ -8,7 +9,7 @@ parser = argparse.ArgumentParser()
 
 # parser.add_argument('--executable', help='path to express_ex_app', required=True, type=str)
 
-parser.add_argument('--generate', help='if this option is used it will generate dataset',  type=bool)
+parser.add_argument('--generate', help='if this option is used it will generate dataset', type=bool)
 parser.add_argument('--db', help='database path', required=True, type=str)
 parser.add_argument('-i', help='input *.kex file',
                     required=True, type=str)

@@ -27,7 +27,11 @@ end
 
 
 #h = loop_const( 6, 4, 1)
-z = encapsulate( x, x, 10*7)
+
+x = x**2
+
+z = convolve(x, [0, 1, -1]) * 9 +  x  + convolve(x, [2,0, 1, -1,7 ]) + x
+#z = encapsulate( x, x, 10 * 7)
 
 
 #function loop_example(arg_1, arg_2):

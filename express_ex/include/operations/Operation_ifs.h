@@ -128,6 +128,10 @@ class Operation_ifs : public ExValue_ifs {
     /**
      * must be called in the end of setupIR(), external call also possible,
      * in particle by RecursiveNeighborPointOperation::setupIR()
+     *
+     * @note This is not an obvious behaviour, however finishSetupIR() tries to store IR_value_ to IR_buffer_ptr_ but
+     * if IR_value_ == nullptr this step is skipped and the developer is responsible for this step.
+     *
      * @param builder
      */
     void finishSetupIR(IRGenerator& builder);

@@ -34,10 +34,7 @@ bool ExValue_ifs::isVisited() const { return is_visited_; }
 
 void ExValue_ifs::calculate() { print_SA_error("ExValue_ifs::calculate "); }
 
-/// Implementation of Value, Operation, Line and Call  members,
-/// which provide llvm IR generation.
-///
-///
+
 llvm::Value* ExValue_ifs::getIRValue(IRGenerator& builder, int64_t parent_level) {
     llvm::Value* ret = nullptr;
     if (isBuffered() && (parent_level != level_)) {

@@ -121,7 +121,16 @@ std::string RecurrenceRelationTemplate::printUint() {
     return getUniqueName() + " = rec_relation(" + name_op_a + ")";
 }
 
-void RecurrenceRelationTemplate::setupIR(IRGenerator &builder) { finishSetupIR(builder); }
+void RecurrenceRelationTemplate::setupIR(IRGenerator &builder) {
+    IR_value_ = operand_[0]->getAssignedVal(true)->getIRValue(builder, level_);
+    finishSetupIR(builder);
+
+    /** this is not an obvious behaviour, however finishSetupIR() tries to store IR_value_ to IR_buffer_ptr_ but
+     * if IR_value_ == nullptr this step is skipped and the developer is responsible for this step.
+     */
+    if (IR_value_) builder.createPositionalStore(IR_value_, IR_buffer_ptr_);
+    // print_IR_error("RecurrenceRelationTemplate::setupIR is not supported yet");
+}
 
 void RecurrenceRelationTemplate::calculate() {
     // Operation_ifs::calculate();

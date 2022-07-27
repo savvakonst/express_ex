@@ -6,8 +6,7 @@ x = param("#1_A01__2")
 
 
 function rms(arg):
-    function recurrence_relation( a):
-       cond = (a[ 0] < 0) * (a[-1] > 0)
+    function recurrence_relation( a , cond):
        increment = ( a[0] * a[0] ) # if ( a[0] * a[0] ) replace with ( a* a) issue occur
        c = recurrence_relation[-1] + increment
        res = cond ? increment : c
@@ -15,19 +14,18 @@ function rms(arg):
     end
 
 
-    function get_num( a ):
-       cond = (a[ 0] < 0) * (a[-1] > 0)
-       c = get_num[-1] + 0 * a[0] + 1
+    function get_num( a , cond ):
+       c = get_num[-1] + 0 * a + 1
        res = cond ? 1 : c
        return double( res )
     end
 
-    num = get_num(arg * 1)
+
     cond = (arg[ 0] < 0) * (arg[-1] > 0)
 
 
-
-    intermediate = recurrence_relation(double(arg * 1))
+    num = get_num(arg, cond)
+    intermediate = recurrence_relation(arg, cond)
 
     res = cond ? (intermediate[-1] / num[-1] )** 0.5 : rms[-1]
 

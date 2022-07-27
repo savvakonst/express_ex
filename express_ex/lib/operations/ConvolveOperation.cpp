@@ -35,14 +35,13 @@ ExValue_ifs* newConvolveOperation(BodyTemplate* body_template, OpCodeEn u_type_o
     ExValue_ifs* arg_b = body_template->pop();
     ExValue_ifs* arg_a = body_template->pop();
     body_template->is_operator_ = true;
-    return newConvolveOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, arg_a, arg_b, shift,
-                                u_type_op);
+    return newConvolveOperation(body_template->getGarbageContainer(), TypeEn::unknown, arg_a, arg_b, shift, u_type_op);
 }
 
 
 ConvolveOperation::ConvolveOperation(ExValue_ifs* large_arr, ExValue_ifs* small_arr, int64_t shift)
     : Operation_ifs(
-          large_arr->type_, TypeEn::unknown_jty, large_arr->ds_ty_,
+          large_arr->type_, TypeEn::unknown, large_arr->ds_ty_,
           isLargeArr(large_arr) ? large_arr->getLength() : maxInt(large_arr->getLength(), small_arr->getLength()),
           OpCodeEn::convolve) {
     // if (large_arr->ds_ty_ < small_arr->ds_ty_)

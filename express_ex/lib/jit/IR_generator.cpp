@@ -31,28 +31,28 @@ llvm::Value* IRGenerator::createConst(int64_t& binary_value, TypeEn target_ty, c
 
     auto& context = getContext();
     switch (target_ty) {
-    case TypeEn::int1_jty:
+    case TypeEn::i1:
         ret = getInt1(*((bool*)(&binary_value)));
         break;
-    case TypeEn::int8_jty:
+    case TypeEn::i8:
         ret = getInt8(*((int8_t*)(&binary_value)));
         break;
-    case TypeEn::int16_jty:
+    case TypeEn::i16:
         ret = getInt16(*((int16_t*)(&binary_value)));
         break;
-    case TypeEn::int32_jty:
+    case TypeEn::i32:
         ret = getInt32(*((int32_t*)(&binary_value)));
         break;
-    case TypeEn::int64_jty:
+    case TypeEn::i64:
         ret = getInt64(*((int64_t*)(&binary_value)));
         break;
-    case TypeEn::float_jty:
+    case TypeEn::f32:
         ret = llvm::ConstantFP::get(llvm::Type::getFloatTy(context), *((float*)(&binary_value)));
         break;
-    case TypeEn::double_jty:
+    case TypeEn::f64:
         ret = llvm::ConstantFP::get(llvm::Type::getDoubleTy(context), *((double*)(&binary_value)));
         break;
-    case TypeEn::unknown_jty:
+    case TypeEn::unknown:
         ret = nullptr;
         break;
     default:
@@ -410,28 +410,28 @@ llvm::Type* IRGenerator::getLLVMType(TypeEn target_ty) {
     llvm::Type* ret = nullptr;
     // this->SetInsertPoint
     switch (target_ty) {
-    case TypeEn::int1_jty:
+    case TypeEn::i1:
         ret = getInt1Ty();
         break;
-    case TypeEn::int8_jty:
+    case TypeEn::i8:
         ret = getInt8Ty();
         break;
-    case TypeEn::int16_jty:
+    case TypeEn::i16:
         ret = getInt16Ty();
         break;
-    case TypeEn::int32_jty:
+    case TypeEn::i32:
         ret = getInt32Ty();
         break;
-    case TypeEn::int64_jty:
+    case TypeEn::i64:
         ret = getInt64Ty();
         break;
-    case TypeEn::float_jty:
+    case TypeEn::f32:
         ret = getFloatTy();
         break;
-    case TypeEn::double_jty:
+    case TypeEn::f64:
         ret = getDoubleTy();
         break;
-    case TypeEn::unknown_jty:
+    case TypeEn::unknown:
         ret = nullptr;
         break;
     default:

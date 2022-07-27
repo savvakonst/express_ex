@@ -35,7 +35,8 @@ end
 
 
 h = loop_const( 6, 4, 11)
-z = encapsulate( x, x**2, h+1 )
+r = h
+z = encapsulate( x, x**2, r )
 
 
 #function loop_example(arg_1, arg_2):

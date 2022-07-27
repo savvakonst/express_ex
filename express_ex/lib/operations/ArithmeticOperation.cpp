@@ -56,19 +56,19 @@ ExValue_ifs* newArithmeticOperation(GarbageContainer* garbage_container, TypeEn 
 ExValue_ifs* newArithmeticOperation(BodyTemplate* body_template, OpCodeEn u_type_op) {
     auto* arg_b = body_template->pop();
     auto* arg_a = body_template->pop();
-    return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, arg_a, arg_b, u_type_op);
+    return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::unknown, arg_a, arg_b, u_type_op);
 }
 
 ExValue_ifs* newInversionOperation(BodyTemplate* body_template) {
     ExValue_ifs* arg = body_template->pop();
-    ExValue_ifs* zero = body_template->getGarbageContainer()->add(new ExConstValue("0", TypeEn::int32_jty));
-    return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, zero, arg, OpCodeEn::sub);
+    ExValue_ifs* zero = body_template->getGarbageContainer()->add(new ExConstValue("0", TypeEn::i32));
+    return newArithmeticOperation(body_template->getGarbageContainer(), TypeEn::unknown, zero, arg, OpCodeEn::sub);
 }
 
 
 
 ArithmeticOperation::ArithmeticOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b)
-    : Operation_ifs(maxTypeVar(var_a, var_b)->type_, TypeEn::unknown_jty, maxDataStructType(var_a, var_b),
+    : Operation_ifs(maxTypeVar(var_a, var_b)->type_, TypeEn::unknown, maxDataStructType(var_a, var_b),
                     maxLength(var_a, var_b), op) {
     level_ = maxLevelVar(var_a, var_b)->getLevel();
 

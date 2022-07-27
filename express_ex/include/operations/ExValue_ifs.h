@@ -55,7 +55,7 @@ class ExValue_ifs : public SmallArr {
     uint64_t getLeftBufferLen() const { return left_buffer_length_; }
     uint64_t getRightBufferLen() const { return right_buffer_length_; }
 
-    bool isSync() const { return time_type_ == TypeEn::unknown_jty; }
+    bool isSync() const { return time_type_ == TypeEn::unknown; }
     TypeEn getTempType() const { return isUnknownTy(type_) ? temp_type_ : type_; }
 
     ParameterIfs* getParameter() const { return parameter_; }
@@ -116,14 +116,14 @@ class ExValue_ifs : public SmallArr {
     const DataStructureTypeEn ds_ty_ = DataStructureTypeEn::kConstant;
 
 
-    const TypeEn time_type_ = TypeEn::unknown_jty;
-    const TypeEn type_ = TypeEn::unknown_jty;
+    const TypeEn time_type_ = TypeEn::unknown;
+    const TypeEn type_ = TypeEn::unknown;
 
     /**
      * it is used to const value calculation
      * inside functions with recursive tail call
      */
-    TypeEn temp_type_ = TypeEn::unknown_jty;
+    TypeEn temp_type_ = TypeEn::unknown;
 
 
    protected:

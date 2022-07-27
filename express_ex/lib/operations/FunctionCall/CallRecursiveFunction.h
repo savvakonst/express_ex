@@ -26,7 +26,7 @@ class CallRecursiveFunction : public CallI_ifs {
 class TailCallDirective : public CallI_ifs {
    public:
     explicit TailCallDirective(const stack<ExValue_ifs*>& args)
-        : CallI_ifs(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1, args) {}
+        : CallI_ifs(TypeEn::unknown, TypeEn::unknown, DataStructureTypeEn::kConstant, 1, args) {}
 
     ~TailCallDirective() override = default;
 

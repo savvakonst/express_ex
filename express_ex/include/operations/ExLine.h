@@ -12,7 +12,7 @@ class ExLine : public ExValue_ifs {
    public:
     ExLine(const std::string& name, ExValue_ifs* var)
         : ExValue_ifs(var->type_,                  //
-                      TypeEn::unknown_jty,         //
+                      TypeEn::unknown,             //
                       var->ds_ty_,                 //
                       length_t(var->getLength()))  //
     {
@@ -83,12 +83,14 @@ class ExArgument : public ExLine {
     ExArgument(const std::string& name, ExValue_ifs* var) : ExLine(name, var) {}
 
     explicit ExArgument(const std::string& name)
-        : ExLine(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1) {
+        : ExLine(TypeEn::unknown, TypeEn::unknown, DataStructureTypeEn::kConstant, 1) {
         name_ = name;
     }
     ~ExArgument() override = default;
 
-    ExValue_ifs* getAssignedVal(bool deep = false) override { return assigned_val_ ? ExLine::getAssignedVal() : this; }
+    ExValue_ifs* getAssignedVal(bool deep = false) override {
+        return assigned_val_ ? ExLine::getAssignedVal(deep) : this;
+    }
     NodeTypeEn getNodeType() const override { return NodeTypeEn::kArgument; }
     bool isArg() const override { return true; }
 
@@ -108,7 +110,7 @@ class ExRecursiveArgument : public ExArgument {
    public:
     ExRecursiveArgument(const std::string& name, TypeEn ty)
         : ExArgument(ty,                              //
-                     TypeEn::unknown_jty,             //
+                     TypeEn::unknown,                 //
                      DataStructureTypeEn::kVariable,  //
                      length_t(1))                     //
     {
@@ -135,10 +137,10 @@ class ExRecursiveArgument : public ExArgument {
 class ExParam : public ExLine {
    public:
     ExParam(const std::string& name, const std::string& link_name, DataStructureTypeEn dsty)
-        : ExLine(TypeEn::unknown_jty,  //
-                 TypeEn::unknown_jty,  //
-                 dsty,                 //
-                 1)                    //
+        : ExLine(TypeEn::unknown,  //
+                 TypeEn::unknown,  //
+                 dsty,             //
+                 1)                //
     {
         name_ = name;
         link_name_ = link_name;
@@ -146,7 +148,7 @@ class ExParam : public ExLine {
 
     ExParam(const std::string& name, ParameterIfs* parameter)
         : ExLine(PRMType2JITType(parameter->getPrmType()),  //
-                 TypeEn::unknown_jty,                       //
+                 TypeEn::unknown,                           //
                  DataStructureTypeEn::kLargeArr,            //
                  parameter->getVirtualSize()) {
         name_ = name;

@@ -52,7 +52,7 @@ ExValue_ifs* newSmallArrayDefOp(BodyTemplate* body_template, size_t arg_count) {
 SmallArrayDefOperation::SmallArrayDefOperation(double start, double stop, ExValue_ifs::length_t length,
                                                const std::vector<ExValue_ifs*>& args, TypeEn target_type)
     : Operation_ifs(target_type,                     //
-                    TypeEn::unknown_jty,             //
+                    TypeEn::unknown,                 //
                     DataStructureTypeEn::kSmallArr,  //
                     length_t(args.size()),           //
                     OpCodeEn::smallArrayDef),        //
@@ -65,7 +65,7 @@ SmallArrayDefOperation::SmallArrayDefOperation(double start, double stop, ExValu
 
 SmallArrayDefOperation::SmallArrayDefOperation(const stack<ExValue_ifs*>& args, TypeEn target_type)
     : Operation_ifs(target_type,                     //
-                    TypeEn::unknown_jty,             //
+                    TypeEn::unknown,                 //
                     DataStructureTypeEn::kSmallArr,  //
                     length_t(args.size()),           //
                     OpCodeEn::smallArrayDef),        //
@@ -184,7 +184,7 @@ SmallArrayDefOperation* SmallArrayDefOperation::create(ExValue_ifs* arg1, ExValu
         auto start = ((ExConstValue*)arg1)->getDoubleValue();
         auto stop = ((ExConstValue*)arg2)->getDoubleValue();
 
-        auto type = TypeEn::double_jty;
+        auto type = TypeEn::f64;
         auto length = arg3->getBinaryValue();
         return new SmallArrayDefOperation(start, stop, length, {arg1}, type);
     } else {
@@ -199,7 +199,7 @@ SmallArrayDefOperation* SmallArrayDefOperation::create(ExValue_ifs* arg1, ExValu
         auto start = ((ExConstValue*)arg1)->getDoubleValue();
         auto stop = ((ExConstValue*)arg2)->getDoubleValue();
 
-        auto type = TypeEn::int64_jty;
+        auto type = TypeEn::i64;
         auto length = length_t(stop - start);
         return new SmallArrayDefOperation(start, stop, length, {arg1}, type);
     } else {
@@ -212,7 +212,7 @@ SmallArrayDefOperation* SmallArrayDefOperation::create(ExValue_ifs* arg1) {
     if (isConst(arg1) && isInteger(arg1)) {
         auto start = 0;
         auto stop = (double)arg1->getBinaryValue();
-        auto type = TypeEn::int64_jty;
+        auto type = TypeEn::i64;
         auto length = length_t(stop);
         return new SmallArrayDefOperation(start, stop, length, {arg1}, type);
     } else {
@@ -222,8 +222,7 @@ SmallArrayDefOperation* SmallArrayDefOperation::create(ExValue_ifs* arg1) {
 }
 
 SmallArrayDefOperation* SmallArrayDefOperation::create(OpCodeEn op, stack<ExValue_ifs*>& args, TypeEn target_type) {
-
-    std::vector varg(args.begin(),args.end());
+    std::vector varg(args.begin(), args.end());
     auto args_size = args.size();
 
     if (op == OpCodeEn::smallArrayDef) {

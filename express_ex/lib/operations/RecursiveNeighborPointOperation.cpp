@@ -26,12 +26,12 @@ ExValue_ifs *newRecursiveNeighborPointOperation(BodyTemplate *body_template) {
 
     body_template->is_operator_ = true;
     body_template->is_recurrence_relation_ = true;
-    return newRecursiveNeighborPointOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, arg_b);
+    return newRecursiveNeighborPointOperation(body_template->getGarbageContainer(), TypeEn::unknown, arg_b);
 }
 
 
 RecursiveNeighborPointOperation::RecursiveNeighborPointOperation(TypeEn target_type, ExValue_ifs *shift)
-    : Operation_ifs(target_type, TypeEn::unknown_jty, DataStructureTypeEn::kLargeArr, 1, OpCodeEn::none_op) {
+    : Operation_ifs(target_type, TypeEn::unknown, DataStructureTypeEn::kLargeArr, 1, OpCodeEn::none_op) {
     operand_.push_back(shift);
 }
 
@@ -98,7 +98,7 @@ void RecursiveNeighborPointOperation::setupIR(IRGenerator &builder) {
 
 
     auto ptr =
-        builder.createPositionalInBoundsGep(current_ptr, operand_[0]->getIRValue(builder, level_), "rec_neighbor_ptr");
+        builder.createPositionalInBoundsGep(current_ptr, operand_[0]->getAssignedVal(true)->getIRValue(builder, level_), "rec_neighbor_ptr");
 
     IR_value_ = builder.createPositionalLoad(ptr, true, "rec_neighbor");
 

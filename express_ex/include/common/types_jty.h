@@ -17,15 +17,15 @@ typedef int32_t (*Jit_Call_t)(char***, char* const*);
 
 enum class TypeEn
 {
-    int1_jty = 0,
-    int8_jty,
-    int16_jty,
-    int32_jty,
-    int64_jty,
-    float_jty = 16,
-    double_jty,
+    i1 = 0,
+    i8,
+    i16,
+    i32,
+    i64,
+    f32 = 16,
+    f64,
 
-    unknown_jty = 32
+    unknown = 32
 };
 
 
@@ -75,14 +75,14 @@ case (TypeEn::x):   \
     t = #x;         \
     break
     switch (type) {
-        ENUM2STR(int1_jty);
-        ENUM2STR(int8_jty);
-        ENUM2STR(int16_jty);
-        ENUM2STR(int32_jty);
-        ENUM2STR(int64_jty);
-        ENUM2STR(float_jty);
-        ENUM2STR(double_jty);
-        ENUM2STR(unknown_jty);
+        ENUM2STR(i1);
+        ENUM2STR(i8);
+        ENUM2STR(i16);
+        ENUM2STR(i32);
+        ENUM2STR(i64);
+        ENUM2STR(f32);
+        ENUM2STR(f64);
+        ENUM2STR(unknown);
     }
     return t;
 #undef ENUM2STR
@@ -106,11 +106,11 @@ case (DataStructureTypeEn::x): \
 #undef ENUM2STR
 }
 
-inline bool isUnknownTy(TypeEn type) { return type == TypeEn::unknown_jty; }
-inline bool isFloating(TypeEn type) { return (type >= TypeEn::float_jty) && !isUnknownTy(type); }
-inline bool isInteger(TypeEn type) { return type <= TypeEn::int64_jty; }
+inline bool isUnknownTy(TypeEn type) { return type == TypeEn::unknown; }
+inline bool isFloating(TypeEn type) { return (type >= TypeEn::f32) && !isUnknownTy(type); }
+inline bool isInteger(TypeEn type) { return type <= TypeEn::i64; }
 inline bool isUInteger(TypeEn type) { return false; }
-inline bool isBool(TypeEn type) { return type == TypeEn::int1_jty; }
+inline bool isBool(TypeEn type) { return type == TypeEn::i1; }
 
 inline DataStructureTypeEn maxDS(const DataStructureTypeEn& var_a, const DataStructureTypeEn& var_b) {
     return var_a < var_b ? var_b : var_a;

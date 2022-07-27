@@ -85,18 +85,18 @@ case (depend):                         \
     target;                            \
     break
 
-#define SWITCH_TYPE_OP(TYPE, DEFAULT)                   \
-    switch (TYPE) {                                     \
-        CASE_OP_GLOBAL(TypeEn::double_jty, OP(double)); \
-        CASE_OP_GLOBAL(TypeEn::float_jty, OP(float));   \
-        CASE_OP_GLOBAL(TypeEn::int64_jty, OP(int64_t)); \
-        CASE_OP_GLOBAL(TypeEn::int32_jty, OP(int32_t)); \
-        CASE_OP_GLOBAL(TypeEn::int16_jty, OP(int16_t)); \
-        CASE_OP_GLOBAL(TypeEn::int8_jty, OP(int8_t));   \
-        CASE_OP_GLOBAL(TypeEn::int1_jty, OP(bool));     \
-    default:                                            \
-        DEFAULT;                                        \
-        break;                                          \
+#define SWITCH_TYPE_OP(TYPE, DEFAULT)             \
+    switch (TYPE) {                               \
+        CASE_OP_GLOBAL(TypeEn::f64, OP(double));  \
+        CASE_OP_GLOBAL(TypeEn::f32, OP(float));   \
+        CASE_OP_GLOBAL(TypeEn::i64, OP(int64_t)); \
+        CASE_OP_GLOBAL(TypeEn::i32, OP(int32_t)); \
+        CASE_OP_GLOBAL(TypeEn::i16, OP(int16_t)); \
+        CASE_OP_GLOBAL(TypeEn::i8, OP(int8_t));   \
+        CASE_OP_GLOBAL(TypeEn::i1, OP(bool));     \
+    default:                                      \
+        DEFAULT;                                  \
+        break;                                    \
     }
 
 #define SWITCH_UINT(CASE_ARG, LOOP, X) \
@@ -161,30 +161,30 @@ case CASE_ARG:                         \
         break;                                                            \
     }
 
-#define OP_LV1(T, ARG_TYPE)                                    \
-    switch (ARG_TYPE) {                                        \
-        CASE_OP_GLOBAL(TypeEn::double_jty, OP_LV2(T, double)); \
-        CASE_OP_GLOBAL(TypeEn::float_jty, OP_LV2(T, float));   \
-        CASE_OP_GLOBAL(TypeEn::int64_jty, OP_LV2(T, int64_t)); \
-        CASE_OP_GLOBAL(TypeEn::int32_jty, OP_LV2(T, int32_t)); \
-        CASE_OP_GLOBAL(TypeEn::int16_jty, OP_LV2(T, int16_t)); \
-        CASE_OP_GLOBAL(TypeEn::int8_jty, OP_LV2(T, int8_t));   \
-        CASE_OP_GLOBAL(TypeEn::int1_jty, OP_LV2(T, bool));     \
+#define OP_LV1(T, ARG_TYPE)                              \
+    switch (ARG_TYPE) {                                  \
+        CASE_OP_GLOBAL(TypeEn::f64, OP_LV2(T, double));  \
+        CASE_OP_GLOBAL(TypeEn::f32, OP_LV2(T, float));   \
+        CASE_OP_GLOBAL(TypeEn::i64, OP_LV2(T, int64_t)); \
+        CASE_OP_GLOBAL(TypeEn::i32, OP_LV2(T, int32_t)); \
+        CASE_OP_GLOBAL(TypeEn::i16, OP_LV2(T, int16_t)); \
+        CASE_OP_GLOBAL(TypeEn::i8, OP_LV2(T, int8_t));   \
+        CASE_OP_GLOBAL(TypeEn::i1, OP_LV2(T, bool));     \
     }
 
-#define CONV_TYPE_OP(ARG_TYPE, RET_TYPE)                                  \
-    if (!isUnknownTy(ARG_TYPE)) {                                         \
-        uint64_t V = 0;                                                   \
-        switch (RET_TYPE) {                                               \
-            CASE_OP_GLOBAL(TypeEn::double_jty, OP_LV1(double, ARG_TYPE)); \
-            CASE_OP_GLOBAL(TypeEn::float_jty, OP_LV1(float, ARG_TYPE));   \
-            CASE_OP_GLOBAL(TypeEn::int64_jty, OP_LV1(int64_t, ARG_TYPE)); \
-            CASE_OP_GLOBAL(TypeEn::int32_jty, OP_LV1(int32_t, ARG_TYPE)); \
-            CASE_OP_GLOBAL(TypeEn::int16_jty, OP_LV1(int16_t, ARG_TYPE)); \
-            CASE_OP_GLOBAL(TypeEn::int8_jty, OP_LV1(int8_t, ARG_TYPE));   \
-            CASE_OP_GLOBAL(TypeEn::int1_jty, OP_LV1(bool, ARG_TYPE));     \
-        }                                                                 \
-    } else {                                                              \
+#define CONV_TYPE_OP(ARG_TYPE, RET_TYPE)                            \
+    if (!isUnknownTy(ARG_TYPE)) {                                   \
+        uint64_t V = 0;                                             \
+        switch (RET_TYPE) {                                         \
+            CASE_OP_GLOBAL(TypeEn::f64, OP_LV1(double, ARG_TYPE));  \
+            CASE_OP_GLOBAL(TypeEn::f32, OP_LV1(float, ARG_TYPE));   \
+            CASE_OP_GLOBAL(TypeEn::i64, OP_LV1(int64_t, ARG_TYPE)); \
+            CASE_OP_GLOBAL(TypeEn::i32, OP_LV1(int32_t, ARG_TYPE)); \
+            CASE_OP_GLOBAL(TypeEn::i16, OP_LV1(int16_t, ARG_TYPE)); \
+            CASE_OP_GLOBAL(TypeEn::i8, OP_LV1(int8_t, ARG_TYPE));   \
+            CASE_OP_GLOBAL(TypeEn::i1, OP_LV1(bool, ARG_TYPE));     \
+        }                                                           \
+    } else {                                                        \
     }
 
 /*

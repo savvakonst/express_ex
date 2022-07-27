@@ -12,8 +12,8 @@ static std::string txtBuiltInOp(OpCodeEn op_code) { return kOpCodesStr[(int)op_c
 ExValue_ifs* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn target_type, ExValue_ifs* arg,
                                      OpCodeEn op_type) {
     ExValue_ifs* var = arg;
-    if (TypeEn::float_jty > target_type) {
-        var = newTypeConvOp(garbage_container, TypeEn::double_jty, arg);
+    if (TypeEn::f32 > target_type) {
+        var = newTypeConvOp(garbage_container, TypeEn::f64, arg);
         target_type = var->type_;
     }
 
@@ -29,7 +29,7 @@ ExValue_ifs* newBuiltInFuncOperation(GarbageContainer* garbage_container, TypeEn
 
 ExValue_ifs* newBuiltInFuncOperation(BodyTemplate* body_template, OpCodeEn op_type) {
     auto* arg = body_template->pop();
-    auto target_type = TypeEn::unknown_jty;
+    auto target_type = TypeEn::unknown;
     return newBuiltInFuncOperation(body_template->getGarbageContainer(), target_type, arg, op_type);
 }
 
@@ -45,8 +45,8 @@ void BuiltInCallOperation::genBodyVisitExit(BodyGenContext* context) {
     g_pos = pos_;
 
     auto* op1 = context->pop();
-    if (TypeEn::float_jty > op1->type_) {
-        op1 = newTypeConvOp(garbage_container, TypeEn::float_jty, op1);
+    if (TypeEn::f32 > op1->type_) {
+        op1 = newTypeConvOp(garbage_container, TypeEn::f32, op1);
     }
     TypeEn target_type = op1->type_;
 
@@ -59,9 +59,9 @@ void BuiltInCallOperation::calculateConstRecursive(RecursiveGenContext* context)
     auto op = operand_[0];
     untyped_t temp_var = 0;
     temp_type_ = op->getTempType();  // was TypeEn temp_type_
-    if (TypeEn::float_jty > temp_type_) {
-        calcTypeConvConst(TypeEn::float_jty, op->getTempType(), op->getBinaryValue());
-        temp_type_ = TypeEn::float_jty;
+    if (TypeEn::f32 > temp_type_) {
+        calcTypeConvConst(TypeEn::f32, op->getTempType(), op->getBinaryValue());
+        temp_type_ = TypeEn::f32;
     }
     binary_value_ = calcBuiltInFuncConst(op_code_, temp_type_, op->getBinaryValue());
 }

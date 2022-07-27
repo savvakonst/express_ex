@@ -35,47 +35,47 @@ calcMinMaxTy gCalcMinMaxSelect(PrmTypesEn arg) {
 TypeEn PRMType2JITType(PrmTypesEn arg) {
     switch (arg) {
     case PrmTypesEn::PRM_TYPE_U08:
-        return TypeEn::unknown_jty;
+        return TypeEn::unknown;
     case PrmTypesEn::PRM_TYPE_U16:
-        return TypeEn::unknown_jty;
+        return TypeEn::unknown;
     case PrmTypesEn::PRM_TYPE_U32:
-        return TypeEn::unknown_jty;
+        return TypeEn::unknown;
     case PrmTypesEn::PRM_TYPE_U64:
-        return TypeEn::unknown_jty;
+        return TypeEn::unknown;
     case PrmTypesEn::PRM_TYPE_I08:
-        return TypeEn::int8_jty;
+        return TypeEn::i8;
     case PrmTypesEn::PRM_TYPE_I16:
-        return TypeEn::int16_jty;
+        return TypeEn::i16;
     case PrmTypesEn::PRM_TYPE_I32:
-        return TypeEn::int32_jty;
+        return TypeEn::i32;
     case PrmTypesEn::PRM_TYPE_I64:
-        return TypeEn::int64_jty;
+        return TypeEn::i64;
     case PrmTypesEn::PRM_TYPE_F32:
-        return TypeEn::float_jty;
+        return TypeEn::f32;
     case PrmTypesEn::PRM_TYPE_F64:
-        return TypeEn::double_jty;
+        return TypeEn::f64;
     case PrmTypesEn::PRM_TYPE_U08_T:
-        return TypeEn::unknown_jty;
+        return TypeEn::unknown;
     case PrmTypesEn::PRM_TYPE_U16_T:
-        return TypeEn::unknown_jty;
+        return TypeEn::unknown;
     case PrmTypesEn::PRM_TYPE_U32_T:
-        return TypeEn::unknown_jty;
+        return TypeEn::unknown;
     case PrmTypesEn::PRM_TYPE_U64_T:
-        return TypeEn::unknown_jty;
+        return TypeEn::unknown;
     case PrmTypesEn::PRM_TYPE_I08_T:
-        return TypeEn::int8_jty;
+        return TypeEn::i8;
     case PrmTypesEn::PRM_TYPE_I16_T:
-        return TypeEn::int16_jty;
+        return TypeEn::i16;
     case PrmTypesEn::PRM_TYPE_I32_T:
-        return TypeEn::int32_jty;
+        return TypeEn::i32;
     case PrmTypesEn::PRM_TYPE_I64_T:
-        return TypeEn::int64_jty;
+        return TypeEn::i64;
     case PrmTypesEn::PRM_TYPE_F32_T:
-        return TypeEn::float_jty;
+        return TypeEn::f32;
     case PrmTypesEn::PRM_TYPE_F64_T:
-        return TypeEn::double_jty;
+        return TypeEn::f64;
     default:
-        return TypeEn::unknown_jty;
+        return TypeEn::unknown;
     }
 }
 
@@ -111,7 +111,7 @@ std::string toString(PrmTypesEn arg) {
         CASE_OP(PRM_TYPE_F32_T);
         CASE_OP(PRM_TYPE_F64_T);
     default:
-        return "TypeEn::unknown_jty";
+        return "TypeEn::unknown";
     }
 #undef CASE_OP
 }

@@ -13,7 +13,7 @@ class BuiltInCallOperation : public Operation_ifs {
     // constructor of type conversion operation or shift and decimation
     BuiltInCallOperation(OpCodeEn op, ExValue_ifs* var, TypeEn target_type)
         : Operation_ifs(target_type,          //
-                        TypeEn::unknown_jty,  //
+                        TypeEn::unknown,  //
                         op,                   //
                         var)                  //
     {

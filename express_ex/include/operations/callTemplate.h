@@ -108,7 +108,7 @@ class TailCallDirectiveTemplate : public CallTemplate_ifs {
    public:
     explicit TailCallDirectiveTemplate(const stack<ExValue_ifs*>& args)
         // TODO try with DataStructureTypeEn::kVariable
-        : CallTemplate_ifs(TypeEn::unknown_jty, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1, args) {}
+        : CallTemplate_ifs(TypeEn::unknown, TypeEn::unknown, DataStructureTypeEn::kConstant, 1, args) {}
 
     ~TailCallDirectiveTemplate() override = default;
 

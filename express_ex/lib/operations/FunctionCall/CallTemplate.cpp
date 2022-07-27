@@ -10,7 +10,7 @@
 
 
 CallTemplate::CallTemplate(BodyTemplate *body, const stack<ExValue_ifs *> &args)
-    : CallTemplate_ifs(body->getRet().front()->type_, TypeEn::unknown_jty, body->getRet().front(), args) {
+    : CallTemplate_ifs(body->getRet().front()->type_, TypeEn::unknown, body->getRet().front(), args) {
     corresponding_body_template_ = body;
 
     if (corresponding_body_template_->getRet().empty()) return;

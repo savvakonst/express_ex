@@ -27,7 +27,7 @@ ExValue_ifs *newNeighborPointOperation(BodyTemplate *body_template) {
 }
 
 NeighborPointOperation::NeighborPointOperation(ExValue_ifs *array, ExValue_ifs *shift)
-    : Operation_ifs(array->type_, TypeEn::unknown_jty, OpCodeEn::none_op, array) {
+    : Operation_ifs(array->type_, TypeEn::unknown, OpCodeEn::none_op, array) {
     // commonSetup(OpCodeEn::none_op, array);
     // type_ = array->getType();
     level_ = array->getLevel() + 1;
@@ -99,7 +99,7 @@ void NeighborPointOperation::setupIR(IRGenerator &builder) {
     auto current_ptr = operand_[0]->getAssignedVal(true)->getIrValuePtr(builder, level_);
 
     auto ptr =
-        builder.createPositionalInBoundsGep(current_ptr, operand_[1]->getIRValue(builder, level_), "neighbor_ptr");
+        builder.createPositionalInBoundsGep(current_ptr, operand_[1]->getAssignedVal(true)->getIRValue(builder, level_), "neighbor_ptr");
 
     IR_value_ = builder.createPositionalLoad(ptr, true, "neighbor");
 

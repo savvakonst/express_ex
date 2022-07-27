@@ -10,32 +10,32 @@
 #include "jit/TableGenContext.h"
 
 ExConstValue::ExConstValue(const std::string &text, TypeEn type)
-    : ExValue_ifs(type, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1), text_value_(text) {
+    : ExValue_ifs(type, TypeEn::unknown, DataStructureTypeEn::kConstant, 1), text_value_(text) {
     binary_value_ = 0;
 
     switch (type) {
-    case TypeEn::int1_jty:
+    case TypeEn::i1:
         *((bool *)(&binary_value_)) = (bool)stoi(text_value_);
         break;
-    case TypeEn::int8_jty:
+    case TypeEn::i8:
         *((int8_t *)(&binary_value_)) = stoi(text_value_);
         break;
-    case TypeEn::int16_jty:
+    case TypeEn::i16:
         *((int16_t *)(&binary_value_)) = stoi(text_value_);
         break;
-    case TypeEn::int32_jty:
+    case TypeEn::i32:
         *((int32_t *)(&binary_value_)) = stoi(text_value_);
         break;
-    case TypeEn::int64_jty:
+    case TypeEn::i64:
         *((int64_t *)(&binary_value_)) = stol(text_value_);
         break;
-    case TypeEn::float_jty:
+    case TypeEn::f32:
         *((float *)(&binary_value_)) = stof(text_value_);
         break;
-    case TypeEn::double_jty:
+    case TypeEn::f64:
         *((double *)(&binary_value_)) = stod(text_value_);
         break;
-    case TypeEn::unknown_jty:
+    case TypeEn::unknown:
         break;
     default:
         print_error("constant reading error");
@@ -54,7 +54,7 @@ static std::string getTxtConstValue(untyped_t binary_value, TypeEn type) {
 }
 
 ExConstValue::ExConstValue(untyped_t binary_value, TypeEn type)
-    : ExValue_ifs(type, TypeEn::unknown_jty, DataStructureTypeEn::kConstant, 1),
+    : ExValue_ifs(type, TypeEn::unknown, DataStructureTypeEn::kConstant, 1),
       text_value_(getTxtConstValue(binary_value, type)) {
     binary_value_ = binary_value;
 };

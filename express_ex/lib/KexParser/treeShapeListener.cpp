@@ -47,7 +47,7 @@ void TreeShapeListener::exitAssignParam(EGrammarParser::AssignParamContext* ctx)
 
     else if (id.size() == stl.size())
         for (size_t i = 0; i < id.size(); i++) {
-            // activ_body_->addParam(id[i]->getText(), TypeEn::double_jty, DataStructureTypeEn::kLargeArr,
+            // activ_body_->addParam(id[i]->getText(), TypeEn::f64, DataStructureTypeEn::kLargeArr,
             // stoi(stl[i]->getText().substr(1)));
             std::string s = stl[i]->getText();
             current_body_->addLine(
@@ -113,16 +113,16 @@ void TreeShapeListener::exitNeighborhoodPoint(EGrammarParser::NeighborhoodPointC
 
 void TreeShapeListener::exitConst(EGrammarParser::ConstContext* ctx) {
     setPos(ctx);
-    auto target_type = TypeEn::unknown_jty;
+    auto target_type = TypeEn::unknown;
 #define CONV_TY(depend, target) \
     case (depend):              \
         target_type = (target); \
         break
     switch (ctx->start->getType()) {
-        CONV_TY(EGrammarParser::FLOAT, TypeEn::float_jty);
-        CONV_TY(EGrammarParser::DOUBLE, TypeEn::double_jty);
-        CONV_TY(EGrammarParser::INT, TypeEn::int32_jty);
-        CONV_TY(EGrammarParser::INT64, TypeEn::int64_jty);
+        CONV_TY(EGrammarParser::FLOAT, TypeEn::f32);
+        CONV_TY(EGrammarParser::DOUBLE, TypeEn::f64);
+        CONV_TY(EGrammarParser::INT, TypeEn::i32);
+        CONV_TY(EGrammarParser::INT64, TypeEn::i64);
     default:;
     }
     current_body_->push(new ExConstValue(ctx->getText(), target_type));
@@ -170,16 +170,16 @@ void TreeShapeListener::exitDecimation(EGrammarParser::DecimationContext* ctx) {
 
 void TreeShapeListener::exitCallTConvBInFunc(EGrammarParser::CallTConvBInFuncContext* ctx) {
     setPos(ctx);
-    auto target_type = TypeEn::unknown_jty;
+    auto target_type = TypeEn::unknown;
 #define CONV_TY(depend, target) \
     case (depend):              \
         target_type = (target); \
         break
     switch (ctx->tConvBInFunc()->start->getType()) {
-        CONV_TY(EGrammarParser::C_FLOAT, TypeEn::float_jty);
-        CONV_TY(EGrammarParser::C_DOUBLE, TypeEn::double_jty);
-        CONV_TY(EGrammarParser::C_INT, TypeEn::int32_jty);
-        CONV_TY(EGrammarParser::C_INT64, TypeEn::int64_jty);
+        CONV_TY(EGrammarParser::C_FLOAT, TypeEn::f32);
+        CONV_TY(EGrammarParser::C_DOUBLE, TypeEn::f64);
+        CONV_TY(EGrammarParser::C_INT, TypeEn::i32);
+        CONV_TY(EGrammarParser::C_INT64, TypeEn::i64);
     default:;
     }
     current_body_->push(newTypeConvOp(current_body_, target_type));

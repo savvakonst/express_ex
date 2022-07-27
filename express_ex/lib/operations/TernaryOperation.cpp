@@ -9,7 +9,7 @@ ExValue_ifs* newTernaryOperation(GarbageContainer* garbage_container, TypeEn tar
                                  ExValue_ifs* arg_b, ExValue_ifs* arg_c, bool rec_call) {
     if (!isCompatible(arg_b, arg_c) || !isCompatible(arg_a, arg_b)) print_error("incompatible values");
 
-    auto i1 = newTypeConvOp(garbage_container, TypeEn::int1_jty, arg_a);
+    auto i1 = newTypeConvOp(garbage_container, TypeEn::i1, arg_a);
 
     if (isConst(i1) && !isUnknownTy(i1) && !isUnknownTy(target_type)) {
         auto const_val = (ExConstValue*)i1;
@@ -40,13 +40,13 @@ ExValue_ifs* newTernaryOperation(BodyTemplate* body_template) {
         valid_recursion = valid_recursion || (arg_b->getAssignedVal(true)->getNodeType() == NodeTypeEn::kTailCall);
     }
 
-    return newTernaryOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, arg_a, arg_b, arg_c,
+    return newTernaryOperation(body_template->getGarbageContainer(), TypeEn::unknown, arg_a, arg_b, arg_c,
                                valid_recursion);
 }
 
 TernaryOperation::TernaryOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b, ExValue_ifs* var_c,
                                    TypeEn target_type, bool rec_call)
-    : Operation_ifs(target_type, TypeEn::unknown_jty, maxDataStructType(var_a, var_b),
+    : Operation_ifs(target_type, TypeEn::unknown, maxDataStructType(var_a, var_b),
                     std::max(var_c->getLength(), maxLength(var_a, var_b)), op) {
     level_ = maxLevelVar(maxLevelVar(var_a, var_b), var_c)->getLevel();
     contain_rec_call_ = rec_call;
@@ -91,7 +91,7 @@ void TernaryOperation::genBodyVisitExit(BodyGenContext* context) {
 void TernaryOperation::calculateConstRecursive(RecursiveGenContext* context) {
     auto op_a = operand_[0], op_b = operand_[1], op_c = operand_[2];
 
-    auto arg_a = calcTypeConvConst(TypeEn::int1_jty, op_a->getTempType(), op_a->getBinaryValue());
+    auto arg_a = calcTypeConvConst(TypeEn::i1, op_a->getTempType(), op_a->getBinaryValue());
     if (contain_rec_call_) {
         bool cond = (*((bool*)&arg_a));
         context->exit_from_loop_ = cond != (op_b->getNodeType() == NodeTypeEn::kTailCall);

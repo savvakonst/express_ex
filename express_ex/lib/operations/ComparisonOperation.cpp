@@ -16,8 +16,7 @@ ExValue_ifs* newComparisonOperation(GarbageContainer* garbage_container, TypeEn 
         if (isBool(target_type)) print_error("invalid type: Int1_jty ");
 
         return garbage_container->add(new ExConstValue(
-            calcComparisonConst(op_type, target_type, arg_a->getBinaryValue(), arg_b->getBinaryValue()),
-            TypeEn::int1_jty));
+            calcComparisonConst(op_type, target_type, arg_a->getBinaryValue(), arg_b->getBinaryValue()), TypeEn::i1));
     }
 
     OpCodeEn local_op_type = OpCodeEn::none_op;
@@ -56,19 +55,19 @@ ExValue_ifs* newComparisonOperation(GarbageContainer* garbage_container, TypeEn 
 ExValue_ifs* newComparisonOperation(BodyTemplate* body_template, OpCodeEn op_type) {
     ExValue_ifs* arg_b = body_template->pop();
     ExValue_ifs* arg_a = body_template->pop();
-    return newComparisonOperation(body_template->getGarbageContainer(), TypeEn::unknown_jty, arg_a, arg_b, op_type);
+    return newComparisonOperation(body_template->getGarbageContainer(), TypeEn::unknown, arg_a, arg_b, op_type);
 }
 
 ComparisonOperation::ComparisonOperation(OpCodeEn op, ExValue_ifs* var_a, ExValue_ifs* var_b)
-    : Operation_ifs((isUnknownTy(var_a) || isUnknownTy(var_b) ? TypeEn::unknown_jty : TypeEn::int1_jty),  //
-                    TypeEn::unknown_jty,                                                                  //
-                    maxDataStructType(var_a, var_b),                                                      //
-                    maxLength(var_a, var_b),                                                              //
-                    op)                                                                                   //
+    : Operation_ifs((isUnknownTy(var_a) || isUnknownTy(var_b) ? TypeEn::unknown : TypeEn::i1),  //
+                    TypeEn::unknown,                                                            //
+                    maxDataStructType(var_a, var_b),                                            //
+                    maxLength(var_a, var_b),                                                    //
+                    op)                                                                         //
 {
     // TODO remove comment
     //  commonSetup(op, maxDSVar(var_a, var_b));
-    //  type_ = isUnknownTy(var_a) || isUnknownTy(var_b) ? TypeEn::unknown_jty : TypeEn::int1_jty;
+    //  type_ = isUnknownTy(var_a) || isUnknownTy(var_b) ? TypeEn::unknown : TypeEn::i1;
 
     level_ = maxLevelVar(var_a, var_b)->getLevel();
 
@@ -118,7 +117,7 @@ void ComparisonOperation::calculateConstRecursive(RecursiveGenContext* context) 
     auto arg_b = calcTypeConvConst(local_type, op_b->getTempType(), op_b->getBinaryValue());
     untyped_t binary_value = calcComparisonConst(op_code_, local_type, arg_a, arg_b);
     binary_value_ = binary_value;
-    temp_type_ = TypeEn::int1_jty;
+    temp_type_ = TypeEn::i1;
 }
 
 void ComparisonOperation::printVisitExit(PrintBodyContext* context) {

@@ -39,7 +39,7 @@ class DLL_EXPORT SyncParameter : public ParameterIfs {
    protected:
     bool calcExtendedInfo();
 
-
+    int64_t sizeof_data_type_ = 0;
 
     BareChunk* chunk_ = nullptr;
     BareChunk* current_chunk_ = nullptr;

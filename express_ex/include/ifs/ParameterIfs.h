@@ -227,7 +227,7 @@ class DLL_EXPORT ParameterIfs {
     [[nodiscard]] const std::vector<ExDataInterval>& getDataIntervalList() const { return interval_list_; }
 
     virtual PrmTypesEn getPrmType() {
-        if (!interval_list_.empty()) type_ = interval_list_[0].type;
+        if (!interval_list_.empty()) type_ = interval_list_.front().type;
         return type_;
     }
 
@@ -329,8 +329,6 @@ class DLL_EXPORT ParameterIfs {
     std::vector<ExDataInterval> interval_list_;
     PrmTypesEn type_ = PrmTypesEn::PRM_TYPE_UNKNOWN;
 
-
-    int64_t sizeof_data_type_ = 0;
 
     std::string error_info_;
 };

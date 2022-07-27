@@ -17,7 +17,9 @@ AsyncParameter::AsyncParameter(const AsyncParameter& prm)
       is_new_interval_(prm.is_new_interval_),
       parent_parameter_(this),
       id_(DatasetsStorage_ifs::kDefaultId),
-      ds_storage_(nullptr) {}
+      ds_storage_(nullptr) {
+    init();
+}
 
 AsyncParameter::AsyncParameter(const std::string& name, const std::vector<ExDataInterval>& interval_list,
                                bool save_file_names) {
@@ -31,17 +33,20 @@ AsyncParameter::AsyncParameter(const std::string& name, const std::vector<ExData
         }
     }
 
-    if (!interval_list_.empty()) {
-        sizeof_data_type_ = sizeOfTy(interval_list_.front().type);
-        type_ = interval_list_.front().type;
-        calc_min_max_ptr_ = gCalcMinMaxSelect(type_);
-    }
+    // if (!interval_list_.empty()) {
+    data_size_ = sizeOfTy(getPrmType());
+    data_size_factor_ = (data_size_ + prm_time_size_);
+    type_ = interval_list_.front().type;
+    calc_min_max_ptr_ = gCalcMinMaxSelect(type_);
+
+    //}
 
     auto bgn = interval_list_.front().ti.time;
     auto last_ti = interval_list_.back().ti;
     auto end = last_ti.duration + double(last_ti.time) / double(1ll << 32);
 
     time_interval_ = {bgn, end};
+    init();
 }
 
 AsyncParameter::AsyncParameter(const std::string& name, const ExTimeInterval& time_interval,
@@ -51,21 +56,49 @@ AsyncParameter::AsyncParameter(const std::string& name, const ExTimeInterval& ti
     time_interval_ = time_interval;
 }
 
+void AsyncParameter::init() {
+#define CASE(DATA_TYPE, TIME_TYPE)                                \
+    case sizeof(DATA_TYPE): {                                     \
+        copyFromBuffer_ = ::copyFromBuffer<DATA_TYPE, TIME_TYPE>; \
+        copyToBuffer_ = ::copyToBuffer<DATA_TYPE, TIME_TYPE>;     \
+        break;                                                    \
+    }
+
+#define SWITCH(TIME_TYPE)          \
+    switch (data_size_) {          \
+        CASE(uint64_t, TIME_TYPE); \
+        CASE(uint32_t, TIME_TYPE); \
+        CASE(uint16_t, TIME_TYPE); \
+        CASE(uint8_t, TIME_TYPE);  \
+    default:                       \
+        break;                     \
+    }
+
+    if (prm_time_size_ == 8) {
+        SWITCH(uint64_t);
+    } else if (prm_time_size_ == 4) {
+        SWITCH(uint32_t);
+    }
+#undef SWITCH
+#undef CASE
+}
+
+
 AsyncParameter::~AsyncParameter() = default;
 
 void AsyncParameter::readFromBuffer(char* data_buffer_ptr, uint64_t points_to_read) {
     ExDataInterval& di = interval_list_[current_interval_index_];
     if (calc_min_max_ptr_) calc_min_max_ptr_(data_buffer_ptr, points_to_read, di.val_max, di.val_min, is_new_interval_);
+    copyFromBuffer_(this, data_buffer_ptr, points_to_read);
+    /*
     if (data_size_ == 8) copyFromBuffer((uint64_t*)data_buffer_ptr, points_to_read);
     else if (data_size_ == 4) copyFromBuffer((uint32_t*)data_buffer_ptr, points_to_read);
     else if (data_size_ == 2) copyFromBuffer((uint16_t*)data_buffer_ptr, points_to_read);
     else if (data_size_ == 1) copyFromBuffer((uint8_t*)data_buffer_ptr, points_to_read);
+     */
 }
 
 inline bool AsyncParameter::open(bool open_to_write) {
-    data_size_ = sizeOfTy(this->getPrmType());
-    data_size_factor_ = (data_size_ + prm_time_size_);
-
     unused_points_in_current_interval_ = interval_list_[current_interval_index_].getPointsNumber();
 
     if (isOpened()) return false;
@@ -185,11 +218,13 @@ uint64_t AsyncParameter::read(char* data_buffer_ptr, uint64_t points_to_read) {
     time_buffer_.replaceLastData();
     intermediate_buffer_.resetPos();
 
+    copyToBuffer_(this, data_buffer_ptr, base);
+    /*
     if (data_size_ == 8) copyToBuffer((uint64_t*)data_buffer_ptr, base);
     else if (data_size_ == 4) copyToBuffer((uint32_t*)data_buffer_ptr, base);
     else if (data_size_ == 2) copyToBuffer((uint16_t*)data_buffer_ptr, base);
     else if (data_size_ == 1) copyToBuffer((uint8_t*)data_buffer_ptr, base);
-
+    */
     time_buffer_.resetPos();
 
     return base - points_to_read;

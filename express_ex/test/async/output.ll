@@ -6,15 +6,15 @@ source_filename = "test"
 
 declare i32 @buffer_update_function(i32)
 
-define i32 @main(i64*** %0) {
+define i32 @main(i64*** %0, i64** %1) {
 init_block:
   %offset_incr = getelementptr inbounds i64**, i64*** %0, i32 0
-  %1 = load i64**, i64*** %offset_incr, align 8
-  %2 = call i32 @sub_main(i64** %1)
+  %2 = load i64**, i64*** %offset_incr, align 8
+  %3 = call i32 @sub_main(i64** %2, i64** %1)
   ret i32 1
 }
 
-define i32 @sub_main(i64** %0) {
+define i32 @sub_main(i64** %0, i64** %1) {
 init_block:
   %glob_index_alloca = alloca i64, align 8
   store i64 0, i64* %glob_index_alloca, align 4
@@ -41,6 +41,7 @@ load_block_0x635b_level_0_0:                      ; preds = %store_block_0x635b_
   %arg_buffer_val_ = load volatile float, float* %offset_arg_incr_, align 4
   %offset_arg_incr_1 = getelementptr inbounds float, float* %external_buffer_1, i64 %common_offset_
   %arg_buffer_val_2 = load volatile float, float* %offset_arg_incr_1, align 4
+  %offset_op_incr_ = getelementptr inbounds float, float* %internal_buffer_2, i64 %common_offset_
   br label %calc_block_0x635b_level_0_0
 
 calc_block_0x635b_level_0_0:                      ; preds = %load_block_0x635b_level_0_0
@@ -52,15 +53,14 @@ calc_block_0x635b_level_0_0:                      ; preds = %load_block_0x635b_l
   br label %store_block_0x635b_level_0_0
 
 store_block_0x635b_level_0_0:                     ; preds = %calc_block_0x635b_level_0_0
-  %1 = add i64 %common_offset_, 1
-  store i64 %1, i64* %common_offset_alloca_, align 4
-  %2 = icmp slt i64 %1, 8192
-  %offset_op_incr_ = getelementptr inbounds float, float* %internal_buffer_2, i64 %common_offset_
+  %2 = add i64 %common_offset_, 1
+  store i64 %2, i64* %common_offset_alloca_, align 4
+  %3 = icmp slt i64 %2, 8192
   store float %vb8, float* %offset_op_incr_, align 4
-  br i1 %2, label %load_block_0x635b_level_0_0, label %update_buffer_block
+  br i1 %3, label %load_block_0x635b_level_0_0, label %update_buffer_block
 
 update_buffer_block:                              ; preds = %store_block_0x635b_level_0_0
-  %3 = call i32 @buffer_update_function(i32 0)
+  %4 = call i32 @buffer_update_function(i32 0)
   br label %loop_enter_block
 
 loop_enter_block:                                 ; preds = %cycle_exit_block, %update_buffer_block
@@ -77,6 +77,7 @@ load_block_0x635b_level_0:                        ; preds = %store_block_0x635b_
   %arg_buffer_val_5 = load volatile float, float* %offset_arg_incr_4, align 4
   %offset_arg_incr_6 = getelementptr inbounds float, float* %external_buffer_1, i64 %common_offset_3
   %arg_buffer_val_7 = load volatile float, float* %offset_arg_incr_6, align 4
+  %offset_op_incr_13 = getelementptr inbounds float, float* %internal_buffer_2, i64 %common_offset_3
   br label %calc_block_0x635b_level_0
 
 calc_block_0x635b_level_0:                        ; preds = %load_block_0x635b_level_0
@@ -88,19 +89,18 @@ calc_block_0x635b_level_0:                        ; preds = %load_block_0x635b_l
   br label %store_block_0x635b_level_0
 
 store_block_0x635b_level_0:                       ; preds = %calc_block_0x635b_level_0
-  %4 = add i64 %common_offset_3, 1
-  store i64 %4, i64* %common_offset_alloca_, align 4
-  %5 = icmp slt i64 %4, 8192
-  %offset_op_incr_13 = getelementptr inbounds float, float* %internal_buffer_2, i64 %common_offset_3
+  %5 = add i64 %common_offset_3, 1
+  store i64 %5, i64* %common_offset_alloca_, align 4
+  %6 = icmp slt i64 %5, 8192
   store float %vb812, float* %offset_op_incr_13, align 4
-  br i1 %5, label %load_block_0x635b_level_0, label %cycle_exit_block
+  br i1 %6, label %load_block_0x635b_level_0, label %cycle_exit_block
 
 cycle_exit_block:                                 ; preds = %store_block_0x635b_level_0
-  %6 = add i64 %glob_index, 1
-  store i64 %6, i64* %glob_index_alloca, align 4
-  %7 = icmp slt i64 %6, 2
-  %8 = call i32 @buffer_update_function(i32 0)
-  br i1 %7, label %loop_enter_block, label %terminal_loop_enter
+  %7 = add i64 %glob_index, 1
+  store i64 %7, i64* %glob_index_alloca, align 4
+  %8 = icmp slt i64 %7, 2
+  %9 = call i32 @buffer_update_function(i32 0)
+  br i1 %8, label %loop_enter_block, label %terminal_loop_enter
 
 terminal_loop_enter:                              ; preds = %cycle_exit_block
   br label %intermediate_block_0x635b_level_014
@@ -115,6 +115,7 @@ load_block_0x635b_level_015:                      ; preds = %store_block_0x635b_
   %arg_buffer_val_20 = load volatile float, float* %offset_arg_incr_19, align 4
   %offset_arg_incr_21 = getelementptr inbounds float, float* %external_buffer_1, i64 %common_offset_18
   %arg_buffer_val_22 = load volatile float, float* %offset_arg_incr_21, align 4
+  %offset_op_incr_28 = getelementptr inbounds float, float* %internal_buffer_2, i64 %common_offset_18
   br label %calc_block_0x635b_level_016
 
 calc_block_0x635b_level_016:                      ; preds = %load_block_0x635b_level_015
@@ -126,15 +127,14 @@ calc_block_0x635b_level_016:                      ; preds = %load_block_0x635b_l
   br label %store_block_0x635b_level_017
 
 store_block_0x635b_level_017:                     ; preds = %calc_block_0x635b_level_016
-  %9 = add i64 %common_offset_18, 1
-  store i64 %9, i64* %common_offset_alloca_, align 4
-  %10 = icmp slt i64 %9, 859
-  %offset_op_incr_28 = getelementptr inbounds float, float* %internal_buffer_2, i64 %common_offset_18
+  %10 = add i64 %common_offset_18, 1
+  store i64 %10, i64* %common_offset_alloca_, align 4
+  %11 = icmp slt i64 %10, 859
   store float %vb827, float* %offset_op_incr_28, align 4
-  br i1 %10, label %load_block_0x635b_level_015, label %exit_block
+  br i1 %11, label %load_block_0x635b_level_015, label %exit_block
 
 exit_block:                                       ; preds = %store_block_0x635b_level_017
-  %11 = call i32 @buffer_update_function(i32 0)
+  %12 = call i32 @buffer_update_function(i32 0)
   ret i32 1
 }
 

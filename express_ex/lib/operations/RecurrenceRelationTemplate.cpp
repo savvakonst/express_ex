@@ -73,14 +73,18 @@ void RecurrenceRelationTemplate::genBodyVisitExit(BodyGenContext *context) {
             continue;
         }
         // determine terminal nodes
-        if (var->getNodeType() == NodeTypeEn::kRecursiveNeighborPoint) {
+
+        auto n_ty = var->getNodeType();
+        if (n_ty == NodeTypeEn::kRecursiveNeighborPoint) {
             if (operator_cnt) print_error("operator application inside recursion is prohibited");
 
             ref_list.push_back((RecursiveNeighborPointOperation *)var);
             for (auto i : path_stack) values_to_change_level.push(i.first);
             values_to_change_level.push(var);
             temp_stack.push(var);
-        } else if (var->getNodeType() == NodeTypeEn::kArgument) {
+        } else if (n_ty == NodeTypeEn::kArgument) {
+            temp_stack.push(var);
+        } else if (n_ty == NodeTypeEn::kCall) {
             temp_stack.push(var);
         } else var->visitEnter(&temp_stack, false);
 

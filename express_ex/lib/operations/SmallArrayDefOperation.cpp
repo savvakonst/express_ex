@@ -54,8 +54,8 @@ SmallArrayDefOperation::SmallArrayDefOperation(double start, double stop, ExValu
     : Operation_ifs(target_type,                     //
                     TypeEn::unknown,                 //
                     DataStructureTypeEn::kSmallArr,  //
-                    length_t(args.size()),           //
-                    OpCodeEn::smallArrayDef),        //
+                    length,                          //
+                    OpCodeEn::smallArrayRange),      //
       start_(start),
       stop_(stop)  //
 {

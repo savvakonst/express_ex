@@ -12,6 +12,9 @@ void Operation_ifs::reverseTraversalVisitEnter(stack<ExValue_ifs*>* visitor_stac
     commonMarkUnusedVisitEnter(visitor_stack);
     visitEnterSetupBuffer(visitor_stack);
     visitEnterStackUpdate(visitor_stack);
+    for (auto i : operand_)
+        if (i->getLevel() < level_) i->getAssignedVal(true)->setBuffered();
+
     is_unused_ = false;
 }
 

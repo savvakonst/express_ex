@@ -3,38 +3,43 @@
 x = param("#1_A01__2")
 
 
+function integrate_( a ):
+    res = integrate_[-1] + a
+    return double( res );
 
+function rms(arg, delay):
 
-function rms(arg):
     function recurrence_relation( a , cond):
-       increment = ( a[0] * a[0] ) # if ( a[0] * a[0] ) replace with ( a* a) issue occur
+       increment = a * a
        c = recurrence_relation[-1] + increment
        res = cond ? increment : c
-       return double( res )
-    end
+       return double( res );
 
 
-    function get_num( a , cond ):
-       c = get_num[-1] + 0 * a + 1
-       res = cond ? 1 : c
-       return double( res )
-    end
 
+    function get_num( a, cond, delay):
+       last_val =  get_num[-1]
+       c = last_val + 0 * a + 1
+       cond2 =  (last_val > delay )
+       res = (cond * cond2) ? 1 : c
+       return double( res );
 
-    cond = (arg[ 0] < 0) * (arg[-1] > 0)
+    filtered = convolve( arg ,range(70)*0+1 )
 
+    cond = (filtered < 0) * (filtered[-1] > 0)
 
-    num = get_num(arg, cond)
+    num = get_num(arg, cond, delay )
+
+    cond = (num == 1)
+
     intermediate = recurrence_relation(arg, cond)
 
     res = cond ? (intermediate[-1] / num[-1] )** 0.5 : rms[-1]
 
-    return double(res)
-end
+    return double(res);
 
 
 
 
+return rms(x, 1)
 
-
-return rms(x*1)

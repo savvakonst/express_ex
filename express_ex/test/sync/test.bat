@@ -22,7 +22,7 @@ set EXPRESS_FILE="sync_base.express"
 
 ::%PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i --llvmIRcode  %EX_ARG% >  output.ll
 for %%i in ( "recurrence_relation.kex" "integrate.kex" "ternary.kex" "multi_arg.kex" "multi_arg_cos.kex" "single_arg_convolve.kex") do (
-    %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i -untypedFSR --allFSR --tableSSR --outputPrm  --llvmIRcode --runJit %EX_ARG%
+    %PATH_TO_EXE%/express_ex_app.exe   --db=%EXPRESS_FILE% -i=%%i -untypedFSR --allFSR --tableSSR  --llvmIRcode --runJit %EX_ARG%
     ..\ex_test.py   --db=%EXPRESS_FILE% -i=%%i
     IF EXIST out.dat  DEL /f out.dat
 )

@@ -6,8 +6,7 @@
 #include "Intervals.h"
 
 SyncParameter::SyncParameter(const SyncParameter& prm)
-    : ParameterIfs(prm), opened_(prm.opened_), frequency_(prm.frequency_) {
-
+    : ParameterIfs(prm), opened_(prm.opened_), frequency_(prm.frequency_), type_size_(prm.type_size_) {
     const ExDataInterval* last_interval = nullptr;
     for (auto& i : interval_list_) {
         if (last_interval) {
@@ -43,11 +42,11 @@ SyncParameter::SyncParameter(std::string name, const std::vector<ExDataInterval>
         }
     }
 
-    if (!interval_list_.empty()) {
-        sizeof_data_type_ = sizeOfTy(interval_list_.front().type);
-        type_ = interval_list_.front().type;
-        calc_min_max_ptr_ = gCalcMinMaxSelect(type_);
-    }
+    // if (!interval_list_.empty()) {
+    type_size_ = sizeOfTy(interval_list_.front().type);
+    type_ = interval_list_.front().type;
+    calc_min_max_ptr_ = gCalcMinMaxSelect(type_);
+    //}
 
     auto bgn = interval_list_.front().ti.time;
     auto end = interval_list_.back().getEndTime();
@@ -114,7 +113,7 @@ inline bool SyncParameter::close() {
 bool SyncParameter::seek(int64_t point_umber) { return false; }
 
 uint64_t SyncParameter::write(char* data_buffer_ptr, uint64_t point_number) {
-    ex_size_t bytes_to_write = point_number * sizeof_data_type_;
+    ex_size_t bytes_to_write = point_number * type_size_;
     ex_size_t written_bytes = 0;
 
     while ((bytes_to_write != 0) && (current_chunk_ != nullptr)) {
@@ -126,7 +125,7 @@ uint64_t SyncParameter::write(char* data_buffer_ptr, uint64_t point_number) {
 }
 
 uint64_t SyncParameter::read(char* data_buffer_ptr, uint64_t point_number) {
-    ex_size_t bytes_to_read = point_number * sizeof_data_type_;
+    ex_size_t bytes_to_read = point_number * type_size_;
     ex_size_t readed_bytes = 0;
 
     while ((bytes_to_read != 0) && (current_chunk_ != nullptr)) {
@@ -140,7 +139,7 @@ uint64_t SyncParameter::read(char* data_buffer_ptr, uint64_t point_number) {
 
 
 uint64_t SyncParameter::getVirtualSize() const {
-    if (interval_list_.size() == 1) return ((uint64_t)interval_list_.front().size) / sizeof_data_type_;
+    if (interval_list_.size() == 1) return ((uint64_t)interval_list_.front().size) / type_size_;
     else return (uint64_t)(frequency_ * (time_interval_.time - timeFromDouble(time_interval_.duration)));
 }
 
@@ -268,4 +267,3 @@ inline bool SyncParameter::calcExtendedInfo() {
     }
     return true;
 }
-

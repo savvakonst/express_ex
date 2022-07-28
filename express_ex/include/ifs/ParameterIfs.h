@@ -340,6 +340,7 @@ class DLL_EXPORT ParameterIfs {
     PrmTypesEn type_ = PrmTypesEn::PRM_TYPE_UNKNOWN;
 
 
+
     std::string error_info_;
 };
 

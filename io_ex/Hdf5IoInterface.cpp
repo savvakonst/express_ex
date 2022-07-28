@@ -37,11 +37,15 @@ bool Hdf5IoInterface::close() {
 
 bool Hdf5IoInterface::datasetExists(const char *name) {
     herr_t err = ::H5Lexists(file_id_, name, H5P_DEFAULT);
-    return err > 0;    //return err > -1;
+    return err > 0;  // return err > -1;
 }
 
 DatasetsStorage_ifs::id_t Hdf5IoInterface::createDataset(const char *name) {
-    // TODO:is it necessary check existence, maybe only H5Dcreate1 do it?
+    hsize_t dims = 0;
+    hsize_t max_dims = H5S_UNLIMITED;
+
+    if (::H5Sset_extent_simple(file_space_id_, 1, &dims, &max_dims) < 0) return -1;
+
     hid_t id = ::H5Dcreate(file_id_, name, H5T_NATIVE_UCHAR, file_space_id_, H5P_DEFAULT, prop_list_id_, H5P_DEFAULT);
 
     if (id < 0) return -1;
@@ -62,6 +66,11 @@ DatasetsStorage_ifs::id_t Hdf5IoInterface::openDataset(const char *name) {
         ret++;
     }
     */
+    hsize_t dims = 0;
+    hsize_t max_dims = H5S_UNLIMITED;
+
+    if (::H5Sset_extent_simple(file_space_id_, 1, &dims, &max_dims) < 0) return -1;
+
     hid_t id = kDefaultId;
     if (datasetExists(name)) {
         id = H5Dopen1(file_id_, name);

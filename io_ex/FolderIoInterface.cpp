@@ -71,7 +71,7 @@ DatasetsStorage_ifs::id_t FolderIoInterface::openDataset(const char* name) {
 
     if (rw_)
         for (auto i : datasets_) {
-            if (i && (getNameByPtr(i) == path)) return false;
+            if (i && (getNameByPtr(i) == path)) return -1;
         }
     auto file = new QFile();
 
@@ -104,7 +104,10 @@ bool FolderIoInterface::removeDataset(const char* name) {
     }
 
     auto path = folder_name_ + "/" + std::string(name);
-    return std::remove(path.c_str()) == 0;
+
+    QFile file(path.c_str());
+    return file.remove();
+    //return std::remove(path.c_str()) == 0;
 }
 
 DatasetsStorage_ifs::ds_ssize_t FolderIoInterface::getDatasetSize(id_t index) {

@@ -37,7 +37,7 @@ bool Hdf5IoInterface::close() {
 
 bool Hdf5IoInterface::datasetExists(const char *name) {
     herr_t err = ::H5Lexists(file_id_, name, H5P_DEFAULT);
-    return err > -1;
+    return err > 0;    //return err > -1;
 }
 
 DatasetsStorage_ifs::id_t Hdf5IoInterface::createDataset(const char *name) {

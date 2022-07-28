@@ -54,6 +54,16 @@ enum class PrmTypesEn : uint64_t
     PRM_TYPE_F32_TU = 0x5024,
     PRM_TYPE_F64_TU = 0x5028,
 
+    PRM_TYPE_U08_T2 = 0x2001,  // 8193 (8192 + 1)
+    PRM_TYPE_U16_T2 = 0x2002,  // 8194 (8192 + 2)
+    PRM_TYPE_U32_T2 = 0x2004,  // 8196 (8192 + 4)
+    PRM_TYPE_U64_T2 = 0x2008,  // 8200 (8192 + 8)
+    PRM_TYPE_I08_T2 = 0x2011,  // 8209 (8192 + 17)
+    PRM_TYPE_I16_T2 = 0x2012,  // 8210 (8192 + 18)
+    PRM_TYPE_I32_T2 = 0x2014,  // 8212 (8192 + 20)
+    PRM_TYPE_I64_T2 = 0x2018,  // 8216 (8192 + 24)
+    PRM_TYPE_F32_T2 = 0x2024,  // 8228 (8192 + 36)
+    PRM_TYPE_F64_T2 = 0x2028,  // 8232 (8192 + 40)
 
     PRM_TYPE_UNKNOWN = 0xffff
 };

@@ -147,9 +147,9 @@ class ExParam : public ExLine {
     }
 
     ExParam(const std::string& name, ParameterIfs* parameter)
-        : ExLine(PRMType2JITType(parameter->getPrmType()),  //
-                 TypeEn::unknown,                           //
-                 DataStructureTypeEn::kLargeArr,            //
+        : ExLine(toTypeEn(parameter->getPrmType()),  //
+                 TypeEn::unknown,                    //
+                 DataStructureTypeEn::kLargeArr,     //
                  parameter->getVirtualSize()) {
         name_ = name;
         link_name_ = parameter->getName();

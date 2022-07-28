@@ -399,7 +399,7 @@ inline size_t sizeOfTy(TypeEn type) {
     return size;
 }
 
-TypeEn PRMType2JITType(PrmTypesEn arg);
+TypeEn toTypeEn(PrmTypesEn arg);
 PrmTypesEn toPrmType(TypeEn arg);
 
 template <typename T>

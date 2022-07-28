@@ -52,34 +52,7 @@ class DLL_EXPORT AsyncParameter : public ParameterIfs {
     void readFromBuffer(char* data_buffer_ptr, uint64_t points_to_read);
     void readRawData(uint64_t points_to_read);
 
-    template <typename T>
-    void copyToBuffer(T* data_buffer_ptr, uint64_t points_to_read) {
-        while (points_to_read) {
-            *((float*)time_buffer_.current_ptr_) = *((float*)intermediate_buffer_.current_ptr_);
-            time_buffer_.current_ptr_ += sizeof(float);
-            intermediate_buffer_.current_ptr_ += sizeof(float);
-            *data_buffer_ptr = *((T*)intermediate_buffer_.current_ptr_);
-            intermediate_buffer_.current_ptr_ += sizeof(T);
-            ++data_buffer_ptr;
-            points_to_read--;
-        }
-    }
 
-    template <typename T>
-    void copyFromBuffer(T* data_buffer_ptr, uint64_t points_to_read) {
-        IntermediateBuffer& parent_time_buffer = parent_parameter_->time_buffer_;
-        while (points_to_read) {
-            *((float*)intermediate_buffer_.current_ptr_) = *((float*)parent_time_buffer.current_ptr_);
-            // this side effect is important for IntermediateBuffer::replaceLastData() void
-            parent_time_buffer.current_ptr_ += sizeof(float);
-
-            intermediate_buffer_.current_ptr_ += sizeof(float);
-            *((T*)intermediate_buffer_.current_ptr_) = *data_buffer_ptr;
-            intermediate_buffer_.current_ptr_ += sizeof(T);
-            ++data_buffer_ptr;
-            points_to_read--;
-        }
-    }
 
     const ExTimeInterval& getTimeInterval(int64_t interval_index) const {
         return interval_list_[(size_t)interval_index].ti;

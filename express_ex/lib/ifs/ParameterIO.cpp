@@ -32,7 +32,9 @@ calcMinMaxTy gCalcMinMaxSelect(PrmTypesEn arg) {
 #undef CALC_CASE_OP
 }
 
-TypeEn PRMType2JITType(PrmTypesEn arg) {
+TypeEn toTypeEn(PrmTypesEn arg) {
+    arg = PrmTypesEn(0xff & uint64_t(arg));
+
     switch (arg) {
     case PrmTypesEn::PRM_TYPE_U08:
         return TypeEn::unknown;
@@ -54,30 +56,12 @@ TypeEn PRMType2JITType(PrmTypesEn arg) {
         return TypeEn::f32;
     case PrmTypesEn::PRM_TYPE_F64:
         return TypeEn::f64;
-    case PrmTypesEn::PRM_TYPE_U08_T:
-        return TypeEn::unknown;
-    case PrmTypesEn::PRM_TYPE_U16_T:
-        return TypeEn::unknown;
-    case PrmTypesEn::PRM_TYPE_U32_T:
-        return TypeEn::unknown;
-    case PrmTypesEn::PRM_TYPE_U64_T:
-        return TypeEn::unknown;
-    case PrmTypesEn::PRM_TYPE_I08_T:
-        return TypeEn::i8;
-    case PrmTypesEn::PRM_TYPE_I16_T:
-        return TypeEn::i16;
-    case PrmTypesEn::PRM_TYPE_I32_T:
-        return TypeEn::i32;
-    case PrmTypesEn::PRM_TYPE_I64_T:
-        return TypeEn::i64;
-    case PrmTypesEn::PRM_TYPE_F32_T:
-        return TypeEn::f32;
-    case PrmTypesEn::PRM_TYPE_F64_T:
-        return TypeEn::f64;
     default:
         return TypeEn::unknown;
     }
 }
+
+
 
 PrmTypesEn toPrmType(TypeEn arg) {
     if (isFloating(arg)) return (PrmTypesEn)(0x20 | sizeOfTy(arg));
@@ -86,9 +70,16 @@ PrmTypesEn toPrmType(TypeEn arg) {
 }
 
 std::string toString(PrmTypesEn arg) {
+    uint64_t time_type = uint64_t(arg) >> 8;
+    arg = PrmTypesEn(0xff & uint64_t(arg));
+    std::string postfix;
+    if (time_type == 0x10) postfix = "_T";
+    else if (time_type == 0x50) postfix = "_TU";
+    else if (time_type == 0x20) postfix = "_T2";
+
 #define CASE_OP(NAME)      \
     case PrmTypesEn::NAME: \
-        return #NAME
+        return #NAME + postfix
     switch (arg) {
         CASE_OP(PRM_TYPE_U08);
         CASE_OP(PRM_TYPE_U16);
@@ -100,16 +91,6 @@ std::string toString(PrmTypesEn arg) {
         CASE_OP(PRM_TYPE_I64);
         CASE_OP(PRM_TYPE_F32);
         CASE_OP(PRM_TYPE_F64);
-        CASE_OP(PRM_TYPE_U08_T);
-        CASE_OP(PRM_TYPE_U16_T);
-        CASE_OP(PRM_TYPE_U32_T);
-        CASE_OP(PRM_TYPE_U64_T);
-        CASE_OP(PRM_TYPE_I08_T);
-        CASE_OP(PRM_TYPE_I16_T);
-        CASE_OP(PRM_TYPE_I32_T);
-        CASE_OP(PRM_TYPE_I64_T);
-        CASE_OP(PRM_TYPE_F32_T);
-        CASE_OP(PRM_TYPE_F64_T);
     default:
         return "TypeEn::unknown";
     }

@@ -243,7 +243,7 @@ inline uint64_t AsyncParameter::getVirtualSize() const {
 ParameterIfs* AsyncParameter::intersection(ParameterIfs* b, PrmTypesEn target_ty, const std::string& name) {
     auto parameter_a = this;
     auto parameter_b = (AsyncParameter*)b;
-    target_ty = PrmTypesEn(0x1000 | (uint64_t)target_ty);
+
 
     if (parameter_a == parameter_b) return this;
 
@@ -282,7 +282,9 @@ ParameterIfs* AsyncParameter::intersection(ParameterIfs* b, PrmTypesEn target_ty
 
 
 ParameterIfs* AsyncParameter::retyping(PrmTypesEn target_ty, const std::string& name) {
-    target_ty = PrmTypesEn(0x1000 | (uint64_t)target_ty);
+    uint64_t time_type = 0xff00 & uint64_t(this->getPrmType());
+
+    target_ty = PrmTypesEn(time_type | uint64_t(target_ty));
 
     if (getPrmType() == target_ty) return this;
 
